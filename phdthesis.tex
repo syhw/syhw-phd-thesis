@@ -1,0 +1,77 @@
+\documentclass[a4paper,12pt,twoside]{memoir}
+
+%%%%%%%%%%% Mes packages
+\usepackage{amsfonts, amsmath, amssymb, amstext, latexsym}
+\usepackage{stmaryrd}
+\usepackage{graphicx, epsfig, wrapfig}
+\usepackage{exscale}
+\usepackage{amsbsy}
+\usepackage{amsopn}
+\usepackage{lettrine}
+%%%\usepackage{cite}
+\usepackage{natbib}
+\usepackage{rotating}
+%\usepackage{bbm}
+%%%\usepackage{fancyhdr}
+%\usepackage{here}
+\usepackage[utf8]{inputenc}
+%\usepackage[latin1]{inputenc}
+\usepackage{fullpage}
+\usepackage{url}
+\usepackage{xspace}
+\usepackage{enumerate}
+\usepackage[english]{babel}
+\usepackage{textcomp}
+\usepackage{pdfpages}
+\usepackage{mathrsfs}
+\usepackage{tikz}
+\usetikzlibrary{mindmap,trees}
+% \usepackage{stmaryrd} % mathematical symbols
+\usepackage[T1]{fontenc} % serif: fontenc, palatino, fouriernc, lmodern
+% \usepackage{charter} % sans serif: cmbright, arev, kurier, iwona
+% serif: chancery, concrete, newcent
+\usepackage{ulem}
+
+%%%%%%%%%%% Mes commandes
+\newcommand{\noi}{\noindent}
+\newcommand{\II}{\mbox{\large 1\hskip -0,353em 1}}
+\newcommand{\MR}{\mathcal{R}}
+\newcommand{\RR} {\mbox{I \hskip -0.55 em R}}
+\newcommand{\dx}{\,dx}
+\newcommand{\ito}{,\dotsc,}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Poly}[1]{\mathcal{P}_{#1}}
+\newcommand{\abs}[1]{\left\lvert#1\right\rvert}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newcommand{\pars}[1]{\left(#1\right)}
+\newcommand{\bigpars}[1]{\bigl(#1\bigr)}
+\newcommand{\set}[1]{\left\{#1\right\}}
+\newcommand\web{\begingroup \urlstyle{tt}\Url}
+\include{titre/titre}
+
+%\date{}
+
+\begin{document}
+%%%%%%%%%%% Titre
+
+\maketitle
+
+\include{chapters/intro}
+\include{chapters/gameai}
+\include{chapters/theory}
+\include{chapters/rtsai}
+\include{chapters/micro}
+\include{chapters/tactics}
+\include{chapters/strategy}
+\include{chapters/meta}
+\include{chapters/conclusion}
+
+%%% \bibliographystyle{plain}
+%\bibstyle{plainnat}
+\bibliographystyle{plainnat}
+%\bibdata{phdthesis}
+\bibliography{phdthesis}
+
+\end{document}
+
