@@ -1,6 +1,4 @@
 \chapter{Game AI}
-
-%Ninety percent of video game AI really is pretty damn bad. I think that's actually why it's so much fun to shoot things. Because the AI is so bad and the characters are so annoying. Matthew Perry
 %Babbage, Charles -- . . .every game of skill is susceptible of being played by an automaton.
 %Minsky, Marvin -- It is not that the games and mathematical problems are chosen because they are clear and simple; rather it is that they give us, for the smallest initial structures, the greatest complexity, so that one can engage some really formidable situations after a relatively minimal diversion into programming. From Semantic Information Processing, p. 12. Cambridge, MA: MIT Press (1968).
 % If you'd like to know, I can tell you that in your universe you move freely in three dimensions that you call space. You move in a straight line in a fourth, which you call time, and stay rooted to one place in a fifth, which is the first fundamental of probability. After that it gets a bit complicated, and there's all sort of stuff going on in dimensions thirteen to twenty-two that you really wouldn't want to know about. All you really need to know for the moment is that the universe is a lot more complicated than you might think, even if you start from a position of thinking it's pretty damn complicated in the first place. I can easily not say words like "damn" if it offends you. H2G2
@@ -23,7 +21,7 @@ Joshua: To win the game.\\
 \subsection{Win}
 During the last decade, the video games industry has see the emergence of ``e-sport''. It is the professionalization of certain competitive games at the higher levels, as in sports, with spectators, leagues, sponsors, fans and broadcasts. A %non-exhaustive 
 list of major electronic sports games includes (but is not limited to): StarCraft: Brood War, Counter-Strike, Quake III, Warcraft III, Halo, StarCraft II. The first game to have had progamers was StarCraft: Brood War, in Korea, with top players earning more than top soccer players. Nowadays,
-Game AI can be used part of the gameplay as a challenge to the player. Some player like competition, some others want to train. A
+Game AI can be used part of the gameplay as a challenge to the player.
 
 %%%Not solved: humans are the best
 
@@ -40,6 +38,10 @@ Patience, Mario, racing, PacMan
 Myst, Tetris, point and clicks...
 
 \section{Abstract Strategy Games}
+%%% http://en.wikipedia.org/wiki/Game_complexity
+%%% http://en.wikipedia.org/wiki/Solved_board_games
+\subsection{Tic-tac-toe}
+minimax
 \subsection{Checkers}
 alpha-beta
 \subsection{Chess}
@@ -47,7 +49,7 @@ alpha-beta
 \subsection{Go}
 +Monte Carlo
 
-\section{Games with some Randomness}
+\section{Games with some Uncertainty}
 \subsection{Monopoly}
 %\subsection{Diplomacy}
 %\subsection{Bridge}
@@ -80,7 +82,7 @@ alpha-beta
 \end{itemize}
 
 \section{RTS}
-Expended later.
+Expanded later.
 \begin{itemize}
 \item Problem (gameplay)
 \item Industry (Broodwar, AoE, Total A)
@@ -90,15 +92,62 @@ Expended later.
 \section{Game Characteristics}
 \subsection{Combinatory}
 \subsection{Partial information}
-\subsection{Multiplayer}
-\subsection{PvE}
+%%%\subsection{Multiplayer}
+%%%\subsection{PvE}
 \subsection{Randomness}
 \subsection{Time Constant(s)}
+\subsection{Learning Curve}
+\subsection{Recap}
+\begin{sidewaystable}
+\begin{tabular}{|l|ccccc|}
+\hline 
+Game & Combinatory & Vertical cont. & Horizontal cont. & Partial Info. & Randomness \\
+\hline
+Checkers & $b\approxeq 10; n\approxeq 70$ & none & none & no & no \\
+Chess & $b\approxeq 40; n\approxeq 80$ & none & none & no & no \\
+Go & $b\approxeq 300; n\approxeq 150$ & none & some & no & no \\
+%Monopoly 
+%Battleship
+Limit Poker & $b\approxeq 3$\footnote{fold,check,raise} $;n/hour \in [20\dots240]$\footnote{number of decisions taken per hour} & some & few & much & much \\
+Time Racing & & & & & \\
+(TrackMania) & $b\approxeq 50-1,000$\footnote{$\{X \times Y\}$ sampling$\times$50Hz}$;n/min \approxeq 60$ & full & much & no & no \\
+FFPS duel & & & & & \\
+(Quake III) & $b\approxeq 200-10,000$\footnote{$\{X \times Y \times Z\}$ sampling$\times$50Hz + firing}$;n/min \approxeq 100$\footnote{60 ``continuous move actions''+ 40 (mean) fire actions per sec} & some & much & some & ($\approxeq$)no \\
+%World of Warcraft (duel) & $b\approxeq $ & some & much & some & some \\
+RTS & & & & & \\
+(StarCraft) & $b\approxeq 200$\footnote{atomic dir/unit $\times$ \# units + constructions + productions}$;n/min=APM\approxeq 300$\footnote{for progamers, counting group actions as only one action}& some & some & much & no\\
+\hline
+\end{tabular}
+\end{sidewaystable}
 
 \section{Player Characteristics}
+In all these games, knowledge and learning plays a key role. Humans compensate their lack of (conscious) computational power with pattern matching, abstract thinking and efficient memory structures. 
 \subsection{Virtuosity}
-\subsection{Psychology}
-\subsection{Logical inference}
+Skill
+\subsection{Deduction}
+\subsection{Induction}
+\subsection{Decision-Making}
+%%%\subsection{Psychology}
+\subsection{Recap}
+%%% https://en.wikipedia.org/wiki/Cognition
+\begin{sidewaystable}
+\begin{tabular}{|l|ccccccc|}
+\hline 
+Game & Virtuosity & Deduction & Induction & Decision-Making & \multicolumn{3}{c|}{Knowledge} \\
+     & (sensory-motor) & (analysis) & (abstraction) & (acting) & game & map & opponent \\
+Checkers & 0 & ++ & + & 0 & ++&0&+ \\
+Chess & 0 & +++ & + & 0 & ++&0&+ \\
+Go & 0 & +++ & ++ & 0 & ++&0&+ \\
+Limit Poker & 0 & ++ & ++ & +++ & ++&0&++ \\
+Time Racing & & & & & & & \\
+(TrackMania) & +++ & 0 & 0 & 0 & +&++&0 \\
+FFPS duel & & & & & & & \\ 
+(Quake III) & +++ & + & 0 & + & +&++&+ \\
+RTS & & & & & & & \\
+(StarCraft) & +++ & +++ & +++ & +++ & ++&+&++ \\
+\hline
+\end{tabular}
+\end{sidewaystable}
 
 \section{An interesting problem}
 \subsection{Simulated but stochastic}
