@@ -111,8 +111,10 @@ Go & $b\approxeq 300; n\approxeq 150$ & none & some & no & no \\
 Limit Poker & $b\approxeq 3$\footnote{fold,check,raise} $;n/hour \in [20\dots240]$\footnote{number of decisions taken per hour} & some & few & much & much \\
 Time Racing & & & & & \\
 (TrackMania) & $b\approxeq 50-1,000$\footnote{$\{X \times Y\}$ sampling$\times$50Hz}$;n/min \approxeq 60$ & full & much & no & no \\
+Team FPS & & & & & \\
+(Counter-Strike) & $b\approxeq 100-5,000$\footnote{\label{samplingFPS}$\{X \times Y \times Z\}$ sampling$\times$50Hz + firing} $;n/min \approxeq 100$\footnote{\label{apmFPS}60 ``continuous move actions''+ 40 (mean) fire actions per sec} & some & much & some & some \\
 FFPS duel & & & & & \\
-(Quake III) & $b\approxeq 200-10,000$\footnote{$\{X \times Y \times Z\}$ sampling$\times$50Hz + firing}$;n/min \approxeq 100$\footnote{60 ``continuous move actions''+ 40 (mean) fire actions per sec} & some & much & some & ($\approxeq$)no \\
+(Quake III) & $b\approxeq 200-10,000$\footref{samplingFPS} $;n/min \approxeq 100$\footref{apmFPS} & some & much & some & ($\approxeq$)no \\
 %World of Warcraft (duel) & $b\approxeq $ & some & much & some & some \\
 RTS & & & & & \\
 (StarCraft) & $b\approxeq 200$\footnote{atomic dir/unit $\times$ \# units + constructions + productions}$;n/min=APM\approxeq 300$\footnote{for progamers, counting group actions as only one action}& some & some & much & no\\
@@ -135,16 +137,16 @@ Skill
 \hline 
 Game & Virtuosity & Deduction & Induction & Decision-Making & \multicolumn{3}{c|}{Knowledge} \\
      & (sensory-motor) & (analysis) & (abstraction) & (acting) & game & map & opponent \\
-Checkers & 0 & ++ & + & 0 & ++&0&+ \\
-Chess & 0 & +++ & + & 0 & ++&0&+ \\
-Go & 0 & +++ & ++ & 0 & ++&0&+ \\
-Limit Poker & 0 & ++ & ++ & +++ & ++&0&++ \\
+Checkers &   & ++ & &   & ++& &+ \\
+Chess &   & ++ & &   & ++& &+ \\
+Go &   & ++ & + &   & ++& &+ \\
+Limit Poker &   & + & + & ++ & ++& &++ \\
 Time Racing & & & & & & & \\
-(TrackMania) & +++ & 0 & 0 & 0 & +&++&0 \\
+(TrackMania) & ++ &   &   &   & +&++&  \\
 FFPS duel & & & & & & & \\ 
-(Quake III) & +++ & + & 0 & + & +&++&+ \\
+(Quake III) & ++ & + &   & + & +&++&+ \\
 RTS & & & & & & & \\
-(StarCraft) & +++ & +++ & +++ & +++ & ++&+&++ \\
+(StarCraft) & ++ & ++ & ++ & ++ & ++&+&++ \\
 \hline
 \end{tabular}
 \end{sidewaystable}

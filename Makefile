@@ -5,4 +5,4 @@ all:
 	pdflatex phdthesis
 
 clean:
-	rm *.aux *.log *.blg *.bbl
+	rm *.aux *.log *.blg *.bbl chapters/*.aux
