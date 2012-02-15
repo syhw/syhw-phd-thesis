@@ -17,22 +17,39 @@ Joshua: To win the game.\\
 
 \section{Goals of Game AI}
 %\lettrine[lines=1, lhang=.3]{W}{hat} are the goals of game AI?
+Non-playing characters (NPC, also called ``mobs'') are here to stay. Being it in ever more immersive single player adventures (The Elder Scrolls V: Skyrim), part of a cooperative gameplay (World of Warcraft, Left 4 Dead) or as helpers on our side or trainers against us (``pets'', strategy games), they are of interest for the game industry, but also for robotics, to study human cognition and for artificial intelligence in the large.
 
 \subsection{Win}
-During the last decade, the video games industry has see the emergence of ``e-sport''. It is the professionalization of certain competitive games at the higher levels, as in sports, with spectators, leagues, sponsors, fans and broadcasts. A %non-exhaustive 
-list of major electronic sports games includes (but is not limited to): StarCraft: Brood War, Counter-Strike, Quake III, Warcraft III, Halo, StarCraft II. The first game to have had progamers was StarCraft: Brood War, in Korea, with top players earning more than top soccer players. Nowadays,
-Game AI can be used part of the gameplay as a challenge to the player.
+During the last decade, the video games industry has seen the emergence of ``e-sport''. It is the professionalization of specific competitive games at the higher levels, as in sports: with spectators, leagues, sponsors, fans and broadcasts. A %non-exhaustive 
+list of major electronic sports games includes (but is not limited to): StarCraft: Brood War, Counter-Strike, Quake III, Warcraft III, Halo, StarCraft II. The first game to have had progamers was StarCraft: Brood War, in Korea, with top players earning more than top soccer players. Top players earn more than \$400,000 a year but the professional average is below, around \$50-60,000 a year \citep{TeamLiquidPGMIncome}, against the average South Korean salary at \$16,300 in 2010. Currently, Brood War is being slowly phased out to StarCraft II (still 4.9 millions players in South Korea in 2011 \cite{CitationNeeded}). There are TV channels broadcasting Brood War (OnGameNet, previously also MBC Game) or StarCraft II (GOM TV, streaming) and for which it constitutes a major chunk of the air time. %in 2010 in South Korea, the average salary for a professional StarCraft player was \$60,000 against the average salary at \$16,300\citep{StarCraftPGM}). 
+``E-sport'' is important to the subject of game AI because it ensures competitiveness of the human players. It is less challenging to write a competitive AI for game played by few and without competitions than to write an AI for Chess, Go or StarCraft. E-sport, through the distribution of ``replays'' also ensures a constant and heavy flow of human player data to mine and learn from. Finally, cognitive science researchers (like the Simon Fraser University Cognitive Science Lab) study the cognitive aspects (attention, learning, re) of high level RTS playing\cite{CitationNeeded}.
+
+Good human players, through their ability to learn and adapt, and through high-level strategic reasoning, are still undefeated. Single players are often frustrated by the NPC behaviors in non-linear (not fully scripted) games. Nowadays, video games AI could be used part of the gameplay as a challenge to the player. 
+This is not the case in most of the games though, in decreasing order of resolution of the problem\footnote{We deal in gameplay potentials here, particularly considering non-linear games, current RPG and MMORPG are often linearly limited \textit{because} of the untracted``world interacting NPC'' AI problem. Otherwise, linear RPG AI fare often better than team FPS AI.}: fast FPS\footnote{First Person Shooter: egocentric shooter game, strong sub-genres are fast FPS, also called ``Quake-likes'', (e.g. Quake III), and team/tactical FPS (e.g. Counter-Strike, Team Fortress 2)}, team FPS, RPG\footnote{Role Playing Game, e.g. Dungeons \& Dragons based Baldur's Gate}, MMORPG\footnote{Massively Multi-player Online Role Playing Game, distinct of RPG by the scale of cooperation sometimes needed to achieve a common goal, e.g. Dark Age of Camelot, World of Warcraft}, RTS\footnote{Real-Time Strategy games are (mainly) allocentric economic and military simulations from an operational tactical/strategist commander viewpoint, e.g. Command \& Conquer, Age of Empires, StarCraft, Total Annihilation}. These games in which artificial intelligences do not beat top human players on equal footing requires increasingly more cheats to even be a challenge (not for long as they mostly do not adapt). Cheats encompass (but are not limited to):
+\begin{itemize}
+\item RPG NPC often have at least 10 times more hit points (health points) than their human counterparts in equal numbers,
+\item FPS bots can see through walls and use perfect aiming,
+\item RTS bots see through the ``fog of war'' and have free additional resources.
+\end{itemize}
+How do we build game robotic players (``bots'', AI, NPC) which can provide some challenge, or be helpful without being frustrating, while staying fun?
 
 %%%Not solved: humans are the best
 
 \subsection{Fun}
+
+
+
 %%%Not solved: humans are the most fun to play with
 
 \subsection{Programming}
 
 \section{Single Player Games}
-Single player games are not
-\subsection{Reflex/Action games}
+
+Single player games are not the main focus of our thesis, but we have to 
+
+\subsection{Action games}
+
+
 Patience, Mario, racing, PacMan
 \subsection{Puzzles}
 Myst, Tetris, point and clicks...
@@ -49,19 +66,28 @@ alpha-beta
 \subsection{Go}
 +Monte Carlo
 
-\section{Games with some Uncertainty}
+\section{Games with Uncertainty}
+An exhaustive list of games or even of games genres is beyond the scope/range (XXX) of this thesis. On the other hand, we will explain games for which randomness or incomplete information plays a key role with not-so-basic examples.
+
 \subsection{Monopoly}
+In Monopoly, there is few hidden information (\textit{Chance} and \textit{Community Chest} cards only), but there is randomness in the throwing of dice\footnote{Note that the sum of two uniform distributions is not a uniform but a Irwin-Hall, $\forall n>1, P([\sum_{i=1}^n{(X_i\in U(0,1))}]=x) \propto \frac{1}{(n-1)!}\sum_{k=0}^n(-1)^k{n\choose k}\max{((x-k)^{n-1},0)}$, converging towards a Gaussian (central limit theorem).}, and a substantial influence of skill (player's decision). A very basic playing strategy would be to just look at the ruturn on investment (ROI) with regard to prices, rents and frequencies, choosing only based on the money you have and the possible actions of buying or not. A less naive way to play should evaluate the questions of buying with regard to what we already own, what others own, our cash and advancement in the game. The complete state space is huge (places for each players $\times$ their money $\times$ their possessions), but according to \cite{MonopolyMarkov}, we can model the game for one player (as he has no influence on the dice rolls and decisions of others) as a Markov process on 120 ordered pairs: 40 board spaces $\times$ possible number of doubles rolled so far in this turn (0, 1, 2). With this model, it is possible to compute more than simple ROI and derive applicable and interesting strategies. So, even in monopoly, which is not lottery playing or simple dice throwing, a simple probabilistic modeling yields a robust strategy. Additionally, \cite{MonopolyFrayn05} used genetic algorithms to generate the most efficient strategies for portfolio management. We observe that the main difficulty of Monopoly: randomness in a gameplay in which we have to make up a strategy, can be dealt with with probabilistic modeling.
+
 %\subsection{Diplomacy}
 %\subsection{Bridge}
 \subsection{Battleship}
+Incompleteness of information, no randomness.
+
 \subsection{Poker}
 
 %\section{Card Games}
 \citep{gunn}
 
 \section{FPS}
+\subsection{Gameplay}
+\subsection{FPS AI}
+\subsubsection{Industry}
+\subsubsection{Research}
 \begin{itemize}
-\item Problem (gameplay)
 \item Quake 3 AI (industry standard w/o squad AI) \citep{waveren-02-artificial}
 \item Killzone 2, F.E.A.R \citep{orkinGDC_FEAR} (planning), Crysis 2, BF3: industry standards with squad AI
 \item Research:
@@ -72,6 +98,18 @@ alpha-beta
 \item UT Challenge (c.f. CIG)
 \end{itemize}
 \end{itemize}
+\subsection{Limitations}
+\begin{tikzpicture}[
+    fact/.style={rectangle, draw=none, rounded corners=1mm, fill=blue, drop shadow,
+        text centered, anchor=north, text=white},
+    state/.style={circle, draw=none, fill=orange, circular drop shadow,
+        text centered, anchor=north, text=white},
+    leaf/.style={circle, draw=none, fill=red, circular drop shadow,
+        text centered, anchor=north, text=white},
+    level distance=0.5cm, growth parent anchor=south
+]
+\end{tikzpicture}
+
 
 \section{(MMO)RPGs}
 \begin{itemize}
@@ -111,13 +149,15 @@ Go & $b\approxeq 300; n\approxeq 150$ & none & some & no & no \\
 Limit Poker & $b\approxeq 3$\footnote{fold,check,raise} $;n/hour \in [20\dots240]$\footnote{number of decisions taken per hour} & some & few & much & much \\
 Time Racing & & & & & \\
 (TrackMania) & $b\approxeq 50-1,000$\footnote{$\{X \times Y\}$ sampling$\times$50Hz}$;n/min \approxeq 60$ & full & much & no & no \\
-Team FPS & & & & & \\
-(Counter-Strike) & $b\approxeq 100-5,000$\footnote{\label{samplingFPS}$\{X \times Y \times Z\}$ sampling$\times$50Hz + firing} $;n/min \approxeq 100$\footnote{\label{apmFPS}60 ``continuous move actions''+ 40 (mean) fire actions per sec} & some & much & some & some \\
-FFPS duel & & & & & \\
-(Quake III) & $b\approxeq 200-10,000$\footref{samplingFPS} $;n/min \approxeq 100$\footref{apmFPS} & some & much & some & ($\approxeq$)no \\
-%World of Warcraft (duel) & $b\approxeq $ & some & much & some & some \\
-RTS & & & & & \\
-(StarCraft) & $b\approxeq 200$\footnote{atomic dir/unit $\times$ \# units + constructions + productions}$;n/min=APM\approxeq 300$\footnote{for progamers, counting group actions as only one action}& some & some & much & no\\
+Team FPS & $b\approxeq 100-5,000$\footnote{\label{samplingFPS}$\{X \times Y \times Z\}$ sampling$\times$50Hz + firing} $;n/min \approxeq 100$\footnote{\label{apmFPS}60 ``continuous move actions''+ 40 (mean) fire actions per sec} & some & much & some & some \\
+(Counter-Strike) & & & & & \\
+(Team Fortress 2) & & & & & \\
+FFPS duel & $b\approxeq 200-10,000$\footref{samplingFPS} $;n/min \approxeq 100$\footref{apmFPS} & some & much & some & ($\approxeq$)no \\
+(Quake III) & & & & & \\
+MMORPG & $b\approxeq 50-100$\footnote{in RPGs, the player does not have to aim and positioning plays a lesser role than in FPS} $;n/min \approxeq 60$\footnote{move and use abilities/cast spells} & much & much & few & moderate \\
+(WoW, DAoC) & & & & & \\
+RTS & $b\approxeq 200$\footnote{atomic dir/unit $\times$ \# units + constructions + productions}$;n/min=APM\approxeq 300$\footnote{for progamers, counting group actions as only one action}& some & some & much & no\\
+(StarCraft) & & & & & \\
 \hline
 \end{tabular}
 \end{sidewaystable}
@@ -141,12 +181,17 @@ Checkers &   & ++ & &   & ++& &+ \\
 Chess &   & ++ & &   & ++& &+ \\
 Go &   & ++ & + &   & ++& &+ \\
 Limit Poker &   & + & + & ++ & ++& &++ \\
-Time Racing & & & & & & & \\
-(TrackMania) & ++ &   &   &   & +&++&  \\
-FFPS duel & & & & & & & \\ 
-(Quake III) & ++ & + &   & + & +&++&+ \\
-RTS & & & & & & & \\
-(StarCraft) & ++ & ++ & ++ & ++ & ++&+&++ \\
+Time Racing & ++ &   &   &   & +&++&  \\
+(TrackMania) & & & & & & & \\
+Team FPS & & & & & & & \\ 
+(Counter-Strike) & & & & & & & \\ 
+(Team Fortress 2) & & & & & & & \\ 
+FFPS duel & ++ & + &   & + & +&++&+ \\
+(Quake III) & & & & & & & \\ 
+MMORPG & + & + & + & ++ & +&++&+ \\
+(WoW, DAoC) & & & & & & & \\ 
+RTS & ++ & ++ & ++ & ++ & ++&+&++ \\
+(StarCraft) & & & & & & & \\
 \hline
 \end{tabular}
 \end{sidewaystable}
