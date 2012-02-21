@@ -20,12 +20,13 @@ Joshua: To win the game.\\
 Non-playing characters (NPC, also called ``mobs'') are here to stay. Being it in ever more immersive single player adventures (The Elder Scrolls V: Skyrim), part of a cooperative gameplay (World of Warcraft, Left 4 Dead) or as helpers on our side or trainers against us (``pets'', strategy games), they are of interest for the game industry, but also for robotics, to study human cognition and for artificial intelligence in the large.
 
 \subsection{Win}
+%%%Not solved: humans are the best
 During the last decade, the video games industry has seen the emergence of ``e-sport''. It is the professionalization of specific competitive games at the higher levels, as in sports: with spectators, leagues, sponsors, fans and broadcasts. A %non-exhaustive 
 list of major electronic sports games includes (but is not limited to): StarCraft: Brood War, Counter-Strike, Quake III, Warcraft III, Halo, StarCraft II. The first game to have had progamers was StarCraft: Brood War, in Korea, with top players earning more than top soccer players. Top players earn more than \$400,000 a year but the professional average is below, around \$50-60,000 a year \citep{TeamLiquidPGMIncome}, against the average South Korean salary at \$16,300 in 2010. Currently, Brood War is being slowly phased out to StarCraft II (still 4.9 millions players in South Korea in 2011 \cite{CitationNeeded}). There are TV channels broadcasting Brood War (OnGameNet, previously also MBC Game) or StarCraft II (GOM TV, streaming) and for which it constitutes a major chunk of the air time. %in 2010 in South Korea, the average salary for a professional StarCraft player was \$60,000 against the average salary at \$16,300\citep{StarCraftPGM}). 
 ``E-sport'' is important to the subject of game AI because it ensures competitiveness of the human players. It is less challenging to write a competitive AI for game played by few and without competitions than to write an AI for Chess, Go or StarCraft. E-sport, through the distribution of ``replays'' also ensures a constant and heavy flow of human player data to mine and learn from. Finally, cognitive science researchers (like the Simon Fraser University Cognitive Science Lab) study the cognitive aspects (attention, learning, re) of high level RTS playing\cite{CitationNeeded}.
 
 Good human players, through their ability to learn and adapt, and through high-level strategic reasoning, are still undefeated. Single players are often frustrated by the NPC behaviors in non-linear (not fully scripted) games. Nowadays, video games AI could be used part of the gameplay as a challenge to the player. 
-This is not the case in most of the games though, in decreasing order of resolution of the problem\footnote{We deal in gameplay potentials here, particularly considering non-linear games, current RPG and MMORPG are often linearly limited \textit{because} of the untracted``world interacting NPC'' AI problem. Otherwise, linear RPG AI fare often better than team FPS AI.}: fast FPS\footnote{First Person Shooter: egocentric shooter game, strong sub-genres are fast FPS, also called ``Quake-likes'', (e.g. Quake III), and team/tactical FPS (e.g. Counter-Strike, Team Fortress 2)}, team FPS, RPG\footnote{Role Playing Game, e.g. Dungeons \& Dragons based Baldur's Gate}, MMORPG\footnote{Massively Multi-player Online Role Playing Game, distinct of RPG by the scale of cooperation sometimes needed to achieve a common goal, e.g. Dark Age of Camelot, World of Warcraft}, RTS\footnote{Real-Time Strategy games are (mainly) allocentric economic and military simulations from an operational tactical/strategist commander viewpoint, e.g. Command \& Conquer, Age of Empires, StarCraft, Total Annihilation}. These games in which artificial intelligences do not beat top human players on equal footing requires increasingly more cheats to even be a challenge (not for long as they mostly do not adapt). Cheats encompass (but are not limited to):
+This is not the case in most of the games though, in decreasing order of resolution of the problem\footnote{We deal in gameplay potentials here, particularly considering non-linear games, current RPG and MMORPG are often linearly limited \textit{because} of the untracted``world interacting NPC'' AI problem. Otherwise, linear RPG AI fare often better than team FPS AI.}: fast FPS (first person shooters)\newglossaryentry{FPS}{name=FPS,description={First Person Shooter: egocentric shooter game, strong sub-genres are fast FPS, also called ``Quake-likes'', e.g. Quake III; and team/tactical FPS, e.g. Counter-Strike, Team Fortress 2}}, team FPS, RPG (role playing games)\newglossaryentry{RPG}{name=RPG,description={Role Playing Game, e.g. Dungeons \& Dragons based Baldur's Gate}}, MMORPG (Massively Multi-player Online RPG)\newglossaryentry{MMORPG}{name=MMORPG,description={Massively Multi-player Online Role Playing Game, distinct of RPG by the scale of cooperation sometimes needed to achieve a common goal, e.g. Dark Age of Camelot, World of Warcraft}}, RTS (Real-Time Strategy)\newglossaryentry{RTS}{name=RTS,description={Real-Time Strategy games are (mainly) allocentric economic and military simulations from an operational tactical/strategist commander viewpoint, e.g. Command \& Conquer, Age of Empires, StarCraft, Total Annihilation}}. These games in which artificial intelligences do not beat top human players on equal footing requires increasingly more cheats to even be a challenge (not for long as they mostly do not adapt). AI cheats encompass (but are not limited to):
 \begin{itemize}
 \item RPG NPC often have at least 10 times more hit points (health points) than their human counterparts in equal numbers,
 \item FPS bots can see through walls and use perfect aiming,
@@ -33,26 +34,46 @@ This is not the case in most of the games though, in decreasing order of resolut
 \end{itemize}
 How do we build game robotic players (``bots'', AI, NPC) which can provide some challenge, or be helpful without being frustrating, while staying fun?
 
-%%%Not solved: humans are the best
 
 \subsection{Fun}
-
-
-
 %%%Not solved: humans are the most fun to play with
+The main purpose of gaming is entertainment. Of course, there are subgenres of serious gaming or ``gamification'' of learning, but the majority of people playing games are having fun. Cheating AI are not fun, and so the re-playability of single player games is very low. The vast majority of games which are still played after the single player mode are multi-player games, because humans are the most fun to play with. So how do we get game AI to be fun to play with? The answer seems to be 3-fold:
+\begin{itemize}
+\item For competitive and PvP\newglossaryentry{PvP}{name=PvP,description={Players versus Players}}
+(players versus players) games: improve game AI so that it can play well \textit{on equal footing with humans},
+\item for cooperative and PvE\newglossaryentry{PvE}{name=PvE,description={Players vs Environment}}
+(players vs environment) games: optimize the AI for fun, ``epic wins'': the empowerment of playing your best and just barely winning,
+\item give the AI all the tools to adapt the game to the players: game directors (Left 4 Dead, Dark Spore), procedural content generation (Mario PCG).
+\end{itemize}
+In all cases, a good AI should be able to learn for the players' actions, recognize their behavior to deal with it in the most entertaining way. Examples for a few mainstream games: World of Warcraft instances or StarCraft II missions could be less predictable (less scripted) and always ``just hard enough'', Battlefield 3 or Call of Duty opponents could have a longer life expectancy (5 seconds in some cases), Skyrim's follower NPC could avoid blocking the player in doors, or going in front when she casts fireballs.
 
 \subsection{Programming}
+How do game developers want to deal with game AI programming? We have to understand the needs of industry game AI programmers: 
+\begin{itemize}
+    \item computational efficiency (particularly for real-time games with advanced graphics, the AI CPU budget is low),
+    \item game designers often want to remain in control of the behaviors (and editing tools have to be usable by them),
+    \item scalability (as much autonomy as possible), ``debugability'' (huge states spaces due to the presence of the player(s)), re-use accross games (game independant logic).
+\end{itemize}
+So, programmers can ``hard code'' the behaviors and their switches, for some structuring they have finite state machines \citep{FSM_AIGameProgWisdom2003}. This solution does not scale well (exponential increase in the number of transitions), nor do they generate autonomous behavior, and they can be cumbersome for the game designers to interact with. Hierarchical FSM \citep{CitationNeeded} is a partial answer to these problems: they scale better due to the sharing of transitions between macro-states and are more readable for game designers who can zoom-in on macro/englobing states. They still represent way too much programming work for complex behavior and are not more autonomous than classic FSM. Planning (using a search heuristic in the states space) efficiently gives autonomy to virtual characters. Planners like hierarchical task networks (HTN \citep{Erol_htnplanning}, Armed Assault, Killzone 2 \citep{ArmA1_HTN,Killzone2_HTN}) or STRIPS (\citep{FikesSTRIPS}, F.E.A.R \citep{orkinGDC_FEAR}) generate complex behaviors in the space of the combinations of specified states, and the logic can be re-used accross games. The drawbacks can be a large computational budget (for many agents and/or a complex world), the difficulty to specify reactive behavior, and less (or harder) control from the game designers. Behavior trees (Halo 2 \citep{Isla}, Spore) are a popular in-between HTN and HFSM technique providing scability through a tree-like hierarchy, control through tree editing and some autonomy through a search heuristic (for valid nodes).
+A transversal technique for ease of use is to program game AI with a script (LUA, Python) or domain specific language (DSL\newglossaryentry{DSL}{name=DSL,description={Domain Specific Language}}). From a programming or design point of view, it will have the drawbacks of the models it is based on. If everything is allowed (low-level inputs and outputs directly in the DSL), everything is possible at the cost of cumbersome programming, debugging and few re-use.
+
+Even with scalable\footnote{both computationally and in the number of lines of codes to write to produce a new behavior} architectures like behavior trees or the autonomy that planning provides, there are limitations (burdens on programmers/designers or CPU/GPU):
+\begin{itemize}
+    \item complex worlds require either very long description of the state (in propositional logic) or high expressivity (higher order logics) to specify well-defined behaviors,
+    \item the search space of possible actions increases exponentially with the interactivity (complexity) of the world, thus requiring ever more efficient pruning techniques,
+    \item once human players are in the loop (ain't that the purpose of a game?), uncertainty has to be taken into account. Previous approaches can be ``patched'' to deal with uncertainty, at what cost?
+\end{itemize}
+Our thesis is that we can learn complex behaviors from exploration or observations (of human players) without the need to be explicitely programmed. Furthermore, the game designers can stay in control by choosing which demonstration to learn from and tuning parameters by hand if wanted. \citet{lehy04} showed it in the case of FPS AI (Unreal Tournament), with \textit{inverse programming} to learn reactive behaviors from human demonstration. We extend it to tactical and even strategic behaviors.
 
 \section{Single Player Games}
 
-Single player games are not the main focus of our thesis, but we have to 
+Single player games are not the main focus of our thesis, but they present a few interesting AI characteristics. They encompass all kinds of human cognitive abilities, from reflexes to higher level thinking.
 
 \subsection{Action games}
+%%% Mario, racing, PacMan
 
-
-Patience, Mario, racing, PacMan
 \subsection{Puzzles}
-Myst, Tetris, point and clicks...
+%%% Myst, Tetris, point and clicks, Patience
 
 \section{Abstract Strategy Games}
 %%% http://en.wikipedia.org/wiki/Game_complexity

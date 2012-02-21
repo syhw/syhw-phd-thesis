@@ -33,6 +33,8 @@
 % \usepackage{charter} % sans serif: cmbright, arev, kurier, iwona
 % serif: chancery, concrete, newcent
 \usepackage{ulem}
+\usepackage[toc]{glossaries}
+\makeglossaries
 
 %%%%%%%%%%% Mes commandes
 \newcommand{\noi}{\noindent}
@@ -71,6 +73,8 @@
 \include{chapters/meta}
 \include{chapters/conclusion}
 
+\glsaddall
+\printglossaries
 %%% \bibliographystyle{plain}
 %\bibstyle{plainnat}
 \bibliographystyle{plainnat}
