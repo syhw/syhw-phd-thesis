@@ -3,6 +3,13 @@
 %Minsky, Marvin -- It is not that the games and mathematical problems are chosen because they are clear and simple; rather it is that they give us, for the smallest initial structures, the greatest complexity, so that one can engage some really formidable situations after a relatively minimal diversion into programming. From Semantic Information Processing, p. 12. Cambridge, MA: MIT Press (1968).
 % If you'd like to know, I can tell you that in your universe you move freely in three dimensions that you call space. You move in a straight line in a fourth, which you call time, and stay rooted to one place in a fifth, which is the first fundamental of probability. After that it gets a bit complicated, and there's all sort of stuff going on in dimensions thirteen to twenty-two that you really wouldn't want to know about. All you really need to know for the moment is that the universe is a lot more complicated than you might think, even if you start from a position of thinking it's pretty damn complicated in the first place. I can easily not say words like "damn" if it offends you. H2G2
 
+%%% Some characteristics of Game AI
+%%% high-level perception, commonsense reasoning, NLP, speech processing,
+%%% gesture processing, planning \& counterplanning, cognitive modeling,
+%%% plan recognition, soft real-time response, reactive behavior, teamwork,
+%%% scheduling, path planning, spatial reasoning, temporal reasoning,
+%%% opponent modeling, learning, knowledge acquisition
+
 \begin{verse}\textit{
 \\
 David: What is the primary goal?\\
@@ -14,6 +21,8 @@ Joshua: To win the game.\\
 \lettrine{O}{r}
  is it? ``Game AI'', simultaneously a research topic, an industry standard practice, from a staple to a part of the gameplay. Its uses range from character animation, to behavior modeling and strategic play. In this chapter, we will give our educated guess about the goals of game AI, and review what exists for a broad category of games: single player games, abstract strategy games, partial information and/or stochastic games, computer games. Let us then focus on game-play (from a player point of view) characteristics of theses games so that we can enumerate game AI needs. %%% XXX
 %\lettrine[image=true, lines=3, findent=3pt, nindent=0pt]{lettrines/W.png}{hat} is game AI? What are the goals of AI in games? What are its characteristics? Why is game AI an interesting subject for research? 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
 \section{Goals of Game AI}
 %\lettrine[lines=1, lhang=.3]{W}{hat} are the goals of game AI?
@@ -65,15 +74,23 @@ Even with scalable\footnote{both computationally and in the number of lines of c
 \end{itemize}
 Our thesis is that we can learn complex behaviors from exploration or observations (of human players) without the need to be explicitely programmed. Furthermore, the game designers can stay in control by choosing which demonstration to learn from and tuning parameters by hand if wanted. \citet{lehy04} showed it in the case of FPS AI (Unreal Tournament), with \textit{inverse programming} to learn reactive behaviors from human demonstration. We extend it to tactical and even strategic behaviors.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
 \section{Single Player Games}
 
 Single player games are not the main focus of our thesis, but they present a few interesting AI characteristics. They encompass all kinds of human cognitive abilities, from reflexes to higher level thinking.
 
 \subsection{Action games}
 %%% Mario, racing, PacMan
+Platform games (Mario, Sonic), time attack racing games (TrackMania), solo shoot-them-up (``schmups'', Space Invaders, DodonPachi), sports games and rhythm games (Dance Dance Revolution, Guitar Hero) are games of reflexes, skill and level knowledge. The main components of game AI in these genres is a quick path search heuristic, often with a dynamic environment. There have been Mario \citep{TogeliusMario10}, PacMan \citep{PacManCEC11} and racing competitions \citep{CarRacingWCCI08}. The winners often use (clever) heuristics coupled with a search algorithm (A* for instance). As there are no human opponents, reinforcement learning and genetic programming works well too.
+
+XXX
 
 \subsection{Puzzles}
 %%% Myst, Tetris, point and clicks, Patience
+Point and click (Monkey Island, Kyrandia, Day of the Tentacle), graphic adventure (Myst, Heavy Rain), (tile) puzzles (Minesweeper, Tetris) games are games of logical thinking and puzzle solving. The main components of game AI in these genres is an inference engine with sufficient domain knowledge (an ontology). AI research is not particularly active in the genre of puzzle games, perhaps because solving them has more to do with writing down the ontology than with using new AI techniques. A classic well-studied logic-based, combinatorial puzzle is Sudoku, which has been formulated as a SAT-solving \citep{lynce2006sudoku} and constraint satisfaction problem \citep{Simonis2005}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
 \section{Abstract Strategy Games}
 %%% http://en.wikipedia.org/wiki/Game_complexity
@@ -122,154 +139,146 @@ level 1/.style={sibling distance=42mm},
 level 2/.style={sibling distance=14mm},
 level 3/.style={sibling distance=7mm}
 ]
+\begin{footnotesize}
   \node[ellipse,draw] {Fig.~\ref{fig:TTT} state}
     child {node[rectangle,draw] {0}
-      child {node[circle,draw] {0}
-          child {node[rectangle,draw] {0}
-              child {node[circle,draw] {0}}
-              edge from parent node[left] {1,2}
-            }
-          child {node[rectangle,draw] {0}
-              child {node[circle,draw] {0}}
-              edge from parent node[left] {1,2}
-            }
-          edge from parent node[left] {1,2}
+      child {node[circle,draw] {-1}
+          edge from parent node[pos=0.5,fill=black!20] {2,1}
         }
       child {node[circle,draw] {0}
           child {node[rectangle,draw] {0}
-              child {node[circle,draw] {0}}
-              edge from parent node[left] {1,2}
+              child {node[circle,draw] {0}
+                edge from parent node[pos=0.5,fill=black!20] {3,2}}
+              edge from parent node[pos=0.5,left,fill=black!20] {2,1}
             }
           child {node[rectangle,draw] {0}
-              child {node[circle,draw] {0}}
-              edge from parent node[left] {1,2}
+              child {node[circle,draw] {-1}
+                edge from parent node[pos=0.5,fill=black!20] {2,1}}
+              edge from parent node[pos=0.5,fill=black!20] {3,2}
             }
-          edge from parent node[left] {1,2}
+          edge from parent node[pos=0.5,fill=black!20] {3,1}
         }
       child {node[circle,draw] {0}
           child {node[rectangle,draw] {0}
-              child {node[circle,draw] {0}}
-              edge from parent node[left] {1,2}
+              child {node[circle,draw] {0}
+                edge from parent node[pos=0.5,fill=black!20] {3,1}}
+              edge from parent node[pos=0.5,left,fill=black!20] {2,1}
             }
           child {node[rectangle,draw] {0}
-              child {node[circle,draw] {0}}
-              edge from parent node[left] {1,2}
+              child {node[circle,draw] {-1}
+                edge from parent node[pos=0.5,fill=black!20] {2,1}}
+              edge from parent node[pos=0.5,fill=black!20] {3,1}
             }
-          edge from parent node[left] {1,2}
+          edge from parent node[pos=0.5,fill=black!20] {3,2}
         }
-      edge from parent node[left] {1,2}
+      edge from parent node[pos=0.5,fill=black!20] {1,2}
     }
     child {node[rectangle,draw] {0}
       child {node[circle,draw] {0}
           child {node[rectangle,draw] {0}
-              child {node[circle,draw] {0}}
-              edge from parent node[left] {1,2}
+              child {node[circle,draw] {-1}
+                edge from parent node[pos=0.5,fill=black!20] {3,2}}
+              edge from parent node[pos=0.5,left,fill=black!20] {3,1}
             }
           child {node[rectangle,draw] {0}
-              child {node[circle,draw] {0}}
-              edge from parent node[left] {1,2}
+              child {node[circle,draw] {0}
+                edge from parent node[pos=0.5,fill=black!20] {3,1}}
+              edge from parent node[pos=0.5,fill=black!20] {3,2}
             }
-          edge from parent node[left] {1,2}
+          edge from parent node[pos=0.5,fill=black!20] {1,2}
         }
       child {node[circle,draw] {0}
           child {node[rectangle,draw] {0}
-              child {node[circle,draw] {0}}
-              edge from parent node[left] {1,2}
+              child {node[circle,draw] {0}
+                edge from parent node[pos=0.5,fill=black!20] {3,2}}
+              edge from parent node[pos=0.5,left,fill=black!20] {1,2}
             }
           child {node[rectangle,draw] {0}
-              child {node[circle,draw] {0}}
-              edge from parent node[left] {1,2}
+              child {node[circle,draw] {0}
+                edge from parent node[pos=0.5,fill=black!20] {1,2}}
+              edge from parent node[pos=0.5,fill=black!20] {3,2}
             }
-          edge from parent node[left] {1,2}
+          edge from parent node[pos=0.5,fill=black!20] {3,1}
         }
       child {node[circle,draw] {0}
           child {node[rectangle,draw] {0}
-              child {node[circle,draw] {0}}
-              edge from parent node[left] {1,2}
+              child {node[circle,draw] {-1}
+                edge from parent node[pos=0.5,fill=black!20] {3,1}}
+              edge from parent node[pos=0.5,left,fill=black!20] {1,2}
             }
           child {node[rectangle,draw] {0}
-              child {node[circle,draw] {0}}
-              edge from parent node[left] {1,2}
+              child {node[circle,draw] {0}
+                edge from parent node[pos=0.5,fill=black!20] {1,2}}
+              edge from parent node[pos=0.5,fill=black!20] {3,1}
             }
-          edge from parent node[left] {1,2}
+          edge from parent node[pos=0.5,fill=black!20] {3,2}
         }
-      edge from parent node[left] {1,2}
+      edge from parent node[pos=0.5,fill=black!20] {2,1}
     }
     child {node[rectangle,draw] {0}
       child {node[circle,draw] {0}
           child {node[rectangle,draw] {0}
-              child {node[circle,draw] {0}}
-              edge from parent node[left] {1,2}
+              child {node[circle,draw] {-1}
+                edge from parent node[pos=0.5,fill=black!20] {3,2}}
+              edge from parent node[pos=0.5,left,fill=black!20] {2,1}
             }
-          child {node[rectangle,draw] {0}
-              child {node[circle,draw] {0}}
-              edge from parent node[left] {1,2}
+          child {node[rectangle,draw] {1}
+              edge from parent node[pos=0.5,fill=black!20] {3,2}
             }
-          edge from parent node[left] {1,2}
+          edge from parent node[pos=0.5,fill=black!20] {1,2}
+        }
+      child {node[circle,draw] {-1}
+          edge from parent node[pos=0.5,fill=black!20] {2,1}
         }
       child {node[circle,draw] {0}
           child {node[rectangle,draw] {0}
-              child {node[circle,draw] {0}}
-              edge from parent node[left] {1,2}
+              child {node[circle,draw] {-1}
+                edge from parent node[pos=0.5,fill=black!20] {2,1}}
+              edge from parent node[pos=0.5,left,fill=black!20] {1,2}
             }
           child {node[rectangle,draw] {0}
-              child {node[circle,draw] {0}}
-              edge from parent node[left] {1,2}
+              child {node[circle,draw] {-1}
+                edge from parent node[pos=0.5,fill=black!20] {1,2}}
+              edge from parent node[pos=0.5,fill=black!20] {2,1}
             }
-          edge from parent node[left] {1,2}
+          edge from parent node[pos=0.5,fill=black!20] {3,2}
         }
-      child {node[circle,draw] {0}
-          child {node[rectangle,draw] {0}
-              child {node[circle,draw] {0}}
-              edge from parent node[left] {1,2}
-            }
-          child {node[rectangle,draw] {0}
-              child {node[circle,draw] {0}}
-              edge from parent node[left] {1,2}
-            }
-          edge from parent node[left] {1,2}
-        }
-      edge from parent node[left] {1,2}
+      edge from parent node[pos=0.5,fill=black!20] {3,1}
     }
     child {node[rectangle,draw] {0}
       child {node[circle,draw] {0}
           child {node[rectangle,draw] {0}
-              child {node[circle,draw] {0}}
-              edge from parent node[left] {1,2}
+              child {node[circle,draw] {0}
+                edge from parent node[pos=0.5,fill=black!20] {3,1}}
+              edge from parent node[pos=0.5,left,fill=black!20] {2,1}
             }
-          child {node[rectangle,draw] {0}
-              child {node[circle,draw] {0}}
-              edge from parent node[left] {1,2}
+          child {node[rectangle,draw] {1}
+              edge from parent node[pos=0.5,fill=black!20] {3,1}
             }
-          edge from parent node[left] {1,2}
+          edge from parent node[pos=0.5,fill=black!20] {1,2}
+        }
+      child {node[circle,draw] {-1}
+          edge from parent node[pos=0.5,fill=black!20] {2,1}
         }
       child {node[circle,draw] {0}
           child {node[rectangle,draw] {0}
-              child {node[circle,draw] {0}}
-              edge from parent node[left] {1,2}
+              child {node[circle,draw] {-1}
+                edge from parent node[pos=0.5,fill=black!20] {2,1}}
+              edge from parent node[pos=0.5,left,fill=black!20] {1,2}
             }
           child {node[rectangle,draw] {0}
-              child {node[circle,draw] {0}}
-              edge from parent node[left] {1,2}
+              child {node[circle,draw] {0}
+                edge from parent node[pos=0.5,fill=black!20] {1,2}}
+              edge from parent node[pos=0.5,fill=black!20] {2,1}
             }
-          edge from parent node[left] {1,2}
+          edge from parent node[pos=0.5,fill=black!20] {3,1}
         }
-      child {node[circle,draw] {0}
-          child {node[rectangle,draw] {0}
-              child {node[circle,draw] {0}}
-              edge from parent node[left] {1,2}
-            }
-          child {node[rectangle,draw] {0}
-              child {node[circle,draw] {0}}
-              edge from parent node[left] {1,2}
-            }
-          edge from parent node[left] {1,2}
-        }
-      edge from parent node[left] {1,2}
+      edge from parent node[pos=0.5,fill=black!20] {3,2}
     };
+\end{footnotesize}
 \end{tikzpicture}
 \end{center}
-\caption{Minimax tree with initial position at Fig.~\ref{fig:TTT} state, \textbf{nodes} are states and \textbf{edges} are transitions, labeled with the move. 1 point for the win and -1 for the loss.}
+\caption{Minimax tree with initial position at Fig.~\ref{fig:TTT} state, \textbf{nodes} are states and \textbf{edges} are transitions, labeled with the move. Leafs are end-game states: 1 point for the win and -1 for the loss. Player is ``circles'' and plays first (first edges are player's moves).}
 \label{fig:minimaxTTT}
 \end{figure}
 \subsection{Checkers}
@@ -278,6 +287,8 @@ alpha-beta
 +heuristics
 \subsection{Go}
 +Monte Carlo
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
 \section{Games with Uncertainty}
 An exhaustive list of games or even of games genres is beyond the scope/range (XXX) of this thesis. On the other hand, we will explain games for which randomness or incomplete information plays a key role with not-so-basic examples.
@@ -295,6 +306,8 @@ Incompleteness of information, no randomness.
 %\section{Card Games}
 \citep{gunn}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
 \section{FPS}
 \subsection{Gameplay}
 \subsection{FPS AI}
@@ -311,36 +324,42 @@ Incompleteness of information, no randomness.
 \item UT Challenge (c.f. CIG)
 \end{itemize}
 \end{itemize}
-\subsection{Limitations}
-\begin{tikzpicture}[
-    fact/.style={rectangle, draw=none, rounded corners=1mm, fill=blue, drop shadow,
-        text centered, anchor=north, text=white},
-    state/.style={circle, draw=none, fill=orange, circular drop shadow,
-        text centered, anchor=north, text=white},
-    leaf/.style={circle, draw=none, fill=red, circular drop shadow,
-        text centered, anchor=north, text=white},
-    level distance=0.5cm, growth parent anchor=south
-]
-\end{tikzpicture}
+\subsubsection{Challenges}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
+\section{(MMO)RPG}
+
+\subsection{Gameplay}
+\subsection{RPG AI}
+\subsubsection{Industry}
+\subsubsection{Research}
+\citep{Cutumisu09}
+\subsubsection{Challenges}
+\citep{SYNNAEVE:MMORPG}
 
 
-\section{(MMO)RPGs}
-\begin{itemize}
-\item Problem (gameplay)
-\item Industry (scripts, behavior trees)
-\item Research \citep{Cutumisu09}
-\item \citep{SYNNAEVE:MMORPG}
-\end{itemize}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
 \section{RTS}
-Expanded later.
-\begin{itemize}
-\item Problem (gameplay)
-\item Industry (Broodwar, AoE, Total A)
-\item Research
-\end{itemize}
+
+\subsection{Gameplay}
+XXX 
+
+In chronological order, RTS include (but are not limited to): Ancient Art of War, Herzog Zwei, Dune II, Warcraft, Command \& Conquer, Warcraft II, Command \& Conquer: Red Alert, Total Annihilation, Age of Empires, StarCraft, Age of Empires II, Tzar, Cossacks, Homeworld, Battle Realms, Ground Control, Spring Engine: Balanced Annihilation, Warcraft III, Total War, Warhammer 40k, Sins of a Solar Empire, Supreme Commander, StarCraft II.
+
+Both \citep{Human-LevelAIKillerApplication} and \cite{gunn} propose that RTS AI is one of the most challenging genres, because all levels in the hierarchy of decisions are of importance.
+
+\subsection{RTS AI}
+\subsubsection{Industry}
+\subsubsection{Research}
+\subsubsection{Challenges}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
 \section{Game Characteristics}
+
+For a complementary taxonomy of video games and AI, see \cite{gunn}.
 \subsection{Combinatory}
 \subsection{Partial information}
 %%%\subsection{Multiplayer}
@@ -375,7 +394,12 @@ RTS & $b\approxeq 200$\footnote{atomic dir/unit $\times$ \# units + construction
 \end{tabular}
 \end{sidewaystable}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
 \section{Player Characteristics}
+
+%%% Timings, reflexes, modeling, goals, utility, backtracking, induction, ...
+
 In all these games, knowledge and learning plays a key role. Humans compensate their lack of (conscious) computational power with pattern matching, abstract thinking and efficient memory structures. 
 \subsection{Virtuosity}
 Skill
@@ -408,6 +432,8 @@ RTS & ++ & ++ & ++ & ++ & ++&+&++ \\
 \hline
 \end{tabular}
 \end{sidewaystable}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
 \section{An interesting problem}
 \subsection{Simulated but stochastic}
