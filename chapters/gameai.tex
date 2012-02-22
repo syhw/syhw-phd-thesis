@@ -79,7 +79,199 @@ Single player games are not the main focus of our thesis, but they present a few
 %%% http://en.wikipedia.org/wiki/Game_complexity
 %%% http://en.wikipedia.org/wiki/Solved_board_games
 \subsection{Tic-tac-toe}
+solved
 minimax
+negamax
+\begin{figure}
+\begin{center}
+\begin{tikzpicture}
+[thick]
+  \foreach \x in {1,2,3}
+    \foreach \y in {1,2,3}
+    {
+      \draw (\x,\y) +(-.5,-.5) rectangle ++(.5,.5);
+    }
+
+  \draw (1,3) node{\begin{footnotesize}\textcolor{black!50}{1,3}\end{footnotesize}};
+  \draw (3,1) node{\begin{footnotesize}\textcolor{black!50}{3,1}\end{footnotesize}};
+
+  \draw (2,3) node{\tikz \draw (-.32,-.32) -- (.32,.32);};
+  \draw (2,3) node{\tikz \draw (-.32,.32) -- (.32,-.32);};
+
+  \draw (2,2) node{\tikz \draw (-.32,-.32) -- (.32,.32);};
+  \draw (2,2) node{\tikz \draw (-.32,.32) -- (.32,-.32);};
+
+  \draw (1,1) node{\tikz \draw (-.32,-.32) -- (.32,.32);};
+  \draw (1,1) node{\tikz \draw (-.32,.32) -- (.32,-.32);};
+
+  \draw (1,3) node{\tikz \draw (0,0) circle (10pt);};
+
+  \draw (3,3) node{\tikz \draw (0,0) circle (10pt);};
+\end{tikzpicture}
+\caption{A Tic-tac-toe board position, ``circles'' turn to play}
+\label{fig:TTT}
+\end{center}
+\end{figure}
+
+\begin{figure}
+%%%\hspace{-0.8cm}
+\begin{center}
+\begin{tikzpicture}
+    [thick,
+level 1/.style={sibling distance=42mm},
+level 2/.style={sibling distance=14mm},
+level 3/.style={sibling distance=7mm}
+]
+  \node[ellipse,draw] {Fig.~\ref{fig:TTT} state}
+    child {node[rectangle,draw] {0}
+      child {node[circle,draw] {0}
+          child {node[rectangle,draw] {0}
+              child {node[circle,draw] {0}}
+              edge from parent node[left] {1,2}
+            }
+          child {node[rectangle,draw] {0}
+              child {node[circle,draw] {0}}
+              edge from parent node[left] {1,2}
+            }
+          edge from parent node[left] {1,2}
+        }
+      child {node[circle,draw] {0}
+          child {node[rectangle,draw] {0}
+              child {node[circle,draw] {0}}
+              edge from parent node[left] {1,2}
+            }
+          child {node[rectangle,draw] {0}
+              child {node[circle,draw] {0}}
+              edge from parent node[left] {1,2}
+            }
+          edge from parent node[left] {1,2}
+        }
+      child {node[circle,draw] {0}
+          child {node[rectangle,draw] {0}
+              child {node[circle,draw] {0}}
+              edge from parent node[left] {1,2}
+            }
+          child {node[rectangle,draw] {0}
+              child {node[circle,draw] {0}}
+              edge from parent node[left] {1,2}
+            }
+          edge from parent node[left] {1,2}
+        }
+      edge from parent node[left] {1,2}
+    }
+    child {node[rectangle,draw] {0}
+      child {node[circle,draw] {0}
+          child {node[rectangle,draw] {0}
+              child {node[circle,draw] {0}}
+              edge from parent node[left] {1,2}
+            }
+          child {node[rectangle,draw] {0}
+              child {node[circle,draw] {0}}
+              edge from parent node[left] {1,2}
+            }
+          edge from parent node[left] {1,2}
+        }
+      child {node[circle,draw] {0}
+          child {node[rectangle,draw] {0}
+              child {node[circle,draw] {0}}
+              edge from parent node[left] {1,2}
+            }
+          child {node[rectangle,draw] {0}
+              child {node[circle,draw] {0}}
+              edge from parent node[left] {1,2}
+            }
+          edge from parent node[left] {1,2}
+        }
+      child {node[circle,draw] {0}
+          child {node[rectangle,draw] {0}
+              child {node[circle,draw] {0}}
+              edge from parent node[left] {1,2}
+            }
+          child {node[rectangle,draw] {0}
+              child {node[circle,draw] {0}}
+              edge from parent node[left] {1,2}
+            }
+          edge from parent node[left] {1,2}
+        }
+      edge from parent node[left] {1,2}
+    }
+    child {node[rectangle,draw] {0}
+      child {node[circle,draw] {0}
+          child {node[rectangle,draw] {0}
+              child {node[circle,draw] {0}}
+              edge from parent node[left] {1,2}
+            }
+          child {node[rectangle,draw] {0}
+              child {node[circle,draw] {0}}
+              edge from parent node[left] {1,2}
+            }
+          edge from parent node[left] {1,2}
+        }
+      child {node[circle,draw] {0}
+          child {node[rectangle,draw] {0}
+              child {node[circle,draw] {0}}
+              edge from parent node[left] {1,2}
+            }
+          child {node[rectangle,draw] {0}
+              child {node[circle,draw] {0}}
+              edge from parent node[left] {1,2}
+            }
+          edge from parent node[left] {1,2}
+        }
+      child {node[circle,draw] {0}
+          child {node[rectangle,draw] {0}
+              child {node[circle,draw] {0}}
+              edge from parent node[left] {1,2}
+            }
+          child {node[rectangle,draw] {0}
+              child {node[circle,draw] {0}}
+              edge from parent node[left] {1,2}
+            }
+          edge from parent node[left] {1,2}
+        }
+      edge from parent node[left] {1,2}
+    }
+    child {node[rectangle,draw] {0}
+      child {node[circle,draw] {0}
+          child {node[rectangle,draw] {0}
+              child {node[circle,draw] {0}}
+              edge from parent node[left] {1,2}
+            }
+          child {node[rectangle,draw] {0}
+              child {node[circle,draw] {0}}
+              edge from parent node[left] {1,2}
+            }
+          edge from parent node[left] {1,2}
+        }
+      child {node[circle,draw] {0}
+          child {node[rectangle,draw] {0}
+              child {node[circle,draw] {0}}
+              edge from parent node[left] {1,2}
+            }
+          child {node[rectangle,draw] {0}
+              child {node[circle,draw] {0}}
+              edge from parent node[left] {1,2}
+            }
+          edge from parent node[left] {1,2}
+        }
+      child {node[circle,draw] {0}
+          child {node[rectangle,draw] {0}
+              child {node[circle,draw] {0}}
+              edge from parent node[left] {1,2}
+            }
+          child {node[rectangle,draw] {0}
+              child {node[circle,draw] {0}}
+              edge from parent node[left] {1,2}
+            }
+          edge from parent node[left] {1,2}
+        }
+      edge from parent node[left] {1,2}
+    };
+\end{tikzpicture}
+\end{center}
+\caption{Minimax tree with initial position at Fig.~\ref{fig:TTT} state, \textbf{nodes} are states and \textbf{edges} are transitions, labeled with the move. 1 point for the win and -1 for the loss.}
+\label{fig:minimaxTTT}
+\end{figure}
 \subsection{Checkers}
 alpha-beta
 \subsection{Chess}
