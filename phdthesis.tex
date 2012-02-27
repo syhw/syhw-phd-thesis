@@ -1,10 +1,12 @@
 \documentclass[a4paper,11pt,twoside]{memoir}
 
 %%%%%%%%%%% Mes packages
-\usepackage{amsfonts, amsmath, amssymb, amstext, latexsym}
+\usepackage{amsfonts, amsmath, amssymb, amstext, amsthm, latexsym}
 \usepackage{stmaryrd}
 \usepackage{graphicx, epsfig, wrapfig}
 \usepackage{exscale}
+%\usepackage{algorithmicx,algorithm,algpseudocode}
+\usepackage{algorithm,algpseudocode}
 \usepackage{amsbsy}
 \usepackage{amsopn}
 \usepackage{lettrine}
@@ -52,6 +54,9 @@
 \newcommand{\bigpars}[1]{\bigl(#1\bigr)}
 \newcommand{\set}[1]{\left\{#1\right\}}
 \newcommand\web{\begingroup \urlstyle{tt}\Url}
+\newtheorem*{mythm}{Theorem}
+\newtheorem*{mydef}{Definition}
+\newtheorem*{myproof}{Proof}
 
 \include{titre/titre}
 

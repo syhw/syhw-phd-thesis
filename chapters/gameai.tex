@@ -96,9 +96,62 @@ Point and click (Monkey Island, Kyrandia, Day of the Tentacle), graphic adventur
 %%% http://en.wikipedia.org/wiki/Game_complexity
 %%% http://en.wikipedia.org/wiki/Solved_board_games
 \subsection{Tic-tac-toe}
-solved
-minimax
-negamax
+Tic-tac-toe (noughts and crosses) is a solved game\newglossaryentry{solvedgame}{name={solved game},description={a game whose outcome can be correctly predicted from any position when each side plays optimally}}, meaning that it can be played optimally from each possible position. How did it came to get solved? Each and every possible positions (26,830) have been analyzed by a Minimax (or its variant Negamax) algorithm. Minimax is an algorithm which can be used to determine the optimal score a player can get for a move in a zero-sum game\newglossaryentry{zerosumgame}{name={zero-sum game},description={a game in which the total score of each players, from one player's point-of-view, for every possible strategies, adds up to zero; \textit{i.e.} ``a player benefits only at the expense of others''}}. The Minimax theorem states:
+\begin{mythm}
+For every two-person, zero-sum game with finitely many strategies, there exists a value V and a mixed strategy for each player, such that (a) Given player 2's strategy, the best payoff possible for player 1 is V, and (b) Given player 1's strategy, the best payoff possible for player 2 is -V.
+\end{mythm}
+Applying this theorem to Tic-tac-toe, we can say that winning is +1 point for the player and losing is -1, while draw is 0. 
+\begin{algorithm}
+\caption{Minimax algorithm}
+\label{alg:minimax}
+\begin{algorithmic}
+\Function{mini}{depth}
+    \If{$depth \leq 0$}
+        \State \Return $-value()$
+    \EndIf
+    \State $min \gets +\infty$
+    \ForAll{possible moves}
+        \State $score \gets maxi(depth-1)$
+        \If{$score < min$}
+            \State $min \gets score$
+        \EndIf 
+    \EndFor
+    \State \Return $min$
+\EndFunction
+
+\Function{maxi}{depth}
+    \If{$depth \leq 0$}
+        \State \Return $value()$
+    \EndIf
+    \State $max \gets -\infty$
+    \ForAll{possible moves}
+        \State $score \gets mini(depth-1)$
+        \If{$score > min$}
+            \State $max \gets score$
+        \EndIf
+    \EndFor 
+    \State \Return $max$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+\caption{Negamax algorithm}
+\label{alg:negamax}
+\begin{algorithmic}
+\Function{negamax}{depth}
+    \If{$depth \leq 0$}
+        \State \Return $value()$
+    \EndIf
+    \State $\alpha = -\infty$
+    \ForAll{possible moves}
+        \State $\alpha = max(\alpha, -negamax(depth-1))$
+    \EndFor
+    \State \Return $\alpha$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
 \begin{figure}
 \begin{center}
 \begin{tikzpicture}
@@ -125,7 +178,7 @@ negamax
 
   \draw (3,3) node{\tikz \draw (0,0) circle (10pt);};
 \end{tikzpicture}
-\caption{A Tic-tac-toe board position, ``circles'' turn to play}
+\caption{A Tic-tac-toe board position, ``circles'' turn to play. The couples of numbers explain the numbering (left to right, bottom to top, starting at 1) of the grid.}
 \label{fig:TTT}
 \end{center}
 \end{figure}
