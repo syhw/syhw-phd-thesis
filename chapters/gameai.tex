@@ -95,12 +95,12 @@ Point and click (Monkey Island, Kyrandia, Day of the Tentacle), graphic adventur
 \section{Abstract Strategy Games}
 %%% http://en.wikipedia.org/wiki/Game_complexity
 %%% http://en.wikipedia.org/wiki/Solved_board_games
-\subsection{Tic-tac-toe}
+\subsection{Tic-tac-toe, Minimax}
 Tic-tac-toe (noughts and crosses) is a solved game\newglossaryentry{solvedgame}{name={solved game},description={a game whose outcome can be correctly predicted from any position when each side plays optimally}}, meaning that it can be played optimally from each possible position. How did it came to get solved? Each and every possible positions (26,830) have been analyzed by a Minimax (or its variant Negamax) algorithm. Minimax is an algorithm which can be used to determine the optimal score a player can get for a move in a zero-sum game\newglossaryentry{zerosumgame}{name={zero-sum game},description={a game in which the total score of each players, from one player's point-of-view, for every possible strategies, adds up to zero; \textit{i.e.} ``a player benefits only at the expense of others''}}. The Minimax theorem states:
 \begin{mythm}
 For every two-person, zero-sum game with finitely many strategies, there exists a value V and a mixed strategy for each player, such that (a) Given player 2's strategy, the best payoff possible for player 1 is V, and (b) Given player 1's strategy, the best payoff possible for player 2 is -V.
 \end{mythm}
-Applying this theorem to Tic-tac-toe, we can say that winning is +1 point for the player and losing is -1, while draw is 0. 
+Applying this theorem to Tic-tac-toe, we can say that winning is +1 point for the player and losing is -1, while draw is 0. The exhaustive search algorithm which takes this property into account in described in Algorithm~\ref{alg:minimax}. The result of applying this algorithm to the Tic-tac-toe situation of Fig.~\ref{fig:TTT} is exhaustively represented in Fig.~\ref{fig:minimaxTTT}. For zero-sum games (``strictly competitive games'' as abstract strategy games discussed here), there is a (simpler) Minimax variant called Negamax, shown in Algorithm~\ref{alg:negamax} in Appendix~\ref{apdx:gameAI}.
 \begin{algorithm}
 \caption{Minimax algorithm}
 \label{alg:minimax}
@@ -131,23 +131,6 @@ Applying this theorem to Tic-tac-toe, we can say that winning is +1 point for th
         \EndIf
     \EndFor 
     \State \Return $max$
-\EndFunction
-\end{algorithmic}
-\end{algorithm}
-
-\begin{algorithm}
-\caption{Negamax algorithm}
-\label{alg:negamax}
-\begin{algorithmic}
-\Function{negamax}{depth}
-    \If{$depth \leq 0$}
-        \State \Return $value()$
-    \EndIf
-    \State $\alpha = -\infty$
-    \ForAll{possible moves}
-        \State $\alpha = max(\alpha, -negamax(depth-1))$
-    \EndFor
-    \State \Return $\alpha$
 \EndFunction
 \end{algorithmic}
 \end{algorithm}
@@ -334,25 +317,136 @@ level 3/.style={sibling distance=7mm}
 \caption{Minimax tree with initial position at Fig.~\ref{fig:TTT} state, \textbf{nodes} are states and \textbf{edges} are transitions, labeled with the move. Leafs are end-game states: 1 point for the win and -1 for the loss. Player is ``circles'' and plays first (first edges are player's moves).}
 \label{fig:minimaxTTT}
 \end{figure}
-\subsection{Checkers}
-alpha-beta
-\subsection{Chess}
-+heuristics
-\subsection{Go}
-+Monte Carlo
+\subsection{Checkers, Alpha-beta}
+Checkers, Chess and Go are also zero sum, perfect-information\newglossaryentry{perfectinformationgame}{name={perfect-information game},description={a game in which all the players have complete knowledge of the (board) state of the game}}, partisan\newglossaryentry{partisangame}{name={partisan game},description={a game which is not impartial, in which a player can do actions another can not do (move a faction while the other player(s) cannot)}}, deterministic strategy game. Technically, they all can be solved by exhaustive Minimax. In practice though, it is often intractable: their bounded versions are at least in \textsc{pspace} and their unbounded versions are \textsc{exptime}-hard \cite{GPC}. The state space complexity of Checkers is the smallest of the 3 above-mentioned games with $\approxeq 5.10^20$ possible positions, and as a matter of fact, Checkers have been solved completely\cite{SchaefferBBKMLLS07}. We can see the complexity of Minimax as $O(b^d)$ with $b$ the average branching factor of the tree (to search) and $d$ the average length (depth) of the game. For Checkers $b \approxeq 10$, while the mean game length is 70 \cite{allis1994}. It is already too large to have been solved by Minimax alone (on current hardware). From 1989 to 2007, there were artificial intelligences competitions on Checkers, all using at least alpha-beta pruning: a technique to make efficient cuts in the Minimax search tree while not losing optimality.
+
+Alpha-beta pruning (see Algorithm~\ref{alg:alphabeta}) is a branch-and-bound algorithm which (if the best nodes are searched first) can reduce Minimax to a $O(b^{d/2})=O(\sqrt{b^d})$ complexity ($O(b^{3d/4})$ for a random ordering of nodes). $\alpha$ is the maximum score than we (the maximizing player) are assured to get given what we already evaluated, while $\beta$ is the minimum score than the minimizing player is assured to get. When evaluating more and more nodes, we can only get a better estimate and so $\alpha$ can only increase while $\beta$ can only decrease. %If we find a node for us with an expected value below $\alpha$, we do not have to consider its subtree because it's sub-optimal play. If we find an expected value above $\beta$, it's sub-optimal play for the opponent. 
+\begin{algorithm}
+\caption{Alpha-beta algorithm}
+\label{alg:alphabeta}
+\begin{algorithmic}
+\Function{alphabeta}{node,depth,$\alpha$,$\beta$,player}
+    \If{$depth \leq 0$}
+        \State \Return $value(player)$
+    \EndIf
+    \If{$player == us$}
+        \ForAll{possible moves}
+            \State $\alpha \gets \max{(\alpha, alphabeta(child,depth-1,\alpha,\beta,opponent))}$
+            \If{$\beta \leq \alpha$}
+                \State \textbf{break}
+            \EndIf
+        \EndFor
+        \State \Return $\alpha$
+    \Else
+        \ForAll{possible moves}
+            \State $\beta \gets \min{(\beta, alphabeta(child,depth-1,\alpha,\beta,us))}$
+            \If{$\beta \leq \alpha$}
+                \State \textbf{break}
+            \EndIf
+        \EndFor
+        \State \Return $\beta$
+    \EndIf
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+If we find a node for which $\beta$ becomes less than $\alpha$, it means that this position results from sub-optimal play. When it is because of an update of $\beta$, the sub-optimal play is on the side of the maximizing player (his $\alpha$ is not high enough to be optimal and/or the minimizing player has a winning move faster in the current sub-tree) and this situation is called an $\alpha$ cut-off. On the contrary, when the cut results from an update of $\alpha$, it is called a $\beta$ cut-off and means that the minimizing player would have to play sub-optimally to get into this sub-tree. When Starting the game, $\alpha$ is initialized to $-\infty$ and $\beta$ to $+\infty$. A worked example is given on Figure~\ref{fig:alphabeta}.
+\tikzset{
+alphacut/.style={postaction={decorate},
+        decoration={markings,mark=at position .50 with {\draw (0.05,-.28)--(0.05,.28);\draw (-.05,-.28)--(-.05,.28);\node[right]{$\ \ \alpha \ cut$};}}},
+betacut/.style={postaction={decorate},
+        decoration={markings,mark=at position .50 with {\draw (0.05,-.28)--(0.05,.28);\draw (-.05,-.28)--(-.05,.28);\node[right]{$\ \ \beta \ cut$};}}},
+}
+\begin{figure}
+%%%\hspace{-0.8cm}
+\begin{center}
+\begin{tikzpicture}
+    [thick,
+level 1/.style={sibling distance=32mm},
+level 2/.style={sibling distance=14mm},
+level 3/.style={sibling distance=7mm}
+]
+\begin{small}
+  \node[circle,draw] (top) {3}
+    child {node[rectangle,draw] (a) {3}
+        child {node[circle,draw] (d3) {3}
+            child {node[rectangle,draw] (d4) {2}}
+            child {node[rectangle,draw] {3}}
+        }
+        child {node[circle,draw] (A) {}
+            child {node[rectangle,draw] {5}}
+            child {node[rectangle,draw] {} edge from parent[betacut]}
+        }
+    }
+    child {node[rectangle,draw] (b) {0}
+        child {node[circle,draw] {0}
+            child {node[rectangle,draw] {0}}
+        }
+        child {node[circle,draw] (B) {}
+            child {node[rectangle,draw] {}}
+            child {node[rectangle,draw] {}}
+            edge from parent[alphacut]
+        }
+    }
+    child {node[rectangle,draw] (c) {2}
+        child {node[circle,draw] {2}
+            child {node[rectangle,draw] {2}}
+            child {node[rectangle,draw] {1}}
+        }
+        child {node[circle,draw] {}
+            child {node[rectangle,draw] {}}
+            child {node[rectangle,draw] {}}
+            edge from parent[alphacut]
+        }
+    };
+    \node [blue,left] at (top.west) (d1) {$\alpha = 3$};
+    \node [blue,left] at (a.west) (d2) {$\beta = 3$};
+    \node [blue,left] at (b.west) {$\beta = 0$};
+    \node [blue,left] at (c.west) {$\beta = 2$};
+    \node [right] at (A.east) {$A$};
+    \node [right] at (b.east) {$B$};
+    \node [right] at (c.east) {$C$};
+    \node [left,align=flush left] at (d1.west) {\textsc{Max}\ \ \ };
+    \node [left,align=flush left] at (d2.west) {\textsc{Min}\ \ \ };
+    \node [left] at (d3.west) {\textsc{Max}\ \ \ };
+    \node [left] at (d4.west) {\textsc{Min}\ \ \ };
+\end{small}
+\end{tikzpicture}
+\end{center}
+\caption{Alpha-beta cuts on a Minimax tree, \textbf{nodes} are states and \textbf{edges} are transitions, labeled with the values of positions at the bottom (max depth). Here is the trace of the algorithm: \textbf{1.} descend leftmost first and evaluated 2 and 3, \textbf{2.} percolate max(2,3) higher up to set $\beta = 3$, \textbf{3.} $\beta$-cut in $A$ because its value is at least 5 (which is superior to $\beta=3$), \textbf{4.} Update of $\alpha=3$ at the top node, \textbf{5.} $\alpha$-cut in $B$ because it is at most 0 (which is inferior to $\alpha=3$), \textbf{6.} $\alpha$-cut in $C$ because it is at most 2, \textbf{7.} conclude the best value for the top node is 3.}
+\label{fig:minimaxTTT}
+\end{figure}
+Prior to Checkers beeing solved (meaning that we have a database of which moves to play for all positions resulting from optimal play), or if playing against a sub-optimal opponent, Alpha-beta is going to be helpful to search much deeper than Minimax in the same allowed time. The best Checkers program (since the 90s), which is also the project which solved Checkers \cite{SchaefferBBKMLLS07}, Chinook, has openings and end-game (for lestt than eight pieces of fewer) books, and for the mid-game (when there are more possible moves) relies on a deep search algorithm. So, appart for the beginning and the ending of the game, for which it plays by looking up a database, it used a search algorithm. As Minimax and Alpha-beta are depth first search heuristics, all programs which have to answer in a fixed limit of time use \textit{iterative deepening}, a technique which consists in fixing limited depth which will be considered maximal and evaluating this position. As it does not relies in winning moves at the bottom (remember, the search space is too big in $branching^{depth}$), we need moves evaluation heuristics. We then iterate on growing the maximal depth for which we consider moves, but we are at least sure to have a move to play in a short time (at least the greedy depth 1 found move).
+
+\subsection{Chess, Cut Heuristics}
+
+
+\subsection{Go, Monte-Carlo Tree Search}
+
+Estimated number of legal 19x19 Go positions: $2.081681994 * 10^170$ \cite{tromp2006}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
 \section{Games with Uncertainty}
-An exhaustive list of games or even of games genres is beyond the scope/range (XXX) of this thesis. On the other hand, we will explain games for which randomness or incomplete information plays a key role with not-so-basic examples.
+An exhaustive list of games or even of games genres is beyond the scope/range (XXX) of this thesis. %On the other hand, we will explain games for which randomness or incomplete information plays a key role with not-so-basic examples. 
+All uncertainty boils down to incompleteness of information, being it the physics of the dice being thrown or the inability to measure what is happening in the opponent's brain. However,  we will speak of 2 types (sources) of uncertainty: extensional uncertainty, which is due to incompleteness in direct, measurable information, and intentional uncertainty, which is related to randomness in the game or in (the opponent's) decisions. The purest extensional uncertainty being acting without sensing while the purest intentional uncertainty would be for our acts to be the result of a perfect random generator. The uncertainty coming from the opponent's mind/cognition lies in between, depending on the simplicity to model the game as an optimization procedure. The harder the game is to model, the harder it is to model the trains of thoughts our opponents can follow.
 
 \subsection{Monopoly}
-In Monopoly, there is few hidden information (\textit{Chance} and \textit{Community Chest} cards only), but there is randomness in the throwing of dice\footnote{Note that the sum of two uniform distributions is not a uniform but a Irwin-Hall, $\forall n>1, P([\sum_{i=1}^n{(X_i\in U(0,1))}]=x) \propto \frac{1}{(n-1)!}\sum_{k=0}^n(-1)^k{n\choose k}\max{((x-k)^{n-1},0)}$, converging towards a Gaussian (central limit theorem).}, and a substantial influence of skill (player's decision). A very basic playing strategy would be to just look at the ruturn on investment (ROI) with regard to prices, rents and frequencies, choosing only based on the money you have and the possible actions of buying or not. A less naive way to play should evaluate the questions of buying with regard to what we already own, what others own, our cash and advancement in the game. The complete state space is huge (places for each players $\times$ their money $\times$ their possessions), but according to \cite{MonopolyMarkov}, we can model the game for one player (as he has no influence on the dice rolls and decisions of others) as a Markov process on 120 ordered pairs: 40 board spaces $\times$ possible number of doubles rolled so far in this turn (0, 1, 2). With this model, it is possible to compute more than simple ROI and derive applicable and interesting strategies. So, even in monopoly, which is not lottery playing or simple dice throwing, a simple probabilistic modeling yields a robust strategy. Additionally, \cite{MonopolyFrayn05} used genetic algorithms to generate the most efficient strategies for portfolio management. We observe that the main difficulty of Monopoly: randomness in a gameplay in which we have to make up a strategy, can be dealt with with probabilistic modeling.
+In Monopoly, there is few hidden information (\textit{Chance} and \textit{Community Chest} cards only), but there is randomness in the throwing of dice\footnote{Note that the sum of two uniform distributions is not a uniform but a Irwin-Hall, $\forall n>1, P([\sum_{i=1}^n{(X_i\in U(0,1))}]=x) \propto \frac{1}{(n-1)!}\sum_{k=0}^n(-1)^k{n\choose k}\max{((x-k)^{n-1},0)}$, converging towards a Gaussian (central limit theorem).}, and a substantial influence of skill (player's decision). A very basic playing strategy would be to just look at the ruturn on investment (ROI) with regard to prices, rents and frequencies, choosing only based on the money you have and the possible actions of buying or not. A less naive way to play should evaluate the questions of buying with regard to what we already own, what others own, our cash and advancement in the game. The complete state space is huge (places for each players $\times$ their money $\times$ their possessions), but according to \cite{MonopolyMarkov}, we can model the game for one player (as he has no influence on the dice rolls and decisions of others) as a Markov process on 120 ordered pairs: 40 board spaces $\times$ possible number of doubles rolled so far in this turn (0, 1, 2). With this model, it is possible to compute more than simple ROI and derive applicable and interesting strategies. So, even in monopoly, which is not lottery playing or simple dice throwing, a simple probabilistic modeling yields a robust strategy. Additionally, \cite{MonopolyFrayn05} used genetic algorithms to generate the most efficient strategies for portfolio management. %We observe that the main difficulty of Monopoly: randomness in a gameplay in which we have to make up a strategy, can be dealt with with probabilistic modeling. 
+Monopoly is an example of a game in which we have complete direct information about the state of the game, intentional uncertainty due to the roll of the dice (randomness) can be dealt with thanks to probabilistic modeling (Markov processes here). The opponent's actions are relatively easy to model due to the fact that the goal is to maximize cash and that there are not many different efficient strategies (not many Nash equilibrium if it were a stricter game) to attain it.
 
 %\subsection{Diplomacy}
 %\subsection{Bridge}
 \subsection{Battleship}
-Incompleteness of information, no randomness.
+Battleship (also called ``naval combat'') is a guessing game generally played with two 10x10 grids for each players: one is the player's ships grid, and one is to remember/infer the opponent's ships positions. The goal is to guess where the enemy ships are and sink them by firing shots (torpedoes). There is \textbf{incompleteness} of information but no randomness. Incompleteness can be dealt with with probabilistic reasoning. The classic setup of the game consist in two ships of length 3 and one ship of each lengths of 2, 4 and 5; in this setup, there are 1,925,751,392 possible arrangements for the ships. The way to take advantage of all possible information is to update the probability that there is a ship for all the squares each time we have additional information. So for the 10x10 grid we have a 10x10 matrix $O_{1:10,1:10}$ with $O_{i,j} \in \{true,false\}$ being the $i$th row and $j$th column random variable of the case being occupied. With $ships$ being unsunk ships, we always have $$\sum_{i,j}P(O_{i,j}=true) = \frac{\sum_{k\in ships}length(k)}{10 \times 10}$$. For instance for a ship of size 3 alone at the beginning we can have prior distributions on $O_{1:10,1:10}$ by looking at combinatorics of its placements (see Fig.~\ref{fig:battleship}). We can also have priors on where the opponent likes to place her ships. Then each round we will either hit or miss in $i,j$. When we hit, we know $P(O_{i,j}=true)=1.0$ and will have to revise the probabilities of surrounding areas, and everywhere if we learned the size of the ship, with possible placement of ships. If we did not sunk a ship, the probabilities of uncertain (not 0.0 or 1.0) positions around $i,j$ will be highered according to the sizes of remaining ships. If we miss, we know $P(O_{i,j})=false$ and can also revise (lower) the surrounding probabilities, an example of that effect is shown in Fig.~\ref{fig:battleship}. Battleship is a game with few intensional uncertainty (no randomness), particularly because the goal quite strongly conditions the action (sink ships as fast as possible) but a large part of extensional uncertainty (incompleteness of direct information), which goes down rather quickly once we act, if we update a probabilistic model of the map/grid.
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=7.8cm]{images/battleship_board_3_init_annotated.png} \includegraphics[width=7.8cm]{images/battleship_board_3_1miss.png}
+\caption{Left: visualization of probabilities for squares to contain a ship of size 3 ($P(O_{i,j})=true$) initially, assuming uniform distribution of this type of ship. Annotations correspond to the \textit{number of combinations} (on six, the maximum number of conformations), Right: same probability after a miss in (5, 5). The larger the white area the higher the probability.}
+\label{fig:battleship}
+\end{center}
+\end{figure}
+
 
 \subsection{Poker}
 
