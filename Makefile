@@ -1,3 +1,6 @@
+simple:
+	pdflatex phdthesis
+
 all:
 	pdflatex phdthesis
 	bibtex phdthesis
