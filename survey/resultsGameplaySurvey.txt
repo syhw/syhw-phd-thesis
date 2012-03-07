@@ -1,3 +1,44 @@
+The questions were:
+
+How good are you?
+ Very good
+ Good
+
+How important is the virtuosity? (to win the game)
+reflexes, accuracy, speed, "mechanics"
+ 0 (not at all, or irrelevant)
+ 1 (counts, can be game changing for people on equal level at other answers)
+ 2 (counts a lot, can make a player win even if he is a little worse on lower importance gameplay features)
+
+How important is deductive thinking? (to win the game)
+"If I do A he can do B but not C" or "I see E so he has done D", also called analysis, forward inference."
+ 0 (not at all, or irrelevant)
+ 1 (counts, can be game changing for people on equal level at other answers)
+ 2 (counts a lot, can make a player win even if he is a little worse on lower importance gameplay features)
+
+How important is inductive thinking? (to win the game)
+"He does A so he may be thinking B" or "I see D and E so (in general) he should be going for F (learned)", also called generalization, "abstraction".
+ 0 (not at all, or irrelevant)
+ 1 (counts, can be game changing for people on equal level at other answers)
+ 2 (counts a lot, can make a player win even if he is a little worse on lower importance gameplay features)
+
+How hard is decision-making? (to win the game)
+"I have options A, B and C, with regard to everything I know about this game, I will play B (to win)", selection of a course of actions.
+ 0 (not at all, or irrelevant)
+ 1 (counts, can be game changing for people on equal level at other answers)
+ 2 (counts a lot, can make a player win even if he is a little worse on lower importance gameplay features)
+
+You can predict the next move of your opponent:
+(is knowledge of the game or of the opponent more important)
+ 1 by knowing what the best moves are / the best play for him?
+-1 by knowing him personally (psychology)?
+ 0 both equal
+
+What is more important:
+ 1 knowledge of the game (general strategies, tactics, timings)
+-1 knowledge of the map (specific strategies, tactics, timings)
+ 0 both equal
+
 ==================
 FFPS
 Skill [mean_verygood: 2.000], [mean_good: 2.000], [n: 22], [mean: 2.000]
