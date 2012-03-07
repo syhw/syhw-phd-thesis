@@ -1,0 +1,110 @@
+Timestamp,Chess_HowGood,Chess_Deductive,Chess_Inductive,Chess_DecisionMaking,Chess_Predict,Go_HowGood,Go_Deductive,Go_Inductive,Go_DecisionMaking,Go_Predict,Poker_HowGood,Poker_Deductive,Poker_Inductive,Poker_DecisionMaking,Poker_Predict,TeamFPS_HowGood,TeamFPS_Skill,TeamFPS_Deductive,TeamFPS_Inductive,TeamFPS_DecisionMaking,TeamFPS_Predict,TeamFPS_MapGame,FFPS_HowGood,FFPS_Skill,FFPS_Deductive,FFPS_Inductive,FFPS_DecisionMaking,FFPS_Predict,FFPS_MapGame,Racing_HowGood,Racing_Skill,Racing_Deductive,Racing_Inductive,Racing_DecisionMaking,Racing_Predict,Racing_MapGame,MMORPG_HowGood,MMORPG_Skill,MMORPG_Deductive,MMORPG_Inductive,MMORPG_DecisionMaking,MMORPG_Predict,MMORPG_MapGame,RTS_HowGood,RTS_Skill,RTS_Deductive,RTS_Inductive,RTS_DecisionMaking,RTS_Predict,RTS_MapGame
+
+2/11/2012 13:25:26,,,,,,,,,,,,,,,,Good,2,,1,2,bestplay,map,Good,2,1,2,2,bestplay,both,,,,,,,,,,,,,,,Very good,1,1,2,2,both,both
+2/11/2012 13:29:11,Good,1,1,1,person,,,,,,Good,1,1,1,person,Very good,2,0,2,2,both,both,Good,2,2,2,2,person,both,,,,,,,,Very good,0,1,1,0,person,game,Very good,2,2,2,2,person,both
+2/11/2012 13:30:38,Good,1,1,1,both,Good,,,,,,,,,,Good,1,0,0,0,person,map,Good,1,0,0,0,person,game,,,,,,,,Very good,0,1,1,0,bestplay,game
+2/11/2012 13:30:55,,,,,,,,,,,,,,,,Good,1,1,2,1,person,map,Good,2,1,1,2,both,map,Good,1,0,0,1,both,both,Very good,1,2,2,2,both,game,Good,1,2,2,2,both,map
+2/11/2012 13:33:47,,,,,,,,,,,Good,0,2,2,person,Good,1,1,0,2,bestplay,map,Very good,2,1,0,1,bestplay,game,Very good,2,0,0,1,bestplay,map,,,,,,,,Good,2,2,2,2,bestplay,game
+2/11/2012 13:34:14,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Good,2,2,1,2,person,both
+2/11/2012 13:34:49,Good,1,1,2,both,Good,1,1,1,both,Good,0,1,2,bestplay,Very good,2,2,2,2,both,both,Very good,2,2,2,2,both,both,Very good,2,0,0,2,bestplay,both,Very good,1,1,1,1,both,both,Good,1,2,2,2,both,both
+2/11/2012 13:42:00,Good,2,0,2,bestplay,,,,,,Good,2,1,2,bestplay,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Good,2,2,1,2,person,game
+2/11/2012 13:44:13,Good,2,1,2,both,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Very good,2,2,2,2,person,both
+2/11/2012 13:49:36,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Good,1,2,2,1,bestplay,both
+2/11/2012 13:49:51,Good,2,1,2,both,,,,,,Good,1,2,1,person,,,,,,,,,,,,,,,Very good,2,0,1,1,both,map,,,,,,,,Good,2,2,1,2,both,map
+2/11/2012 13:55:54,,,,,,,,,,,Good,1,2,2,both,,,,,,,,Good,2,2,2,2,both,game,Good,2,0,0,0,,game,Very good,1,1,1,2,bestplay,game,Good,2,2,2,2,both,game
+2/11/2012 14:00:10,,,,,,,,,,,,,,,,,,,,,,,Good,2,0,2,1,bestplay,both,,,,,,,,Good,0,1,2,2,bestplay,game
+2/11/2012 14:04:04,Very good,2,2,2,bestplay,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Good,2,1,1,2,both,both
+2/11/2012 14:08:12,,,,,,Very good,2,2,2,bestplay,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Good,2,2,1,1,both,game
+2/11/2012 14:11:57,,,,,,,,,,,,,,,,Good,2,2,2,1,both,map,,,,,,,,,,,,,,,Good,1,1,1,1,bestplay,game,Good,1,2,2,2,bestplay,game
+2/11/2012 14:18:20,Good,2,2,1,both,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Very good,2,2,1,1,both,both
+2/11/2012 14:29:02,Very good,1,2,1,bestplay,Good,2,1,1,bestplay,Very good,1,2,0,both,Good,2,1,1,1,person,both,Good,2,1,2,1,both,both,Good,2,1,0,0,bestplay,both,Very good,2,2,1,0,bestplay,both,Very good,2,2,2,2,person,both
+2/11/2012 14:36:43,Good,2,2,1,bestplay,,,,,,,,,,,Very good,1,2,2,1,both,both,,,,,,,,,,,,,,,,,,,,,,Very good,2,2,2,2,bestplay,game
+2/11/2012 14:39:02,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Very good,2,2,1,2,both,game
+2/11/2012 14:43:11,,,,,,,,,,,Good,2,2,1,both,Very good,2,1,1,1,both,both,Good,2,0,0,0,bestplay,both,Good,1,0,0,1,bestplay,map,Good,1,2,2,2,bestplay,game,Very good,2,2,2,2,both,both
+2/11/2012 14:44:04,Good,2,2,1,both,,,,,,,,,,,Good,2,1,1,1,both,,,,,,,,,,,,,,,,,,,,,,,Very good,2,2,2,2,both,both
+2/11/2012 14:47:22,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Very good,2,2,2,2,bestplay,game
+2/11/2012 14:50:25,Good,1,2,1,bestplay,Good,1,1,1,bestplay,Very good,2,1,1,both,Very good,2,1,1,1,bestplay,both,Very good,2,1,1,1,both,both,Good,2,0,0,1,bestplay,map,Very good,2,1,1,2,bestplay,both,Very good,2,2,2,2,bestplay,both
+2/11/2012 14:56:24,Good,0,0,1,bestplay
+2/11/2012 14:56:58,Good,2
+2/11/2012 15:00:14,Good,2,1,2,both,,,,,,,,,,,,,,,,,,,,,,,,,Very good,2,0,0,0,person,both
+2/11/2012 15:02:59,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Good,2,2,1,2,bestplay,game
+2/11/2012 15:05:53,,,,,,Good,1,2,2,bestplay,,,,,,Good,2,1,1,0,both,both,Very good,2,1,2,1,bestplay,map
+2/11/2012 15:05:59,Good,2,2,2,bestplay,,,,,,,,,,,,,,,,,,Good,2,1,1,0,both,game
+2/11/2012 15:14:52,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Good,2,1,1,1,both,game
+2/11/2012 15:24:04,Very good,1,1,1,both,,,,,,,,,,,Good,1,1,1,1,both,map,Very good,2,1,1,1,both,both,,,,,,,,Good,1,1,1,1,person,game,Very good,2,2,2,1,both,both
+2/11/2012 15:31:57,Very good,2,2,2,bestplay,,,,,,Very good,2,2,2,both,Good,2,1,0,2,person,both,,,,,,,,,,,,,,,,,,,,,,Very good,2,2,2,2,both,game
+2/11/2012 15:36:07,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Good,2,0,2,2,person,both
+2/11/2012 15:43:08,Good,2,1,2,bestplay,Good,2,2,2,both,Good,0,2,1,both,Good,2,1,1,1,both,game,Good,2,1,1,2,both,both,Good,2,0,0,1,person,game,Very good,1,2,2,2,both,game,Good,1,1,2,2,both,game
+2/11/2012 15:43:45,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Very good,2,0,0,1,bestplay,both,Very good,2,2,2,2,bestplay,both
+2/11/2012 15:47:21,Good,1,0,2,person,,,,,,Good,1,1,0,person,Good,2,1,1,1,both,map,,,,,,,,,,,,,,,Very good,2,1,1,1,both,game
+2/11/2012 15:50:36,Good,2,1,1,bestplay,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Good,2,2,2,1,bestplay,both
+2/11/2012 15:51:18,,,,,,,,,,,,,,,,Very good,2,1,1,2,both,game,,,,,,,,,,,,,,,,,,,,,,Very good,2,2,1,2,bestplay,both
+2/11/2012 16:06:39,Good,2,2,2,both,,,,,,,,,,,Good,1,0,1,1,both,both,,,,,,,,,,,,,,,,,,,,,,Good,2,2,2,2,both,both
+2/11/2012 16:34:08,Very good,2,2,2,bestplay,Good,2,2,2,bestplay,Very good,1,1,1,person,Very good,2,0,1,0,person,both,,,,,,,,Very good,2,0,0,0,bestplay,both,,,,,,,,Very good,2,2,2,2,person,game
+2/11/2012 16:41:28,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Good,1,1,2,2,bestplay,game
+2/11/2012 16:53:42,Good,2,2,1,person,Good,1,1,1,both,Good,1,1,2,person,Very good,2,1,1,1,bestplay,both,Very good,2,2,1,0,both,game,Good,1,1,0,2,bestplay,map,Very good,0,0,1,2,bestplay,both,Very good,2,2,2,2,person,game
+2/11/2012 16:56:29,,,,,,,,,,,,,,,,Good,1,1,0,1,both,map,Good,2,0,0,1,person,game,Good,2,0,0,1,person,map,,,,,,,,Good,2,2,2,2,both,game
+2/11/2012 17:00:11,,,,,,,,,,,,,,,,Good,2,1,1,2,bestplay,game,,,,,,,,,,,,,,,,,,,,,,Very good,2,2,1,2,bestplay,both
+2/11/2012 17:02:26,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Good,2,0,0,0,bestplay,map,Very good,2,1,2,1,bestplay,game,Very good,2,2,2,2,both,game
+2/11/2012 17:02:45,,,,,,,,,,,,,,,,Good,1,2,1,2,bestplay,both,Good,2,2,1,1,both,both,,,,,,,,Good,1,1,1,2,bestplay,game,Good,2,2,2,2,both,both
+2/11/2012 17:03:36,Good,2,1,1,both,,,,,,Good,,,,,Good,1,0,1,1,person,both,,,,,,,,Good,2,0,0,2,bestplay,map,Good,0,0,1,1,person,game,Very good,2,1,0,2,person,both
+2/11/2012 17:09:01,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Very good,1,0,0,1,bestplay,game,Very good,2,2,2,2,both,both
+2/11/2012 17:12:53,Very good,2,2,2,bestplay,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Very good,,,,,,,Very good,1,1,2,2,bestplay,both
+2/11/2012 17:22:14,,,,,,,,,,,,,,,,Good,,,,,,,,,,,,,,,,,,,,,,,,,,,,Good,2,2,1,2,bestplay,both
+2/11/2012 17:28:26,,,,,,,,,,,Good,,,,,,,,,,,,Very good,2,1,1,1,bestplay,game,,,,,,,,,,,,,,,Good,2,2,2,1,bestplay,game
+2/11/2012 17:36:06,,,,,,,,,,,Very good,2,2,2,both,Good,2,1,1,2,bestplay,game,,,,,,,,,,,,,,,,,,,,,,Good,2,2,2,2,both,game
+2/11/2012 17:40:07,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Good,2,1,0,1,both,both,,,,,,,,Good,2,2,2,2,bestplay,game
+2/11/2012 17:49:58,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Very good,1,1,1,1,person,both,Very good,2,2,2,2,bestplay,both
+2/11/2012 17:50:16,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Very good,2,2,2,1,both,game
+2/11/2012 18:05:04,Good,2,2,1,both,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Good,1,2,2,2,both,both
+2/11/2012 18:08:38,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Good,1,1,2,2,both,both
+2/11/2012 18:12:32,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Good,2,2,1,2,bestplay,game
+2/11/2012 18:15:12,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Good,2,2,2,2,both,game
+2/11/2012 18:19:25,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Very good,2,2,1,1,bestplay,game
+2/11/2012 18:33:00,Good,,,,,,,,,,,,,,,Good,1,2,2,1,both,map,,2,,,,,,,,,,,,,Very good,1,2,1,0,bestplay,game,Very good,2,2,2,2,both,both
+2/11/2012 18:33:19,,,,,,,,,,,Good,2,2,2,both,Good,2,,2
+2/11/2012 18:37:21,,,,,,,,,,,,,,,,Good,2,0,0,0,bestplay,game,,,,,,,,,,,,,,,,,,,,,,Very good,2,2,2,2,both,game
+2/11/2012 18:52:52,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Good,2,2,2,2,both,both
+2/11/2012 18:54:22,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Very good,2,2,2,2,both,both,Very good,2,2
+2/11/2012 18:59:10,,,,,,,,,,,,,,,,Good,1,1,1,2,bestplay,map,,,,,,,,,,,,,,,,,,,,,,Good,2,2,2,2,both,both
+2/11/2012 19:00:04,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Good,2,2,2,1,bestplay,game
+2/11/2012 19:07:54,,,,,,,,,,,,,,,,Good,1,2,1,1,bestplay,,,,,,,,,,,,,,,,Very good,1,2,1,1,bestplay,game,Good,2,2,2,2,both,game
+2/11/2012 19:11:37,Good,,1,2,bestplay,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Good,1,2,,2,person,game
+2/11/2012 19:23:14,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Good,0,1,1,1,bestplay,game,Good,1,2,1,1,bestplay,game
+2/11/2012 19:24:26,Good,2,2,2,both,,,,,,,,,,,Very good,2,1,1,2,both,both,,,,,,,,,,,,,,,Very good,1,1,1,1,both,game,Good,1,2,2,1,both,both
+2/11/2012 19:37:08,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Good,2,1,1,2,bestplay,game
+2/11/2012 19:44:27,Good,2,1,2,bestplay,,,,,,,,,,,Very good,2,1,1,1,person,map,,,,,,,,,,,,,,,,,,,,,,Good,2,1,,1,both,both
+2/11/2012 20:05:49,Good,2,1,2,bestplay,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Good,1,1,1,1,both,both,Very good,2,2,1,2,bestplay,game
+2/11/2012 20:29:07,,2,1,1,bestplay,Good,2,2,2,both,,,,,,Good,2,1,1,1,both,game,,,,,,,,,,,,,,,,,,,,,,Good,2,2,1,2,both,both
+2/11/2012 20:38:33,Very good,2,1,2,both,Good,1,2,2,bestplay,Good,1,2,2,person,Very good,2,1,2,2,both,map,Very good,2,0,1,1,both,map,Very good,2,0,1,1,bestplay,both,Good,2,1,1,2,bestplay,game,Very good,2,2,2,2,both,both
+2/11/2012 20:43:50,Good,2,2,2,both,Good,2,2,1,bestplay,Good,1,2,2,person,Good,2,0,1,0,both,both,,,,,,,,,,,,,,,,,,,,,,Very good,2,2,2,2,bestplay,game
+2/11/2012 20:43:50,Good,2,2,2,both,Good,2,2,1,bestplay,Good,1,2,2,person,Good,2,0,1,0,both,both,,,,,,,,,,,,,,,,,,,,,,Very good,2,2,2,2,bestplay,game
+2/11/2012 20:48:40,Good,2,1,2,both,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Good,1,2,2,2,bestplay,both
+2/11/2012 20:59:55,Good,1,1,2,both,,,,,,Good,1,1,2,both,Good,2,1,1,1,both,both,,,,,,,,,,,,,,,Good,1,1,1,1,both,game,Good,2,2,2,1,bestplay,both
+2/11/2012 21:04:49,Good,2,1,2,bestplay,Good,2,1,2,bestplay,Good,1,2,2,both,,,,,,,,,,,,,,,,,,,,,,Very good,2,1,1,1,bestplay,game,Good,2,2,2,1,bestplay,game
+2/11/2012 21:23:15,Good,2,1,1,bestplay,,,,,,,,,,,Good,2,2,1,,both,both,,,,,,,,,,,,,,,Very good,1,2,2,0,both,game
+2/11/2012 21:47:42,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Very good,2,2,2,2,both,game
+2/11/2012 21:55:25,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Good,,,,,,,Good,2,2,1,2,both,game
+2/11/2012 21:55:25,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Good,,,,,,,Good,1,2,1,2,both,game
+2/11/2012 22:09:24,Good,2,1,2,both,Good,2,2,2,both,Good,,,,,Good,1,1,2,0,person,both,Good,,,,,,,Good,2,0,1,1,bestplay,both,Very good,1,2,,2,both,both,Good
+2/11/2012 22:15:15,Good,2,2,2,both,Good,2,2,2,person,Good,0,0,0,both,Good,2,0,0,,bestplay,both,Good,2,2,0,0,both,both,Very good,2,0,0,2,both,game,Very good,1,1,1,2,bestplay,game,Good,1,2,2,2,both,both
+2/11/2012 23:18:52,,,,,,Good,1,1,2,bestplay,,,,,,Good,2,1,1,2,both,both,Good,2,1,1,2,both,both,,,,,,,,Very good,1,2,2,2,both,game,Very good,2,2,1,2,both,both
+2/11/2012 23:50:32,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Good,2,2,2,2,both,both
+2/12/2012 0:12:55,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Good,1,2,2,1,both,game
+2/12/2012 1:18:23,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Very good,2,2,1,2,both,both
+2/12/2012 1:18:28,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Very good,2,2,1,2,both,both
+2/12/2012 1:18:30,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Very good,2,2,1,2,both,both
+2/12/2012 1:18:31,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Very good,2,2,1,2,both,both
+2/12/2012 1:18:32,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Very good,2,2,1,2,both,both
+2/12/2012 2:37:00
+2/12/2012 5:20:15,Good,2,2,2,person,Good,2,2,2,both,Very good,2,2,2,both,Very good,2,2,2,2,both,both,Very good,2,2,2,2,both,both,Very good,2,2,2,2,both,map,Good,2,1,2,2,person,game,Very good,2,2,2,2,person,both
+2/12/2012 12:52:09,,,,,,,,,,,,,,,,,,,,,,,Good,2,0,1,1,person,,Good,2,0,0,0,bestplay,both,Good,1,0,0,0,both,both,Good,2,1,1,2,both,both
+2/12/2012 13:57:27,,,,,,,,,,,Good,1,2,1,both,Very good,1,2,1,1,bestplay,both,Very good,2,1,1,1,bestplay,game,Good,2,0,0,1,bestplay,both
+2/12/2012 20:06:13,,,,,,,,,,,,,,,,Good,2,2,0,1,bestplay,both,,,,,,,,,,,,,,,,,,,,,,Good,2,2,,2,bestplay,game
+2/13/2012 8:47:37,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Good,1,2,2,2,bestplay,game
+2/13/2012 11:28:18,Very good,1,1,2,both,,,,,,,,,,,,,,,,,,Good,2,2,0,1,person,both
+2/13/2012 12:49:42,,,,,,,,,,,,,,,,Good,1,2,2,1,both,both
+2/14/2012 2:15:16,,,,,,Good,2,2,2,bestplay,,,,,,,,,,,,,Good,2,0,1,0,person,both,,,,,,,,,,,,,,,Good,2,2,2,2,both,game
+2/14/2012 12:02:43,,,,,,,,,,,,,,,,Good,1,2,2,2,both,game,,,,,,,,,,,,,,,,,,,,,,Good,2,2,2,2,both,both
+2/14/2012 12:44:53,Good,1,2,2,bestplay,,,,,,Good,2,2,2,person,Good,2,1,1,0,both,map,,,,,,,,,,,,,,,Good,1,0,0,1,bestplay,game,Good,2,2,1,2,bestplay,both
+2/17/2012 10:52:07,,,,,,,,,,,Good,1,1,2,both,,,,,,,,Good,2,0,1,1,bestplay,both,,,,,,,,Good,1,2,1,1,person,game
