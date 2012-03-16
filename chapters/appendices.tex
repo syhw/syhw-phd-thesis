@@ -1,0 +1,19 @@
+\chapter{Game AI}
+\label{apdx:gameAI}
+\begin{algorithm}
+\caption{Negamax algorithm}
+\label{alg:negamax}
+\begin{algorithmic}
+\Function{negamax}{depth}
+    \If{$depth \leq 0$}
+        \State \Return $value()$
+    \EndIf
+    \State $\alpha = -\infty$
+    \ForAll{possible moves}
+        \State $\alpha = max(\alpha, -negamax(depth-1))$
+    \EndFor
+    \State \Return $\alpha$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+

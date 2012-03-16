@@ -584,8 +584,11 @@ Poker is a game with both extensional and intentional uncertainty, from the fact
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
 \section{FPS}
+
 \subsection{Gameplay}
+
 \subsection{FPS AI}
+
 \subsubsection{Industry}
 \subsubsection{Research}
 \begin{itemize}
@@ -606,6 +609,8 @@ Poker is a game with both extensional and intentional uncertainty, from the fact
 \section{(MMO)RPG}
 
 \subsection{Gameplay}
+A role playing game (RPG) consist in the incarnation by the human player of an avatar with a class (warrior, wizard, rogue, priest...) having different skills, spells, items, health points, stamina/energy/mana (magic energy) points. A MMORPG (e.g. World of Warcraft, AION or EVE Online) consist in a role-playing game in a persistent, multi-player world. There usually are players-run factions fighting each others’ (PvP) and players versus environment (PvE) situations. PvE is a cooperative task in which human players fight together against different NPC. 
+
 \subsection{RPG AI}
 \subsubsection{Industry}
 \subsubsection{Research}
@@ -633,22 +638,54 @@ Both \citep{Human-LevelAIKillerApplication} and \cite{gunn} propose that RTS AI 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
 \section{Game Characteristics}
-All the video games that we saw before require to deal with imperfect information and sometimes with randomness, while elaborating a strategy (possibly from underlying policies). From a game theoretic point of view, all the types of video games that we saw above are closer to what is called a Bayesian game \citep{osborne-rubinstein} described by:
-\begin{itemize}
-\item $N$, the finite set of players,
-\item $\Omega$, the finite set of states,
-\end{itemize}
-$$\forall \mathrm{player}\ i \in N$$
-\begin{itemize}
-\item $A_i$, set of actions,
-\item $T_i$, set of signals that can be observed by $i$,
-\item $p_i$, probability measure on $\Omega$ (prior belief of $i$),
-\item $\succ_i$, preference relation on the set of probability measures over $A\times \Omega$ with $A = \times_{j \in N}A_j$.
-\end{itemize}
+All the video games that we saw before require to deal with imperfect information and sometimes with randomness, while elaborating a strategy (possibly from underlying policies). From a game theoretic point of view, all the types of video games that we saw above are closer to what is called a Bayesian game \citep{osborne-rubinstein}. %%%described by:
+%%% \begin{itemize}
+%%% \item $N$, the finite set of players,
+%%% \item $\Omega$, the finite set of states,
+%%% \end{itemize}
+%%% $$\forall \mathrm{player}\ i \in N$$
+%%% \begin{itemize}
+%%% \item $A_i$, set of actions,
+%%% \item $T_i$, set of signals that can be observed by $i$,
+%%% \item $p_i$, probability measure on $\Omega$ (prior belief of $i$),
+%%% \item $\succ_i$, preference relation on the set of probability measures over $A\times \Omega$ with $A = \times_{j \in N}A_j$.
+%%% \end{itemize}
 
-We do not pretend to do a complete taxonomy of video games and AI (e.g. \citep{gunn}), but we wish to provide all the major informations to differentiate game genres (gameplays).
+We do not pretend to do a complete taxonomy of video games and AI (e.g. \citep{gunn}), but we wish to provide all the major informations to differentiate game genres (gameplays). To grasp the challenges they pose, we will provide abstract measures of complexity.
 
 \subsection{Combinatory}
+``How does the state of possible actions grow?'' To measure this, we used a measure from perfect information zero-sum games (as Checkers, Chess and Go): the branching factor $b$ and the depth $n$ of a typical game. The complexity of a game (for taking a decision) is proportional to $b^n$. The average branching factor for a board game is easy to compute: it is the average number of possible moves for a given player. For Poker, we set $b=3$ for \textit{fold, check} and \textit{raise}. $n$ should then be defined over some time, the average number of events (decisions) per hour in Poker is between $20$ to $240$. For video-games, we defined $b$ to be the average number of possible moves at each decision, so for ``continuous'' or ``real-time'' games it is some kind of function of the useful discretization of the virtual world at hand. $n$ has to be defined as a frequency at which a player (artificial or not) has to take decisions to be competitive in the game, so we will give it in $n/time\_unit$. For instance, for a car (plane) racing game, $b \approxeq 50-500$ because $b$ is a combination of throttle ($\ddot{x}$) and direction ($\theta$) sampled values that are relevant for the game world, with $n/min$ at least $60$: a player needs to correct her trajectory \textit{at least} once a second. In RTS games, $b \approxeq 200$ is a lower bound (in StarCraft we may have between $50$ to $400$ units to control), and very good amateurs and professional players perform more than $300$ actions per minute.
+
+The sheer size of $b$ and $n$ in video games make it seem intractable, but humans are able to play, and to play well. To explain this phenomenon, we introduce ``vertical'' and ``horizontal'' continuities in decision making.
+
+\begin{figure}
+%%%\hspace{-0.8cm}
+\begin{center}
+\includegraphics[width=10cm]{images/basic_abstract_decision_hierarchy2.pdf}
+\end{center}
+\caption{Abstract decision hierarchy}
+\label{fig:abstractdecisionhierarchy}
+\end{figure}
+
+\subsubsection{Vertical continuity}
+\begin{figure}
+%%%\hspace{-0.8cm}
+\begin{center}
+\includegraphics[width=10cm]{images/vertical_cont_abstract_decision_hierarchy.pdf}
+\end{center}
+\caption{Vertical continuity}
+\label{fig:verticalcont}
+\end{figure}
+
+\subsubsection{Horizontal continuity}
+\begin{figure}
+%%%\hspace{-0.8cm}
+\begin{center}
+\includegraphics[width=10cm]{images/horizontal_cont_abstract_decision_hierarchy.pdf}
+\end{center}
+\caption{Horizontal continuity}
+\label{fig:horizontalcont}
+\end{figure}
 
 \subsection{Partial information}
 
@@ -685,12 +722,12 @@ Go & $b\approxeq 250-300; n\approxeq 150-200$ & none & some & no & no \\
 %Monopoly 
 %Battleship
 Limit Poker & $b\approxeq 3$\footnote{fold,check,raise} $;n/hour \in [20\dots240]$\footnote{number of decisions taken per hour} & some & few & much & much \\
-Time Racing & & & & & \\
-(TrackMania) & $b\approxeq 50-1,000$\footnote{$\{X \times Y\}$ sampling$\times$50Hz}$;n/min \approxeq 60$ & full & much & no & no \\
-Team FPS & $b\approxeq 100-5,000$\footnote{\label{samplingFPS}$\{X \times Y \times Z\}$ sampling$\times$50Hz + firing} $;n/min \approxeq 100$\footnote{\label{apmFPS}60 ``continuous move actions''+ 40 (mean) fire actions per sec} & some & much & some & some \\
+Time Racing & $b\approxeq 50-1,000$\footnote{$\{\ddot{x} \times \theta (\times \phi)\}$ sampling$\times$50Hz}$;n/min \approxeq 60+$ & full & much & no & no \\
+(TrackMania) & & & & & \\
+Team FPS & $b\approxeq 100-2,000$\footnote{\label{samplingFPS}$\{X \times Y \times Z\}$ sampling$\times$50Hz + firing} $;n/min \approxeq 100$\footnote{\label{apmFPS}60 ``continuous move actions''+ 40 (mean) fire actions per sec} & some & much & some & some \\
 (Counter-Strike) & & & & & \\
 (Team Fortress 2) & & & & & \\
-FFPS duel & $b\approxeq 200-10,000$\footref{samplingFPS} $;n/min \approxeq 100$\footref{apmFPS} & some & much & some & ($\approxeq$)no \\
+FFPS duel & $b\approxeq 200-5,000$\footref{samplingFPS} $;n/min \approxeq 100$\footref{apmFPS} & some & much & some & ($\approxeq$)no \\
 (Quake III) & & & & & \\
 MMORPG & $b\approxeq 50-100$\footnote{in RPGs, the player does not have to aim and positioning plays a lesser role than in FPS} $;n/min \approxeq 60$\footnote{move and use abilities/cast spells} & much & much & few & moderate \\
 (WoW, DAoC) & & & & & \\
