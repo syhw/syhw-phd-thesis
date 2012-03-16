@@ -1,0 +1,12 @@
+Natbib commands
+Citation commandOutput
+\citet{goossens93}    Goossens et al. (1993)
+\citep{goossens93}    (Goossens et al., 1993)
+\citet*{goossens93}    Goossens, goossens93Mittlebach, and Samarin (1993)
+\citep*{goossens93}    (Goossens, Mittlebach, and Samarin, 1993)
+\citeauthor{goossens93}    Goossens et al.
+\citeauthoror*{goossens93}    Goossens, Mittlebach, and Samarin
+\citeyear{goossens93}    1993
+\citeyearpar{goossens93}    (1993)
+\citealt{goossens93}    Goossens et al. 1993
+\citealp{goossens93}    Goossens et al., 1993
