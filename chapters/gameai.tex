@@ -630,7 +630,126 @@ While immobile neutral NPC are bad, acting strangely is sometimes worse for the 
 \citep{Cutumisu09}
 
 \subsubsection{Modeling of a Bayesian MMORPG player}
+XXX
+
+
+This model deals only with a sub-task of a global AI for autonomous NPC. The problem that we try to solve with the presented model is: how do we choose which skill to use and on which target in a PVE battle? Possible targets are all our allies and foes. Possible skills are all that we know, we will just try and get a distribution over target and skills and pick the most probable combination that is yet possible to achieve (enough energy/mana, no cooldown). For that, we first choose what should be the target given all surrounding variables: is an ally near death that he should be healed, which foe should we focus our attacks on? Once we have the distribution over possible targets, we search the distribution about our skills, pondered by the one on targets. We put extra care in having the same input variables as a human player to keep consistent with our goal of modeling a human. However, some variables can be things that humans subconsciously interpolate from perceptions.
+
+\begin{center}
+Variables
+\end{center}
+
+A very simple set of variables is as follows. We have the $n$ characters as possible targets; each of them has a lot of bound variables. Health/Hit points ($HP$) are discretized in 10 levels, from the lower to the higher. Distance ($D$) is discretized in 4 zones around the robot character: contact where it can attack with a contact weapon and then to the further for which we have to move even for shooting the longest distance weapon/spell. Ally ($A$) is a Boolean variable mentioning if character $i$ is allied with the robot character. Delta hit points ($\Delta HP$) is a 3-valued interpolated value from the previous few seconds of fight that informs about the $i$th character getting wounded or healed (or nothing). Imminent death ($ID$) is also an interpolated value that encodes $HP$, $\Delta HP$ and incoming attacks/attackers. This is a Boolean variable saying if the $i$th character if going to die anytime soon. This is an example of what we consider that an experienced human player will infer automatically from the screen and notifications. Class ($C$), simplified over 4 values, gives the type of the $i$th character: a Tank can take a lot of damages and taunt enemies, a Contact damager can deal huge amounts of damage with contact weapons (rogue, barbarian...), Ranged stands for the class that deals damages from far away (hunters, mages...) and Healers are classes that can heal (in considerable amounts). The Resist variable is the combination of binary variables of resistance to certain types of (magical) damages into one variable. With 3 possible resistances we get ($2^3$) 8 possible values. For instance ``$R_i=FireNat$'' means that the $i$th character resists fire and nature-based damages. Armor (physical damages) could have been included, and the variables could have been separated. The skill variable takes here all the possible skills for the given character, and not only the available ones to cast at the moment to be able to have reusable probability tables (i.e. learnable tables).
+
+\begin{itemize}
+    \item Target: $T \in \{t_1\dots t_n\}$
+    \item Hit Points: $HP_1 \dots HP_n$ s.t. $HP_i \in [0\dots 9]$
+    \item Distance: $D_1 \dots D_n$ s.t. $D_i \in \{Contact, Close, Far, VeryFar\}$
+    \item Ally: $A_1 \dots A_n$ s.t. $A_i \in \{true, false\}$
+    \item Derivative Hit Points: $\Delta HP_1 \dots \Delta HP_n$ s.t. $\Delta HP_i \in \{-, 0, +\}$
+    \item Imminent Death: $ID_1 \dots ID_n$ s.t. $ID_i \in \{true, false\}$
+    \item Class: $C_1 \dots C_n$ s.t. $C_i \in \{Tank, Contact, Ranged, Healer\}$
+    \item Resists: $R_1 \dots R_n$ s.t. $R_i \in \{Nothing, Fire, Ice, Nature, FireIce, IceNat, FireNat, All\}$
+    \item Skill: $S \in \{Skill_1 \dots Skill_m\}$
+\end{itemize}
+
+\begin{center}
+Decomposition
+\end{center}
+
+\underline{Target selection:} we want to compute the probability distribution on the variable Target ($T$), so we have to consider the joint distribution with all variables on which $T$ is conditionally dependant : $T^{t-1}$ (the previous value of $T$), and all the variables on each character (except for Resists). The probability of a given target depends on the previous one (it encodes the previous decision and so all previous states). $HP_i$ depends on the facts that the $i$th character is an ally, on his class, and if he is a target. Such a conditional probability table should be learned, but we can already foresee that a targeted ally with $C=tank$ would have a high probability of having low $HP$ because taking it for target means that we intend to heal him. $D_i$ is more probable to be far if $A_i=false$ and $T=i$ (our kind of druid attack with ranged spells). The probability of the $i$th character being an ally depends on if we target allies of foes more often. The probability that $\Delta HP_i=-$ is higher for $A_i=false$ and $C_i=healer$ and $T=i$ and also for $A_i=true$ and $C_i=tank$. As for $A_i$, the probability of $ID_i$ is driven by our soft evidence of targeting characters near death. The probability of $C_i$ is driven by the distribution of foes and allies population, tuned with a soft evidence of which classes our druid human player will target more frequently. Each and every time, if $T \neq i$, the probability of the left variable is given according to the uniform distribution. For the task of computing the distribution on Target, the joint distribution is simplified (by conditional independence of variables) as:
+
+\begin{eqnarray*}
+P(T, T^{t-1}, HP_{1:n}, D_{1:n}, A_{1:n}, \Delta HP_{1:n}, ID_{1:n}, C_{1:n}) = \\
+P(T^{t-1}).P(T|T^{t-1}).\prod_{i=1}^n [ P(HP_i | A_i, C_i, T).P(D_i | A_i, t).P(A_i | T)\\
+P(\Delta HP_i | A_i, C_i, T).P(C_i | A_i, T).P(ID_i | T) ]
+\end{eqnarray*}
+
+\underline{Skill selection:} As previously for targets, we are interested in the conditional probabilities of each character's state variables given other state variables and given $T$ and $S$. If $T=i$, $S=big\_heal$, $C_i=tank$ and $A_i=true$, the probability that $HP_i=0$ or $1$ (very low) is very high. Some skills have optimal ranges to be used at and so $P(D_i)$ will be affected. $A_i=true$ will have a probability of 1.0 of $S=any\_heal$ as will $A_i=false$ have a probability of 1.0 is $S=any\_damage$. The probability of $\Delta HP_i=-$ will top when $S=heal$ for an ally. The one of $R_i=nature$ for $S=nature\_damage$ will be very low. The probability of $ID_i$ will be high for $T=i$ and $S=big\_heal$ or $S=big\_damage$ (depending on whether $i$ is an ally or not). For the task of computing the distribution on Skill we use:
+
+\begin{eqnarray*}
+P(S, T, HP_{1:n}, D_{1:n}, A_{1:n}, \Delta HP_{1:n}, ID_{1:n}, C_{1:n}, R_{1:n}) = \\
+P(S).P(T).\prod_{i=1}^n [ P(HP_i | A_i, C_i, S, T).P(D_i | A_i, S, T).P(A_i | S, T) \\
+        P(\Delta HP_i | A_i, S, T). P(R_i | C_i, S, T). P(C_i | A_i, S, T) ]
+\end{eqnarray*}
+
+\begin{center}
+Parameters and Identification
+\end{center}
+
+\begin{itemize}
+    \item $P(T^{t-1})$ Unknown and unspecified (uniform).
+    \item $P(T|T^{t-1})$ Table, specified with a ``prior'' to prevent switching targets too often or simply learned. Uniform if there is no previous target.
+    \item $P(S)$ Unknown and so unspecified, it could be a prior.
+    \item $P(Left\_Value | Right\_Value)$ All others are \textit{learned tables}.
+\end{itemize}
+
+If there were only perceived variables, learning the right conditional probability tables would just be counting and averaging. However, some variables encode combinations of perceptions and passed states. We could learn such parameters through the EM algorithm but we propose something simpler for the moment as our ``not directly observed variables'' are not complex to compute, we compute them from perceptions as the same time as we learn. In the following Results part, we did not apply learning but instead manually specified the probability tables.
+
+\begin{center}
+Questions
+\end{center}
+
+In any case, we ask our model:\\
+$$P(S,T|hp_{1:n},d_{1:n}, a_{1:n}, \Delta hp_{1:n}, id_{1:n}, c_{1:n}, r_{1:n})$$ 
+Which means that we want to know the distribution on $S$ and $T$ knowing all the state variables. We then choose to do the highest scoring combination of $S \wedge T$ that is available (skills may have cooldowns or cost more mana/energy that we have available).
+
+As (Bayes rule) $P(S,T) = P(S|T).P(T)$, to decompose this question, we can ask:
+$$P(T | hp_{1:n},d_{1:n}, a_{1:n}, \Delta hp_{1:n}, id_{1:n}, c_{1:n})$$ 
+Which means that we want to know the distribution on $T$ knowing all the relevant state variables, followed by (with the newly computed distribution on $T$):
+$$P(S | T, hp_{1:n},d_{1:n}, a_{1:n}, \Delta hp_{1:n}, id_{1:n}, c_{1:n}, r_{1:n})$$ 
+in which we use this distribution on $T$ to compute the distribution on $S$ with:
+$$P(S=skill_1 | \dots) = \sum_T P(S=skill_1 | T, \dots).P(T)$$
+We here choose to sum over all possible values of T. Note that we did not ask:\\
+$P(S|T=most\_probable , \dots)$ but computed instead
+$$\sum_T P(S|T,hp_{1:n},d_{1:n}, a_{1:n}, \Delta hp_{1:n}, id_{1:n}, c_{1:n}, r_{1:n})$$
+This computation has a high complexity (particularly when the sum has a lot of term, i.e. with a lot of targets), so we could choose not to do the sum and use and instantiate ``most probable values'', for instance of Target, but there we would make a choice earlier and so lose information. There are possibly good combinations of $S$ and $T$ for a value of $T$ that is not the most probable one. This downside may be so hard that we may want to reduce the complexity of computation by simplifying our model or its computation to be able to sum. We propose a solution in the discussion.
+
+\begin{center}
+Example
+\end{center}
+
+This model has been applied to a simulated situation with 2 foes and 4 allies while our robot took the part of a ``druid'', a versatile class that can cast spells to do direct damages, damages over time, buff (enhancements), debuff, crowd-control, heal and heal over time. We display a schema of this situation in Figure 1. The arrows indicate foes attacks on allies. The larger the ring is, the more health points the characters have. MT stands for ``main tank'', Add for ``additional foe''. We worked with the skills corresponding to a Druid. HOT stands for heal over time, DOT for damage over time, ``abol'' for abolition and ``regen'' for regeneration, a ``buff'' is an enhancement and a ``dd'' is a direct damage. ``Root'' is a spell which disables the target to move for a short period of time, useful to flee or to put some distance between the enemy and the druid to cast attack spells. ``Small'' spells are usually faster to cast than ``big'' spells.
+
+\begin{eqnarray*}
+Skills \in \{ small\_heal, big\_heal, HOT, poison\_abol, malediction\_abol,\\
+            buff\_armor, regen\_mana, small\_dd, big\_dd, DOT, debuff\_armor, root \}
+\end{eqnarray*}
+
+We did not do the ``Identification'' part, which consists in learning the probability tables from observations. To keep things simple and because we wanted to analyze a little the model, we worked with manually defined probability tables. So we introduced ``soft evidences'', indeed parameters that will modify the conditional probability tables, which we will change to watch their effects. For instance the ``soft evidence that a selected target is foe'' and the ``soft evidence that a selected target will soon die (ID=true)'' that will consequently modify the probability tables of P(Ai) and P(IDi) respectively. We set the probability to target the same target as before to 0.4 and the previous target to ``Lich'' so that the prior probability for all other 6 targets is 0.1 (4 times more chances to target the Lich than any other character). We set the soft evidence P(Ai=false|T=i) to 0.6. This means that our robotic druid is mainly a damage dealer and not a healer. For the ``target selection'' model, we can see on Figure 2.A that the evolution from selecting the main foe ``Lich'' to selecting the ally ``Tank'' is driven by the increase of ``soft evidence that a selected target will soon die'' and our robot eventually moves on targeting his(its) ``Tank'' ally (to heal him). We can see on Figure 2.B that, at some point, the robotic Druid prefers to kill the dying add to save his ally Tank instead of healing him. Note that there is no variable showing the relation between ``Add'' and ``Tank'' (the first is attacking the second, who is taking damages from the first), but this is under consideration for a future, more complete, model.
+
 \citep{SYNNAEVE:MMORPG}
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=4.7cm]{images/wow_fight1.png} \includegraphics[width=4.7cm]{images/wow_fight2.png}
+\caption{}
+\label{fig:wow_fight}
+\end{center}
+\end{figure}
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=7cm]{images/wow_distrib_target1.png} \includegraphics[width=7cm]{images/wow_distrib_target2.png}
+\caption{}
+\label{fig:wow_fight}
+\end{center}
+\end{figure}
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=7cm]{images/wow_distrib_skill1.png} \includegraphics[width=7cm]{images/wow_distrib_skill2.png}
+\caption{}
+\label{fig:wow_fight}
+\end{center}
+\end{figure}
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=11cm]{images/wow_distrib_target_skill.png}
+\caption{}
+\label{fig:wow_fight}
+\end{center}
+\end{figure}
 
 \subsubsection{Challenges}
 
