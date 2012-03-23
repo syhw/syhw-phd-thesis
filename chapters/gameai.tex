@@ -585,12 +585,20 @@ Poker is a game with both extensional and intentional uncertainty, from the fact
 
 \section{FPS}
 
-\subsection{Gameplay}
+\subsection{Gameplay and AI}
+First person shooters gameplay consist in controlling an agent in first person view, centered on the weapon, a gun for instance. The firsts FPS popular enough to bring the genre its name were Wolfeinstein 3D and Doom, by iD Software. Other classic FPS (series) include Duke Nukem 3D, Quake, Half-Life, Team Fortress, Counter-Strike, Unreal Tournament, Tribes, Halo, Medal of Honor, Call of Duty, Battlefield, etc. The distinction between ``fast FPS'' (e.g. Quake series, Unreal Tournament series) and others is made on the speed at which the player moves. In ``fast FPS'', the player is always jumping, running much faster and playing more in 3 dimensions than on discretely separate 2D ground planes. Game types include (but are not limited to):
+\begin{itemize}
+    \item single-player missions, depending of the game design.
+    \item capture-the-flag (CTF), in which a player has to take the flag inside the enemy camp and bring it back in her own base.
+    \item free-for-all (FFA), in which there are no alliances.
+    \item team deathmatch (TD), in which two (or more) teams fight on score.
+    \item various gather and escort (including hostage or payload), in which one team has to find and escort something/somebody to another location.
+    \item duel/tournament/deathmatch, 1 vs 1 matches (mainly ``fast FPS'').
+\end{itemize}
+Some games allow for instant (or delayed, but asynchronous to other players) respawn, most likely in the ``fast FPS'' (Quake-like) games, while in others, the player has to wait for the end of the round to respawn. In some games, weapons, ammunitions, health, armor and items can be picked on the ground (mainly ``fast FPS''), in others, they are fixed at the start or can be bought in game (with points). The map design can make the gameplay vary a lot, between indoors, outdoors, arena-like or linear maps. According to maps and gameplay styles, combat may be well-prepared with ambushes, sniping, indirect (zone damages), or close proximity (even to fist weapons). Most often, there are strong tactical positions and effective ways to attack them. While ``skill'' (speed of the movements, accuracy of the shots) is easy to emulate for an AI, team-play is much harder for bots and it is always a key ability. Team-play is the combination of distributed evaluation of the situation, planning and distribution of specialized tasks. Very high skill also requires integrating over enemy's tactical plans and positions to be able to take indirect shots (grenades for instance) or better positioning (coming from their back), which is hard for AI too. An example of that is that very good human players consistently beat the best bots (nearing 100\% accuracy) in Quake III (which is an almost pure skill ``fast FPS''), because they take advantage of being seen just when their weapons reload or come from their back. Finally, bots which equal the humans by a higher accuracy are less fun to play with: it is a frustrating experience to be shot across the map, by a bot which was stuck in the door because it was pushed out of its trail.
 
-\subsection{FPS AI}
+\subsubsection{State of the art}
 
-\subsubsection{Industry}
-\subsubsection{Research}
 \begin{itemize}
 \item Quake 3 AI (industry standard w/o squad AI) \citep{waveren-02-artificial}
 \item Killzone 2, F.E.A.R \citep{orkinGDC_FEAR} (planning), Crysis 2, BF3: industry standards with squad AI
@@ -608,31 +616,37 @@ Poker is a game with both extensional and intentional uncertainty, from the fact
 
 \section{(MMO)RPG}
 
-\subsection{Gameplay}
-A role playing game (RPG) consist in the incarnation by the human player of an avatar with a class (warrior, wizard, rogue, priest...) having different skills, spells, items, health points, stamina/energy/mana (magic energy) points. A MMORPG (e.g. World of Warcraft, AION or EVE Online) consist in a role-playing game in a persistent, multi-player world. There usually are players-run factions fighting each others’ (PvP) and players versus environment (PvE) situations. PvE is a cooperative task in which human players fight together against different NPC. 
+\subsection{Gameplay and AI}
+Inspired directly by tabletop and live action role-playing games (Dungeon \& Dragons) as new tools for the game masters, it is quite natural for the RPG to have ended up on computers. The firsts digital RPG were text (Wumpus) or ASCII-art (Rogue, NetHack) based. The gameplay evolved considerably with the technique. Nwadays, what we will call a role playing game (RPG) consist in the incarnation by the human player of an avatar (or a team of avatars) with a class: warrior, wizard, rogue, priest, etc., having different skills, spells, items, health points, stamina/energy/mana (magic energy) points. Generally, the story brings the player to solve puzzles and fight. In a fight, the player has to take decisions about what to do but plays a lesser role in performing the action than in a FPS game. In a FPS, she has to move the character (egocentrically) and aim to shoot; in a RPG, she has to position itself (often way less precisely and continually) and just decide which ability to use on which target (or a little more for ``action RPG''). Classic RPG include: Fallout, The Elders Scrolls (from Arena to Skyrim), Secret of Mana, Zelda, Final Fantasy, Diablo, Baldur's Gate. A MMORPG (e.g. World of Warcraft, AION or EVE Online) consist in a role-playing game in a persistent, multi-player world. There usually are players-run factions fighting each others’ (PvP) and players versus environment (PvE) situations. PvE is a cooperative task in which human players fight together against different NPC, and in which the cooperation is at the center of the gameplay. PvP is also a cooperative task, but more policy and reactions-based than a trained and learned choregraphy as for PvE. We can distinguish three types (or modality) of NPC which have different game AI needs:
+\begin{itemize}
+    \item world/neutral/civilian NPC: gives quests, takes part in the world's or game's story, talks,
+    \item ``mob''/hostile NPC that the player will fight, 
+    \item ``pets''/allied NPC: acts by the players' sides.
+\end{itemize}
+While immobile neutral NPC are bad, acting strangely is sometimes worse for the player's immersion. It is more fun for the player to battle with hostile NPC which are not too dumb or predictable. Players really expect allied NPC to at least not hinder them, and it is even better when they adapt to what the player is doing. Finally, for MMORPG, persistent character AI could maintain the player's avatar in the world when she is enjoying real-life.
 
-\subsection{RPG AI}
-\subsubsection{Industry}
-\subsubsection{Research}
+\subsubsection{State-of-the-art}
+
 \citep{Cutumisu09}
-\subsubsection{Challenges}
+
+\subsubsection{Modeling of a Bayesian MMORPG player}
 \citep{SYNNAEVE:MMORPG}
 
+\subsubsection{Challenges}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
 \section{RTS}
 
-\subsection{Gameplay}
+\subsection{Gameplay and AI}
 XXX 
 
 In chronological order, RTS include (but are not limited to): Ancient Art of War, Herzog Zwei, Dune II, Warcraft, Command \& Conquer, Warcraft II, Command \& Conquer: Red Alert, Total Annihilation, Age of Empires, StarCraft, Age of Empires II, Tzar, Cossacks, Homeworld, Battle Realms, Ground Control, Spring Engine: Balanced Annihilation, Warcraft III, Total War, Warhammer 40k, Sins of a Solar Empire, Supreme Commander, StarCraft II.
 
 Both \citep{Human-LevelAIKillerApplication} and \cite{gunn} propose that RTS AI is one of the most challenging genres, because all levels in the hierarchy of decisions are of importance.
 
-\subsection{RTS AI}
-\subsubsection{Industry}
-\subsubsection{Research}
+\subsubsection{State of the art}
+
 \subsubsection{Challenges}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
