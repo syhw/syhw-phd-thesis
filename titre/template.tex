@@ -1,0 +1,58 @@
+% la ligne ci-dessous est à insérer obligatoirement dans le préambule du document avant \begin{document}
+
+\usepackage[a4paper]{titre/meta-donnees}
+
+        % les lignes en bas sont à insérer obligatoirement après \begin{document}
+
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            %%             Commandes Meta-données               %%
+            %%   à renseigner par les auteurs pour générer      %%
+            %%     la couverture modèle Univ. Grenoble          %%
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            %%      Fichier encodé au format ISO-8859-16        %%
+
+            %\Sethpageshift{???mm}   %%optionnel : à décommenter si besoin pour ajout d'espace afin de center la couvérture horizontalement (valeur par défaut est -5.5mm)
+            %\Setvpageshift{???mm}   %%optionnel : à décommenter si besoin pour ajout d'espace afin de center la couvérture verticalement (valeur par défaut est -15.5mm)
+
+
+            %\Universite{}    %%optionnel : à décommenter et à renseigenr si vous voulez changer le non d'université
+            %\Grade{}         %%optionnel : à décommenter et à renseigenr si vous voulez changer le grade
+            \Specialite{Informatique}
+        \Arrete{7 août 2006}
+        \Auteur{Gabriel Synnaeve}
+        \Directeur{Pierre Bessière}
+        %\CoDirecteur{}    %%optionnel : à décommenter et à renseigenr si présence d'un Co-directeur de thèse
+            \Laboratoire{Laboratoire d'Informatique de Grenoble}
+        \EcoleDoctorale{École Doctorale de Mathématiques, Sciences et Technologies de l'Information, Informatique}         
+        \Titre{Bayesian Programming Applied to Multi-Player Video Games}
+        %\Soustitre{}      %%optionnel : à décommenter et à renseigenr si présence d'un sous-titre de thèse
+            \Depot{XXX}       
+
+
+        % Commande pour création de nouvelles catégories dans le jury:
+
+            %\UGTNewJuryCategory{...NomDeLaCategorie...}{...Definition...}
+
+        % Exemple \UGTNewJuryCategory{UGTFamille}{Membre de la famille} que nous ajoutons dans la commande \Jury ci-dessous sous la forme \UGTFamille{Jean Rousseau}{(...titre_et_affiliation...s'il_y_en_a...)}
+
+
+        \Jury{
+            \UGTPresident{...Civilité, Prénom et Nom...}{...titre et affiliation...}
+            \UGTPresidente{...Civilité, Prénom et Nom...}{...titre et affiliation...}
+
+            \UGTRapporteur{...Civilité, Prénom et Nom...}{...titre et affiliation...}      %% 1er rapporteur
+                \UGTRapporteur{...Civilité, Prénom et Nom...}{...titre et affiliation...}      %% second rapporteur
+
+                \UGTExaminateur{...Civilité, Prénom et Nom...}{...titre et affiliation...}     %% 1er examinateur
+                \UGTExaminateur{...Civilité, Prénom et Nom...}{...titre et affiliation...}     %% second examinateur
+                \UGTExaminatrice{...Civilité, Prénom et Nom...}{...titre et affiliation...}    %% 3ème examinateur
+
+                \UGTDirecteur{...Civilité, Prénom et Nom...}{...titre et affiliation...}       %% Directeur de thèse
+                \UGTCoDirecteur{...Civilité, Prénom et Nom...}{...titre et affiliation...}     %% Co-Directeur de thèse s'il y en a
+
+                \UGTInvite{...Civilité, Prénom et Nom...}{...titre et affiliation...}
+            \UGTInvitee{...Civilité, Prénom et Nom...}{...titre et affiliation...}
+        }
+
+%        \MakeUGthesePDG    %% très important pour générer la couvérture de thèse
+
