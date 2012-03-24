@@ -599,8 +599,13 @@ Some games allow for instant (or delayed, but asynchronous to other players) res
 
 \subsubsection{State of the art}
 
+FPS AI consists in controlling an agent in a complex world: it can have to walk, run, crouch, jump, swim, interact with the environment and tools, and sometimes even fly. Additionally, it has to shoot at moving, coordinated and dangerous, targets. %The first solution, in Wolfeinstein 3D, was to have enemies just shoot or run towards the player. The game was basically a linear indoors two-dimensional (no jumps, no stairs, nor the possibility to shoot up or down) labyrinth. 
+On a higher level, it may have to gather weapons, items or power-ups (health, armor, etc.), find interesting tactical locations, attack, chase, retreat...
+
+The Quake III AI is a standard for Quake-like games \citep{waveren-02-artificial}. It consists in a layered architecture (hierarchical) FSM. At the sensory-motor level, it has an Area Awareness System (AAS) which detects collisions, accessibility and computes paths. The level above provides intelligence for chat, goals (locations to go to), goals and weapons selection through fuzzy logic. Higher up, there are the behavior FSM (``seek goals'', chase, retreat, fight, stand...) and production rules (if-then-else) for squad/team AI and orders. A team of bots always behaves following the orders of one of the bots. Bots have characters, which can be accessed/felt by human players, specified by fuzzy relations on ``how much the bot wants to do, have, or use something''. A genetic algorithm was used to optimize the fuzzy logic parameters for specific purposes (like performance). This bot is fun to play against and is considered a success, however Quake-like games makes it easy to have high level bots because very good players have high accuracy (no fire spreading), so they do not feel cheated if bots have a high accuracy too. Also, the game is mainly indoors, which facilitates tactics and terrain reasoning. Finally, cooperative behaviors are not very evolved and consist in acting together towards a goal, not with specialized behaviors for each agent.
+
+TODO:
 \begin{itemize}
-\item Quake 3 AI (industry standard w/o squad AI) \citep{waveren-02-artificial}
 \item Killzone 2, F.E.A.R \citep{orkinGDC_FEAR} (planning), Crysis 2, BF3: industry standards with squad AI
 \item Research:
 \begin{itemize}
@@ -610,7 +615,15 @@ Some games allow for instant (or delayed, but asynchronous to other players) res
 \item UT Challenge (c.f. CIG)
 \end{itemize}
 \end{itemize}
+
 \subsubsection{Challenges}
+
+XXX
+\begin{itemize}
+    \item \textbf{believability} requires the AI to take decisions with the same informations than the human player (fairness) and to be able to deal with unknown situation.
+    \item \textbf{surprise} and {unpredictability} is key for both performance and the long-term interest in the human player in the AI.
+    \item \textbf{performance}, to give a challenge to human players, can be achieved through cooperative, planned and specialized behaviors.
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
@@ -630,10 +643,8 @@ While immobile neutral NPC are bad, acting strangely is sometimes worse for the 
 \citep{Cutumisu09}
 
 \subsubsection{Modeling of a Bayesian MMORPG player}
-XXX
 
-
-This model deals only with a sub-task of a global AI for autonomous NPC. The problem that we try to solve with the presented model is: how do we choose which skill to use and on which target in a PVE battle? Possible targets are all our allies and foes. Possible skills are all that we know, we will just try and get a distribution over target and skills and pick the most probable combination that is yet possible to achieve (enough energy/mana, no cooldown). For that, we first choose what should be the target given all surrounding variables: is an ally near death that he should be healed, which foe should we focus our attacks on? Once we have the distribution over possible targets, we search the distribution about our skills, pondered by the one on targets. We put extra care in having the same input variables as a human player to keep consistent with our goal of modeling a human. However, some variables can be things that humans subconsciously interpolate from perceptions.
+We will now present a model of a player with the Bayesian programming framework \citep{SYNNAEVE:MMORPG}. It deals only with a sub-task of a global AI for autonomous NPC. The problem that we try to solve is: how do we choose which skill to use and on which target in a PVE battle? Possible targets are all our allies and foes. Possible skills are all that we know, we will just try and get a distribution over target and skills and pick the most probable combination that is yet possible to achieve (enough energy/mana, no cooldown). For that, we first choose what should be the target given all surrounding variables: is an ally near death that he should be healed, which foe should we focus our attacks on? Once we have the distribution over possible targets, we search the distribution about our skills, pondered by the one on targets. We put extra care in having the same input variables as a human player to keep consistent with our goal of modeling a human. However, some variables can be things that humans subconsciously interpolate from perceptions.
 
 \begin{center}
 Variables
@@ -709,49 +720,100 @@ This computation has a high complexity (particularly when the sum has a lot of t
 Example
 \end{center}
 
-This model has been applied to a simulated situation with 2 foes and 4 allies while our robot took the part of a ``druid'', a versatile class that can cast spells to do direct damages, damages over time, buff (enhancements), debuff, crowd-control, heal and heal over time. We display a schema of this situation in Figure 1. The arrows indicate foes attacks on allies. The larger the ring is, the more health points the characters have. MT stands for ``main tank'', Add for ``additional foe''. We worked with the skills corresponding to a Druid. HOT stands for heal over time, DOT for damage over time, ``abol'' for abolition and ``regen'' for regeneration, a ``buff'' is an enhancement and a ``dd'' is a direct damage. ``Root'' is a spell which disables the target to move for a short period of time, useful to flee or to put some distance between the enemy and the druid to cast attack spells. ``Small'' spells are usually faster to cast than ``big'' spells.
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=4.7cm]{images/wow_fight1.png} \hspace{1cm} \includegraphics[width=4.7cm]{images/wow_fight2.png}
+\caption{Example setup A (left) and B (right), 2 foes, 2 “tanks”, players with stars can heal allies, players with dotted lines will soon die ($ID=true$).}
+\label{fig:wow_fight}
+\end{center}
+\end{figure}
+
+This model has been applied to a simulated situation with 2 foes and 4 allies while our robot took the part of a ``druid'', a versatile class that can cast spells to do direct damages, damages over time, buff (enhancements), debuff, crowd-control, heal and heal over time. We display a schema of this situation in Fig.~\ref{fig:wow_fight} The arrows indicate foes attacks on allies. The larger the ring is, the more health points the characters have. MT stands for ``main tank'', Add for ``additional foe''. We worked with the skills corresponding to a Druid. HOT stands for heal over time, DOT for damage over time, ``abol'' for abolition and ``regen'' for regeneration, a ``buff'' is an enhancement and a ``dd'' is a direct damage. ``Root'' is a spell which disables the target to move for a short period of time, useful to flee or to put some distance between the enemy and the druid to cast attack spells. ``Small'' spells are usually faster to cast than ``big'' spells.
 
 \begin{eqnarray*}
 Skills \in \{ small\_heal, big\_heal, HOT, poison\_abol, malediction\_abol,\\
             buff\_armor, regen\_mana, small\_dd, big\_dd, DOT, debuff\_armor, root \}
 \end{eqnarray*}
 
-We did not do the ``Identification'' part, which consists in learning the probability tables from observations. To keep things simple and because we wanted to analyze a little the model, we worked with manually defined probability tables. So we introduced ``soft evidences'', indeed parameters that will modify the conditional probability tables, which we will change to watch their effects. For instance the ``soft evidence that a selected target is foe'' and the ``soft evidence that a selected target will soon die (ID=true)'' that will consequently modify the probability tables of P(Ai) and P(IDi) respectively. We set the probability to target the same target as before to 0.4 and the previous target to ``Lich'' so that the prior probability for all other 6 targets is 0.1 (4 times more chances to target the Lich than any other character). We set the soft evidence P(Ai=false|T=i) to 0.6. This means that our robotic druid is mainly a damage dealer and not a healer. For the ``target selection'' model, we can see on Figure 2.A that the evolution from selecting the main foe ``Lich'' to selecting the ally ``Tank'' is driven by the increase of ``soft evidence that a selected target will soon die'' and our robot eventually moves on targeting his(its) ``Tank'' ally (to heal him). We can see on Figure 2.B that, at some point, the robotic Druid prefers to kill the dying add to save his ally Tank instead of healing him. Note that there is no variable showing the relation between ``Add'' and ``Tank'' (the first is attacking the second, who is taking damages from the first), but this is under consideration for a future, more complete, model.
-
-\citep{SYNNAEVE:MMORPG}
-\begin{figure}[h!]
-\begin{center}
-\includegraphics[width=4.7cm]{images/wow_fight1.png} \includegraphics[width=4.7cm]{images/wow_fight2.png}
-\caption{}
-\label{fig:wow_fight}
-\end{center}
-\end{figure}
+We did not do the ``Identification'' part, which consists in learning the probability tables from observations. To keep things simple and because we wanted to analyze a little the model, we worked with manually defined probability tables. So we introduced ``soft evidences'', indeed parameters that will modify the conditional probability tables, which we will change to watch their effects. For instance the ``soft evidence that a selected target is foe'' and the ``soft evidence that a selected target will soon die ($ID=true$)'' that will consequently modify the probability tables of $P(A_i)$ and $P(ID_i)$ respectively. We set the probability to target the same target as before to 0.4 and the previous target to ``Lich'' so that the prior probability for all other 6 targets is 0.1 (4 times more chances to target the Lich than any other character). We set the soft evidence $P(A_i=false|T=i)$ to 0.6. This means that our robotic druid is mainly a damage dealer and not a healer. For the ``target selection'' model, we can see on Fig.~\ref{fig:wow_target} (left) that the evolution from selecting the main foe ``Lich'' to selecting the ally ``Tank'' is driven by the increase of ``soft evidence that a selected target will soon die'' and our robot eventually moves on targeting his(its) ``Tank'' ally (to heal him). We can see on Fig.~\ref{fig:wow_target} (right) that, at some point, the robotic Druid prefers to kill the dying add to save his ally Tank instead of healing him. Note that there is no variable showing the relation between ``Add'' and ``Tank'' (the first is attacking the second, who is taking damages from the first), but this is under consideration for a future, more complete, model.
 
 \begin{figure}[h!]
 \begin{center}
 \includegraphics[width=7cm]{images/wow_distrib_target1.png} \includegraphics[width=7cm]{images/wow_distrib_target2.png}
-\caption{}
-\label{fig:wow_fight}
+\caption{Left: probabilities of targets depending on the soft evidence that a target is dying with setup A. Right: same, with setup B.}
+\label{fig:wow_target}
 \end{center}
 \end{figure}
+
+For the ``skill selection'' model, we can see on Fig.~\ref{fig:wow_skill} the influence of $ID_i$ on Skill which is coherent with the Target distribution: either, in setup A (left), we evolve with the increase of $P(ID_i=true|Target=i)$ to choose to heal our ally or, in setup B (right), to deal direct damage (and hopefully, kill) the foe attacking him. As you can see here, when we have the highest probability to attack the main enemy (``Lich'', when $P(ID_i=true|Target=i)$ is low), who is a $C=tank$, we get a high probability for the Skill $debuff\_armor$. We only cast this skill if the debuff is not already present, so perhaps that we will cast $small\_dd$ instead. To conclude this example, Fig.~\ref{fig:wow_target_skill} shows the distribution on $P(T,S|all\_status\_variables)$ with setup A and the probability to target the previous target (set to ``Lich'' here) only $\approxeq 2$ times greater than any other character (so that we focus less on the same character), soft evidences $P(ID_i=true|Target=i)=0.9$ and $P(A_i=false|Target=i)=0.6$. In a greedy way, if the first couple $(T,S)$ is already done or not available, we take the second.
 
 \begin{figure}[h!]
 \begin{center}
 \includegraphics[width=7cm]{images/wow_distrib_skill1.png} \includegraphics[width=7cm]{images/wow_distrib_skill2.png}
-\caption{}
-\label{fig:wow_fight}
+\caption{Left: Probabilities of skills depending on the soft evidence that a target is dying with setup A. Right: same, with setup B.}
+\label{fig:wow_skill}
 \end{center}
 \end{figure}
 
 \begin{figure}[h!]
 \begin{center}
 \includegraphics[width=11cm]{images/wow_distrib_target_skill.png}
-\caption{}
-\label{fig:wow_fight}
+\caption{Log-probabilities of Target and Skill with setup A, and $P(ID|Target)=0.9, P(A|Target)=0.6$}
+\label{fig:wow_target_skill}
 \end{center}
 \end{figure}
 
+\begin{center}
+Discussion
+\end{center}
+
+This model has to be applied in a real MMORPG, out of its simulated sandbox, to reveal all its shortcomings and be updated. We can already think of some future difficulties, for instance there is a possibility for many games that the Skill variable will be very big and that it will imply a too high computational cost. For that concern, we propose to clusterize the skills in global skills ($GS$) (as it can be seen in the description of the example). This approach to break down the complexity of computation is general and can be used with other variables. The skill variable $S$ can then be the subset of skills corresponding to the clustering of $GS$, for instance we could have:
+
+$$GS \in \{SkillHeal, SkillBuff, SkillAttack, SkillDebuff\}$$
+$$S = SkillHeal \in \{skill_1 \dots skill_j\}$$
+$$S = SkillBuff \in \{skill_{j+1} \dots skill_k\}$$
+$$S = SkillAttack \in \{skill_{k+1} \dots skill_l\}$$
+$$S = SkillDebuff \in \{skill_{l+1} \dots skill_m\}$$
+
+Global skills joint distribution: as for the “Skill joint distribution” without Resists. It will take advantage of splitting between allies and foes.
+
+\begin{eqnarray*}
+P(GS,T,HP_{1:n},D_{1:n},A_{1:n},\Delta HP_{1:n}, ID_{1:n}, C_{1:n}) = \\
+P(GS).P(T).\prod_{i=1}^n [ P(HP_i | A_i, C_i, GS, T).P(D_i | A_i, GS, T).P(A_i | GS, T)\\
+                        .P(\Delta HP_i | A_i, GS, T).P(ID_i | GS, T).P(C_i | A_i, GS, T)]
+\end{eqnarray*}
+
+Specialized skills joint distribution:
+
+\begin{eqnarray*}
+P(S,GS,T,HP_{1:n},D_{1:n},A_{1:n},\Delta HP_{1:n}, ID_{1:n}, C_{1:n}, R_{1:n}) = \\
+P(S|GS).P(T).\prod_{i=1}^n [ P(HP_i | A_i, C_i, S, T).P(D_i | A_i, S, T).P(A_i | S, T)\\
+                        .P(\Delta HP_i | A_i, S, T).P(R_i | C_i, S, T).P(ID_i | S, T).P(C_i | A_i, S, T)]
+\end{eqnarray*}
+for the corresponding S. So that we can ask the question:
+$$P(S | GS, T, hp_{1:n}, d_{1:n}, a_{1:n}, \Delta hp_{1:n}, id_{1:n}, c_{1:n}, r_{1:n})$$
+
+that will trigger $P(GS|T,\dots)$, itself triggering $P(T|all\_state\_variables)$. Choosing to do with or without the intermediate $GS$ computation, regrouping abilities by types, is mainly a question of computational time.
+
+The choice of the skill or ability to use and the target on which to use it puts hard constraints on every others decisions the autonomous agent has to take to perform its ability action. Thus, such a model shows that:
+\begin{itemize}
+    \item cooperative behavior is not too hard to incorporate in a decision (instead of being hard-coded),
+    \item it can be learned, either from observations of a human player or by reinforcement (exploration),
+    \item it is computationally tractable (for use in all games), the inference is just a series of ``probabilistic \textit{if}s'',
+\end{itemize}
+Moreover, using this model on another agent than the once controlled by the AI can give a prediction on what it will do, resulting in human-like, adaptive, playing style.
+
 \subsubsection{Challenges}
+
+There are mainly two axes for RPG games to bring more fun: interest in the game play(s), and immersion. For both these topics, we think game AI can bring a lot:
+\begin{itemize}
+    \item \textbf{believability} of the agents will come from AI approaches than can deal with new situations, being it because they were not dealt with during game development (because the ``possible situations'' space is too big) or because they were brought by the players' unforeseeable actions. Scripts and strict policies approaches will be in difficulty here, and we will assist to other Skyrim's NPC blunders.
+    \item \textbf{interest} (as opposed to boredom) for the human players in the game style of the AI will come from approaches which can generate different behaviors in a given situation. Expectable AI particularly affects replayability negatively.
+    \item \textbf{performance} relative to the gameplay will come from AI approaches than can fully deal with cooperative behavior. One solution is to design mobs to be orders of magnitude stronger (in term of hit points and damages) than players characters, or more numerous. Another, arguably more entertaining, solution is to bring the mobs behavior to a point where they are a challenge for the team of human players.
+\end{itemize}
+Both believability and performance require to deal with uncertainty of the game environment. RPG AI problem spaces are not tractable for a frontal search approach nor are there few enough situations to consider to just write a bunch of script and puppeteer artificial agents at any time.
+
+% Challenges for RPG games AI 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
