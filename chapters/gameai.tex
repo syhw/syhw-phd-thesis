@@ -604,21 +604,16 @@ On a higher level, it may have to gather weapons, items or power-ups (health, ar
 
 The Quake III AI is a standard for Quake-like games \citep{waveren-02-artificial}. It consists in a layered architecture (hierarchical) FSM. At the sensory-motor level, it has an Area Awareness System (AAS) which detects collisions, accessibility and computes paths. The level above provides intelligence for chat, goals (locations to go to), goals and weapons selection through fuzzy logic. Higher up, there are the behavior FSM (``seek goals'', chase, retreat, fight, stand...) and production rules (if-then-else) for squad/team AI and orders. A team of bots always behaves following the orders of one of the bots. Bots have characters, which can be accessed/felt by human players, specified by fuzzy relations on ``how much the bot wants to do, have, or use something''. A genetic algorithm was used to optimize the fuzzy logic parameters for specific purposes (like performance). This bot is fun to play against and is considered a success, however Quake-like games makes it easy to have high level bots because very good players have high accuracy (no fire spreading), so they do not feel cheated if bots have a high accuracy too. Also, the game is mainly indoors, which facilitates tactics and terrain reasoning. Finally, cooperative behaviors are not very evolved and consist in acting together towards a goal, not with specialized behaviors for each agent.
 
-TODO:
-\begin{itemize}
-\item Killzone 2, F.E.A.R \citep{orkinGDC_FEAR} (planning), Crysis 2, BF3: industry standards with squad AI
-\item Research:
-\begin{itemize}
-\item \citep{lehy04}
-\item \citep{Laird01} (cognitive architecture)
-\item others (\citep{Hladky_anevaluation} ANN, ...)
-\item UT Challenge (c.f. CIG)
-\end{itemize}
-\end{itemize}
+The more recent FPS games have dealt with these limitations by using combinations of hierarchical temporal networks (HTN) (Killzone 2 \citep{Killzone2_HTN} and ArmA \citep{ArmA1_HTN}), STRIPS planning (F.E.A.R. \citep{orkinGDC_FEAR}), Behavior trees (Spore, Halo 2 \citep{Isla}). % (Crysis2 BF3)
+\begin{color}{red}explain Behavior trees?\end{color}
+\url{http://files.aigamedev.com/insiders/BehaviorTrees_Slides.pdf}
+\url{http://altdevblogaday.com/2011/02/24/introduction-to-behavior-trees/}
+
+In research, there are cognitive architecture \citep{Laird01} (applied to Quake), multiobjective neuroevolution \citep{Zanetti2004,schrum_cig11competition}, robotics inspired Bayesian models \citep{lehy04}, and various other machine learning approaches \citep{Hladky_anevaluation}. \begin{color}{red}XXX, detail, how much?\end{color}
 
 \subsubsection{Challenges}
 
-XXX
+Single-player FPS campaigns immersion could benefit from more realistic bots and clever squad tactics. Multi-player FPS are competitive games, and a better game AI should focus on:
 \begin{itemize}
     \item \textbf{believability} requires the AI to take decisions with the same informations than the human player (fairness) and to be able to deal with unknown situation.
     \item \textbf{surprise} and {unpredictability} is key for both performance and the long-term interest in the human player in the AI.
@@ -811,7 +806,7 @@ There are mainly two axes for RPG games to bring more fun: interest in the game 
     \item \textbf{interest} (as opposed to boredom) for the human players in the game style of the AI will come from approaches which can generate different behaviors in a given situation. Expectable AI particularly affects replayability negatively.
     \item \textbf{performance} relative to the gameplay will come from AI approaches than can fully deal with cooperative behavior. One solution is to design mobs to be orders of magnitude stronger (in term of hit points and damages) than players characters, or more numerous. Another, arguably more entertaining, solution is to bring the mobs behavior to a point where they are a challenge for the team of human players.
 \end{itemize}
-Both believability and performance require to deal with uncertainty of the game environment. RPG AI problem spaces are not tractable for a frontal search approach nor are there few enough situations to consider to just write a bunch of script and puppeteer artificial agents at any time.
+Both believability and performance require to deal with uncertainty of the game environment. RPG AI problem spaces are not tractable for a frontal (low-level) search approach nor are there few enough situations to consider to just write a bunch of script and puppeteer artificial agents at any time.
 
 % Challenges for RPG games AI 
 
