@@ -84,7 +84,7 @@ Single player games are not the main focus of our thesis, but they present a few
 %%% Mario, racing, PacMan
 Platform games (Mario, Sonic), time attack racing games (TrackMania), solo shoot-them-up (``schmups'', Space Invaders, DodonPachi), sports games and rhythm games (Dance Dance Revolution, Guitar Hero) are games of reflexes, skill and level knowledge. The main components of game AI in these genres is a quick path search heuristic, often with a dynamic environment. There have been Mario \citep{TogeliusMario10}, PacMan \citep{PacManCEC11} and racing competitions \citep{CarRacingWCCI08}. The winners often use (clever) heuristics coupled with a search algorithm (A* for instance). As there are no human opponents, reinforcement learning and genetic programming works well too.
 
-XXX
+\begin{color}{red}XXX\end{color}
 
 \subsection{Puzzles}
 %%% Myst, Tetris, point and clicks, Patience
@@ -550,7 +550,7 @@ With Go, we see clearly that humans do not play the game using the same approach
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
 \section{Games with Uncertainty}
-An exhaustive list of games or even of games genres is beyond the scope/range (XXX) of this thesis. %On the other hand, we will explain games for which randomness or incomplete information plays a key role with not-so-basic examples. 
+An exhaustive list of games or even of games genres is beyond the scope/range of this thesis. %On the other hand, we will explain games for which randomness or incomplete information plays a key role with not-so-basic examples. 
 All uncertainty boils down to incompleteness of information, being it the physics of the dice being thrown or the inability to measure what is happening in the opponent's brain. However,  we will speak of 2 types (sources) of uncertainty: extensional uncertainty, which is due to incompleteness in direct, measurable information, and intentional uncertainty, which is related to randomness in the game or in (the opponent's) decisions. The purest extensional uncertainty being acting without sensing while the purest intentional uncertainty would be for our acts to be the result of a perfect random generator. The uncertainty coming from the opponent's mind/cognition lies in between, depending on the simplicity to model the game as an optimization procedure. The harder the game is to model, the harder it is to model the trains of thoughts our opponents can follow.
 
 \subsection{Monopoly}
@@ -604,12 +604,13 @@ On a higher level, it may have to gather weapons, items or power-ups (health, ar
 
 The Quake III AI is a standard for Quake-like games \citep{waveren-02-artificial}. It consists in a layered architecture (hierarchical) FSM. At the sensory-motor level, it has an Area Awareness System (AAS) which detects collisions, accessibility and computes paths. The level above provides intelligence for chat, goals (locations to go to), goals and weapons selection through fuzzy logic. Higher up, there are the behavior FSM (``seek goals'', chase, retreat, fight, stand...) and production rules (if-then-else) for squad/team AI and orders. A team of bots always behaves following the orders of one of the bots. Bots have characters, which can be accessed/felt by human players, specified by fuzzy relations on ``how much the bot wants to do, have, or use something''. A genetic algorithm was used to optimize the fuzzy logic parameters for specific purposes (like performance). This bot is fun to play against and is considered a success, however Quake-like games makes it easy to have high level bots because very good players have high accuracy (no fire spreading), so they do not feel cheated if bots have a high accuracy too. Also, the game is mainly indoors, which facilitates tactics and terrain reasoning. Finally, cooperative behaviors are not very evolved and consist in acting together towards a goal, not with specialized behaviors for each agent.
 
-The more recent FPS games have dealt with these limitations by using combinations of hierarchical temporal networks (HTN) (Killzone 2 \citep{Killzone2_HTN} and ArmA \citep{ArmA1_HTN}), STRIPS planning (F.E.A.R. \citep{orkinGDC_FEAR}), Behavior trees (Spore, Halo 2 \citep{Isla}). % (Crysis2 BF3)
-\begin{color}{red}explain Behavior trees?\end{color}
-\url{http://files.aigamedev.com/insiders/BehaviorTrees_Slides.pdf}
-\url{http://altdevblogaday.com/2011/02/24/introduction-to-behavior-trees/}
+The more recent FPS games have dealt with these limitations by using combinations of STRIPS planning (F.E.A.R. \citep{orkinGDC_FEAR}), hierarchical task networks (HTN) (Killzone 2 \citep{Killzone2_HTN} and ArmA \citep{ArmA1_HTN}), Behavior trees (Halo 2 \citep{Isla}). Left4Dead (a cooperative PvE FPS) uses a global supervisor of the AI to set the pace of the threat to be the most enjoyable for the player \citep{left4dead2009}.% (Crysis2 BF3)
+\begin{color}{red}explain Behavior trees? \\
+\url{http://files.aigamedev.com/insiders/BehaviorTrees_Slides.pdf}\\ 
+\url{http://altdevblogaday.com/2011/02/24/introduction-to-behavior-trees/}\\
+\url{http://www.cgf-ai.com/docs/straatman_remco_killzone_ai.pdf} \end{color}
 
-In research, there are cognitive architecture \citep{Laird01} (applied to Quake), multiobjective neuroevolution \citep{Zanetti2004,schrum_cig11competition}, robotics inspired Bayesian models \citep{lehy04}, and various other machine learning approaches \citep{Hladky_anevaluation}. \begin{color}{red}XXX, detail, how much?\end{color}
+In research, \citet{Laird01} focused on learning rules for opponent modeling, planning and reactive planning (on Quake), so that the robot builds plan by anticipating the opponent's actions. \citet{lehy04} used robotics inspired Bayesian models to quickly learn the parameters from human players (on Unreal Tournament). \citet{Zanetti2004} and \citet{westraQ3} applied evolutionary neural networks to optimize Quake III bots. Predicting opponents positions is a central task to believability and has been solved successfully using particle filters \citep{particlefiltergameAI} and other models (like Hidden Semi-Markov Models) \citep{Hladky_anevaluation}. Multi-objective neuro-evolution \citep{Zanetti2004,schrum_cig11competition} combines learning from human traces with evolutionary learning for the structure of the artificial neural network, and leads to realistic (human-like) behaviors, in the context of the BotPrize challenge (judged by humans) \citep{Hingston_2009}.
 
 \subsubsection{Challenges}
 
@@ -633,9 +634,9 @@ Inspired directly by tabletop and live action role-playing games (Dungeon \& Dra
 \end{itemize}
 While immobile neutral NPC are bad, acting strangely is sometimes worse for the player's immersion. It is more fun for the player to battle with hostile NPC which are not too dumb or predictable. Players really expect allied NPC to at least not hinder them, and it is even better when they adapt to what the player is doing. Finally, for MMORPG, persistent character AI could maintain the player's avatar in the world when she is enjoying real-life.
 
-\subsubsection{State-of-the-art}
+\subsubsection{State of the art}
 
-\citep{Cutumisu09}
+Methods used in FPS are also used in RPG. The needs are sometimes a little different for RPG games, for instance to have interruptible and/or modal behaviors, along with stronger story-telling capabilities \citep{kline2009,riedl11}. Behavior multi-queues \citep{Cutumisu09} resolve the problems of having resumable, collaborative, real-time and parallel behavior. \citet{kline2011} used an AI director to adapt the difficulty of Dark Spore to the performance of the player in real-time.
 
 \subsubsection{Modeling of a Bayesian MMORPG player}
 
@@ -815,55 +816,92 @@ Both believability and performance require to deal with uncertainty of the game 
 \section{RTS}
 
 \subsection{Gameplay and AI}
-XXX 
+RTS gameplay consist in gathering resources, building up an economic and military power through growth and technology, to defeat your opponent by destroying his base, army and economy. It requires dealing with strategy, tactics, and units management (often called micro-management) in real-time. Strategy consist in what will be done in the long term as well as predicting what the enemy is doing. It particularly deals with the economy/army trade-off estimation, army composition, long-term planning. The three aggregate indicators for strategy are aggression, production, and technology. The tactical aspect of the gameplay is dominated by military moves: when, where (with regard to topography and weak points), how to attack or defend. This implies dealing with \textit{extensional} (what the invisible units under ``fog of war'' are doing) and \textit{intentional} (what will the visible enemy units do) uncertainty. Finally, at the actions/motor level, micro-management is the art of maximizing the effectiveness of the units \textit{i.e.} the damages given/damages received ratio. For instance: retreat and save a wounded unit so that the enemy units would have to chase it either boosts your firepower or weakens the opponent's. Both \citep{Human-LevelAIKillerApplication} and \cite{gunn} propose that RTS AI is one of the most challenging genres, because all levels in the hierarchy of decisions are of importance.
+%%% incompleteness of information yielding uncertainty
 
-In chronological order, RTS include (but are not limited to): Ancient Art of War, Herzog Zwei, Dune II, Warcraft, Command \& Conquer, Warcraft II, Command \& Conquer: Red Alert, Total Annihilation, Age of Empires, StarCraft, Age of Empires II, Tzar, Cossacks, Homeworld, Battle Realms, Ground Control, Spring Engine: Balanced Annihilation, Warcraft III, Total War, Warhammer 40k, Sins of a Solar Empire, Supreme Commander, StarCraft II.
-
-Both \citep{Human-LevelAIKillerApplication} and \cite{gunn} propose that RTS AI is one of the most challenging genres, because all levels in the hierarchy of decisions are of importance.
+In chronological order, RTS include (but are not limited to): Ancient Art of War, Herzog Zwei, Dune II, Warcraft, Command \& Conquer, Warcraft II, Command \& Conquer: Red Alert, Total Annihilation, Age of Empires, StarCraft, Age of Empires II, Tzar, Cossacks, Homeworld, Battle Realms, Ground Control, Spring Engine: Balanced Annihilation, Warcraft III, Total War, Warhammer 40k, Sins of a Solar Empire, Supreme Commander, StarCraft II. XXX ???
 
 \subsubsection{State of the art}
+\citet{Buro04callfor} called for AI research in RTS games and identified the technical challenges as adversarial planning under uncertainty, learning and opponent modeling, and spatial and temporal reasoning.
+ 
+On planning under uncertainty, \citet{LTW} used case-based reasoning (CBR) to perform dynamic plan retrieval extracted from domain knowledge in Wargus (Warcraft II clone). \citet{Ontanon2007} base their real-time case-based planning (CBP) system on a plan dependency graph which is learned from human demonstration in Wargus. In \citep{Mishra2008,Ontanon2010}, they used a knowledge-based approach to perform situation assessment and use the right plan, and revize it (integrating learning, planning, and problem solving in CBR). \citet{Trusty2011} used a genetic-algorithm inspired method to mix and optimize existing expert plan, also in Wargus. \citet{Chung05} adapts Monte-Carlo tree search to planning in RTS games and applied it to a capture-the-flag mod of Open RTS. \citet{Balla} applied UCT (MCTS algorithm) to tactical assault planning in Wargus. Reactive planning and goal-driven autonomy (that is, find the less irrelevant goal to follow in unknown situations) are studied in \citep{Weber2010cr,WeberCIG10}.
+\citet{NovaBot2011}
+\citet{metalevelbehavioradaptrts}
+\citet{Churchill2011}
+%\citep{Weber2010qf}
+
+On learning and opponent modeling, \citet{schadd2007opponent} used hierarchical classifiers to learn the opponent's behavior in Total Annihilation (Spring). \citet{HsiehS08} learned players' strategy models with CBR by mining replays of StarCraft. \citet{weberStrat} applied data-mining to StarCraft replays to learn to predict strategies.
+\citet{HagelbackCIG10}
+\citet{Kim2010}
+\citet{Kabanza2010}
+\citet{HMMstrat_RTS_AIIDE11}
+\citet{SYNNAEVE:OpeningPred}
+\citet{SYNNAEVE:StratPred}
+
+On spatial and temporal reasoning, \citet{Forbus2002}
+\citet{Southey2007}
+\citet{Hagelback2009}
+\citet{SmithCIG10}
+\citet{ButlerCIG10}
+\citet{teamCompositionRTS}
+\citet{CadenaG11}
+\citet{SORTS}
+\citet{SYNNAEVE:Micro}
+\citet{weber2011aiide}
 
 \subsubsection{Challenges}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
-\section{Game Characteristics}
-All the video games that we saw before require to deal with imperfect information and sometimes with randomness, while elaborating a strategy (possibly from underlying policies). From a game theoretic point of view, all the types of video games that we saw above are closer to what is called a Bayesian game \citep{osborne-rubinstein}. %%%described by:
+\section{Games Characteristics}
+All the types of video games that we saw before require to deal with imperfect information and sometimes with randomness, while elaborating a strategy (possibly from underlying policies). From a game theoretic point of view, these video games are close to what is called a Bayesian game \citep{osborne-rubinstein}. %%% Their formal description is:
 %%% \begin{itemize}
-%%% \item $N$, the finite set of players,
-%%% \item $\Omega$, the finite set of states,
+%%% \item $N$, a finite set of players,
+%%% \item $\Omega$, a finite set of states,
 %%% \end{itemize}
 %%% $$\forall \mathrm{player}\ i \in N$$
 %%% \begin{itemize}
-%%% \item $A_i$, set of actions,
-%%% \item $T_i$, set of signals that can be observed by $i$,
-%%% \item $p_i$, probability measure on $\Omega$ (prior belief of $i$),
-%%% \item $\succ_i$, preference relation on the set of probability measures over $A\times \Omega$ with $A = \times_{j \in N}A_j$.
+%%% \item $A_i$, a set of actions,
+%%% \item $T_i$, a set of signals that can be observed by $i$,
+%%% \item $p_i$, a probability measure on $\Omega$ (prior belief of $i$),
+%%% \item $\succ_i$, a preference relation on the set of probability measures over $A\times \Omega$ with $A = \times_{j \in N}A_j$.
 %%% \end{itemize}
+However, solving Bayesian games is non-trivial, there are no generic and efficient approaches, and so it has not been done formally for card games with more than a few cards. \citet{BillingsBDHSSS03} approximated a game theoretic solution for Poker through abstraction heuristics, it leads to believe than game theory can be applied at the higher (strategic) abstracted levels of video games.
 
 We do not pretend to do a complete taxonomy of video games and AI (e.g. \citep{gunn}), but we wish to provide all the major informations to differentiate game genres (gameplays). To grasp the challenges they pose, we will provide abstract measures of complexity.
 
 \subsection{Combinatory}
 ``How does the state of possible actions grow?'' To measure this, we used a measure from perfect information zero-sum games (as Checkers, Chess and Go): the branching factor $b$ and the depth $n$ of a typical game. The complexity of a game (for taking a decision) is proportional to $b^n$. The average branching factor for a board game is easy to compute: it is the average number of possible moves for a given player. For Poker, we set $b=3$ for \textit{fold, check} and \textit{raise}. $n$ should then be defined over some time, the average number of events (decisions) per hour in Poker is between $20$ to $240$. For video-games, we defined $b$ to be the average number of possible moves at each decision, so for ``continuous'' or ``real-time'' games it is some kind of function of the useful discretization of the virtual world at hand. $n$ has to be defined as a frequency at which a player (artificial or not) has to take decisions to be competitive in the game, so we will give it in $n/time\_unit$. For instance, for a car (plane) racing game, $b \approxeq 50-500$ because $b$ is a combination of throttle ($\ddot{x}$) and direction ($\theta$) sampled values that are relevant for the game world, with $n/min$ at least $60$: a player needs to correct her trajectory \textit{at least} once a second. In RTS games, $b \approxeq 200$ is a lower bound (in StarCraft we may have between $50$ to $400$ units to control), and very good amateurs and professional players perform more than $300$ actions per minute.
 
-The sheer size of $b$ and $n$ in video games make it seem intractable, but humans are able to play, and to play well. To explain this phenomenon, we introduce ``vertical'' and ``horizontal'' continuities in decision making.
+The sheer size of $b$ and $n$ in video games make it seem intractable, but humans are able to play, and to play well. To explain this phenomenon, we introduce ``vertical'' and ``horizontal'' continuities in decision making. Fig.~\ref{fig:abstractdecisionhierarchy} shows how one can view the decision-making process in a video game: at different time scales, the player has to choose between strategies to follow, that can be realized with the help of different tactics. Finally, at the action/output/motor level, these tactics have to be implemented one way or the other. So, matching Fig.~\ref{fig:abstractdecisionhierarchy}, we could design a Bayesian model:
+\begin{itemize}
+\item $S^{t,t-1} \in {Attack,Defend,Seach,Hide}$, the strategy variable
+\item $T^{t,t-1} \in {Front,Back,Prepare,Rush}$, the tactics variable
+\item $A^{t,t-1} \in {low\_level\_actions}$, the action variables
+\item $O_{1:n}^{t} \in \{observations\}$, the set of observations variables
+\end{itemize}
+%\begin{eqnarray*}
+$$P(S^{t,t-1},T^{t,t-1},A^{t,t-1},O_{1:n}^t) = P(S^{t-1}).P(T^{t-1}).P(A^{t-1})$$
+$$.P(O_{1:n}^t).P(S^t|S^{t-1},O_{1:n}^t).P(T^t|S^t,T^{t-1},O_{1:n}^t).P(A^t|T^t,A^{t-1},O_{1:n}^t)$$
+%\end{eqnarray*}
 
 \begin{figure}
 %%%\hspace{-0.8cm}
 \begin{center}
 \includegraphics[width=10cm]{images/basic_abstract_decision_hierarchy2.pdf}
 \end{center}
-\caption{Abstract decision hierarchy}
+\caption{Abstract decision hierarchy in a video game}
 \label{fig:abstractdecisionhierarchy}
 \end{figure}
 
 \subsubsection{Vertical continuity}
+Vertical continuity in the decision-making process describes when taking a higher-level decision implies a strong conditioning on lower-levels decisions.
 \begin{figure}
 %%%\hspace{-0.8cm}
 \begin{center}
 \includegraphics[width=10cm]{images/vertical_cont_abstract_decision_hierarchy.pdf}
 \end{center}
-\caption{Vertical continuity}
+\caption{Vertical continuity in decision-making in a video game}
 \label{fig:verticalcont}
 \end{figure}
 
@@ -873,7 +911,7 @@ The sheer size of $b$ and $n$ in video games make it seem intractable, but human
 \begin{center}
 \includegraphics[width=10cm]{images/horizontal_cont_abstract_decision_hierarchy.pdf}
 \end{center}
-\caption{Horizontal continuity}
+\caption{Horizontal continuity in decision-making in a video game}
 \label{fig:horizontalcont}
 \end{figure}
 
