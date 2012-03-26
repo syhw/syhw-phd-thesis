@@ -318,7 +318,7 @@ level 3/.style={sibling distance=7mm}
 \label{fig:minimaxTTT}
 \end{figure}
 \subsection{Checkers, Alpha-beta}
-Checkers, Chess and Go are also zero sum, perfect-information\newglossaryentry{perfectinformationgame}{name={perfect-information game},description={a game in which all the players have complete knowledge of the (board) state of the game}}, partisan\newglossaryentry{partisangame}{name={partisan game},description={a game which is not impartial, in which a player can do actions another can not do (move a faction while the other player(s) cannot)}}, deterministic strategy game. Technically, they all can be solved by exhaustive Minimax. In practice though, it is often intractable: their bounded versions are at least in \textsc{pspace} and their unbounded versions are \textsc{exptime}-hard \citep{GPC}. The state space complexity of Checkers is the smallest of the 3 above-mentioned games with $\approxeq 5.10^20$ possible positions, and as a matter of fact, Checkers have been solved completely\citep{SchaefferBBKMLLS07}. We can see the complexity of Minimax as $O(b^d)$ with $b$ the average branching factor of the tree (to search) and $d$ the average length (depth) of the game. For Checkers $b \approxeq 10$, while the mean game length is 70 \citep{allis1994}. It is already too large to have been solved by Minimax alone (on current hardware). From 1989 to 2007, there were artificial intelligences competitions on Checkers, all using at least alpha-beta pruning: a technique to make efficient cuts in the Minimax search tree while not losing optimality.
+Checkers, Chess and Go are also zero sum, perfect-information\newglossaryentry{perfectinformationgame}{name={perfect-information game},description={a game in which all the players have complete knowledge of the (board) state of the game}}, partisan\newglossaryentry{partisangame}{name={partisan game},description={a game which is not impartial, in which a player can do actions another can not do (move a faction while the other player(s) cannot)}}, deterministic strategy game. Theoretically, they all can be solved by exhaustive Minimax. In practice though, it is often intractable: their bounded versions are at least in \textsc{pspace} and their unbounded versions are \textsc{exptime}-hard \citep{GPC}. The state space complexity of Checkers is the smallest of the 3 above-mentioned games with $\approxeq 5.10^{20}$ possible positions, and as a matter of fact, Checkers have been solved completely\citep{SchaefferBBKMLLS07}. We can see the complexity of Minimax as $O(b^d)$ with $b$ the average branching factor of the tree (to search) and $d$ the average length (depth) of the game. For Checkers $b \approxeq 10$, while the mean game length is 70 \citep{allis1994}. It is already too large to have been solved by Minimax alone (on current hardware). From 1989 to 2007, there were artificial intelligences competitions on Checkers, all using at least alpha-beta pruning: a technique to make efficient cuts in the Minimax search tree while not losing optimality.
 
 Alpha-beta pruning (see Algorithm~\ref{alg:alphabeta}) is a branch-and-bound algorithm which (if the best nodes are searched first) can reduce Minimax to a $O(b^{d/2})=O(\sqrt{b^d})$ complexity ($O(b^{3d/4})$ for a random ordering of nodes). $\alpha$ is the maximum score than we (the maximizing player) are assured to get given what we already evaluated, while $\beta$ is the minimum score than the minimizing player is assured to get. When evaluating more and more nodes, we can only get a better estimate and so $\alpha$ can only increase while $\beta$ can only decrease. %If we find a node for us with an expected value below $\alpha$, we do not have to consider its subtree because it's sub-optimal play. If we find an expected value above $\beta$, it's sub-optimal play for the opponent. 
 \begin{algorithm}
@@ -418,10 +418,10 @@ level 3/.style={sibling distance=7mm}
 Prior to Checkers being solved (meaning that we have a database of which moves to play for all positions resulting from optimal play), or if playing against a sub-optimal opponent, Alpha-beta is going to be helpful to search much deeper than Minimax in the same allowed time. The best Checkers program (since the 90s), which is also the project which solved Checkers \citep{SchaefferBBKMLLS07}, Chinook, has openings and end-game (for lest than eight pieces of fewer) books, and for the mid-game (when there are more possible moves) relies on a deep search algorithm. So, appart for the beginning and the ending of the game, for which it plays by looking up a database, it used a search algorithm. As Minimax and Alpha-beta are depth first search heuristics, all programs which have to answer in a fixed limit of time use \textit{iterative deepening}, a technique which consists in fixing limited depth which will be considered maximal and evaluating this position. As it does not relies in winning moves at the bottom (remember, the search space is too big in $branching^{depth}$), we need moves evaluation heuristics. We then iterate on growing the maximal depth for which we consider moves, but we are at least sure to have a move to play in a short time (at least the greedy depth 1 found move).
 
 \subsection{Chess, Heuristics}
-With a branching factor of $\approxeq 35$ and an average game length of 80 moves \citep{Shannon_1950}, the average game-tree complexity of chess is $35^{80}\approxeq 3.10^{123}$. \citet{Shannon_1950} also estimated the number of possible actions (Shannon number) to be of the order of $10^{43}$. Chess AI needed a little more than just Alpha-beta to win against top human players (not that Checkers could not benefit it!), particularly on 1996 hardware (first win of a computer against a reigning world champion, Deep Blue on Garry Kasparov). Once an AI has openings and ending books (databases to look-up for classical moves), how can we search deeper during the game, or how can we evaluate better a situation? In iterative deepening Alpha-beta (or other search algorithms like Negascout or MTD-f), one needs to know the value of a move at the maximal depth. If it does not correspond to the end of the game, there is a need for a evaluation heuristic. Some may be straight forward, like the resulting value of an exchange in pieces points. But some strategies sacrifice a queen in favor of a more avantageous tactical position or a checkmate, so evaluation heuristics need to take tactical positions into account. In Deep Blue, the evaluation function had 8000 cases, with 4000 positions in the openings book, all learned from 700,000 grandmaster games \citep{DeepBlue}. Nowadays, Chess programs are better than deep blue and generally also search less positions. For instance, Pocket Fritz (HIARCS engine) beats current grandmasters \citep{CitationNeeded} while evaluating 20,000 positions per second (740 MIPS on a smartphone) against Deep Blue's (11.38 GFlops) 200 millions per second.
+With a branching factor of $\approxeq 35$ and an average game length of 80 moves \citep{Shannon_1950}, the average game-tree complexity of chess is $35^{80}\approxeq 3.10^{123}$. \citet{Shannon_1950} also estimated the number of possible positions (Shannon number) to be of the order of $10^{43}$. Chess AI needed a little more than just Alpha-beta to win against top human players (not that Checkers could not benefit it!), particularly on 1996 hardware (first win of a computer against a reigning world champion, Deep Blue on Garry Kasparov). Once an AI has openings and ending books (databases to look-up for classical moves), how can we search deeper during the game, or how can we evaluate better a situation? In iterative deepening Alpha-beta (or other search algorithms like Negascout or MTD-f), one needs to know the value of a move at the maximal depth. If it does not correspond to the end of the game, there is a need for a evaluation heuristic. Some may be straight forward, like the resulting value of an exchange in pieces points. But some strategies sacrifice a queen in favor of a more avantageous tactical position or a checkmate, so evaluation heuristics need to take tactical positions into account. In Deep Blue, the evaluation function had 8000 cases, with 4000 positions in the openings book, all learned from 700,000 grandmaster games \citep{DeepBlue}. Nowadays, Chess programs are better than deep blue and generally also search less positions. For instance, Pocket Fritz (HIARCS engine) beats current grandmasters \citep{CitationNeeded} while evaluating 20,000 positions per second (740 MIPS on a smartphone) against Deep Blue's (11.38 GFlops) 200 millions per second.
 
 \subsection{Go, Monte-Carlo Tree Search}
-With an estimated number of legal 19x19 Go positions of $2.081681994 * 10^{170}$ \cite{tromp2006}, and an average branching factor above Chess for gobans above 9x9, Go sets another limit for AI. MoGo \citep{GellyUCT, Gelly2006} introduced Upper Confidence Bounds for Trees (UCT\newglossaryentry{UCT}{name=UCT,description={Upper Confidence Bounds for Trees}}) for Monte-Carlo Tree Search (MCTS\newglossaryentry{MCTS}{name=MCTS,description={Monte-Carlo Tree Search}}) in Go AI successfully (being the best 9x9 and 13x13 Go program and the first to win against a pro on 9x9). The approach of MCTS is to randomly sample in the search tree (which is too big to be searched entirely), instead of systematically expanding the build tree as in Minimax. For that, all we need is to have, for each node $node$ in the search tree, $Q(node)$ the sum of the simulations rewards on all the runs through $node$, and $N(node)$ the visits count of $node$. Algorithm~\ref{alg:mcts} details the MCTS algorithm and Fig.~\ref{fig:mcts} explains the principle.
+With an estimated number of legal 19x19 Go positions of $2.081681994 * 10^{170}$ \cite{tromp2006}, and an average branching factor above Chess for gobans above 9x9, Go sets another limit for AI. MoGo \citep{GellyUCT, Gelly2006} introduced Upper Confidence Bounds for Trees (UCT\newglossaryentry{UCT}{name=UCT,description={Upper Confidence Bounds for Trees}}) for Monte-Carlo Tree Search (MCTS\newglossaryentry{MCTS}{name=MCTS,description={Monte-Carlo Tree Search}}) in Go AI successfully (being the best 9x9 and 13x13 Go program and the first to win against a pro on 9x9). The approach of MCTS is to randomly sample in the search tree (which is too big to be searched entirely), instead of systematically expanding the build tree as in Minimax. For that, all we need is to have, for each node $node$ in the search tree, $Q(node)$ the sum of the simulations rewards on all the runs through $node$, and $N(node)$ the visits count of $node$. Algorithm~\ref{alg:mcts} details the MCTS algorithm and Fig.~\ref{fig:MCTS} explains the principle.
 \begin{algorithm}
 \caption{Monte-Carlo Tree Search algorithm. 
 \textsc{ExpandFrom}$(node)$ is the tree (growing) policy function on how to select where to search from situation $node$ (exploration or exploitation?) and how to expand the game tree (deep-first, breadth-first, heuristics?) in case of untried actions. \textsc{Evaluate}$(tree)$ may have 2 behaviors: \textbf{1.} if $tree$ is complete (terminal), it gives an evaluation according to games rules, \textbf{2.} if $tree$ is incomplete, it has to give an estimation, either through simulation (for instance play at random) or an heuristic. \textsc{BestChild} picks the action that leads to the better value/reward from $node$. \textsc{Merge}$(node, tree)$ changes the existing tree (with $node$) to take all the $Q(\nu) \forall \nu \in tree$ (new) values into account. If $tree$ contains new nodes (there were some exploration), they are added to $node$ at the right positions.}
@@ -545,7 +545,7 @@ UCT specializes MCTS in that it specifies \textsc{ExpandFrom} (as in Algorithm.~
 
 \citet{BanditBased} showed that the probability of selecting sub-optimal actions converges to zero and so that UCT MCTS converges to the minimax tree and so is optimal. Empirically, they found several convergences rates of UCT to be in $O(b^{d/2})$, as fast as Alpha-beta tree search, and able to deal with larger problems (with some error). For a broader survey on MCTS methods, see \citep{MCTSsurvey}.
 
-With Go, we see clearly that humans do not play the game using the same approach. Top Go players can reason about their opponent's move, but they seem to be able to do it in a qualitative manner, at another scale. So, while tree search algorithms help a lot for tactical play in Go, particularly by integrating openings/ending knowledge, pattern macthing algorithms are not yet at the strategical level of human players. When a MCTS algorithm learns something, it stays at the level of possible actions (even considering positional hashing), while the human player seems to be able to generalize, and re-use heuristics learned at another level.
+With Go, we see clearly that humans do not play abstract strategy games using the same approach. Top Go players can reason about their opponent's move, but they seem to be able to do it in a qualitative manner, at another scale. So, while tree search algorithms help a lot for tactical play in Go, particularly by integrating openings/ending knowledge, pattern macthing algorithms are not yet at the strategical level of human players. When a MCTS algorithm learns something, it stays at the level of possible actions (even considering positional hashing), while the human player seems to be able to generalize, and re-use heuristics learned at another level.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
@@ -577,7 +577,7 @@ Battleship is a game with few intensional uncertainty (no randomness), particula
 \subsection{Poker}
 Poker\footnote{We deal mainly with the \textit{Limit Hold'em} variant of Poker.} is a zero-sum (without the house's cut), imperfect information and stochastic betting game. Poker ``AI'' is as old as game theory \citep{nash51a}, but the research effort for human-level Poker AI started in the end of the 90s. The interest for Poker AI is such that there are annual AAAI computer Poker competitions\footnote{\url{http://www.computerpokercompetition.org/}}. \citet{Billings98pokeras} defend Poker as an interesting game for decision-making research, %combining imperfect information with randomness. The
 because the task of building a good/high level Poker AI (player) entails to take decisions with incomplete information about the state of the game, incomplete information about the opponents' intentions, and model their thoughts process to be able to bluff efficiently. A Bayesian network can combine these uncertainties and represent the player's hand, the opponents' hands and their playing behavior conditioned upon the hand, as in \citep{Korb99bayesianpoker}. A simple ``risk evaluating'' AI (folding and raising according to the outcomes of its hands) will not prevail against good human players. Bluffing, as described by \citet{VonNeumannMorgenstern1944} ``to create uncertainty in the opponent's mind'', is an element of Poker which needs its own modeling. \citet{Southey05bayesbluff} also give a Bayesian treatment to Poker, separating the uncertainty resulting from the game (draw of cards) and from the opponents' strategies, and focusing on bluff. From a game theoretic point of view, Poker is a \textit{Bayesian game}, which needs extensive form modeling (possible game trees along with the agents' information state). \citet{Koller97representationsand} used the sequence form transformation, the set of realization weights of the sequences of moves, %of extensive form with informations sets,
-to search over the space of randomized strategies for Bayesian games automatically. Unfortunately, strict game theoretic optimal strategies for full-scale Poker are not tractable this way, two players Texas Hold'em having a state space $\approxeq O(10^18)$. \citet{BillingsBDHSSS03} approximated the game-theoretic optimal strategies through abstraction and are able to beat strong human players (not world-class opponents).
+to search over the space of randomized strategies for Bayesian games automatically. Unfortunately, strict game theoretic optimal strategies for full-scale Poker are not tractable this way, two players Texas Hold'em having a state space $\approxeq O(10^{18})$. \citet{BillingsBDHSSS03} approximated the game-theoretic optimal strategies through abstraction and are able to beat strong human players (not world-class opponents).
 
 Poker is a game with both extensional and intentional uncertainty, from the fact that the opponents' hands are hidden, the chance in the draw of the cards, the opponents' model about the game state and their model about our mental state(s) (leading our decision(s)). While the iterated reasoning (``if she does A, I can do B'') is (theoretically) finite in Chess due to perfect information, it is not the case in Poker (``I think she thinks I think...''). The combination of different sources of uncertainty (as in Poker) makes it complex to deal with it (somehow, the sources of uncertainty must be separated), and we will see that both these sources of uncertainties arise (at different levels) in video games.
 
@@ -595,7 +595,11 @@ First person shooters gameplay consist in controlling an agent in first person v
     \item various gather and escort (including hostage or payload), in which one team has to find and escort something/somebody to another location.
     \item duel/tournament/deathmatch, 1 vs 1 matches (mainly ``fast FPS'').
 \end{itemize}
-Some games allow for instant (or delayed, but asynchronous to other players) respawn, most likely in the ``fast FPS'' (Quake-like) games, while in others, the player has to wait for the end of the round to respawn. In some games, weapons, ammunitions, health, armor and items can be picked on the ground (mainly ``fast FPS''), in others, they are fixed at the start or can be bought in game (with points). The map design can make the gameplay vary a lot, between indoors, outdoors, arena-like or linear maps. According to maps and gameplay styles, combat may be well-prepared with ambushes, sniping, indirect (zone damages), or close proximity (even to fist weapons). Most often, there are strong tactical positions and effective ways to attack them. While ``skill'' (speed of the movements, accuracy of the shots) is easy to emulate for an AI, team-play is much harder for bots and it is always a key ability. Team-play is the combination of distributed evaluation of the situation, planning and distribution of specialized tasks. Very high skill also requires integrating over enemy's tactical plans and positions to be able to take indirect shots (grenades for instance) or better positioning (coming from their back), which is hard for AI too. An example of that is that very good human players consistently beat the best bots (nearing 100\% accuracy) in Quake III (which is an almost pure skill ``fast FPS''), because they take advantage of being seen just when their weapons reload or come from their back. Finally, bots which equal the humans by a higher accuracy are less fun to play with: it is a frustrating experience to be shot across the map, by a bot which was stuck in the door because it was pushed out of its trail.
+From these various game types, the player has to maximize its damage (or positive actions) output while staying alive. For that, she will navigate her avatar in an uncertain environment (partial information and other players intentions) and shoot (or not) at targets with specific weapons.
+
+Some games allow for instant (or delayed, but asynchronous to other players) respawn, most likely in the ``fast FPS'' (Quake-like) games, while in others, the player has to wait for the end of the round to respawn. In some games, weapons, ammunitions, health, armor and items can be picked on the ground (mainly ``fast FPS''), in others, they are fixed at the start or can be bought in game (with points). The map design can make the gameplay vary a lot, between indoors, outdoors, arena-like or linear maps. According to maps and gameplay styles, combat may be well-prepared with ambushes, sniping, indirect (zone damages), or close proximity (even to fist weapons). Most often, there are strong tactical positions and effective ways to attack them. 
+
+While ``skill'' (speed of the movements, accuracy of the shots) is easy to emulate for an AI, team-play is much harder for bots and it is always a key ability. Team-play is the combination of distributed evaluation of the situation, planning and distribution of specialized tasks. Very high skill also requires integrating over enemy's tactical plans and positions to be able to take indirect shots (grenades for instance) or better positioning (coming from their back), which is hard for AI too. An example of that is that very good human players consistently beat the best bots (nearing 100\% accuracy) in Quake III (which is an almost pure skill ``fast FPS''), because they take advantage of being seen just when their weapons reload or come from their back. Finally, bots which equal the humans by a higher accuracy are less fun to play with: it is a frustrating experience to be shot across the map, by a bot which was stuck in the door because it was pushed out of its trail.
 
 \subsubsection{State of the art}
 
@@ -626,7 +630,7 @@ Single-player FPS campaigns immersion could benefit from more realistic bots and
 \section{(MMO)RPG}
 
 \subsection{Gameplay and AI}
-Inspired directly by tabletop and live action role-playing games (Dungeon \& Dragons) as new tools for the game masters, it is quite natural for the RPG to have ended up on computers. The firsts digital RPG were text (Wumpus) or ASCII-art (Rogue, NetHack) based. The gameplay evolved considerably with the technique. Nwadays, what we will call a role playing game (RPG) consist in the incarnation by the human player of an avatar (or a team of avatars) with a class: warrior, wizard, rogue, priest, etc., having different skills, spells, items, health points, stamina/energy/mana (magic energy) points. Generally, the story brings the player to solve puzzles and fight. In a fight, the player has to take decisions about what to do but plays a lesser role in performing the action than in a FPS game. In a FPS, she has to move the character (egocentrically) and aim to shoot; in a RPG, she has to position itself (often way less precisely and continually) and just decide which ability to use on which target (or a little more for ``action RPG''). Classic RPG include: Fallout, The Elders Scrolls (from Arena to Skyrim), Secret of Mana, Zelda, Final Fantasy, Diablo, Baldur's Gate. A MMORPG (e.g. World of Warcraft, AION or EVE Online) consist in a role-playing game in a persistent, multi-player world. There usually are players-run factions fighting each others’ (PvP) and players versus environment (PvE) situations. PvE is a cooperative task in which human players fight together against different NPC, and in which the cooperation is at the center of the gameplay. PvP is also a cooperative task, but more policy and reactions-based than a trained and learned choregraphy as for PvE. We can distinguish three types (or modality) of NPC which have different game AI needs:
+Inspired directly by tabletop and live action role-playing games (Dungeon \& Dragons) as new tools for the game masters, it is quite natural for the RPG to have ended up on computers. The firsts digital RPG were text (Wumpus) or ASCII-art (Rogue, NetHack) based. The gameplay evolved considerably with the technique. Nowadays, what we will call a role playing game (RPG) consist in the incarnation by the human player of an avatar (or a team of avatars) with a class: warrior, wizard, rogue, priest, etc., having different skills, spells, items, health points, stamina/energy/mana (magic energy) points. Generally, the story brings the player to solve puzzles and fight. In a fight, the player has to take decisions about what to do but plays a lesser role in performing the action than in a FPS game. In a FPS, she has to move the character (egocentrically) and aim to shoot; in a RPG, she has to position itself (often way less precisely and continually) and just decide which ability to use on which target (or a little more for ``action RPG''). Classic RPG include: Fallout, The Elders Scrolls (from Arena to Skyrim), Secret of Mana, Zelda, Final Fantasy, Diablo, Baldur's Gate. A MMORPG (e.g. World of Warcraft, AION or EVE Online) consist in a role-playing game in a persistent, multi-player world. There usually are players-run factions fighting each others’ (PvP) and players versus environment (PvE) situations. PvE is a cooperative task in which human players fight together against different NPC, and in which the cooperation is at the center of the gameplay. PvP is also a cooperative task, but more policy and reactions-based than a trained and learned choregraphy as for PvE. We can distinguish three types (or modality) of NPC which have different game AI needs:
 \begin{itemize}
     \item world/neutral/civilian NPC: gives quests, takes part in the world's or game's story, talks,
     \item ``mob''/hostile NPC that the player will fight, 
@@ -638,166 +642,7 @@ While immobile neutral NPC are bad, acting strangely is sometimes worse for the 
 
 Methods used in FPS are also used in RPG. The needs are sometimes a little different for RPG games, for instance to have interruptible and/or modal behaviors, along with stronger story-telling capabilities \citep{kline2009,riedl11}. Behavior multi-queues \citep{Cutumisu09} resolve the problems of having resumable, collaborative, real-time and parallel behavior. \citet{kline2011} used an AI director to adapt the difficulty of Dark Spore to the performance of the player in real-time.
 
-\subsubsection{Modeling of a Bayesian MMORPG player}
-
-We will now present a model of a player with the Bayesian programming framework \citep{SYNNAEVE:MMORPG}. It deals only with a sub-task of a global AI for autonomous NPC. The problem that we try to solve is: how do we choose which skill to use and on which target in a PVE battle? Possible targets are all our allies and foes. Possible skills are all that we know, we will just try and get a distribution over target and skills and pick the most probable combination that is yet possible to achieve (enough energy/mana, no cooldown). For that, we first choose what should be the target given all surrounding variables: is an ally near death that he should be healed, which foe should we focus our attacks on? Once we have the distribution over possible targets, we search the distribution about our skills, pondered by the one on targets. We put extra care in having the same input variables as a human player to keep consistent with our goal of modeling a human. However, some variables can be things that humans subconsciously interpolate from perceptions.
-
-\begin{center}
-Variables
-\end{center}
-
-A very simple set of variables is as follows. We have the $n$ characters as possible targets; each of them has a lot of bound variables. Health/Hit points ($HP$) are discretized in 10 levels, from the lower to the higher. Distance ($D$) is discretized in 4 zones around the robot character: contact where it can attack with a contact weapon and then to the further for which we have to move even for shooting the longest distance weapon/spell. Ally ($A$) is a Boolean variable mentioning if character $i$ is allied with the robot character. Delta hit points ($\Delta HP$) is a 3-valued interpolated value from the previous few seconds of fight that informs about the $i$th character getting wounded or healed (or nothing). Imminent death ($ID$) is also an interpolated value that encodes $HP$, $\Delta HP$ and incoming attacks/attackers. This is a Boolean variable saying if the $i$th character if going to die anytime soon. This is an example of what we consider that an experienced human player will infer automatically from the screen and notifications. Class ($C$), simplified over 4 values, gives the type of the $i$th character: a Tank can take a lot of damages and taunt enemies, a Contact damager can deal huge amounts of damage with contact weapons (rogue, barbarian...), Ranged stands for the class that deals damages from far away (hunters, mages...) and Healers are classes that can heal (in considerable amounts). The Resist variable is the combination of binary variables of resistance to certain types of (magical) damages into one variable. With 3 possible resistances we get ($2^3$) 8 possible values. For instance ``$R_i=FireNat$'' means that the $i$th character resists fire and nature-based damages. Armor (physical damages) could have been included, and the variables could have been separated. The skill variable takes here all the possible skills for the given character, and not only the available ones to cast at the moment to be able to have reusable probability tables (i.e. learnable tables).
-
-\begin{itemize}
-    \item Target: $T \in \{t_1\dots t_n\}$
-    \item Hit Points: $HP_1 \dots HP_n$ s.t. $HP_i \in [0\dots 9]$
-    \item Distance: $D_1 \dots D_n$ s.t. $D_i \in \{Contact, Close, Far, VeryFar\}$
-    \item Ally: $A_1 \dots A_n$ s.t. $A_i \in \{true, false\}$
-    \item Derivative Hit Points: $\Delta HP_1 \dots \Delta HP_n$ s.t. $\Delta HP_i \in \{-, 0, +\}$
-    \item Imminent Death: $ID_1 \dots ID_n$ s.t. $ID_i \in \{true, false\}$
-    \item Class: $C_1 \dots C_n$ s.t. $C_i \in \{Tank, Contact, Ranged, Healer\}$
-    \item Resists: $R_1 \dots R_n$ s.t. $R_i \in \{Nothing, Fire, Ice, Nature, FireIce, IceNat, FireNat, All\}$
-    \item Skill: $S \in \{Skill_1 \dots Skill_m\}$
-\end{itemize}
-
-\begin{center}
-Decomposition
-\end{center}
-
-\underline{Target selection:} we want to compute the probability distribution on the variable Target ($T$), so we have to consider the joint distribution with all variables on which $T$ is conditionally dependant : $T^{t-1}$ (the previous value of $T$), and all the variables on each character (except for Resists). The probability of a given target depends on the previous one (it encodes the previous decision and so all previous states). $HP_i$ depends on the facts that the $i$th character is an ally, on his class, and if he is a target. Such a conditional probability table should be learned, but we can already foresee that a targeted ally with $C=tank$ would have a high probability of having low $HP$ because taking it for target means that we intend to heal him. $D_i$ is more probable to be far if $A_i=false$ and $T=i$ (our kind of druid attack with ranged spells). The probability of the $i$th character being an ally depends on if we target allies of foes more often. The probability that $\Delta HP_i=-$ is higher for $A_i=false$ and $C_i=healer$ and $T=i$ and also for $A_i=true$ and $C_i=tank$. As for $A_i$, the probability of $ID_i$ is driven by our soft evidence of targeting characters near death. The probability of $C_i$ is driven by the distribution of foes and allies population, tuned with a soft evidence of which classes our druid human player will target more frequently. Each and every time, if $T \neq i$, the probability of the left variable is given according to the uniform distribution. For the task of computing the distribution on Target, the joint distribution is simplified (by conditional independence of variables) as:
-
-\begin{eqnarray*}
-P(T, T^{t-1}, HP_{1:n}, D_{1:n}, A_{1:n}, \Delta HP_{1:n}, ID_{1:n}, C_{1:n}) = \\
-P(T^{t-1}).P(T|T^{t-1}).\prod_{i=1}^n [ P(HP_i | A_i, C_i, T).P(D_i | A_i, t).P(A_i | T)\\
-P(\Delta HP_i | A_i, C_i, T).P(C_i | A_i, T).P(ID_i | T) ]
-\end{eqnarray*}
-
-\underline{Skill selection:} As previously for targets, we are interested in the conditional probabilities of each character's state variables given other state variables and given $T$ and $S$. If $T=i$, $S=big\_heal$, $C_i=tank$ and $A_i=true$, the probability that $HP_i=0$ or $1$ (very low) is very high. Some skills have optimal ranges to be used at and so $P(D_i)$ will be affected. $A_i=true$ will have a probability of 1.0 of $S=any\_heal$ as will $A_i=false$ have a probability of 1.0 is $S=any\_damage$. The probability of $\Delta HP_i=-$ will top when $S=heal$ for an ally. The one of $R_i=nature$ for $S=nature\_damage$ will be very low. The probability of $ID_i$ will be high for $T=i$ and $S=big\_heal$ or $S=big\_damage$ (depending on whether $i$ is an ally or not). For the task of computing the distribution on Skill we use:
-
-\begin{eqnarray*}
-P(S, T, HP_{1:n}, D_{1:n}, A_{1:n}, \Delta HP_{1:n}, ID_{1:n}, C_{1:n}, R_{1:n}) = \\
-P(S).P(T).\prod_{i=1}^n [ P(HP_i | A_i, C_i, S, T).P(D_i | A_i, S, T).P(A_i | S, T) \\
-        P(\Delta HP_i | A_i, S, T). P(R_i | C_i, S, T). P(C_i | A_i, S, T) ]
-\end{eqnarray*}
-
-\begin{center}
-Parameters and Identification
-\end{center}
-
-\begin{itemize}
-    \item $P(T^{t-1})$ Unknown and unspecified (uniform).
-    \item $P(T|T^{t-1})$ Table, specified with a ``prior'' to prevent switching targets too often or simply learned. Uniform if there is no previous target.
-    \item $P(S)$ Unknown and so unspecified, it could be a prior.
-    \item $P(Left\_Value | Right\_Value)$ All others are \textit{learned tables}.
-\end{itemize}
-
-If there were only perceived variables, learning the right conditional probability tables would just be counting and averaging. However, some variables encode combinations of perceptions and passed states. We could learn such parameters through the EM algorithm but we propose something simpler for the moment as our ``not directly observed variables'' are not complex to compute, we compute them from perceptions as the same time as we learn. In the following Results part, we did not apply learning but instead manually specified the probability tables.
-
-\begin{center}
-Questions
-\end{center}
-
-In any case, we ask our model:\\
-$$P(S,T|hp_{1:n},d_{1:n}, a_{1:n}, \Delta hp_{1:n}, id_{1:n}, c_{1:n}, r_{1:n})$$ 
-Which means that we want to know the distribution on $S$ and $T$ knowing all the state variables. We then choose to do the highest scoring combination of $S \wedge T$ that is available (skills may have cooldowns or cost more mana/energy that we have available).
-
-As (Bayes rule) $P(S,T) = P(S|T).P(T)$, to decompose this question, we can ask:
-$$P(T | hp_{1:n},d_{1:n}, a_{1:n}, \Delta hp_{1:n}, id_{1:n}, c_{1:n})$$ 
-Which means that we want to know the distribution on $T$ knowing all the relevant state variables, followed by (with the newly computed distribution on $T$):
-$$P(S | T, hp_{1:n},d_{1:n}, a_{1:n}, \Delta hp_{1:n}, id_{1:n}, c_{1:n}, r_{1:n})$$ 
-in which we use this distribution on $T$ to compute the distribution on $S$ with:
-$$P(S=skill_1 | \dots) = \sum_T P(S=skill_1 | T, \dots).P(T)$$
-We here choose to sum over all possible values of T. Note that we did not ask:\\
-$P(S|T=most\_probable , \dots)$ but computed instead
-$$\sum_T P(S|T,hp_{1:n},d_{1:n}, a_{1:n}, \Delta hp_{1:n}, id_{1:n}, c_{1:n}, r_{1:n})$$
-This computation has a high complexity (particularly when the sum has a lot of term, i.e. with a lot of targets), so we could choose not to do the sum and use and instantiate ``most probable values'', for instance of Target, but there we would make a choice earlier and so lose information. There are possibly good combinations of $S$ and $T$ for a value of $T$ that is not the most probable one. This downside may be so hard that we may want to reduce the complexity of computation by simplifying our model or its computation to be able to sum. We propose a solution in the discussion.
-
-\begin{center}
-Example
-\end{center}
-
-\begin{figure}[h!]
-\begin{center}
-\includegraphics[width=4.7cm]{images/wow_fight1.png} \hspace{1cm} \includegraphics[width=4.7cm]{images/wow_fight2.png}
-\caption{Example setup A (left) and B (right), 2 foes, 2 “tanks”, players with stars can heal allies, players with dotted lines will soon die ($ID=true$).}
-\label{fig:wow_fight}
-\end{center}
-\end{figure}
-
-This model has been applied to a simulated situation with 2 foes and 4 allies while our robot took the part of a ``druid'', a versatile class that can cast spells to do direct damages, damages over time, buff (enhancements), debuff, crowd-control, heal and heal over time. We display a schema of this situation in Fig.~\ref{fig:wow_fight} The arrows indicate foes attacks on allies. The larger the ring is, the more health points the characters have. MT stands for ``main tank'', Add for ``additional foe''. We worked with the skills corresponding to a Druid. HOT stands for heal over time, DOT for damage over time, ``abol'' for abolition and ``regen'' for regeneration, a ``buff'' is an enhancement and a ``dd'' is a direct damage. ``Root'' is a spell which disables the target to move for a short period of time, useful to flee or to put some distance between the enemy and the druid to cast attack spells. ``Small'' spells are usually faster to cast than ``big'' spells.
-
-\begin{eqnarray*}
-Skills \in \{ small\_heal, big\_heal, HOT, poison\_abol, malediction\_abol,\\
-            buff\_armor, regen\_mana, small\_dd, big\_dd, DOT, debuff\_armor, root \}
-\end{eqnarray*}
-
-We did not do the ``Identification'' part, which consists in learning the probability tables from observations. To keep things simple and because we wanted to analyze a little the model, we worked with manually defined probability tables. So we introduced ``soft evidences'', indeed parameters that will modify the conditional probability tables, which we will change to watch their effects. For instance the ``soft evidence that a selected target is foe'' and the ``soft evidence that a selected target will soon die ($ID=true$)'' that will consequently modify the probability tables of $P(A_i)$ and $P(ID_i)$ respectively. We set the probability to target the same target as before to 0.4 and the previous target to ``Lich'' so that the prior probability for all other 6 targets is 0.1 (4 times more chances to target the Lich than any other character). We set the soft evidence $P(A_i=false|T=i)$ to 0.6. This means that our robotic druid is mainly a damage dealer and not a healer. For the ``target selection'' model, we can see on Fig.~\ref{fig:wow_target} (left) that the evolution from selecting the main foe ``Lich'' to selecting the ally ``Tank'' is driven by the increase of ``soft evidence that a selected target will soon die'' and our robot eventually moves on targeting his(its) ``Tank'' ally (to heal him). We can see on Fig.~\ref{fig:wow_target} (right) that, at some point, the robotic Druid prefers to kill the dying add to save his ally Tank instead of healing him. Note that there is no variable showing the relation between ``Add'' and ``Tank'' (the first is attacking the second, who is taking damages from the first), but this is under consideration for a future, more complete, model.
-
-\begin{figure}[h!]
-\begin{center}
-\includegraphics[width=7cm]{images/wow_distrib_target1.png} \includegraphics[width=7cm]{images/wow_distrib_target2.png}
-\caption{Left: probabilities of targets depending on the soft evidence that a target is dying with setup A. Right: same, with setup B.}
-\label{fig:wow_target}
-\end{center}
-\end{figure}
-
-For the ``skill selection'' model, we can see on Fig.~\ref{fig:wow_skill} the influence of $ID_i$ on Skill which is coherent with the Target distribution: either, in setup A (left), we evolve with the increase of $P(ID_i=true|Target=i)$ to choose to heal our ally or, in setup B (right), to deal direct damage (and hopefully, kill) the foe attacking him. As you can see here, when we have the highest probability to attack the main enemy (``Lich'', when $P(ID_i=true|Target=i)$ is low), who is a $C=tank$, we get a high probability for the Skill $debuff\_armor$. We only cast this skill if the debuff is not already present, so perhaps that we will cast $small\_dd$ instead. To conclude this example, Fig.~\ref{fig:wow_target_skill} shows the distribution on $P(T,S|all\_status\_variables)$ with setup A and the probability to target the previous target (set to ``Lich'' here) only $\approxeq 2$ times greater than any other character (so that we focus less on the same character), soft evidences $P(ID_i=true|Target=i)=0.9$ and $P(A_i=false|Target=i)=0.6$. In a greedy way, if the first couple $(T,S)$ is already done or not available, we take the second.
-
-\begin{figure}[h!]
-\begin{center}
-\includegraphics[width=7cm]{images/wow_distrib_skill1.png} \includegraphics[width=7cm]{images/wow_distrib_skill2.png}
-\caption{Left: Probabilities of skills depending on the soft evidence that a target is dying with setup A. Right: same, with setup B.}
-\label{fig:wow_skill}
-\end{center}
-\end{figure}
-
-\begin{figure}[h!]
-\begin{center}
-\includegraphics[width=11cm]{images/wow_distrib_target_skill.png}
-\caption{Log-probabilities of Target and Skill with setup A, and $P(ID|Target)=0.9, P(A|Target)=0.6$}
-\label{fig:wow_target_skill}
-\end{center}
-\end{figure}
-
-\begin{center}
-Discussion
-\end{center}
-
-This model has to be applied in a real MMORPG, out of its simulated sandbox, to reveal all its shortcomings and be updated. We can already think of some future difficulties, for instance there is a possibility for many games that the Skill variable will be very big and that it will imply a too high computational cost. For that concern, we propose to clusterize the skills in global skills ($GS$) (as it can be seen in the description of the example). This approach to break down the complexity of computation is general and can be used with other variables. The skill variable $S$ can then be the subset of skills corresponding to the clustering of $GS$, for instance we could have:
-
-$$GS \in \{SkillHeal, SkillBuff, SkillAttack, SkillDebuff\}$$
-$$S = SkillHeal \in \{skill_1 \dots skill_j\}$$
-$$S = SkillBuff \in \{skill_{j+1} \dots skill_k\}$$
-$$S = SkillAttack \in \{skill_{k+1} \dots skill_l\}$$
-$$S = SkillDebuff \in \{skill_{l+1} \dots skill_m\}$$
-
-Global skills joint distribution: as for the “Skill joint distribution” without Resists. It will take advantage of splitting between allies and foes.
-
-\begin{eqnarray*}
-P(GS,T,HP_{1:n},D_{1:n},A_{1:n},\Delta HP_{1:n}, ID_{1:n}, C_{1:n}) = \\
-P(GS).P(T).\prod_{i=1}^n [ P(HP_i | A_i, C_i, GS, T).P(D_i | A_i, GS, T).P(A_i | GS, T)\\
-                        .P(\Delta HP_i | A_i, GS, T).P(ID_i | GS, T).P(C_i | A_i, GS, T)]
-\end{eqnarray*}
-
-Specialized skills joint distribution:
-
-\begin{eqnarray*}
-P(S,GS,T,HP_{1:n},D_{1:n},A_{1:n},\Delta HP_{1:n}, ID_{1:n}, C_{1:n}, R_{1:n}) = \\
-P(S|GS).P(T).\prod_{i=1}^n [ P(HP_i | A_i, C_i, S, T).P(D_i | A_i, S, T).P(A_i | S, T)\\
-                        .P(\Delta HP_i | A_i, S, T).P(R_i | C_i, S, T).P(ID_i | S, T).P(C_i | A_i, S, T)]
-\end{eqnarray*}
-for the corresponding S. So that we can ask the question:
-$$P(S | GS, T, hp_{1:n}, d_{1:n}, a_{1:n}, \Delta hp_{1:n}, id_{1:n}, c_{1:n}, r_{1:n})$$
-
-that will trigger $P(GS|T,\dots)$, itself triggering $P(T|all\_state\_variables)$. Choosing to do with or without the intermediate $GS$ computation, regrouping abilities by types, is mainly a question of computational time.
-
-The choice of the skill or ability to use and the target on which to use it puts hard constraints on every others decisions the autonomous agent has to take to perform its ability action. Thus, such a model shows that:
-\begin{itemize}
-    \item cooperative behavior is not too hard to incorporate in a decision (instead of being hard-coded),
-    \item it can be learned, either from observations of a human player or by reinforcement (exploration),
-    \item it is computationally tractable (for use in all games), the inference is just a series of ``probabilistic \textit{if}s'',
-\end{itemize}
-Moreover, using this model on another agent than the once controlled by the AI can give a prediction on what it will do, resulting in human-like, adaptive, playing style.
+XXX
 
 \subsubsection{Challenges}
 
@@ -809,21 +654,22 @@ There are mainly two axes for RPG games to bring more fun: interest in the game 
 \end{itemize}
 Both believability and performance require to deal with uncertainty of the game environment. RPG AI problem spaces are not tractable for a frontal (low-level) search approach nor are there few enough situations to consider to just write a bunch of script and puppeteer artificial agents at any time.
 
-% Challenges for RPG games AI 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
 \section{RTS}
+As RTS are the central focus on this thesis, we will discuss specific problems and solution more in depth in their dedicated chapters, simply brushing here the underlying major research problems.
 
 \subsection{Gameplay and AI}
 RTS gameplay consist in gathering resources, building up an economic and military power through growth and technology, to defeat your opponent by destroying his base, army and economy. It requires dealing with strategy, tactics, and units management (often called micro-management) in real-time. Strategy consist in what will be done in the long term as well as predicting what the enemy is doing. It particularly deals with the economy/army trade-off estimation, army composition, long-term planning. The three aggregate indicators for strategy are aggression, production, and technology. The tactical aspect of the gameplay is dominated by military moves: when, where (with regard to topography and weak points), how to attack or defend. This implies dealing with \textit{extensional} (what the invisible units under ``fog of war'' are doing) and \textit{intentional} (what will the visible enemy units do) uncertainty. Finally, at the actions/motor level, micro-management is the art of maximizing the effectiveness of the units \textit{i.e.} the damages given/damages received ratio. For instance: retreat and save a wounded unit so that the enemy units would have to chase it either boosts your firepower or weakens the opponent's. Both \citep{Human-LevelAIKillerApplication} and \cite{gunn} propose that RTS AI is one of the most challenging genres, because all levels in the hierarchy of decisions are of importance.
 %%% incompleteness of information yielding uncertainty
 
-In chronological order, RTS include (but are not limited to): Ancient Art of War, Herzog Zwei, Dune II, Warcraft, Command \& Conquer, Warcraft II, Command \& Conquer: Red Alert, Total Annihilation, Age of Empires, StarCraft, Age of Empires II, Tzar, Cossacks, Homeworld, Battle Realms, Ground Control, Spring Engine: Balanced Annihilation, Warcraft III, Total War, Warhammer 40k, Sins of a Solar Empire, Supreme Commander, StarCraft II. XXX ???
+In chronological order, RTS include (but are not limited to): Ancient Art of War, Herzog Zwei, Dune II, Warcraft, Command \& Conquer, Warcraft II, C\&C: Red Alert, Total Annihilation, Age of Empires, StarCraft, Age of Empires II, Tzar, Cossacks, Homeworld, Battle Realms, Ground Control, Spring Engine games, Warcraft III, Total War, Warhammer 40k, Sins of a Solar Empire, Supreme Commander, StarCraft II. 
+
+XXX ???
 
 \subsubsection{State of the art}
-\citet{Buro04callfor} called for AI research in RTS games and identified the technical challenges as adversarial planning under uncertainty, learning and opponent modeling, and spatial and temporal reasoning. We will discuss specific problems and solution more in depth in their dedicated chapters, brushing here the underlying major research problems.
- 
+\citet{Buro04callfor} called for AI research in RTS games and identified the technical challenges as adversarial planning under uncertainty, learning and opponent modeling, and spatial and temporal reasoning.  
+
 On planning under uncertainty, \citet{LTW} used case-based reasoning (CBR) to perform dynamic plan retrieval extracted from domain knowledge in Wargus (Warcraft II clone). \citet{Ontanon2007} based their real-time case-based planning (CBP) system on a plan dependency graph which is learned from human demonstration in Wargus. In \citep{Mishra2008,Ontanon2010,metalevelbehavioradaptrts}, they used a knowledge-based approach to perform situation assessment to use the right plan, and revise it (integrating learning, planning, and problem solving in CBR), performing runtime adaptation by monitoring its performance. \citet{Trusty2011} used a genetic-algorithm inspired method to mix and optimize existing expert plan, also in Wargus. \citet{Chung05} adapted Monte-Carlo tree search to planning in RTS games and applied it to a capture-the-flag mod of Open RTS. \citet{Balla} applied UCT (MCTS algorithm) to tactical assault planning in Wargus. Reactive planning and goal-driven autonomy (that is, find the more relevant goal to follow in unknown situations) are studied in \citep{Weber2010cr,WeberCIG10}. \citet{Churchill2011} used abstractions and heuristics to produce a real-time build-order planner. %\citet{CadenaG11} used fuzzy CBR for strategic and tactical planning.
 %\citep{Weber2010qf}
 
