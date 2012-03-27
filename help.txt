@@ -1,4 +1,4 @@
-Natbib commands
+Natbib commands:
 Citation commandOutput
 \citet{goossens93}    Goossens et al. (1993)
 \citep{goossens93}    (Goossens et al., 1993)
@@ -10,3 +10,6 @@ Citation commandOutput
 \citeyearpar{goossens93}    (1993)
 \citealt{goossens93}    Goossens et al. 1993
 \citealp{goossens93}    Goossens et al., 1993
+
+Glossary:
+Truc*\newglossaryentry{Truc}{name=Truc,description={lfklakflaksflk laksflkaf}}
