@@ -43,7 +43,7 @@ In combinatorial game theory terms, competitive StarCraft is a zero sum, partial
 \includegraphics[width=13cm]{images/starcraft_bbq_concept.pdf}
 \end{center}
 \label{fig:conceptbbq}
-\caption{Information-centric view of the architecture of the bot, the gray parts perform game actions (as the physical actions of the player on the keyboard and mouse).}
+\caption{Information-centric view of the architecture of the major components of the bot. Arrows are labeled with the information or orders they convey: dotted arrows are convey constraints, double lined arrows convey distributions, plain and simple arrows convey direct information or orders. The gray parts perform game actions (as the physical actions of the player on the keyboard and mouse).}
 \end{figure}
 
 In Fig.~\ref{fig:conceptbbq}, we present the flow of informations between the different inference and decision-making parts of the bot architecture. One can also view this problem as having a good model of one's strategy, one's opponent strategy, and taking decisions. The software architecture that we propose is to have services building and maintaining the model of the enemy as well as our state, and decision-making modules using all this information to give orders to actuators.
