@@ -1,0 +1,90 @@
+\documentclass[a4paper,12pt]{article}
+
+%%%%%%%%%%% Mes packages
+\usepackage{amsfonts, amsmath, amssymb, amstext, latexsym}
+\usepackage{stmaryrd}
+\usepackage{graphicx, epsfig, wrapfig}
+\usepackage{exscale}
+\usepackage{amsbsy}
+\usepackage{amsopn}
+%\usepackage{bbm}
+\usepackage{fancyhdr}
+%\usepackage{here}
+\usepackage[utf8]{inputenc}
+%\usepackage[latin1]{inputenc}
+\usepackage{fullpage}
+\usepackage{url}
+\usepackage{xspace}
+\usepackage{enumerate}
+%\usepackage[english]{babel}
+\usepackage[english]{babel}
+\usepackage{textcomp}
+\usepackage{pdfpages}
+\usepackage{mathrsfs}
+\usepackage{tikz}
+\usetikzlibrary{mindmap,trees}
+% \usepackage{stmaryrd} % mathematical symbols
+\usepackage[T1]{fontenc} % serif: fontenc, palatino, fouriernc, lmodern
+% \usepackage{charter} % sans serif: cmbright, arev, kurier, iwona
+% serif: chancery, concrete, newcent
+\usepackage{ulem}
+
+%%%%%%%%%%% Mes commandes
+\newcommand{\noi}{\noindent}
+\newcommand{\II}{\mbox{\large 1\hskip -0,353em 1}}
+\newcommand{\MR}{\mathcal{R}}
+\newcommand{\RR} {\mbox{I \hskip -0.55 em R}}
+\newcommand{\dx}{\,dx}
+\newcommand{\ito}{,\dotsc,}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Poly}[1]{\mathcal{P}_{#1}}
+\newcommand{\abs}[1]{\left\lvert#1\right\rvert}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newcommand{\pars}[1]{\left(#1\right)}
+\newcommand{\bigpars}[1]{\bigl(#1\bigr)}
+\newcommand{\set}[1]{\left\{#1\right\}}
+\newcommand\web{\begingroup \urlstyle{tt}\Url}
+
+\date{}
+
+\begin{document}
+%%%%%%%%%%% Titre
+\begin{flushright}
+\quad
+\vskip 4pt
+\begin{picture}(15,15)(0,0)
+\multiput(0,0)(0,5){4}{\line(1,0){15}}
+\multiput(0,0)(5,0){4}{\line(0,1){15}}
+\put(2.5,2.5){\circle*{4}}
+\put(7.5,2.5){\circle*{4}}
+\put(12.5,2.5){\circle*{4}}
+\put(12.5,7.5){\circle*{4}}
+\put(7.5,12.5){\circle*{4}}
+\end{picture}
+{\fontsize{16pt}{16} \selectfont \textbf{\\
+Bayesian Programming and Learning\\
+for Multi-Player Video Games: \\
+Application to real-time strategy AI}}
+\vskip 10pt
+Gabriel Synnaeve, University of Grenoble, \\
+under the supervision of Pierre Bessi\`{e}re, CNRS
+\vskip 10pt
+\hrule height 4pt
+\vskip 4pt
+\end{flushright}
+%\end{center}
+%\end{tabular}
+
+This thesis explores the use of Bayesian models in multi-player video games AI, particularly real-time strategy (RTS) games AI. Video games are an in-between of real world robotics and total simulations, as other players are not simulated, nor do we have control over the simulation. RTS games require having strategic (technological, economical), tactical (spatial, temporal) and reactive (units control) actions and decisions on the go. This decisions, made up from incomplete/partial information, also constrains each others. As the actions of players are real-time and simultaneous, dynamic behavior adaptation is key to expert human playing.
+
+We used Bayesian modeling as an alternative to (boolean valued) logic, able to cope with incompleteness of information and (thus) uncertainty. Our claim is that, through pragmatic Bayesian modeling and machine learning, game AI programmers can achieve more adaptable and robust behaviors. %way more efficiently than by scripting (full specification of the behavior) or planning (full specification of the search problem) approaches. 
+Indeed, incomplete specification of the possible behaviors in scripting, or incomplete specification of the possible states in planning/search raise the need to deal with uncertainty. Machine learning helps reducing the complexity of fully specifying such models. 
+We show that Bayesian programming can integrate all kinds of sources of uncertainty (hidden state, intention, stochasticity), through the realization of a fully robotic StarCraft player. Probability distributions are a mean to convey the full extent of the information we have on a problem and can represent by turns: constraints, partial knowledge, state space estimation and incompleteness in the model itself.
+
+Beyond models and their implementations, our contributions are threefolds: machine learning based plan recognition/opponent modeling %for symmetric players
+by using the structure of the domain knowledge, multi-scale decision-making under uncertainty%for multi-scale AI, 
+, and integration of Bayesian models with a real-time control program.
+
+\end{document}
+
