@@ -776,12 +776,27 @@ navigation: $T^t$=go round the block, $T^{t+1}$ -> limited by future position\\
 RTS: cannot switch between Front and Back attacks with the same army at close time-steps\\
 simpler examples?
 
-\subsection{Partial information}
+\subsection{Randomness}
+Randomness can be inherent to the gameplay. In board games and table top role-playing, randomness often comes from throwing dice(s) to decide the outcome of actions. In decision-making theory, this induced stochasticity is dealt with in the framework of a \newacronym{mdp}{MDP}{Markov decision process}\gls{mdp}. A \gls{mdp} is a tuple of $(S,A,T,R)$ with:
+\begin{itemize}
+    \item $S$ a finite set of states
+    \item $A$ a finite set of actions
+    \item $T_a(s,s') = P([S^{t+1}=s']|[S^t=s],[A^t=a])$ the probability that action $a$ in state $s$ at time $t$ will lead to state $s'$ at time $t+1$
+    \item $R_a(s,s')$ the immediate reward for going from state $s$ to state $s'$ with action $a$.
+\end{itemize}
+\gls{mdp} can be solved through dynamic programming or the Bellman value iteration algorithm \citep{CitationNeeded}. In video games, the sheer size of $S$ and $A$ make it in-tractable to use \gls{mdp} directly on the whole AI task, but they are used (in research) either locally or at abstracted levels of decision. Randomness inherent to the process is one of the sources of intentional uncertainty, and we can consider player's intentions in this stochastic framework. Modeling this source of uncertainty is part of the challenge of writing game AI models.
 
+\subsection{Partial observations}
+Partial information is another source of randomness, which is found in shi-fu-mi, poker, \glos{RTS} and \glos{FPS} games, to name a few. We will not go down to the fact that the throwing of the dice seemed random because we only have partial information about its physics, or of the seed of the deterministic random generator that produced its outcome. Here, partial observations refers to the par of the game state which is deliberatively hidden between players (from a gameplay point of view): hidden hands in poker or hidden units in \glos{RTS} games due to the ``fog of war''. In decision-making theory, partial observations are dealt with in the framework of a \newacronym{pomdp}{POMDP}{partially observable Markov decision process}\gls{pomdp}. A \gls{pomdp} is a tuple $(S,A,O,T,\Omega,R)$ with $S,A,T,R$ as in a \gls{mdp} and:
+\begin{itemize}
+    \item $O$ a finite set of observations
+    \item $\Omega$ conditional observations probabilities specifying: $P(O^{t+1}|S^{t+1},A^t)$
+\end{itemize}
+In a \gls{pomdp}, one cannot know exactly which state they are in and thus must reason with a probability distribution on $S$. $\Omega$ is used to update the distribution on $S$ (the belief) uppon taking the action $a$ and observing $o$, we have: $P([S^{t+1}=s']) \propto \Omega(o|s',a).\sum_{s \in S} T_a(s,s').P([S^t=s])$. In game AI, \gls{pomdp} are computationally intractable for most problems, and thus we need to model more carefully (without full $\Omega$ and $T$) the dynamics and the information value.
+% \Omega([O^{t+1}=o]|[S^{t+1}=s'],[A^t=a])
 
 %%%\subsection{Multiplayer}
 %%%\subsection{PvE}
-\subsection{Randomness}
 
 \subsection{Time Constant(s)}
 
