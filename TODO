@@ -2,7 +2,7 @@
 - une entrée de glossaire par jeu
 - une phrase d'intro pour chaque type de jeu
 - dans minimax expliquer b^d
-- s/b^n/b^d => mettre équivalent en puissance de 10
+- b^d => mettre équivalent en puissance de 10
 - have been solved completely -> après avoir parlé de alpha-beta
 - ref negascout et mtd-f
 - préciser b^d pour Go + parler des coups non légaux
