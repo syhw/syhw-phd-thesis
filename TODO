@@ -4,6 +4,5 @@
 - dans minimax expliquer b^d
 - b^d => mettre équivalent en puissance de 10
 - have been solved completely -> après avoir parlé de alpha-beta
-- ref negascout et mtd-f
 - préciser b^d pour Go + parler des coups non légaux
 - paragraphe ce qui se fait en vrai sur apprentissage et expertise dans chaque jeu
