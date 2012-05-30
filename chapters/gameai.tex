@@ -327,8 +327,8 @@ level 3/.style={sibling distance=7mm}
 \subsection{Checkers, Alpha-beta}
 Checkers, Chess and Go are also zero sum, \newglossaryentry{perfectinformation}{name={perfect-information},description={(game) in which all the players have complete knowledge of the (board) state of the game}}\glos{perfectinformation}, \newglossaryentry{partisan}{name={partisan},description={(game) which is not impartial, in which a player can do actions another can not do (move a faction while the other player(s) cannot)}}\glos{partisan}, deterministic strategy game. Theoretically, they all can be solved by exhaustive Minimax. 
 In practice though, it is often intractable: their bounded versions are at least in \textsc{pspace} and their unbounded versions are \textsc{exptime}-hard \citep{GPC}. We can see the complexity of Minimax as $O(b^d)$ with $b$ the average branching factor of the tree (to search) and $d$ the average length (depth) of the game. 
-For Checkers $b \approxeq 8$, but taking pieces is mandatory, resulting in a mean adjusted branching factor of $\approxeq 4$, while the mean game length is 70 resulting in a game tree complexity of $\approxeq 10^{31}$ \citep{allis1994}. It is already too large to have been solved by Minimax alone (on current hardware). From 1989 to 2007, there were artificial intelligences competitions on Checkers, all using at least alpha-beta pruning: a technique to make efficient cuts in the Minimax search tree while not losing optimality. 
-The state space complexity of Checkers is the smallest of the 3 above-mentioned games with $\approxeq 5.10^{20}$ legal possible positions (conformations of pieces which can happen in games). As a matter of fact, Checkers have been (weakly) solved, which means it was solved for perfect perfect play on both sides (and always ends in a draw) \citep{Schaeffer07}. Not all positions resulting from imperfect play have been analyzed. 
+For Checkers $b \approx 8$, but taking pieces is mandatory, resulting in a mean adjusted branching factor of $\approx 4$, while the mean game length is 70 resulting in a game tree complexity of $\approx 10^{31}$ \citep{allis1994}. It is already too large to have been solved by Minimax alone (on current hardware). From 1989 to 2007, there were artificial intelligences competitions on Checkers, all using at least alpha-beta pruning: a technique to make efficient cuts in the Minimax search tree while not losing optimality. 
+The state space complexity of Checkers is the smallest of the 3 above-mentioned games with $\approx 5.10^{20}$ legal possible positions (conformations of pieces which can happen in games). As a matter of fact, Checkers have been (weakly) solved, which means it was solved for perfect perfect play on both sides (and always ends in a draw) \citep{Schaeffer07}. Not all positions resulting from imperfect play have been analyzed. 
 
 Alpha-beta pruning (see Algorithm~\ref{alg:alphabeta}) is a branch-and-bound algorithm which can reduce Minimax search down to a $O(b^{d/2})=O(\sqrt{b^d})$ complexity if the best nodes are searched first ($O(b^{3d/4})$ for a random ordering of nodes). $\alpha$ is the maximum score than we (the maximizing player) are assured to get given what we already evaluated, while $\beta$ is the minimum score than the minimizing player is assured to get. When evaluating more and more nodes, we can only get a better estimate and so $\alpha$ can only increase while $\beta$ can only decrease. %If we find a node for us with an expected value below $\alpha$, we do not have to consider its subtree because it's sub-optimal play. If we find an expected value above $\beta$, it's sub-optimal play for the opponent. 
 \begin{algorithm}
@@ -429,10 +429,10 @@ level 3/.style={sibling distance=7mm}
 Alpha-beta is going to be helpful to search much deeper than Minimax in the same allowed time. The best Checkers program (since the 90s), which is also the project which solved Checkers \citep{SchaefferBBKMLLS07}, Chinook, has openings and end-game (for lest than eight pieces of fewer) books, and for the mid-game (when there are more possible moves) relies on a deep search algorithm. So, appart for the beginning and the ending of the game, for which it plays by looking up a database, it used a search algorithm. As Minimax and Alpha-beta are depth first search heuristics, all programs which have to answer in a fixed limit of time use \textit{iterative deepening}, a technique which consists in fixing limited depth which will be considered maximal and evaluating this position. As it does not relies in winning moves at the bottom, because the search space is too big in $branching^{depth}$, we need moves evaluation heuristics. We then iterate on growing the maximal depth for which we consider moves, but we are at least sure to have a move to play in a short time (at least the greedy depth 1 found move).
 
 \subsection{Chess, Heuristics}
-With a branching factor of $\approxeq 35$ and an average game length of 80 moves \citep{Shannon_1950}, the average game-tree complexity of chess is $35^{80}\approxeq 3.10^{123}$. \citet{Shannon_1950} also estimated the number of possible (legal) positions to be of the order of $10^{43}$, which is called the Shannon number. Chess AI needed a little more than just Alpha-beta to win against top human players (not that Checkers could not benefit it), particularly on 1996 hardware (first win of a computer against a reigning world champion, Deep Blue vs. Garry Kasparov). Once an AI has openings and ending books (databases to look-up for classical moves), how can we search deeper during the game, or how can we evaluate better a situation? In iterative deepening Alpha-beta (or other search algorithms like Negascout \citep{reinfeld1983negascout} or MTD-f\citep{Plaat1996}), one needs to know the value of a move at the maximal depth. If it does not correspond to the end of the game, there is a need for a evaluation heuristic. Some may be straight forward, like the resulting value of an exchange in pieces points. But some strategies sacrifice a queen in favor of a more advantageous tactical position or a checkmate, so evaluation heuristics need to take tactical positions into account. In Deep Blue, the evaluation function had 8000 cases, with 4000 positions in the openings book, all learned from 700,000 grandmaster games \citep{DeepBlue}. Nowadays, Chess programs are better than deep blue and generally also search less positions. For instance, Pocket Fritz (HIARCS engine) beats current grandmasters \citep{CitationNeeded} while evaluating 20,000 positions per second (740 MIPS on a smartphone) against Deep Blue's (11.38 GFlops) 200 millions per second.
+With a branching factor of $\approx 35$ and an average game length of 80 moves \citep{Shannon_1950}, the average game-tree complexity of chess is $35^{80}\approx 3.10^{123}$. \citet{Shannon_1950} also estimated the number of possible (legal) positions to be of the order of $10^{43}$, which is called the Shannon number. Chess AI needed a little more than just Alpha-beta to win against top human players (not that Checkers could not benefit it), particularly on 1996 hardware (first win of a computer against a reigning world champion, Deep Blue vs. Garry Kasparov). Once an AI has openings and ending books (databases to look-up for classical moves), how can we search deeper during the game, or how can we evaluate better a situation? In iterative deepening Alpha-beta (or other search algorithms like Negascout \citep{reinfeld1983negascout} or MTD-f\citep{Plaat1996}), one needs to know the value of a move at the maximal depth. If it does not correspond to the end of the game, there is a need for a evaluation heuristic. Some may be straight forward, like the resulting value of an exchange in pieces points. But some strategies sacrifice a queen in favor of a more advantageous tactical position or a checkmate, so evaluation heuristics need to take tactical positions into account. In Deep Blue, the evaluation function had 8000 cases, with 4000 positions in the openings book, all learned from 700,000 grandmaster games \citep{DeepBlue}. Nowadays, Chess programs are better than deep blue and generally also search less positions. For instance, Pocket Fritz (HIARCS engine) beats current grandmasters \citep{CitationNeeded} while evaluating 20,000 positions per second (740 MIPS on a smartphone) against Deep Blue's (11.38 GFlops) 200 millions per second.
 
 \subsection{Go, Monte-Carlo Tree Search}
-With an estimated number of legal 19x19 Go positions of $2.081681994 * 10^{170}$ \citep{tromp2006} (1.196\% of possible positions), and an average branching factor above Chess for \newglossaryentry{goban}{name=goban,description={board used for the game of Go},plural=gobans}\gloss{goban} from 9x9 and above, Go sets another limit for AI. For 19x19 gobans, the game tree complexity is up to $10^{360}$ \citep{allis1994}. Approaches other than systematic exploration of the game tree are required. One of them is Monte Carlo Tree Search \newglossaryentry{MCTS}{name=MCTS,description={Monte-Carlo Tree Search}}(\glos{MCTS}). Its principle is to randomly sample which nodes to expand and which to exploit in the search tree, instead of systematically expanding the build tree as in Minimax. For a given $node$ in the search tree, we note $Q(node)$ the sum of the simulations rewards on all the runs through $node$, and $N(node)$ the visits count of $node$. Algorithm~\ref{alg:mcts} details the MCTS algorithm and Fig.~\ref{fig:MCTS} explains the principle.
+With an estimated number of legal 19x19 Go positions of $2.081681994 * 10^{170}$ \citep{tromp2006} (1.196\% of possible positions), and an average branching factor above Chess for \newglossaryentry{goban}{name=goban,description={board used for the game of Go},plural=gobans}\gloss{goban} from 9x9 and above, Go sets another limit for AI. For 19x19 gobans, the game tree complexity is up to $10^{360}$ \citep{allis1994}. The branching factor varies greatly, from $\approx 30$ to $300$ (361 cases at first), while the mean depth (number of plies in a game) is between 150 to 200. Approaches other than systematic exploration of the game tree are required. One of them is Monte Carlo Tree Search \newglossaryentry{MCTS}{name=MCTS,description={Monte-Carlo Tree Search}}(\glos{MCTS}). Its principle is to randomly sample which nodes to expand and which to exploit in the search tree, instead of systematically expanding the build tree as in Minimax. For a given $node$ in the search tree, we note $Q(node)$ the sum of the simulations rewards on all the runs through $node$, and $N(node)$ the visits count of $node$. Algorithm~\ref{alg:mcts} details the MCTS algorithm and Fig.~\ref{fig:MCTS} explains the principle.
 
 \begin{algorithm}
 \caption{Monte-Carlo Tree Search algorithm. 
@@ -591,7 +591,7 @@ Battleship is a game with few intensional uncertainty (no randomness), particula
 \subsection{Poker}
 Poker\footnote{We deal mainly with the \textit{Limit Hold'em} variant of Poker.} is a zero-sum (without the house's cut), imperfect information and stochastic betting game. Poker ``AI'' is as old as game theory \citep{nash51a}, but the research effort for human-level Poker AI started in the end of the 90s. The interest for Poker AI is such that there are annual AAAI computer Poker competitions\footnote{\url{http://www.computerpokercompetition.org/}}. \citet{Billings98pokeras} defend Poker as an interesting game for decision-making research, %combining imperfect information with randomness. The
 because the task of building a good/high level Poker AI (player) entails to take decisions with incomplete information about the state of the game, incomplete information about the opponents' intentions, and model their thoughts process to be able to bluff efficiently. A Bayesian network can combine these uncertainties and represent the player's hand, the opponents' hands and their playing behavior conditioned upon the hand, as in \citep{Korb99bayesianpoker}. A simple ``risk evaluating'' AI (folding and raising according to the outcomes of its hands) will not prevail against good human players. Bluffing, as described by \citet{VonNeumannMorgenstern1944} ``to create uncertainty in the opponent's mind'', is an element of Poker which needs its own modeling. \citet{Southey05bayesbluff} also give a Bayesian treatment to Poker, separating the uncertainty resulting from the game (draw of cards) and from the opponents' strategies, and focusing on bluff. From a game theoretic point of view, Poker is a \newglossaryentry{bayesiangame}{name={Bayesian game},description={a game in which information about knowledge about payoffs is incomplete}}\glos{bayesiangame}. In a Bayesian game, the normal form representation requires describing the strategy spaces, type spaces, payoff and belief functions for each player. It maps to all the possible game trees along with the agents' information state representing the probabilities of individual moves, called the extensive form. Both these forms scale very poorly (exponentially). \citet{Koller97representationsand} used the sequence form transformation, the set of realization weights of the sequences of moves\footnote{for a given player, a sequence is a path down the game tree isolating only moves under their control}, %of extensive form with informations sets,
-to search over the space of randomized strategies for Bayesian games automatically. Unfortunately, strict game theoretic optimal strategies for full-scale Poker are still not tractable this way, two players Texas Hold'em having a state space $\approxeq O(10^{18})$. \citet{BillingsBDHSSS03} approximated the game-theoretic optimal strategies through abstraction and are able to beat strong human players (not world-class opponents).
+to search over the space of randomized strategies for Bayesian games automatically. Unfortunately, strict game theoretic optimal strategies for full-scale Poker are still not tractable this way, two players Texas Hold'em having a state space $\approx O(10^{18})$. \citet{BillingsBDHSSS03} approximated the game-theoretic optimal strategies through abstraction and are able to beat strong human players (not world-class opponents).
 
 Poker is a game with both extensional and intentional uncertainty, from the fact that the opponents' hands are hidden, the chance in the draw of the cards, the opponents' model about the game state and their model about our mental state(s) (leading our decision(s)). While the iterated reasoning (``if she does A, I can do B'') is (theoretically) finite in Chess due to perfect information, it is not the case in Poker (``I think she thinks I think...''). The combination of different sources of uncertainty (as in Poker) makes it complex to deal with it (somehow, the sources of uncertainty must be separated), and we will see that both these sources of uncertainties arise (at different levels) in video games.
 
@@ -700,7 +700,7 @@ In \citep{Buro04callfor}, the challenges of RTS AI are:
     \item ``learning and opponent modeling'': adaptivity plays a key role in the strength of human players.
     \item ``spatial and temporal reasoning'': tactics using the terrain features and good timings are essential for higher level play.
 \end{itemize}
-To these challenges, we would like to add the difficulty of inter-connecting all special cases resolutions of these problems: both for collaborative (economical and logistical) management of the resources, and for sharing of uncertainty quantization in the decision-making processes. This will be extended further in the next chapters as RTS are the main focus of this thesis.
+To these challenges, we would like to add the difficulty of inter-connecting all special cases resolutions of these problems: both for the collaborative (economical and logistical) management of the resources, and for the sharing of uncertainty quantization in the decision-making processes. Collaborative management of the resources require arbitrage between sub-models on resources repartition. By sharing information (and its uncertainty) between sub-models, decisions can be made that account better for the whole knowledge of the AI system. This will be extended further in the next chapters as RTS are the main focus of this thesis.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
@@ -722,7 +722,7 @@ However, solving Bayesian games is non-trivial, there are no generic and efficie
 We do not pretend to do a complete taxonomy of video games and AI (e.g. \citep{gunn}), but we wish to provide all the major informations to differentiate game genres (gameplays). To grasp the challenges they pose, we will provide abstract measures of complexity.
 
 \subsection{Combinatory}
-``How does the state of possible actions grow?'' To measure this, we used a measure from perfect information zero-sum games (as Checkers, Chess and Go): the branching factor $b$ and the depth $d$ of a typical game. The complexity of a game (for taking a decision) is proportional to $b^d$. The average branching factor for a board game is easy to compute: it is the average number of possible moves for a given player. For Poker, we set $b=3$ for \textit{fold, check} and \textit{raise}. $d$ should then be defined over some time, the average number of events (decisions) per hour in Poker is between $20$ to $240$. For video-games, we defined $b$ to be the average number of possible moves at each decision, so for ``continuous'' or ``real-time'' games it is some kind of function of the useful discretization of the virtual world at hand. $d$ has to be defined as a frequency at which a player (artificial or not) has to take decisions to be competitive in the game, so we will give it in $d/time\_unit$. For instance, for a car (plane) racing game, $b \approxeq 50-500$ because $b$ is a combination of throttle ($\ddot{x}$) and direction ($\theta$) sampled values that are relevant for the game world, with $d/min$ at least $60$: a player needs to correct her trajectory \textit{at least} once a second. In RTS games, $b \approxeq 200$ is a lower bound (in StarCraft we may have between $50$ to $400$ units to control), and very good amateurs and professional players perform more than $300$ actions per minute.
+``How does the state of possible actions grow?'' To measure this, we used a measure from perfect information zero-sum games (as Checkers, Chess and Go): the branching factor $b$ and the depth $d$ of a typical game. The complexity of a game (for taking a decision) is proportional to $b^d$. The average branching factor for a board game is easy to compute: it is the average number of possible moves for a given player. For Poker, we set $b=3$ for \textit{fold, check} and \textit{raise}. $d$ should then be defined over some time, the average number of events (decisions) per hour in Poker is between $20$ to $240$. For video-games, we defined $b$ to be the average number of possible moves at each decision, so for ``continuous'' or ``real-time'' games it is some kind of function of the useful discretization of the virtual world at hand. $d$ has to be defined as a frequency at which a player (artificial or not) has to take decisions to be competitive in the game, so we will give it in $d/time\_unit$. For instance, for a car (plane) racing game, $b \approx 50-500$ because $b$ is a combination of throttle ($\ddot{x}$) and direction ($\theta$) sampled values that are relevant for the game world, with $d/min$ at least $60$: a player needs to correct her trajectory \textit{at least} once a second. In RTS games, $b \approx 200$ is a lower bound (in StarCraft we may have between $50$ to $400$ units to control), and very good amateurs and professional players perform more than $300$ actions per minute.
 
 The sheer size of $b$ and $d$ in video games make it seem intractable, but humans are able to play, and to play well. To explain this phenomenon, we introduce ``vertical'' and ``horizontal'' continuities in decision making. Fig.~\ref{fig:abstractdecisionhierarchy} shows how one can view the decision-making process in a video game: at different time scales, the player has to choose between strategies to follow, that can be realized with the help of different tactics. Finally, at the action/output/motor level, these tactics have to be implemented one way or the other. So, matching Fig.~\ref{fig:abstractdecisionhierarchy}, we could design a Bayesian model:
 \begin{itemize}
@@ -772,7 +772,7 @@ simpler examples?
 
 
 \subsubsection{Horizontal continuity}
-Horizontal continuity also helps out cutting the search in the state space to only relevant states. At a given abstraction level, it describes when taking a decision implies a strong conditioning on the next time-step decision (for this given level). As seen on Figure~\ref{fig:horizontalcont}: previous decisions on a given level have a strong conditioning on the next ones. For instance, and in non-probability terms, if the choice of a tactic $t$ (in the domain of $T^t$) entails a strong reduction in the size of the domain of $T^{t+1}$, we consider that $T$ has horizontal continuity. There is horizontal continuity between $T^{t-1}$ and $T^t$ if $\forall t in \{T\}, \{P(T^t|S^t,[T^{t-1}=t],O_{1:n}^t) > \epsilon\}$ is sparse in $\{P(T^t|S^t,O_{1:n}^t) > \epsilon\}$. There can be local horizontal continuity, for which the previous state holds only for one (or a few) $t \in \{T\}$. Recognizing horizontal continuity boils down to recognizing sequences of (frequent) actions (/?\ sequence mining ?) from decisions/actions dynamics and use that to reduce the search space of subsequent decisions. Of course, at a sufficiently small time-step, most continuous games have high horizontal continuity: the value of the time-step counts in the analysis (as the design of the abstraction levels for vertical continuity).
+Horizontal continuity also helps out cutting the search in the state space to only relevant states. At a given abstraction level, it describes when taking a decision implies a strong conditioning on the next time-step decision (for this given level). As seen on Figure~\ref{fig:horizontalcont}: previous decisions on a given level have a strong conditioning on the next ones. For instance, and in non-probability terms, if the choice of a tactic $t$ (in the domain of $T^t$) entails a strong reduction in the size of the domain of $T^{t+1}$, we consider that $T$ has horizontal continuity. There is horizontal continuity between $T^{t-1}$ and $T^t$ if $\forall t \in \{T\}, \{P(T^t|S^t,[T^{t-1}=t],O_{1:n}^t) > \epsilon\}$ is sparse in $\{P(T^t|S^t,O_{1:n}^t) > \epsilon\}$. There can be local horizontal continuity, for which the previous state holds only for one (or a few) $t \in \{T\}$. Recognizing horizontal continuity boils down to recognizing sequences of (frequent) actions (/?\ sequence mining ?) from decisions/actions dynamics and use that to reduce the search space of subsequent decisions. Of course, at a sufficiently small time-step, most continuous games have high horizontal continuity: the value of the time-step counts in the analysis (as the design of the abstraction levels for vertical continuity).
 
 \begin{figure}
 %%%\hspace{-0.8cm}
@@ -807,90 +807,122 @@ Partial information is another source of randomness, which is found in shi-fu-mi
 In a \gls{pomdp}, one cannot know exactly which state they are in and thus must reason with a probability distribution on $S$. $\Omega$ is used to update the distribution on $S$ (the belief) uppon taking the action $a$ and observing $o$, we have: $P([S^{t+1}=s']) \propto \Omega(o|s',a).\sum_{s \in S} T_a(s,s').P([S^t=s])$. In game AI, \gls{pomdp} are computationally intractable for most problems, and thus we need to model more carefully (without full $\Omega$ and $T$) the dynamics and the information value.
 % \Omega([O^{t+1}=o]|[S^{t+1}=s'],[A^t=a])
 
-%%%\subsection{Multiplayer}
-%%%\subsection{PvE}
-
 \subsection{Time Constant(s)}
 
-\subsection{Learning Curve}
+For novice to video games, we give some orders of magnitudes of the time constants involved. Indeed, we present here only real-time video games and time constants are central to comprehension of the challenges at hand. In all games, the player is taking actions continuously sampled at the minimum of the human interface device (mouse, keyboard, pad) refreshment rate and the game engine loop: at \textit{least} 30Hz. In most racing games, there is a quite high continuity in the input which is constrained by the dynamics of movements (except perhaps hand braking). In other games, there are big discontinuities, even if fast \glos{FPS} control resembles racing games a lot. \glos{RTS} professional gamers are giving inputs at $\approx 300$ actions per minute (\newglossaryentry{APM}{name=APM,description={action per minute, an input speed frequency in competitive gaming}}\glos{APM}).
+
+
+There are also different time constants for a strategic switch to take effect. In RTS games, it may vary between the build duration of at least one building and one unit (1-2 minutes) to a lot more (5 minutes). In an RPG or a team FPS, it may even be longer (up to one full round or one game by requiring to change the composition of the team and/or the spells) or shorter by depending on the game mode. For tactical moves, we consider that the time for a decision to have effects is proportional to the mean time for a squad to go from the middle of the map (arena) to anywhere else. In RTS games, this is usually between 20 seconds to 2 minutes. Maps variability between \glos{RPG} titles and \glos{FPS} titles is high, but we can give an estimate of tactical moves to use between 10 seconds (fast FPS) to 5 minutes (some FPS, RPG).
+
+%\subsection{Learning Curve}
 
 \subsection{Recap}
 
-%%% \begin{tabular}{|l|c|c|}
-%%% \hline
-%%%  & Perfect information & Imperfect information \\
-%%% \hline
-%%% No chance & Chess & Battleship \\
-%%%           & Go    & FFPS \\
-%%%           &       & \textbf{RTS} \\
-%%% Chance    & Monopoly & Poker \\
-%%%           & \textbf{RPG} & RPG, RTS\\
-%%% \hline
-%%% \end{tabular}
+We present the main qualitative results for big classes of gameplays (with examples) in a table page~\pageref{recapgames}.
 
+%\begin{small}
+%\setlength{\tabcolsep}{5pt}
 \begin{sidewaystable}
 \begin{tabular}{|l|ccccc|}
+\multicolumn{6}{c}{quantization in increasing order: no, negligible, few, some, moderate, much} \\
 \hline 
-Game & Combinatory & Vertical cont. & Horizontal cont. & Partial Info. & Randomness \\
+%Game & Combinatory & Vertical cont. & Horizontal cont. & Partial info. & Randomness & \multicolumn{3}{|c|}{Time constants} & Learning curve\\
+% & & & & & & Strat. & Tact. & Act. & & \\
+Game & Combinatory & Vertical continuity & Horizontal continuity & Partial information & Randomness \\
 \hline
-Checkers & $b\approxeq 10; n\approxeq 70$ & none & none & no & no \\
-Chess & $b\approxeq 35; n\approxeq 80$ & none & none & no & no \\
-Go & $b\approxeq 250-300; n\approxeq 150-200$ & none & some & no & no \\
+Checkers & $b\approx 4-8; n\approx 70$ & few & some & no & no \\
+Chess & $b\approx 35; n\approx 80$ & some & few & no & no \\
+Go & $b\approx 30-300; n\approx 150-200$ & some & moderate & no & no \\
 %Monopoly 
 %Battleship
-Limit Poker & $b\approxeq 3$\footnote{fold,check,raise} $;n/hour \in [20\dots240]$\footnote{number of decisions taken per hour} & some & few & much & much \\
-Time Racing & $b\approxeq 50-1,000$\footnote{$\{\ddot{x} \times \theta (\times \phi)\}$ sampling$\times$50Hz}$;n/min \approxeq 60+$ & full & much & no & no \\
+Limit Poker & $b\approx 3$\footnote{fold,check,raise} $;n/hour \in [20\dots240]$\footnote{number of decisions taken per hour} & moderate & few & much & much \\
+Time Racing & $b\approx 50-1,000$\footnote{$\{\ddot{x} \times \theta [\times \phi]\}$ sampling$\times$50Hz}$;n/min \approx 60+$ & much & much & no & no \\
 (TrackMania) & & & & & \\
-Team FPS & $b\approxeq 100-2,000$\footnote{\label{samplingFPS}$\{X \times Y \times Z\}$ sampling$\times$50Hz + firing} $;n/min \approxeq 100$\footnote{\label{apmFPS}60 ``continuous move actions''+ 40 (mean) fire actions per sec} & some & much & some & some \\
+Team FPS & $b\approx 100-2,000$\footnote{\label{samplingFPS}$\{X \times Y \times Z\}$ sampling$\times$50Hz + firing} $;n/min \approx 100$\footnote{\label{apmFPS}60 ``continuous move actions''+ 40 (mean) fire actions per sec} & some & moderate & some & some \\
 (Counter-Strike) & & & & & \\
 (Team Fortress 2) & & & & & \\
-FFPS duel & $b\approxeq 200-5,000$\footref{samplingFPS} $;n/min \approxeq 100$\footref{apmFPS} & some & much & some & ($\approxeq$)no \\
+FFPS duel & $b\approx 200-5,000$\footref{samplingFPS} $;n/min \approx 100$\footref{apmFPS} & some & much & some & negligible \\
 (Quake III) & & & & & \\
-MMORPG & $b\approxeq 50-100$\footnote{in RPGs, the player does not have to aim and positioning plays a lesser role than in FPS} $;n/min \approxeq 60$\footnote{move and use abilities/cast spells} & much & much & few & moderate \\
+MMORPG & $b\approx 50-100$\footnote{in RPGs, the player does not have to aim and positioning plays a lesser role than in FPS} $;n/min \approx 60$\footnote{move and use abilities/cast spells} & moderate & much & few & moderate \\
 (WoW, DAoC) & & & & & \\
-RTS & $b\approxeq 200$\footnote{atomic dir/unit $\times$ \# units + constructions + productions}$;n/min=APM\approxeq 300$\footnote{for pro-gamers, counting group actions as only one action}& some & some & much & no\\
+RTS & $b\approx 200$\footnote{atomic dir/unit $\times$ \# units + constructions + productions}$;n/min=APM\approx 300$\footnote{for pro-gamers, counting group actions as only one action}& moderate & some & much & negligible\\
 (StarCraft) & & & & & \\
 \hline
 \end{tabular}
+\label{recapgames}
 \end{sidewaystable}
+%\end{small}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
 \section{Player Characteristics}
 
 %%% Timings, reflexes, modeling, goals, utility, backtracking, induction, ...
+In all these games, knowledge and learning plays a key role. Humans compensate their lack of (conscious) computational power with pattern matching, abstract thinking and efficient memory structures. 
 
-In all these games, knowledge and learning plays a key role. Humans compensate their lack of (conscious) computational power with pattern matching, abstract thinking and efficient memory structures. Between 20 and 108 answers XXX
-\subsection{Virtuosity}
-Skill
-\subsection{Deduction}
-\subsection{Induction}
-\subsection{Decision-Making}
-%%%\subsection{Psychology}
-\subsection{Recap}
+\begin{itemize}
+    \item Virtuosity:
+    \item Deductive reasoning:
+    \item Inductive reasoning:
+    \item Decision-making: 
+    \item Knowledge:
+    \item Psychology:
+\end{itemize}
+
+Finally, we made a quick survey among gamers and regrouped the 108 answers in table~\ref{surveygamers} page~\pageref{surveygamers}. The goal was a to get a grasp on which skills are correlated to which gameplays. The questions that we asked can be found in Appendix~\ref{apdx:survey}. Answers mostly come from good to highly competitive (on a national level) amateurs.
+\\
+Est-ce que je mets des resultats plus ``bruts'' en annexe?
+
+%\subsection{Virtuosity} skill
+%\subsection{Deduction}
+%\subsection{Induction}
+%\subsection{Decision-Making}
+%\subsection{Psychology}
+%\subsection{Recap}
+
 %%% https://en.wikipedia.org/wiki/Cognition
+%%% \begin{sidewaystable}
+%%% \begin{tabular}{|l|ccccccc|}
+%%% \hline 
+%%% Game & Virtuosity & Deduction & Induction & Decision-Making & \multicolumn{3}{c|}{Knowledge} \\
+%%%      & (sensory-motor) & (analysis) & (abstraction) & (acting) & game & map & opponent \\
+%%% Checkers &   & ++ & &   & ++& &+ \\
+%%% Chess &   & ++ & &   & ++& &+ \\
+%%% Go &   & ++ & + &   & ++& &+ \\
+%%% Limit Poker &   & + & + & ++ & ++& &++ \\
+%%% Time Racing & ++ &   &   &   & +&++&  \\
+%%% (TrackMania) & & & & & & & \\
+%%% Team FPS & & & & & & & \\ 
+%%% (Counter-Strike) & & & & & & & \\ 
+%%% (Team Fortress 2) & & & & & & & \\ 
+%%% FFPS duel & ++ & + &   & + & +&++&+ \\
+%%% (Quake III) & & & & & & & \\ 
+%%% MMORPG & + & + & + & ++ & +&++&+ \\
+%%% (WoW, DAoC) & & & & & & & \\ 
+%%% RTS & ++ & ++ & ++ & ++ & ++&+&++ \\
+%%% (StarCraft) & & & & & & & \\
+%%% \hline
+%%% \end{tabular}
+%%% \end{sidewaystable}
+
 \begin{sidewaystable}
-\begin{tabular}{|l|ccccccc|}
-\hline 
-Game & Virtuosity & Deduction & Induction & Decision-Making & \multicolumn{3}{c|}{Knowledge} \\
-     & (sensory-motor) & (analysis) & (abstraction) & (acting) & game & map & opponent \\
-Checkers &   & ++ & &   & ++& &+ \\
-Chess &   & ++ & &   & ++& &+ \\
-Go &   & ++ & + &   & ++& &+ \\
-Limit Poker &   & + & + & ++ & ++& &++ \\
-Time Racing & ++ &   &   &   & +&++&  \\
-(TrackMania) & & & & & & & \\
-Team FPS & & & & & & & \\ 
-(Counter-Strike) & & & & & & & \\ 
-(Team Fortress 2) & & & & & & & \\ 
-FFPS duel & ++ & + &   & + & +&++&+ \\
-(Quake III) & & & & & & & \\ 
-MMORPG & + & + & + & ++ & +&++&+ \\
-(WoW, DAoC) & & & & & & & \\ 
-RTS & ++ & ++ & ++ & ++ & ++&+&++ \\
-(StarCraft) & & & & & & & \\
+\begin{tabular}{|l|cccccc|}
+\hline
+Game & Virtuosity\footnote{``skill'', dexterity of the player related to the game, as for a musician with their instrument.} & Deduction \footnote{capacity for deductive reasoning; from general principle to a specific conclusion.} & Induction \footnote{capacity for inductive reasoning, abstraction, generalization; from specific examples to a general conclusion.} & Decision-Making\footnote{capacity to select a course of actions in the presence of several alternatives, possibly under uncertainty and stress.} & Opponent prediction\footnote{what is the biggest indicator to predict the opponent's moves: their psychology (subjective) or the rules and logic of the game (objective)?} & Advantageous knowledge\footnote{Is knowledge of the game in general, or of the map specifically, preferable in order to play well?} \\
+ & (sensory-motor) & (analysis) & (abstraction) & (acting) & -1: subjectivity & -1 map \\
+ & [0-2] & [0-2] & [0-2] & [0-2] & 1: objectivity & 1: game \\
+\hline
+Chess (n: 35) &  X  & 1.794 & 1.486 & 1.657 & 0.371 &  X  \\
+Go (n: 16) &  X  & 1.688 & 1.625 & 1.625 & 0.562 &  X  \\
+Poker (n: 22) &  X  & 1.136 & 1.591 & 1.545 & -0.318 &  X  \\
+Racing (n: 19) & 1.842 & 0.263 & 0.211 & 1.000 & 0.500 & -0.316 \\
+TeamFPS (n: 40) & 1.700 & 1.026 & 1.075 & 1.256 & 0.150 & -0.105 \\
+FFPS (n: 22) & 2.000 & 1.095 & 1.095 & 1.190 & 0.000 & 0.150 \\
+MMORPG (n: 29) & 1.069 & 1.069 & 1.103 & 1.241 & 0.379 & 0.759 \\
+RTS (n: 90) & 1.800 & 1.856 & 1.655 & 1.822 & 0.211 & 0.433 \\
 \hline
 \end{tabular}
+\label{surveygamers}
 \end{sidewaystable}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 

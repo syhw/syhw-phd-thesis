@@ -76,3 +76,30 @@ for g,v in games.iteritems():
                 print '[%s: %d],' % (k,vv),
         print ''
 
+print "=================== latex table ==================="
+print ""
+print "\\begin{tabular}{|l|cccccc|}"
+print "\\hline"
+print "Game & Virtuosity & Deduction & Induction & Decision-Making & Opponent & Knowledge\\\\"
+print " & (sensory-motor) & (analysis) & (abstraction) & (acting) & -1: subjectivity & -1 map \\\\"
+print " & [0-2] & [0-2] & [0-2] & [0-2] & 1: objectivity & 1: game \\\\"
+print "\\hline"
+
+for g,v in games.iteritems():
+    l = []
+    n = 0
+    for c in ['Skill','Deductive','Inductive','DecisionMaking','Predict','MapGame']:
+        if not c in v:
+            l.append(' X ')
+            continue
+        if v[c][-1]['n'] > n:
+            n = v[c][-1]['n']
+        l.append('%.3f' % (v[c][-1]['mean']))
+
+    print "%s (n: %d) & %s \\\\" % (g, n, " & ".join(l))
+    
+print "\\hline"
+print "\\label{surveygamers}"
+print "\\end{tabular}"
+    
+
