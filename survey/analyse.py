@@ -76,6 +76,7 @@ for g,v in games.iteritems():
                 print '[%s: %d],' % (k,vv),
         print ''
 
+print ""
 print "=================== latex table ==================="
 print ""
 print "\\begin{tabular}{|l|cccccc|}"

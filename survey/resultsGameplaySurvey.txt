@@ -1,98 +1,115 @@
-The questions were:
-
-How good are you?
- Very good
- Good
-
-How important is the virtuosity? (to win the game)
-reflexes, accuracy, speed, "mechanics"
- 0 (not at all, or irrelevant)
- 1 (counts, can be game changing for people on equal level at other answers)
- 2 (counts a lot, can make a player win even if he is a little worse on lower importance gameplay features)
-
-How important is deductive thinking? (to win the game)
-"If I do A he can do B but not C" or "I see E so he has done D", also called analysis, forward inference."
- 0 (not at all, or irrelevant)
- 1 (counts, can be game changing for people on equal level at other answers)
- 2 (counts a lot, can make a player win even if he is a little worse on lower importance gameplay features)
-
-How important is inductive thinking? (to win the game)
-"He does A so he may be thinking B" or "I see D and E so (in general) he should be going for F (learned)", also called generalization, "abstraction".
- 0 (not at all, or irrelevant)
- 1 (counts, can be game changing for people on equal level at other answers)
- 2 (counts a lot, can make a player win even if he is a little worse on lower importance gameplay features)
-
-How hard is decision-making? (to win the game)
-"I have options A, B and C, with regard to everything I know about this game, I will play B (to win)", selection of a course of actions.
- 0 (not at all, or irrelevant)
- 1 (counts, can be game changing for people on equal level at other answers)
- 2 (counts a lot, can make a player win even if he is a little worse on lower importance gameplay features)
-
-You can predict the next move of your opponent:
-(is knowledge of the game or of the opponent more important)
- 1 by knowing what the best moves are / the best play for him?
--1 by knowing him personally (psychology)?
- 0 both equal
-
-What is more important:
- 1 knowledge of the game (general strategies, tactics, timings)
--1 knowledge of the map (specific strategies, tactics, timings)
- 0 both equal
-
 ==================
 FFPS
-Skill [mean_verygood: 2.000], [mean_good: 2.000], [n: 22], [mean: 2.000]
-Deductive [mean_verygood: 1.250], [mean_good: 1.000], [n: 21], [mean: 1.095]
-Inductive [mean_verygood: 1.125], [mean_good: 1.077], [n: 21], [mean: 1.095]
-DecisionMaking [mean_verygood: 1.125], [mean_good: 1.231], [n: 21], [mean: 1.190]
-Predict [mean_verygood: 0.250], [mean_good: -0.154], [n: 21], [mean: 0.000]
-MapGame [mean_verygood: 0.250], [mean_good: 0.083], [n: 20], [mean: 0.150]
+Skill [mean_verygood: 2.000], [mean_good: 2.000], [n: 22], [mean: 2.000], 
+Deductive [mean_verygood: 1.250], [mean_good: 1.000], [n: 21], [mean: 1.095], 
+Inductive [mean_verygood: 1.125], [mean_good: 1.077], [n: 21], [mean: 1.095], 
+DecisionMaking [mean_verygood: 1.125], [mean_good: 1.231], [n: 21], [mean: 1.190], 
+Predict [mean_verygood: 0.250], [mean_good: -0.154], [n: 21], [mean: 0.000], 
+MapGame [mean_verygood: 0.250], [mean_good: 0.083], [n: 20], [mean: 0.150], 
 ==================
 Poker
-Deductive [mean_verygood: 1.667], [mean_good: 0.938], [n: 22], [mean: 1.136]
-Inductive [mean_verygood: 1.667], [mean_good: 1.562], [n: 22], [mean: 1.591]
-DecisionMaking [mean_verygood: 1.333], [mean_good: 1.625], [n: 22], [mean: 1.545]
-Predict [mean_verygood: -0.167], [mean_good: -0.375], [n: 22], [mean: -0.318]
+Deductive [mean_verygood: 1.667], [mean_good: 0.938], [n: 22], [mean: 1.136], 
+Inductive [mean_verygood: 1.667], [mean_good: 1.562], [n: 22], [mean: 1.591], 
+DecisionMaking [mean_verygood: 1.333], [mean_good: 1.625], [n: 22], [mean: 1.545], 
+Predict [mean_verygood: -0.167], [mean_good: -0.375], [n: 22], [mean: -0.318], 
 ==================
 MMORPG
-Skill [mean_verygood: 1.118], [mean_good: 1.000], [n: 29], [mean: 1.069]
-Deductive [mean_verygood: 1.235], [mean_good: 0.833], [n: 29], [mean: 1.069]
-Inductive [mean_verygood: 1.176], [mean_good: 1.000], [n: 29], [mean: 1.103]
-DecisionMaking [mean_verygood: 1.235], [mean_good: 1.250], [n: 29], [mean: 1.241]
-Predict [mean_verygood: 0.471], [mean_good: 0.250], [n: 29], [mean: 0.379]
-MapGame [mean_verygood: 0.706], [mean_good: 0.833], [n: 29], [mean: 0.759]
+Skill [mean_verygood: 1.118], [mean_good: 1.000], [n: 29], [mean: 1.069], 
+Deductive [mean_verygood: 1.235], [mean_good: 0.833], [n: 29], [mean: 1.069], 
+Inductive [mean_verygood: 1.176], [mean_good: 1.000], [n: 29], [mean: 1.103], 
+DecisionMaking [mean_verygood: 1.235], [mean_good: 1.250], [n: 29], [mean: 1.241], 
+Predict [mean_verygood: 0.471], [mean_good: 0.250], [n: 29], [mean: 0.379], 
+MapGame [mean_verygood: 0.706], [mean_good: 0.833], [n: 29], [mean: 0.759], 
 ==================
 TeamFPS
-Skill [mean_verygood: 1.917], [mean_good: 1.607], [n: 40], [mean: 1.700]
-Deductive [mean_verygood: 1.083], [mean_good: 1.000], [n: 39], [mean: 1.026]
-Inductive [mean_verygood: 1.417], [mean_good: 0.929], [n: 40], [mean: 1.075]
-DecisionMaking [mean_verygood: 1.417], [mean_good: 1.185], [n: 39], [mean: 1.256]
-Predict [mean_verygood: 0.000], [mean_good: 0.214], [n: 40], [mean: 0.150]
-MapGame [mean_verygood: -0.083], [mean_good: -0.115], [n: 38], [mean: -0.105]
+Skill [mean_verygood: 1.917], [mean_good: 1.607], [n: 40], [mean: 1.700], 
+Deductive [mean_verygood: 1.083], [mean_good: 1.000], [n: 39], [mean: 1.026], 
+Inductive [mean_verygood: 1.417], [mean_good: 0.929], [n: 40], [mean: 1.075], 
+DecisionMaking [mean_verygood: 1.417], [mean_good: 1.185], [n: 39], [mean: 1.256], 
+Predict [mean_verygood: 0.000], [mean_good: 0.214], [n: 40], [mean: 0.150], 
+MapGame [mean_verygood: -0.083], [mean_good: -0.115], [n: 38], [mean: -0.105], 
 ==================
 Chess
-Deductive [mean_verygood: 1.714], [mean_good: 1.815], [n: 34], [mean: 1.794]
-Inductive [mean_verygood: 1.714], [mean_good: 1.429], [n: 35], [mean: 1.486]
-DecisionMaking [mean_verygood: 1.714], [mean_good: 1.643], [n: 35], [mean: 1.657]
-Predict [mean_verygood: 0.714], [mean_good: 0.286], [n: 35], [mean: 0.371]
+Deductive [mean_verygood: 1.714], [mean_good: 1.815], [n: 34], [mean: 1.794], 
+Inductive [mean_verygood: 1.714], [mean_good: 1.429], [n: 35], [mean: 1.486], 
+DecisionMaking [mean_verygood: 1.714], [mean_good: 1.643], [n: 35], [mean: 1.657], 
+Predict [mean_verygood: 0.714], [mean_good: 0.286], [n: 35], [mean: 0.371], 
 ==================
 RTS
-Skill [mean_verygood: 1.947], [mean_good: 1.692], [n: 90], [mean: 1.800]
-Deductive [mean_verygood: 1.921], [mean_good: 1.808], [n: 90], [mean: 1.856]
-Inductive [mean_verygood: 1.632], [mean_good: 1.673], [n: 87], [mean: 1.655]
-DecisionMaking [mean_verygood: 1.895], [mean_good: 1.769], [n: 90], [mean: 1.822]
-Predict [mean_verygood: 0.105], [mean_good: 0.288], [n: 90], [mean: 0.211]
+Skill [mean_verygood: 1.947], [mean_good: 1.692], [n: 90], [mean: 1.800], 
+Deductive [mean_verygood: 1.921], [mean_good: 1.808], [n: 90], [mean: 1.856], 
+Inductive [mean_verygood: 1.632], [mean_good: 1.673], [n: 87], [mean: 1.655], 
+DecisionMaking [mean_verygood: 1.895], [mean_good: 1.769], [n: 90], [mean: 1.822], 
+Predict [mean_verygood: 0.105], [mean_good: 0.288], [n: 90], [mean: 0.211], 
+MapGame [mean_verygood: 0.368], [mean_good: 0.481], [n: 90], [mean: 0.433], 
 ==================
 Go
-Deductive [mean_verygood: 2.000], [mean_good: 1.667], [n: 16], [mean: 1.688]
-Inductive [mean_verygood: 2.000], [mean_good: 1.600], [n: 16], [mean: 1.625]
-DecisionMaking [mean_verygood: 2.000], [mean_good: 1.600], [n: 16], [mean: 1.625]
-Predict [mean_verygood: 1.000], [mean_good: 0.533], [n: 16], [mean: 0.562]
+Deductive [mean_verygood: 2.000], [mean_good: 1.667], [n: 16], [mean: 1.688], 
+Inductive [mean_verygood: 2.000], [mean_good: 1.600], [n: 16], [mean: 1.625], 
+DecisionMaking [mean_verygood: 2.000], [mean_good: 1.600], [n: 16], [mean: 1.625], 
+Predict [mean_verygood: 1.000], [mean_good: 0.533], [n: 16], [mean: 0.562], 
 ==================
 Racing
-Skill [mean_verygood: 2.000], [mean_good: 1.750], [n: 19], [mean: 1.842]
-Deductive [mean_verygood: 0.286], [mean_good: 0.250], [n: 19], [mean: 0.263]
-Inductive [mean_verygood: 0.571], [mean_good: 0.000], [n: 19], [mean: 0.211]
-DecisionMaking [mean_verygood: 1.286], [mean_good: 0.833], [n: 19], [mean: 1.000]
-Predict [mean_verygood: 0.571], [mean_good: 0.455], [n: 18], [mean: 0.500]
-MapGame [mean_verygood: -0.286], [mean_good: -0.333], [n: 19], [mean: -0.316]
+Skill [mean_verygood: 2.000], [mean_good: 1.750], [n: 19], [mean: 1.842], 
+Deductive [mean_verygood: 0.286], [mean_good: 0.250], [n: 19], [mean: 0.263], 
+Inductive [mean_verygood: 0.571], [mean_good: 0.000], [n: 19], [mean: 0.211], 
+DecisionMaking [mean_verygood: 1.286], [mean_good: 0.833], [n: 19], [mean: 1.000], 
+Predict [mean_verygood: 0.571], [mean_good: 0.455], [n: 18], [mean: 0.500], 
+MapGame [mean_verygood: -0.286], [mean_good: -0.333], [n: 19], [mean: -0.316], 
+=================== latex table ===================
+
+\begin{tabular}{|l|cccccc|}
+\hline
+Game & Virtuosity & Deduction & Induction & Decision-Making & Opponent & Knowledge\\
+ & (sensory-motor) & (analysis) & (abstraction) & (acting) & -1: subjectivity & -1: map \\
+ & [0-2] & [0-2] & [0-2] & [0-2] & 1: objectivity & 1: game \\
+\hline
+FFPS (n: 22) & 2.000 & 1.095 & 1.095 & 1.190 & 0.000 & 0.150 \\
+Poker (n: 22) &  X  & 1.136 & 1.591 & 1.545 & -0.318 &  X  \\
+MMORPG (n: 29) & 1.069 & 1.069 & 1.103 & 1.241 & 0.379 & 0.759 \\
+TeamFPS (n: 40) & 1.700 & 1.026 & 1.075 & 1.256 & 0.150 & -0.105 \\
+Chess (n: 35) &  X  & 1.794 & 1.486 & 1.657 & 0.371 &  X  \\
+RTS (n: 90) & 1.800 & 1.856 & 1.655 & 1.822 & 0.211 & 0.433 \\
+Go (n: 16) &  X  & 1.688 & 1.625 & 1.625 & 0.562 &  X  \\
+Racing (n: 19) & 1.842 & 0.263 & 0.211 & 1.000 & 0.500 & -0.316 \\
+\hline
+\label{surveygamers}
+\end{tabular}
+
+=================== HTML table ===================
+
+<table>
+<tr>
+<th> Game </th><th> Virtuosity </th><th> Deduction </th><th> Induction </th><th> Decision-Making </th><th> Opponent </th><th> Knowledge </th>
+</tr>
+<tr>
+<th> </th><th> (sensory-motor) </th><th> (analysis) </th><th> (abstraction) </th><th> (acting) </th><th> -1: subjectivity </th><th> -1 map </th>
+</tr>
+<tr>
+<th> </th><th> [0-2] </th><th> [0-2] </th><th> [0-2] </th><th> [0-2] </th><th> 1: objectivity </th><th> 1: game </th>
+</tr>
+<tr>
+<td>FFPS (n: 22) </td><td> 2.000 </td><td> 1.095 </td><td> 1.095 </td><td> 1.190 </td><td> 0.000 </td><td> 0.150 </td>
+</tr>
+<tr>
+<td>Poker (n: 22) </td><td>  X  </td><td> 1.136 </td><td> 1.591 </td><td> 1.545 </td><td> -0.318 </td><td>  X  </td>
+</tr>
+<tr>
+<td>MMORPG (n: 29) </td><td> 1.069 </td><td> 1.069 </td><td> 1.103 </td><td> 1.241 </td><td> 0.379 </td><td> 0.759 </td>
+</tr>
+<tr>
+<td>TeamFPS (n: 40) </td><td> 1.700 </td><td> 1.026 </td><td> 1.075 </td><td> 1.256 </td><td> 0.150 </td><td> -0.105 </td>
+</tr>
+<tr>
+<td>Chess (n: 35) </td><td>  X  </td><td> 1.794 </td><td> 1.486 </td><td> 1.657 </td><td> 0.371 </td><td>  X  </td>
+</tr>
+<tr>
+<td>RTS (n: 90) </td><td> 1.800 </td><td> 1.856 </td><td> 1.655 </td><td> 1.822 </td><td> 0.211 </td><td> 0.433 </td>
+</tr>
+<tr>
+<td>Go (n: 16) </td><td>  X  </td><td> 1.688 </td><td> 1.625 </td><td> 1.625 </td><td> 0.562 </td><td>  X  </td>
+</tr>
+<tr>
+<td>Racing (n: 19) </td><td> 1.842 </td><td> 0.263 </td><td> 0.211 </td><td> 1.000 </td><td> 0.500 </td><td> -0.316 </td>
+</tr>
+</table>
