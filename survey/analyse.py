@@ -81,7 +81,7 @@ print ""
 print "\\begin{tabular}{|l|cccccc|}"
 print "\\hline"
 print "Game & Virtuosity & Deduction & Induction & Decision-Making & Opponent & Knowledge\\\\"
-print " & (sensory-motor) & (analysis) & (abstraction) & (acting) & -1: subjectivity & -1 map \\\\"
+print " & (sensory-motor) & (analysis) & (abstraction) & (acting) & -1: subjectivity & -1: map \\\\"
 print " & [0-2] & [0-2] & [0-2] & [0-2] & 1: objectivity & 1: game \\\\"
 print "\\hline"
 
@@ -101,5 +101,36 @@ for g,v in games.iteritems():
 print "\\hline"
 print "\\label{surveygamers}"
 print "\\end{tabular}"
+print ""
     
 
+print "=================== HTML table ==================="
+print ""
+print "<table>"
+print "<tr>"
+print "<th> Game </th><th> Virtuosity </th><th> Deduction </th><th> Induction </th><th> Decision-Making </th><th> Opponent </th><th> Knowledge </th>"
+print "</tr>"
+print "<tr>"
+print "<th> </th><th> (sensory-motor) </th><th> (analysis) </th><th> (abstraction) </th><th> (acting) </th><th> -1: subjectivity </th><th> -1 map </th>"
+print "</tr>"
+print "<tr>"
+print "<th> </th><th> [0-2] </th><th> [0-2] </th><th> [0-2] </th><th> [0-2] </th><th> 1: objectivity </th><th> 1: game </th>"
+print "</tr>"
+
+for g,v in games.iteritems():
+    l = []
+    n = 0
+    print "<tr>"
+    for c in ['Skill','Deductive','Inductive','DecisionMaking','Predict','MapGame']:
+        if not c in v:
+            l.append(' X ')
+            continue
+        if v[c][-1]['n'] > n:
+            n = v[c][-1]['n']
+        l.append('%.3f' % (v[c][-1]['mean']))
+
+    print "<td>%s (n: %d) </td><td> %s </td>" % (g, n, " </td><td> ".join(l))
+    print "</tr>"
+    
+print "</table>"
+    
