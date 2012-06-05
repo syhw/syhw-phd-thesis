@@ -696,9 +696,9 @@ On spatial and temporal reasoning, \citet{Forbus2002} presented tactical qualita
 
 In \citep{Buro04callfor}, the challenges of RTS AI are:
 \begin{itemize}
-    \item ``adversarial planning under uncertainty'', and for that abstractions have to be found both allowing to deal with partial observations and to plan in real-time.
-    \item ``learning and opponent modeling'': adaptivity plays a key role in the strength of human players.
-    \item ``spatial and temporal reasoning'': tactics using the terrain features and good timings are essential for higher level play.
+    \item \textbf{adversarial planning under uncertainty}, and for that abstractions have to be found both allowing to deal with partial observations and to plan in real-time.
+    \item \textbf{learning and opponent modeling}: adaptivity plays a key role in the strength of human players.
+    \item \textbf{spatial and temporal reasoning}: tactics using the terrain features and good timings are essential for higher level play.
 \end{itemize}
 To these challenges, we would like to add the difficulty of inter-connecting all special cases resolutions of these problems: both for the collaborative (economical and logistical) management of the resources, and for the sharing of uncertainty quantization in the decision-making processes. Collaborative management of the resources require arbitrage between sub-models on resources repartition. By sharing information (and its uncertainty) between sub-models, decisions can be made that account better for the whole knowledge of the AI system. This will be extended further in the next chapters as RTS are the main focus of this thesis.
 
@@ -724,7 +724,7 @@ We do not pretend to do a complete taxonomy of video games and AI (e.g. \citep{g
 \subsection{Combinatory}
 ``How does the state of possible actions grow?'' To measure this, we used a measure from perfect information zero-sum games (as Checkers, Chess and Go): the branching factor $b$ and the depth $d$ of a typical game. The complexity of a game (for taking a decision) is proportional to $b^d$. The average branching factor for a board game is easy to compute: it is the average number of possible moves for a given player. For Poker, we set $b=3$ for \textit{fold, check} and \textit{raise}. $d$ should then be defined over some time, the average number of events (decisions) per hour in Poker is between $20$ to $240$. For video-games, we defined $b$ to be the average number of possible moves at each decision, so for ``continuous'' or ``real-time'' games it is some kind of function of the useful discretization of the virtual world at hand. $d$ has to be defined as a frequency at which a player (artificial or not) has to take decisions to be competitive in the game, so we will give it in $d/time\_unit$. For instance, for a car (plane) racing game, $b \approx 50-500$ because $b$ is a combination of throttle ($\ddot{x}$) and direction ($\theta$) sampled values that are relevant for the game world, with $d/min$ at least $60$: a player needs to correct her trajectory \textit{at least} once a second. In RTS games, $b \approx 200$ is a lower bound (in StarCraft we may have between $50$ to $400$ units to control), and very good amateurs and professional players perform more than $300$ actions per minute.
 
-The sheer size of $b$ and $d$ in video games make it seem intractable, but humans are able to play, and to play well. To explain this phenomenon, we introduce ``vertical'' and ``horizontal'' continuities in decision making. Fig.~\ref{fig:abstractdecisionhierarchy} shows how one can view the decision-making process in a video game: at different time scales, the player has to choose between strategies to follow, that can be realized with the help of different tactics. Finally, at the action/output/motor level, these tactics have to be implemented one way or the other. So, matching Fig.~\ref{fig:abstractdecisionhierarchy}, we could design a Bayesian model:
+The sheer size of $b$ and $d$ in video games make it seem intractable, but humans are able to play, and to play well. To explain this phenomenon, we introduce ``vertical'' and ``horizontal'' continuities in decision making. Fig.~\ref{fig:abstractdecisionhierarchy} shows how one can view the decision-making process in a video game: at different time scales, the player has to choose between strategies to follow, that can be realized with the help of different tactics. Finally, at the action/output/motor level, these tactics have to be implemented one way or another. So, matching Fig.~\ref{fig:abstractdecisionhierarchy}, we could design a Bayesian model:
 \begin{itemize}
 \item $S^{t,t-1} \in {Attack,Defend,Collect,Hide}$, the strategy variable
 \item $T^{t,t-1} \in {Front,Back,Hit-and-run,Infiltrate}$, the tactics variable
@@ -737,9 +737,9 @@ The sheer size of $b$ and $d$ in video games make it seem intractable, but human
 $$P(S^{t,t-1},T^{t,t-1},A^{t,t-1},O_{1:n}^t) = P(S^{t-1}).P(T^{t-1}).P(A^{t-1})$$
 $$.P(O_{1:n}^t).P(S^t|S^{t-1},O_{1:n}^t).P(T^t|S^t,T^{t-1},O_{1:n}^t).P(A^t|T^t,A^{t-1},O_{1:n}^t)$$
 \begin{itemize}
-    \item $P(S^t|S^{t-1},O_{1:n}^t)$ should be read as ``the probability distribution on the strategies at time $t$ is determined/influenced by the distribution on the strategies at time $t-1$ and (all) the distributions on the observations at time $t$''.
-    \item $P(T^t|S^t,T^{t-1},O_{1:n}^t)$ should be read as ``the probability distribution on the tactics at time $t$ is determined by the distribution on the strategies at time $t$, the distribution on the tactics at time $t-1$ and the distributions on the observations at time $t$''.
-    \item $P(A^t|T^t,A^{t-1},O_{1:n}^t)$ should be read as ``the probability distribution on the actions at time $t$ is determined by the distribution on the tactics at time $t$, the distribution on the actions at time $t-1$ and the distributions on the observations at time $t$''.
+    \item $P(S^t|S^{t-1},O_{1:n}^t)$ should be read as ``the probability distribution on the strategies at time $t$ is determined/influenced by the strategy at time $t-1$ and the observations at time $t$''.
+    \item $P(T^t|S^t,T^{t-1},O_{1:n}^t)$ should be read as ``the probability distribution on the tactics at time $t$ is determined by the strategy at time $t$, tactics at time $t-1$ and the observations at time $t$''.
+    \item $P(A^t|T^t,A^{t-1},O_{1:n}^t)$ should be read as ``the probability distribution on the actions at time $t$ is determined by tactics at time $t$, the actions at time $t-1$ and the observations at time $t$''.
 \end{itemize}
 %\end{eqnarray*}
 
@@ -753,7 +753,7 @@ $$.P(O_{1:n}^t).P(S^t|S^{t-1},O_{1:n}^t).P(T^t|S^t,T^{t-1},O_{1:n}^t).P(A^t|T^t,
 \end{figure}
 
 \subsubsection{Vertical continuity}
-In the decision-making process, vertical continuity describes when taking a higher-level decision implies a strong conditioning on lower-levels decisions. As seen on Figure~\ref{fig:verticalcont}: higher level abstractions have a strong conditioning on lower levels. For instance, and in non-probability terms, if the choice of a strategy $s$ (in the domain of $S$) entails a strong reduction in the size of the domain of $T$, we consider that there is a vertical continuity between $S$ and $T$. There is vertical continuity between $S$ and $T$ if $\forall s \in \{S\}, \{P(T^t|[S^t=s], T^{t-1}, O_{1:n}^t) > \epsilon\}$ is sparse in $\{P(T^t|T^{t-1}, O_{1:n}^t) > \epsilon\}$. There can be local vertical continuity, for which the previous statement holds only for one (or a few) $s \in \{S\}$, which are harder to exploit. Recognizing vertical continuity allows us to explore the state space efficiently, filtering out absurd considerations with regard to the higher decision level(s).
+In the decision-making process, vertical continuity describes when taking a higher-level decision implies a strong conditioning on lower-levels decisions. As seen on Figure~\ref{fig:verticalcont}: higher level abstractions have a strong conditioning on lower levels. For instance, and in non-probabilistic terms, if the choice of a strategy $s$ (in the domain of $S$) entails a strong reduction in the size of the domain of $T$, we consider that there is a vertical continuity between $S$ and $T$. There is vertical continuity between $S$ and $T$ if $\forall s \in \{S\}, \{P(T^t|[S^t=s], T^{t-1}, O_{1:n}^t) > \epsilon\}$ is sparse in $\{P(T^t|T^{t-1}, O_{1:n}^t) > \epsilon\}$. There can be local vertical continuity, for which the previous statement holds only for one (or a few) $s \in \{S\}$, which are harder to exploit. Recognizing vertical continuity allows us to explore the state space efficiently, filtering out absurd considerations with regard to the higher decision level(s).
 
 \begin{figure}
 %%%\hspace{-0.8cm}
@@ -772,7 +772,7 @@ simpler examples?
 
 
 \subsubsection{Horizontal continuity}
-Horizontal continuity also helps out cutting the search in the state space to only relevant states. At a given abstraction level, it describes when taking a decision implies a strong conditioning on the next time-step decision (for this given level). As seen on Figure~\ref{fig:horizontalcont}: previous decisions on a given level have a strong conditioning on the next ones. For instance, and in non-probability terms, if the choice of a tactic $t$ (in the domain of $T^t$) entails a strong reduction in the size of the domain of $T^{t+1}$, we consider that $T$ has horizontal continuity. There is horizontal continuity between $T^{t-1}$ and $T^t$ if $\forall t \in \{T\}, \{P(T^t|S^t,[T^{t-1}=t],O_{1:n}^t) > \epsilon\}$ is sparse in $\{P(T^t|S^t,O_{1:n}^t) > \epsilon\}$. There can be local horizontal continuity, for which the previous state holds only for one (or a few) $t \in \{T\}$. Recognizing horizontal continuity boils down to recognizing sequences of (frequent) actions (/?\ sequence mining ?) from decisions/actions dynamics and use that to reduce the search space of subsequent decisions. Of course, at a sufficiently small time-step, most continuous games have high horizontal continuity: the value of the time-step counts in the analysis (as the design of the abstraction levels for vertical continuity).
+Horizontal continuity also helps out cutting the search in the state space to only relevant states. At a given abstraction level, it describes when taking a decision implies a strong conditioning on the next time-step decision (for this given level). As seen on Figure~\ref{fig:horizontalcont}: previous decisions on a given level have a strong conditioning on the next ones. For instance, and in non-probabilistic terms, if the choice of a tactic $t$ (in the domain of $T^t$) entails a strong reduction in the size of the domain of $T^{t+1}$, we consider that $T$ has horizontal continuity. There is horizontal continuity between $T^{t-1}$ and $T^t$ if $\forall t \in \{T\}, \{P(T^t|S^t,[T^{t-1}=t],O_{1:n}^t) > \epsilon\}$ is sparse in $\{P(T^t|S^t,O_{1:n}^t) > \epsilon\}$. There can be local horizontal continuity, for which the previous state holds only for one (or a few) $t \in \{T\}$. Recognizing horizontal continuity boils down to recognizing sequences of (frequent) actions from decisions/actions dynamics and use that to reduce the search space of subsequent decisions. Of course, at a sufficiently small time-step, most continuous games have high horizontal continuity: the size of the time-step is strongly related to the design of the abstraction levels for vertical continuity.
 
 \begin{figure}
 %%%\hspace{-0.8cm}
@@ -796,7 +796,7 @@ Randomness can be inherent to the gameplay. In board games and table top role-pl
     \item $T_a(s,s') = P([S^{t+1}=s']|[S^t=s],[A^t=a])$ the probability that action $a$ in state $s$ at time $t$ will lead to state $s'$ at time $t+1$
     \item $R_a(s,s')$ the immediate reward for going from state $s$ to state $s'$ with action $a$.
 \end{itemize}
-\gls{mdp} can be solved through dynamic programming or the Bellman value iteration algorithm \citep{CitationNeeded}. In video games, the sheer size of $S$ and $A$ make it in-tractable to use \gls{mdp} directly on the whole AI task, but they are used (in research) either locally or at abstracted levels of decision. Randomness inherent to the process is one of the sources of intentional uncertainty, and we can consider player's intentions in this stochastic framework. Modeling this source of uncertainty is part of the challenge of writing game AI models.
+\gls{mdp} can be solved through dynamic programming or the Bellman value iteration algorithm \citep{CitationNeeded}. In video games, the sheer size of $S$ and $A$ make it intractable to use \gls{mdp} directly on the whole AI task, but they are used (in research) either locally or at abstracted levels of decision. Randomness inherent to the process is one of the sources of intentional uncertainty, and we can consider player's intentions in this stochastic framework. Modeling this source of uncertainty is part of the challenge of writing game AI models.
 
 \subsection{Partial observations}
 Partial information is another source of randomness, which is found in shi-fu-mi, poker, \glos{RTS} and \glos{FPS} games, to name a few. We will not go down to the fact that the throwing of the dice seemed random because we only have partial information about its physics, or of the seed of the deterministic random generator that produced its outcome. Here, partial observations refer to the part of the game state which is deliberatively hidden between players (from a gameplay point of view): hidden hands in poker or hidden units in \glos{RTS} games due to the ``fog of war''. In decision-making theory, partial observations are dealt with in the framework of a \newacronym{pomdp}{POMDP}{partially observable Markov decision process}\gls{pomdp}. A \gls{pomdp} is a tuple $(S,A,O,T,\Omega,R)$ with $S,A,T,R$ as in a \gls{mdp} and:
@@ -809,7 +809,7 @@ In a \gls{pomdp}, one cannot know exactly which state they are in and thus must 
 
 \subsection{Time Constant(s)}
 
-For novice to video games, we give some orders of magnitudes of the time constants involved. Indeed, we present here only real-time video games and time constants are central to comprehension of the challenges at hand. In all games, the player is taking actions continuously sampled at the minimum of the human interface device (mouse, keyboard, pad) refreshment rate and the game engine loop: at \textit{least} 30Hz. In most racing games, there is a quite high continuity in the input which is constrained by the dynamics of movements (except perhaps hand braking). In other games, there are big discontinuities, even if fast \glos{FPS} control resembles racing games a lot. \glos{RTS} professional gamers are giving inputs at $\approx 300$ actions per minute (\newglossaryentry{APM}{name=APM,description={action per minute, an input speed frequency in competitive gaming}}\glos{APM}).
+For novice to video games, we give some orders of magnitudes of the time constants involved. Indeed, we present here only real-time video games and time constants are central to comprehension of the challenges at hand. In all games, the player is taking actions continuously sampled at the minimum of the human interface device (mouse, keyboard, pad) refreshment rate and the game engine loop: at \textit{least} 30Hz. In most racing games, there is a quite high continuity in the input which is constrained by the dynamics of movements. In other games, there are big discontinuities, even if fast \glos{FPS} control resembles racing games a lot. \glos{RTS} professional gamers are giving inputs at $\approx 300$ actions per minute (\newglossaryentry{APM}{name=APM,description={action per minute, an input speed frequency in competitive gaming}}\glos{APM}).
 
 
 There are also different time constants for a strategic switch to take effect. In RTS games, it may vary between the build duration of at least one building and one unit (1-2 minutes) to a lot more (5 minutes). In an RPG or a team FPS, it may even be longer (up to one full round or one game by requiring to change the composition of the team and/or the spells) or shorter by depending on the game mode. For tactical moves, we consider that the time for a decision to have effects is proportional to the mean time for a squad to go from the middle of the map (arena) to anywhere else. In RTS games, this is usually between 20 seconds to 2 minutes. Maps variability between \glos{RPG} titles and \glos{FPS} titles is high, but we can give an estimate of tactical moves to use between 10 seconds (fast FPS) to 5 minutes (some FPS, RPG).
@@ -830,22 +830,22 @@ We present the main qualitative results for big classes of gameplays (with examp
 % & & & & & & Strat. & Tact. & Act. & & \\
 Game & Combinatory & Vertical continuity & Horizontal continuity & Partial information & Randomness \\
 \hline
-Checkers & $b\approx 4-8; n\approx 70$ & few & some & no & no \\
-Chess & $b\approx 35; n\approx 80$ & some & few & no & no \\
-Go & $b\approx 30-300; n\approx 150-200$ & some & moderate & no & no \\
+Checkers & $b\approx 4-8; d\approx 70$ & few & some & no & no \\
+Chess & $b\approx 35; d\approx 80$ & some & few & no & no \\
+Go & $b\approx 30-300; d\approx 150-200$ & some & moderate & no & no \\
 %Monopoly 
 %Battleship
-Limit Poker & $b\approx 3$\footnote{fold,check,raise} $;n/hour \in [20\dots240]$\footnote{number of decisions taken per hour} & moderate & few & much & much \\
-Time Racing & $b\approx 50-1,000$\footnote{$\{\ddot{x} \times \theta [\times \phi]\}$ sampling$\times$50Hz}$;n/min \approx 60+$ & much & much & no & no \\
+Limit Poker & $b\approx 3$\footnote{fold,check,raise} $;d/hour \in [20\dots240]$\footnote{number of decisions taken per hour} & moderate & few & much & much \\
+Time Racing & $b\approx 50-1,000$\footnote{$\{\ddot{x} \times \theta \times \phi\}$ sampling$\times$50Hz}$;d/min \approx 60+$ & much & much & no & no \\
 (TrackMania) & & & & & \\
-Team FPS & $b\approx 100-2,000$\footnote{\label{samplingFPS}$\{X \times Y \times Z\}$ sampling$\times$50Hz + firing} $;n/min \approx 100$\footnote{\label{apmFPS}60 ``continuous move actions''+ 40 (mean) fire actions per sec} & some & moderate & some & some \\
+Team FPS & $b\approx 100-2,000$\footnote{\label{samplingFPS}$\{X \times Y \times Z\}$ sampling$\times$50Hz + firing} $;d/min \approx 100$\footnote{\label{apmFPS}60 ``continuous move actions''+ 40 (mean) fire actions per sec} & some & moderate & some & some \\
 (Counter-Strike) & & & & & \\
 (Team Fortress 2) & & & & & \\
-FFPS duel & $b\approx 200-5,000$\footref{samplingFPS} $;n/min \approx 100$\footref{apmFPS} & some & much & some & negligible \\
+FFPS duel & $b\approx 200-5,000$\footref{samplingFPS} $;d/min \approx 100$\footref{apmFPS} & some & much & some & negligible \\
 (Quake III) & & & & & \\
-MMORPG & $b\approx 50-100$\footnote{in RPGs, the player does not have to aim and positioning plays a lesser role than in FPS} $;n/min \approx 60$\footnote{move and use abilities/cast spells} & moderate & much & few & moderate \\
+MMORPG & $b\approx 50-100$\footnote{in RPGs, there are usually more abilities than in FPS games, but the player does not have to aim to hit a target, and thus positioning plays a lesser role than in FPS.} $;d/min \approx 60$\footnote{move and use abilities/cast spells} & moderate & much & few & moderate \\
 (WoW, DAoC) & & & & & \\
-RTS & $b\approx 200$\footnote{atomic dir/unit $\times$ \# units + constructions + productions}$;n/min=APM\approx 300$\footnote{for pro-gamers, counting group actions as only one action}& moderate & some & much & negligible\\
+RTS & $b\approx 200$\footnote{atomic dir/unit $\times$ \# units + constructions + productions}$;d/min=APM\approx 300$\footnote{for pro-gamers, counting group actions as only one action}& moderate & some & much & negligible\\
 (StarCraft) & & & & & \\
 \hline
 \end{tabular}
