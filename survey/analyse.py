@@ -77,6 +77,34 @@ for g,v in games.iteritems():
         print ''
 
 print ""
+print "=================== latex table RAW ==================="
+print ""
+print "\\begin{tabular}{|l|ccc|ccc|ccc|ccc|ccc|ccc|}"
+print "\\hline"
+print "Game & \multicolumn{3}{|c|}{Virtuosity} & \multicolumn{3}{|c|}{Deduction} & \multicolumn{3}{|c|}{Induction} & \multicolumn{3}{|c|}{Decision-Making} & \multicolumn{3}{|c|}{Opponent} & \multicolumn{3}{|c|}{Knowledge}\\\\"
+print " & \multicolumn{3}{|c|}{(sensory-motor)} & \multicolumn{3}{|c|}{(analysis)} & \multicolumn{3}{|c|}{(abstraction)} & \multicolumn{3}{|c|}{(acting)} & \multicolumn{3}{|c|}{-1: subjectivity} & \multicolumn{3}{|c|}{-1: map} \\\\"
+print " & \multicolumn{3}{|c|}{[0-2]} & \multicolumn{3}{|c|}{[0-2]} & \multicolumn{3}{|c|}{[0-2]} & \multicolumn{3}{|c|}{[0-2]} & \multicolumn{3}{|c|}{1: objectivity} & \multicolumn{3}{|c|}{1: game} \\\\"
+print " & top & rest & n & top & rest & n & top & rest & n & top & rest & n & top & rest & n & top & rest & n \\\\"
+print "\\hline"
+
+for g,v in games.iteritems():
+    l = []
+    for c in ['Skill','Deductive','Inductive','DecisionMaking','Predict','MapGame']:
+        if not c in v:
+            l.append(' X & X & X ')
+            continue
+        l.append('%.3f' % (v[c][-1]['mean_verygood']))
+        l.append('%.3f' % (v[c][-1]['mean_good']))
+        l.append('%d' % (v[c][-1]['n']))
+
+    print "%s & %s \\\\" % (g, " & ".join(l))
+    
+print "\\hline"
+print "\\label{fullsurveygamers}"
+print "\\end{tabular}"
+print ""
+
+print ""
 print "=================== latex table ==================="
 print ""
 print "\\begin{tabular}{|l|cccccc|}"
