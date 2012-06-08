@@ -1,22 +1,16 @@
-\documentclass[a4paper,10.3pt,twoside]{memoir}
+\documentclass[a4paper,11pt,twoside]{memoir}
 
 %%%%%%%%%%% Mes packages
 \usepackage{amsfonts, amsmath, amssymb, amstext, amsthm, latexsym}
 \usepackage{stmaryrd}
 \usepackage{graphicx, epsfig, wrapfig}
 \usepackage{exscale}
-%\usepackage{algorithmicx,algorithm,algpseudocode}
 \usepackage{algorithm,algpseudocode}
 \usepackage{amsbsy}
 \usepackage{amsopn}
 \usepackage{lettrine}
-\usepackage{hyperref}
-%%%\usepackage{cite}
 \usepackage{natbib}
 \usepackage{rotating}
-%\usepackage{bbm}
-%%%\usepackage{fancyhdr}
-%\usepackage{here}
 \usepackage[utf8]{inputenc}
 %\usepackage[latin1]{inputenc}
 \usepackage{fullpage}
@@ -29,6 +23,7 @@
 \usepackage{multirow}
 \usepackage{rotating}
 \usepackage{mathrsfs}
+\input{pdfspecific.tex}
 \usepackage{tikz}
 \usetikzlibrary{shapes,arrows,mindmap,trees}
 \usetikzlibrary{decorations.pathmorphing}
@@ -73,6 +68,7 @@
 \newtheorem*{mydef}{Definition}
 \newtheorem*{myproof}{Proof}
 
+
 %\include{titre/titre}
 \include{titre/template}
 
@@ -83,19 +79,34 @@
 \mathrm{P}
 }
 
+\usepackage{minitoc}
+\setlength{\mtcindent}{24pt}
+\renewcommand{\mtcoffset}{0pt}
+\mtcsetoffset{minitoc}{0pt}
+\setlength{\mtcskipamount}{\bigskipamount}
+\setcounter{minitocdepth}{2}
+\renewcommand{\mtcfont}{\small\rmfamily\upshape\mdseries}
+\renewcommand{\mtcSfont}{\small\rmfamily\upshape\bfseries}
+\renewcommand{\mtctitle}{}
+\def\chaptertoc{\minitoc \vskip 16pt}
+
 \begin{document}
-%%%%%%%%%%% Titre
 
 %\maketitle
 \MakeUGthesePDG
+
+\dominitoc
 \setcounter{tocdepth}{2}
 \tableofcontents
+%\listoffigures
+%\listoftables
 
 \newcommand{\glos}[1]{\gls{#1}*}
 \newcommand{\gloss}[1]{\glspl{#1}*}
 \newcommand{\Glos}[1]{\Gls{#1}*}
 \newcommand{\Gloss}[1]{\Glspl{#1}*}
 
+\include{chapters/notations}
 \include{chapters/intro}
 \include{chapters/gameai}
 \include{chapters/theory}

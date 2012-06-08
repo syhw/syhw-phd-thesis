@@ -19,40 +19,32 @@ One sees, from this Essay, that the theory of probabilities is basically just co
 \section{Characteristics of Game AI}
 
 \subsection{Partial information}
-The bot cannot cheat (it is not fun).
+If the AI has perfect information, behaving realistically is the problem. Cheating bots are not fun, so either AI should just use information available to the players, or it should fake having only partial information. In probabilistic modeling, sensor models allow for the computation of the state $S$ from observations $O$ by asking $\PP(S|O)$. One can easily specify or learn $\PP(O|S)$: either the game designers specify it, or the bot uses perfect information to get $S$ and leanrs (counts) $\PP(O|S)$. Then infer $\PP(S|O) = \frac{\PP(O|S).\PP(S)}{\PP(O)}$ (Bayes rule). Incompleteness of information is just uncertainty about the full state.
 
 \subsection{Randomness}
-The bot cannot assume optimal play.
+Some games have inherent stochasticity (variable random action effects) part of the gameplay, and even for other games, an AI can't assume optimal play from the opponent. In the context of state estimation and control, dealing with this randomness require ad-hoc methods for scripting of boolean logic, while it is dealt with natively with probabilistic models. Where a program would have to test for the action effect/value $V$ to be in a given interval to decide on a given course of action $A$, a probabilistic models just computes $\PP(A|E) = \frac{\PP(E|A).\PP(A)}{\PP(E)}$.
 
 \subsection{Vertical continuity}
-Hierarchical models.
+Abstracting higher level cognitive functions (strategy and tactics for instance) is an efficient way to break the complexity barrier of writing game AI. Exploiting the vertical continuity, i.e. the conditioning of higher level thinking on actions, is totally possible in a hierarchical Bayesian model. With strategies as values of $S$ and tactics as values of $T$, $\PP(T|S)$ gives the conditioning of $T$ on $S$ and thus enables us to evaluate only those $T$ values that are possible with given $S$ values.
 
 \subsection{Horizontal continuity}
-Temporal/sequence/filter models.
+Real-time games may use discrete time-steps (24Hz for instance for StarCraft), it does not prevent temporal continuity in strategies, tactics and, most strongly, actions. There are several Bayesian models able to deal with sequences, filter models, from which \newglossaryentry{HMM}{name=HMM,description={Hidden Markov Model, a dynamic Bayesian network estimating hidden states following a Markov process from observations}}Hidden Markov Models (\glos{HMM}) \citep{Rabiner}, Kalman filters \citep{Kalman1960} and particle filters \citep{particleFiltering} are specializations of. With states $S$ and observations $O$, filter models under the Markov assumption represent the joint $\PP(S^0).\PP(O^0|S^0).\prod_{t=1}^T[\PP(S^t | S^{t-1}).\PP(O^t|S^t)]$.
 
 \subsection{Autonomy and Programming}
-Autonomy is the ability to deal with new states, the challenge of autonomous characters arises from state spaces too big to be fully specified (in scripts / FSM). 
-The bot can learn from others games, self past games and self current game.
-
-
-\subsection{Uncertainty}
-Uncertainty can arise from game rules (fog-of-war) or from the dimension of the search space (game state space, e.g. Go).
-
-\subsection{Autonomy}
+Autonomy is the ability to deal with new states, the challenge of autonomous characters arises from state spaces too big to be fully specified (in scripts / FSM). Again, probabilistic modeling enables one to recognize unspecified states as soft mixtures of known states, of deal with unknown state as an incomplete version of a known state which subsumes it. Autonomy can also be reached through learning, being it through online or offline learning. Offline learning is used to learn parameters that does not have to be specified by the programmers and/or game designers. One can use data or experiments with known/wanted situations (supervised learning, reinforcement learning), or explore data (unsupervised learning) or game states (evolutionary algorithms). Online learning can provide adaptivity of the AI to the player and/or its own competency playing the game.
 
 \section{The Bayesian Programming Methodology}
-
 We introduce Bayesian programs (BP), a formalism that can be used to describe entirely any kind of Bayesian model, subsuming Bayesian networks and Bayesian maps, equivalent to probabilistic factor graphs \cite{Diard03}. 
 There are mainly two parts in a BP, the \textbf{description} of how to compute the joint distribution, and the \textbf{question(s)} that it will be asked. 
 
-The description consists in explaining the relevant \textit{variables} $\{X^1,\dots,X^n\}$ and explain their dependencies by \textit{decomposing} the joint distribution $P(X^1\dots X^n | \delta, \pi)$ with existing preliminary knowledge $\pi$ and data $\delta$. The \textit{forms} of each term of the product specify how to compute their distributions: either parametric forms (laws or probability tables, with free parameters that can be learned from data $\delta$) or recursive questions to other Bayesian programs.
+The description consists in exhibiting the relevant \textit{variables} $\{X^1,\dots,X^n\}$ and explain their dependencies by \textit{decomposing} the joint distribution $P(X^1\dots X^n | \delta, \pi)$ with existing preliminary knowledge $\pi$ and data $\delta$. The \textit{forms} of each term of the product specify how to compute their distributions: either parametric forms (laws or probability tables, with free parameters that can be learned from data $\delta$) or recursive questions to other Bayesian programs.
 
 Answering a question is computing the distribution $P(Searched | Known)$, with $Searched$ and $Known$ two disjoint subsets of the variables. 
 %%%$P(Searched | Known) = \begin{small} \frac{\sum_{Free}P(Searched\ Free\ Known)}{P(Known)} \end{small} = \frac{1}{Z}\times \sum_{Free} P(Searched\ Free\ Known)$. 
 $P(Searched | Known) $
 $$ = \frac{\sum_{Free}P(Searched,\ Free,\ Known)}{P(Known)}$$ $$ = \frac{1}{Z}\times \sum_{Free} P(Searched,\ Free,\ Known)$$
 
-General Bayesian inference is practically intractable, but conditional independence hypotheses and constraints (stated in the description) often simplify the model. Also, there are different well-known approximation techniques, for instance Monte Carlo methods \cite{MacKay} and variational Bayes \cite{Beal}. In this paper, we will use a specific fusion model (inverse programming) that allows for complete inference to be computed in real-time.
+General Bayesian inference is practically intractable, but conditional independence hypotheses and constraints (stated in the description) often simplify the model. Also, there are different well-known approximation techniques, for instance Monte Carlo methods \cite{MacKay} and variational Bayes \cite{Beal}.
 
 \begin{small}
 \begin{eqnarray*}
