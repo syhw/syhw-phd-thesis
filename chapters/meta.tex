@@ -1,16 +1,37 @@
-\chapter{Inter-game Adaptation (meta-game)}
+\chapter{Perspectives}
+\chaptertoc
+
+\begin{quotation}\textit{
+Man's last mind paused before fusion, looking over a space that included nothing but the dregs of one last dark star and nothing besides but incredibly thin matter, agitated randomly by the tag ends of heat wearing out, asymptotically, to the absolute zero.\\
+Man said, ``AC, is this the end? Can this chaos not be reversed into the Universe once more? Can that not be done?''\\
+AC said, ``THERE IS AS YET INSUFFICIENT DATA FOR A MEANINGFUL ANSWER.''
+}
+\begin{flushright}Isaac Asimov. The Last Question (1956)\end{flushright}\end{quotation}
+
+\section{Units Control (Micro-management)}
+Reinforcement learning, \citep{Marthi05concurrenthierarchical}
+
+Evolving control policies, \citep{Miles2007}
+
+\section{Strategy and Tactics}
+
+Bandits
+
+\section{Inter-game Adaptation (Meta-game)}
 Other cases of learning not dealt with in previous chapters:
 
-\section{Player modeling}
-$$P(WhatToDo|Opponent)$$
-Basic adaptation to opponents' play styles between games.
+Laplace smoothing $P(ETT=ett|Player=p)= \frac{1 + nbgames(ett,p)}{\#ETT + nbgames(p)}$. Same for $EClusters$ and $ETactics$.
 
-\section{Reinforcement learning}
-$$P(WhatToDo|Ourself)$$
-Seeking the causes of success/failures and modifying parameters accordingly. The farther from the evaluated model you are, the hardest is the modification/search/tuning.
+%%%\subsection{Player modeling}
+%%%$$P(WhatToDo|Opponent)$$
+%%%Basic adaptation to opponents' play styles between games.
 
-\section{Discussion}
-$$P(WhatToDo|IThink').P(IThink'|HeThinks).P(HeThinks|IThink)...$$
-Meta-game / Psychological warfare / Game theory / I think he thinks I think...
+%%%\subsection{Reinforcement learning}
+%%%$$P(WhatToDo|Ourself)$$
+%%%Seeking the causes of success/failures and modifying parameters accordingly. The farther from the evaluated model you are, the hardest is the modification/search/tuning.
+
+%%%\subsection{Discussion}
+%%%$$P(WhatToDo|IThink').P(IThink'|HeThinks).P(HeThinks|IThink)...$$
+%%%Meta-game / Psychological warfare / Game theory / I think he thinks I think...
 
 
