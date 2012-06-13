@@ -9,4 +9,4 @@ all:
 	pdflatex phdthesis
 
 clean:
-	rm *.aux *.log *.blg *.bbl *.glg *.glo *.gls *.ist *.toc *.out *.xdy *.pdf chapters/*.aux
+	rm *.aux *.log *.blg *.bbl *.glg *.glo *.gls *.ist *.toc *.out *.xdy *.pdf *.mtc* *.lof *.lot *.brf *.maf chapters/*.aux

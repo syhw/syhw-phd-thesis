@@ -1,0 +1,33 @@
+\definecolor{darkblue}{HTML}{000099}
+\definecolor{darkgreen}{HTML}{006600}
+\definecolor{darkred}{HTML}{990000}
+%\usepackage[colorlinks,citecolor=darkblue,linkcolor=darkred,urlcolor=darkgreen,pagebackref]{hyperref}
+\usepackage[pdftex,
+            pdfauthor={Gabriel Synnaeve},
+            pdftitle={Bayesian Programming and Learning for Multi-Player Video Games: Application to RTS AI},
+            pdfsubject={Ph.D thesis},
+            pdfkeywords={Bayesian, machine learning, video games, artificial intelligence, RTS},
+            pdfproducer={Latex with hyperref},
+            pdfcreator={pdflatex},
+            pagebackref]{hyperref}
+\pdfinfo{
+   /Author (Gabriel Synnaeve)
+   /Title  (Bayesian Programming and Learning for Multi-Player Video Games: Application to RTS AI)
+   %/CreationDate (D:20040502195600)
+   /Subject (Ph.D thesis)
+   /Keywords (Bayesian;machine learning;video games;artificial intelligence;RTS)
+}
+% BACKREF :
+% définir un style pour les backrefs :
+\newcommand{\mapolicebackref}[1]{
+    \hspace*{\fill} \mbox{\textit {\small #1}}
+}
+%pour gérer les backref dans la bibliographie
+\renewcommand*{\backref}[1]{}
+\renewcommand*{\backrefalt}[4]{%
+\ifcase #1 \mapolicebackref{no citations}
+    \or \mapolicebackref{cited page #2}
+    \else \mapolicebackref{#1 citations pages #2}
+\fi
+}
+
