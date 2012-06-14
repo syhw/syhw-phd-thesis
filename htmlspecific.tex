@@ -1,0 +1,12 @@
+\usepackage[pagebackref]{hyperref}
+\newcommand{\mapolicebackref}[1]{
+    \hspace*{\fill} \mbox{\textit {\small #1}}
+}
+%pour gérer les backref dans la bibliographie
+\renewcommand*{\backref}[1]{}
+\renewcommand*{\backrefalt}[4]{%
+\ifcase #1 \mapolicebackref{no citations}
+    \or \mapolicebackref{cited page #2}
+    \else \mapolicebackref{#1 citations pages #2}
+\fi
+}
