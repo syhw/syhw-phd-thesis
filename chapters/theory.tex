@@ -223,7 +223,7 @@ Desc.
     \mathrm{learning\ (e.g.\ Laplace\ succession\ law)\ or\ manually\ specified}\\
     \end{cases}\\
 Question\\
-P(S,T|T^{t-1}, HP_{1:n}, D_{1:n}, A_{1:n}, \Delta HP_{1:n}, ID_{1:n}, C_{1:n}, R_{1:n})
+\PP(S,T|T^{t-1}, HP_{1:n}, D_{1:n}, A_{1:n}, \Delta HP_{1:n}, ID_{1:n}, C_{1:n}, R_{1:n})
 \end{cases}
 \end{eqnarray*}
 
@@ -245,37 +245,37 @@ Skills \in \{ small\_heal, big\_heal, HOT, poison\_abol, malediction\_abol,\\
 \end{eqnarray*}
 
 We did not do the ``Identification'' part, which consists in learning the probability tables from observations. To keep things simple and because we wanted to analyze the answers of the model, we worked with manually defined probability tables, %. So we introduced ``soft evidences'', indeed parameters that will modify the conditional probability tables, 
-which we will change to watch their effects. 
+which we will change to watch their effects on the full behavior of the model. 
 %For instance the
 %``soft evidence that a selected target is foe'' and the ``soft evidence that a selected target will soon die ($ID=true$)'' that will consequently modify the probability tables of $P(A_i)$ and $P(ID_i)$ respectively. 
 %probability that a selected target is a foe $\PP(A_i|T=i)$ and the probability that a selected target will soon die will $\PP(ID_i=``soon''|T=i)$
 In the experiments, we will try different values for the ``soft evidence that a selected target will soon die'', that is $\PP(ID_i | T=i)$, and see how the behavior of the agent changes. 
-We set the probability to target the same target as before ($P(T^t=i|T^{t-1}=i)$) to 0.4 and the previous target to ``Lich'' so that the prior probability for all other 6 targets is 0.1 (4 times more chances to target the Lich than any other character). 
-We set the probability to target an enemy (instead of an ally) $P(A_i=false|T=i)$ to 0.6. This means that our robotic druid is mainly a damage dealer and just a backup healer. For the ``target selection'' sub-model, we can see on Fig.~\ref{fig:wow_target} (left) that the evolution from selecting the main foe ``Lich'' to selecting the ally ``Tank'' is driven by the increase of 
+We set the probability to target the same target as before ($\PP(T^t=i|T^{t-1}=i)$) to 0.4 and the previous target to ``Lich'' so that the prior probability for all other 6 targets is 0.1 (4 times more chances to target the Lich than any other character). 
+We set the probability to target an enemy (instead of an ally) $\PP(A_i=false|T=i)$ to 0.6. This means that our robotic druid is mainly a damage dealer and just a backup healer. For the ``target selection'' sub-model, we can see on Fig.~\ref{fig:wow_target} (left) that the evolution from selecting the main foe ``Lich'' to selecting the ally ``Tank'' is driven by the increase of 
 ``soft evidence that a selected target will soon die'' and our robot eventually moves on targeting their ``Tank'' ally (to heal them). We can see on Fig.~\ref{fig:wow_target} (right) that, at some point, the robotic Druid prefers to kill the dying ``add'' (additional foe) to save their ally Tank instead of healing them. Note that there is no variable showing the relation between ``Add'' and ``Tank'' (the first is attacking the second, who is taking damages from the first), but this could be taken into account in a more complete model.
 
 \begin{figure}[h!]
 \begin{center}
 \includegraphics[width=7.8cm]{images/wow_distrib_target1.png} \includegraphics[width=7.8cm]{images/wow_distrib_target2.png}
-\caption{Left: probabilities of targets depending on the soft evidence that a target is dying ($\PP(ID_i=true | T=i)$) with setup A. Right: same, with setup B.}
+\caption{Left: probabilities of targets depending on the soft evidence that a target is dying ($\PP(ID_i=true | T=i)$) with setup A (no ally is risking death). Right: same, with setup B (the ``tank'' ally is risking death).}
 \label{fig:wow_target}
 \end{center}
 \end{figure}
-
-For the ``skill selection'' model, we can see on Fig.~\ref{fig:wow_skill} the influence of $ID_i$ on Skill which is coherent with the Target distribution: either, in setup A (left), we evolve with the increase of $P(ID_i=true|Target=i)$ to choose to heal our ally or, in setup B (right), to deal direct damage (and hopefully, kill) the foe attacking him. As you can see here, when we have the highest probability to attack the main enemy (``Lich'', when $P(ID_i=true|Target=i)$ is low), who is a $C=tank$, we get a high probability for the Skill \textit{debuff\_armor}. We only cast this skill if the debuff is not already present, so perhaps that we will cast \textit{small\_dd} instead. To conclude this example, Fig.~\ref{fig:wow_target_skill} shows the distribution on $P(T,S|all\_status\_variables)$ with setup A and the probability to target the previous target (set to ``Lich'' here) only $\approx 2$ times greater than any other character (so that we focus less on the same character), soft evidences $P(ID_i=true|Target=i)=0.9$ and $P(A_i=false|Target=i)=0.6$. In a greedy way, if the first couple $(T,S)$ is already done or not available, we take the second.
-
 \begin{figure}[h!]
 \begin{center}
 \includegraphics[width=7.8cm]{images/wow_distrib_skill1.png} \includegraphics[width=7.8cm]{images/wow_distrib_skill2.png}
-\caption{Left: Probabilities of skills depending on the soft evidence that a target is dying ($\PP(ID_i=true|T=i)$) with setup A. Right: same, with setup B.}
+\caption{Left: Probabilities of skills depending on the soft evidence that a target is dying ($\PP(ID_i=true|T=i)$) with setup A (no ally is risking death). Right: same, with setup B (the ``tank'' ally is risking death).}
 \label{fig:wow_skill}
 \end{center}
 \end{figure}
 
+For the ``skill selection'' model, we can see on Fig.~\ref{fig:wow_skill} the influence of $ID_i$ on Skill which is coherent with the Target distribution: either, in setup A (left), we evolve with the increase of $\PP(ID_i=true|Target=i)$ to choose to heal our ally or, in setup B (right), to deal direct damage (and hopefully, kill) the foe attacking him. As you can see here, when we have the highest probability to attack the main enemy (``Lich'', when $\PP(ID_i=true|Target=i)$ is low), who is a $C=tank$, we get a high probability for the Skill \textit{debuff\_armor}. We only cast this skill if the debuff is not already present, so perhaps that we will cast \textit{small\_dd} instead. To conclude this example, Fig.~\ref{fig:wow_target_skill} shows the distribution on $\PP(T,S|all\_status\_variables)$ with setup A and the probability to target the previous target (set to ``Lich'' here) only $\approx 2$ times greater than any other character (so that we focus less on the same character), soft evidences $\PP(ID_i=true|Target=i)=0.9$ and $\PP(A_i=false|Target=i)=0.6$. On the decision-making side of this model, a simple approach would be a greedy one: if the first couple $(T,S)$ is already done or not available, we perform the second, and so on.
+
+
 \begin{figure}[h!]
 \begin{center}
-\includegraphics[width=12cm]{images/wow_distrib_target_skill.png}
-\caption{Log-probabilities of Target and Skill with setup A, and $P(ID_i=true|T=i)=0.9, P(A_i=true|T=i)=0.6$. We can see that if the role of our character is more of a healer, it is most probable that it will heal an ally, even when they are not endangered (setup A).}
+\includegraphics[width=12.5cm]{images/wow_distrib_target_skill.png}
+\caption{Log-probabilities of Target and Skill with setup A, and $\PP(ID_i=true|T=i)=0.9, \PP(A_i=false|T=i)=0.6$. This plot corresponds to the answer to the full question on which decision-making has to be done.}
 \label{fig:wow_target_skill}
 \end{center}
 \end{figure}
@@ -310,12 +310,12 @@ For the ``skill selection'' model, we can see on Fig.~\ref{fig:wow_skill} the in
 %%% 
 %%% that will trigger $P(GS|T,\dots)$, itself triggering $P(T|all\_state\_variables)$. Choosing to do with or without the intermediate $GS$ computation, regrouping abilities by types, is mainly a question of computational time.
 
-The choice of the skill or ability to use and the target on which to use it puts hard constraints on every others decisions the autonomous agent has to take to perform its ability action. Thus, such a model shows that:
+This limited model served the purpose of presenting Bayesian programming in practice. While it was used in a simulation, it showcases the approach one can take to break down the problem of autonomous control of \glos{npc}. The choice of the skill or ability to use and the target on which to use it puts hard constraints on every others decisions the autonomous agent has to take to perform its ability action. Thus, such a model shows that:
 \begin{itemize}
     \item cooperative behavior is not too hard to incorporate in a decision (instead of being hard-coded),
     \item it can be learned, either from observations of a human player or by reinforcement (exploration),
     \item it is computationally tractable (for use in all games), the inference is just a series of ``probabilistic \textit{if}s'',
 \end{itemize}
-Moreover, using this model on another agent than the once controlled by the AI can give a prediction on what it will do, resulting in human-like, adaptive, playing style.
+Moreover, using this model on another agent than the one controlled by the AI can give a prediction on what it will do, resulting in human-like, adaptive, playing style.
 
 We did not kept at the research track of Bayesian modeling MMORPG games due to the difficulty to work on these types of games: the studios have too much to lose to ``farmer'' bots to accept any automated access to the game. Also, there are no sharing format of data (like replays) and the invariants of the game situations are fewer than in RTS games. Finally, RTS games have international AI competitions which were a good motivation to compare our approach with other game AI researchers.
