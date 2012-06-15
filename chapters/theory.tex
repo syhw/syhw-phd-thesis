@@ -250,32 +250,32 @@ which we will change to watch their effects.
 %``soft evidence that a selected target is foe'' and the ``soft evidence that a selected target will soon die ($ID=true$)'' that will consequently modify the probability tables of $P(A_i)$ and $P(ID_i)$ respectively. 
 %probability that a selected target is a foe $\PP(A_i|T=i)$ and the probability that a selected target will soon die will $\PP(ID_i=``soon''|T=i)$
 In the experiments, we will try different values for the ``soft evidence that a selected target will soon die'', that is $\PP(ID_i | T=i)$, and see how the behavior of the agent changes. 
-We set the probability to target the same target as before to 0.4 and the previous target to ``Lich'' so that the prior probability for all other 6 targets is 0.1 (4 times more chances to target the Lich than any other character). 
-We set the probability to target an enemy (instead of an ally) $P(A_i=false|T=i)$ to 0.6. This means that our robotic druid is mainly a damage dealer and just a backup healer. For the ``target selection'' model, we can see on Fig.~\ref{fig:wow_target} (left) that the evolution from selecting the main foe ``Lich'' to selecting the ally ``Tank'' is driven by the increase of 
-``soft evidence that a selected target will soon die'' and our robot eventually moves on targeting his(its) ``Tank'' ally (to heal him). We can see on Fig.~\ref{fig:wow_target} (right) that, at some point, the robotic Druid prefers to kill the dying ``add'' (additional foe) to save his ally Tank instead of healing him. Note that there is no variable showing the relation between ``Add'' and ``Tank'' (the first is attacking the second, who is taking damages from the first), but this could be taken into account in a more complete model.
+We set the probability to target the same target as before ($P(T^t=i|T^{t-1}=i)$) to 0.4 and the previous target to ``Lich'' so that the prior probability for all other 6 targets is 0.1 (4 times more chances to target the Lich than any other character). 
+We set the probability to target an enemy (instead of an ally) $P(A_i=false|T=i)$ to 0.6. This means that our robotic druid is mainly a damage dealer and just a backup healer. For the ``target selection'' sub-model, we can see on Fig.~\ref{fig:wow_target} (left) that the evolution from selecting the main foe ``Lich'' to selecting the ally ``Tank'' is driven by the increase of 
+``soft evidence that a selected target will soon die'' and our robot eventually moves on targeting their ``Tank'' ally (to heal them). We can see on Fig.~\ref{fig:wow_target} (right) that, at some point, the robotic Druid prefers to kill the dying ``add'' (additional foe) to save their ally Tank instead of healing them. Note that there is no variable showing the relation between ``Add'' and ``Tank'' (the first is attacking the second, who is taking damages from the first), but this could be taken into account in a more complete model.
 
 \begin{figure}[h!]
 \begin{center}
 \includegraphics[width=7.8cm]{images/wow_distrib_target1.png} \includegraphics[width=7.8cm]{images/wow_distrib_target2.png}
-\caption{Left: probabilities of targets depending on the soft evidence that a target is dying with setup A. Right: same, with setup B. TODO }
+\caption{Left: probabilities of targets depending on the soft evidence that a target is dying ($\PP(ID_i=true | T=i)$) with setup A. Right: same, with setup B.}
 \label{fig:wow_target}
 \end{center}
 \end{figure}
 
-For the ``skill selection'' model, we can see on Fig.~\ref{fig:wow_skill} the influence of $ID_i$ on Skill which is coherent with the Target distribution: either, in setup A (left), we evolve with the increase of $P(ID_i=true|Target=i)$ to choose to heal our ally or, in setup B (right), to deal direct damage (and hopefully, kill) the foe attacking him. As you can see here, when we have the highest probability to attack the main enemy (``Lich'', when $P(ID_i=true|Target=i)$ is low), who is a $C=tank$, we get a high probability for the Skill $debuff\_armor$. We only cast this skill if the debuff is not already present, so perhaps that we will cast $small\_dd$ instead. To conclude this example, Fig.~\ref{fig:wow_target_skill} shows the distribution on $P(T,S|all\_status\_variables)$ with setup A and the probability to target the previous target (set to ``Lich'' here) only $\approx 2$ times greater than any other character (so that we focus less on the same character), soft evidences $P(ID_i=true|Target=i)=0.9$ and $P(A_i=false|Target=i)=0.6$. In a greedy way, if the first couple $(T,S)$ is already done or not available, we take the second.
+For the ``skill selection'' model, we can see on Fig.~\ref{fig:wow_skill} the influence of $ID_i$ on Skill which is coherent with the Target distribution: either, in setup A (left), we evolve with the increase of $P(ID_i=true|Target=i)$ to choose to heal our ally or, in setup B (right), to deal direct damage (and hopefully, kill) the foe attacking him. As you can see here, when we have the highest probability to attack the main enemy (``Lich'', when $P(ID_i=true|Target=i)$ is low), who is a $C=tank$, we get a high probability for the Skill \textit{debuff\_armor}. We only cast this skill if the debuff is not already present, so perhaps that we will cast \textit{small\_dd} instead. To conclude this example, Fig.~\ref{fig:wow_target_skill} shows the distribution on $P(T,S|all\_status\_variables)$ with setup A and the probability to target the previous target (set to ``Lich'' here) only $\approx 2$ times greater than any other character (so that we focus less on the same character), soft evidences $P(ID_i=true|Target=i)=0.9$ and $P(A_i=false|Target=i)=0.6$. In a greedy way, if the first couple $(T,S)$ is already done or not available, we take the second.
 
 \begin{figure}[h!]
 \begin{center}
-\includegraphics[width=7cm]{images/wow_distrib_skill1.png} \includegraphics[width=7cm]{images/wow_distrib_skill2.png}
-\caption{Left: Probabilities of skills depending on the soft evidence that a target is dying with setup A. Right: same, with setup B. TODO }
+\includegraphics[width=7.8cm]{images/wow_distrib_skill1.png} \includegraphics[width=7.8cm]{images/wow_distrib_skill2.png}
+\caption{Left: Probabilities of skills depending on the soft evidence that a target is dying ($\PP(ID_i=true|T=i)$) with setup A. Right: same, with setup B.}
 \label{fig:wow_skill}
 \end{center}
 \end{figure}
 
 \begin{figure}[h!]
 \begin{center}
-\includegraphics[width=11cm]{images/wow_distrib_target_skill.png}
-\caption{Log-probabilities of Target and Skill with setup A, and $P(ID|Target)=0.9, P(A|Target)=0.6$ TODO}
+\includegraphics[width=12cm]{images/wow_distrib_target_skill.png}
+\caption{Log-probabilities of Target and Skill with setup A, and $P(ID_i=true|T=i)=0.9, P(A_i=true|T=i)=0.6$. We can see that if the role of our character is more of a healer, it is most probable that it will heal an ally, even when they are not endangered (setup A).}
 \label{fig:wow_target_skill}
 \end{center}
 \end{figure}
