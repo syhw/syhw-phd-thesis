@@ -1,10 +1,12 @@
 \chapter{Strategy}
+\chaptertoc
 
 %Strategy without tactics is the slowest route to victory. Tactics without strategy is the noise before defeat. Sun Tzu
 
 
 \begin{quotation}\textit{
-All men can see these tactics whereby I conquer, but what none can see is the strategy out of which victory is evolved.} Sun Tzu\end{quotation}
+All men can see these tactics whereby I conquer, but what none can see is the strategy out of which victory is evolved.}\\
+Sun Tzu\end{quotation}
 
 
 
@@ -15,36 +17,32 @@ All men can see these tactics whereby I conquer, but what none can see is the st
 \label{fig:conceptSTRATEGY}
 \caption{Information-centric view of the architecture of the bot, the part concerning this chapter is in the dotted rectangle}
 \end{figure}
+
 \begin{itemize}
 \item Problem: take the winning strategy in the absolute (knowing everything: complete observations, players intentions, effects of each possible actions).
-\item Problem that we solve: take winning strategy knowing what we saw from the opponent and our model of the game.
-\item Complexity: without going meta, prediction is an ``inference under uncertainty'' problem, adaptation w.r.t. what we know is a planning under constraints problem. Going meta $\Rightarrow$ \texttt{(O.O)}
-\item State of the art: Data mining, plan recognition, CBR... \citep{weberStrat}, \citep{Weber2010qf} and even meta \citep{metalevelbehavioradaptrts}.
-\item Our take: \citep{SYNNAEVE:OpeningPred}, \citep{SYNNAEVE:StratPred}
-\item Results: better resistance to noise, which is fundamental in real setup RTS gameplay (fog of war). Full Bayesian model down to adaptation actions some day?
-\item Conclusion and perspectives: a way to encode and use gameplay/structural knowledge 
+\item Problem that we solve: take the winning strategy (in average) knowing what we saw from the opponent and our model of the game. 
+\item Type: prediction is an ``inference under uncertainty'' problem; adaptation given what we know is a ``planning under constraints'' problem. 
+\item Complexity: EXPTIME-complete (as for Chess and Go). StarCraft subsumes Wargus, which has an estimated mean branching factor $1.5.10^3$ \citep{LTW} (Chess: $\approx 35$, Go: $<360$). \cite{bgweberPhD} find a branching factor of $> 1.10^6$ for StarCraft. The game complexity is roughly $10^11500$, versus the Shannon number for Chess ($10^43$). Our solutions are real-time on a laptop.
+%\item Results: better resistance to noise, which is fundamental in real setup RTS gameplay (fog of war). Full Bayesian model down to adaptation actions some day?
+%\item Conclusion and perspectives: a way to encode and use gameplay/structural knowledge 
 \end{itemize}
 
 \section{What is a Strategy?}
 % tech tree, opening, army composition, build tree
 
-In a RTS, players need to gather resources to build military units and defeat their opponents. To that end, they often have \textit{worker units} (or extraction structures) than can gather resources needed to build \textit{workers}, \textit{buildings}, \textit{military units} and \textit{research upgrades}. Workers are often also builders (as in StarCraft) and are weak in fights compared to military units. Resources may have different uses, for instance in StarCraft: minerals are used for everything, whereas gas is only required for advanced buildings or military units, and technology upgrades. Buildings and research upgrades define technology trees (directed acyclic graphs) and each state of a ``tech tree'' allow for different unit type production abilities and unit spells/abilities. The military can be of different types, any combinations of ranged, casters, contact attack, zone attacks, big, small, slow, fast, invisible, flying... Units can have attacks and defenses that counter each others as in rock-paper-scissors. We consider \textit{strategy} the way to expand the tech tree as well as the army composition, because both require long term planning under uncertainty, and a risk-reward trade-off. 
+%In a RTS, players need to gather resources to build military units and defeat their opponents. To that end, they often have \textit{worker units} (or extraction structures) than can gather resources needed to build \textit{workers}, \textit{buildings}, \textit{military units} and \textit{research upgrades}. Workers are often also builders (as in StarCraft) and are weak in fights compared to military units. Resources may have different uses, for instance in StarCraft: minerals are used for everything, whereas gas is only required for advanced buildings or military units, and technology upgrades. Buildings and research upgrades define technology trees (directed acyclic graphs) and each state of a ``tech tree'' allow for different unit type production abilities and unit spells/abilities. The military can be of different types, any combinations of ranged, casters, contact attack, zone attacks, big, small, slow, fast, invisible, flying... Units can have attacks and defenses that counter each others as in rock-paper-scissors. We consider \textit{strategy} the way to expand the tech tree as well as the army composition, because both require long term planning under uncertainty, and a risk-reward trade-off. 
+
+From last chapter, we recall the \textit{\glos{techtree}} is a directed acyclic graph which contains the whole technological (buildings and upgrades) development of a player. Also, each unit and building has a \textit{sight range} that provides the player with a view of the map. Parts of the map not in the sight range of the player's units are under \textit{fog of war} and the player ignores what is and happens there. In RTS games jargon, an \newglossaryentry{opening}{name=opening,description={in Chess as in RTS games: the first strategic moves of the game, the strategy of the early game},plural=openings}\textit{\glos{opening}} denotes the same thing than in Chess: an early game plan for which the player has to make choices. In Chess because one can not move many pieces at once (each turn), in RTS games because during the development phase, one is economically limited and has to choose between economic and military priorities and can only open so many tech paths at once. The \glos{opening} corresponds to the first military (tactical) moves that will be performed and, in StarCraft, it corresponds to the 5 (early rushes) to 15 minutes (advanced technology / late push) timespan. 
+
+Players have to find out what opening their opponents are doing to be able to effectively deal with the strategy (army composition) and tactics (military moves: where and when) thrown at them. For that, players scout each other and reason about the incomplete information they can bring together about army and buildings composition. This paper presents a probabilistic model able to predict the \textit{\glos{opening}} of the enemy that is used in a StarCraft AI competition entry bot (see Figure~\ref{fig:}). Instead of hard-coding strategies or even considering plans as a whole, we consider the long term evolution of our \glos{techtree} and the evolution of our army composition separately (but steering and constraining each others), as shown in Fig.~\ref{bbq_dataflow}. With this model, our bot asks ``what units should I produce?'' (assessing the whole situation), being able to revise and adapt its production plans.
+
+Later in the game, as the possibilities of strategies ``diverge'' (as in Chess), there are no longer fixed foundations that we can speak of as for openings. Instead, what is interesting is to know the technologies available to the enemy as well as have a sense of the composition of their army. The players have to adapt to each other technologies and armies compositions either to be able to defend or to attack. Some units are more cost-efficient than others against particular compositions. Some combinations of units play well with each others (for instance biological units with ``medics'' or a good ratio of strong contact units backed with fragile ranged or artillery units). Finally, some units can be game changing by themselves like cloaking units, detectors, massive area of effects units... 
 
 
-Each unit and building has a \textit{sight range} that provides the player with a view of the map. Parts of the map not in the sight range of the player's units are under \textit{fog of war} and the player ignores what is and happens there.
-In RTS games jargon, an \newglossaryentry{opening}{name=opening,description={in Chess as in RTS games: the first strategic moves of the game, the strategy of the early game},plural=openings}\textit{\glos{opening}} denotes the same thing than in Chess: an early game plan for which the player has to make choices. In Chess because one can not move many pieces at once (each turn), in RTS games because during the development phase, one is economically limited and has to choose between economic and military priorities and can only open so many tech paths at once. The \textit{\glos{opening}} corresponds to the first military (tactical) moves that will be performed and, in StarCraft, it corresponds to the 5 (early rushes) to 15 minutes (advanced technology / late push) timespan. 
-Players have to find out what opening their opponents are doing to be able to effectively deal with the strategy (army composition) and tactics (military moves: where and when) thrown at them. For that, players scout each other and reason about the incomplete information they can bring together about army and buildings composition. This paper presents a probabilistic model able to predict the \textit{\glos{opening}} of the enemy that is used in a StarCraft AI competition entry bot (see Figure~\ref{fig:}). Instead of hard-coding strategies or even considering plans as a whole, we consider the long term evolution of our tech tree and the evolution of our army composition separately (but steering and constraining each others), as shown in Fig.~\ref{bbq_dataflow}. With this model, our bot asks ``what units should I produce?'' (assessing the whole situation), being able to revise and adapt its production plans.
+\section{Related Works}
 
-
-\section{Strategy prediction}
-
-
-\begin{quotation}\textit{
-What is of supreme importance in war is to attack the enemy's strategy.} Sun Tzu\end{quotation}
-
-\subsection{Related Works}
 %This work was encouraged by the reading of Weber and Mateas' Data Mining Approach to Strategy Prediction \citep{weberStrat} and the fact that they provided their dataset, that we used. They tried and evaluated several machine learning algorithms on replays that were labeled with strategies (openings) with rules.
-
+\citep{Weber2010qf} 
 
 There are related works in the domains of opponent modeling \citep{HsiehS08,schadd2007opponent,OBRecog}. The main methods used to these ends are case-based reasoning (CBR) and planning or plan recognition \citep{LTW,CBR_Planning,OntanonCBR,HTNPlanning,Ramirez}. There are precedent works of Bayesian plan recognition \citep{BMPR}, even in games with Albrecht \textit{et al.} \citep{BayesianRecog} using dynamic Bayesian networks to recognize a user's plan in a multi-player dungeon adventure. 
 
@@ -57,13 +55,20 @@ Dereszynski \textit{et al.} \citep{HMMstrat_RTS_AIIDE11} used an HMM which state
 
 The work described in this section can be classified as probabilistic plan recognition. Strictly speaking, we present model-based machine learning used for prediction of plans, while our model is not limited to prediction. It performs two levels of plan recognition, both are learned from the replays: tech tree prediction (unsupervised) and opening prediction (semi-supervised or supervised depending on the labeling method).
 
+
+\section{Strategy prediction}
+
+\begin{quotation}\textit{
+What is of supreme importance in war is to attack the enemy's strategy.}\\
+Sun Tzu\end{quotation}
+
 \subsection{Replays Labeling}
 We used Weber and Mateas \citep{weberStrat} dataset of labeled replays. It is composed of 9316 StarCraft: Broodwar game logs, between $\approx$ 500 and 1300 per \textit{match-up}. A match-up is a set of the two opponents races, Protoss versus Terran (PvT) is a match-up, PvZ is another one. They are distinguished because strategies distribution are very different across match-ups (see Table~\ref{openings_distrib}). Weber and Mateas used logic rules on building sequences to put their labels, concerning only tier 2 strategies (no tier 1 rushes).
 
 Openings are closely related to \textit{build orders} (BO) but different BO can lead to the same opening and some BO are shared by different openings. Particularly, if we do not take the time at which the buildings are constructed, we may be wrong too often. For that reason, we tried to label replays with the statistical appearance of key features with a semi-supervised method (see Figure~\ref{replays_labeling}). Indeed, the purpose of our opening prediction model is to help our StarCraft playing bot to deal with rushes and special tactics. This was not the main focus of Weber and Mateas' labels, which follow more the development of the tech tree. We used the key components of openings that we want to be aware of as features for our labeling algorithm as show in Table~\ref{labels}.
 
 \begin{figure}[htp]
-\centerline{\includegraphics[width=1.0\columnwidth]{images/replays_labeling.pdf}}
+\centerline{\includegraphics[width=0.76\columnwidth]{images/replays_labeling.pdf}}
 \caption{Data centric view of our semi-supervised labeling of replays}
 \label{replays_labeling}
 \end{figure}
@@ -75,7 +80,6 @@ For the clustering part, we tried k-means, expectation-maximization (EM) with eq
 and \ref{ZvPmutas} show the clusters out of EM with the features of the corresponding openings. We thought of clustering because there are two cases in which you build a specific military unit of research a specific upgrade: either it is part of your opening, or it is part of your longer term game plan or even in reaction to the opponent. So the distribution over the time at which a feature appears is bimodal, with one (sharp) mode corresponding to ``opening with it'' and the other for the rest of the games, as can be seen in Figure~\ref{PvTfastDT}.
 
 \begin{table*}[ht] \caption{Opening/Strategies labels of the replays (Weber's and ours are not always corresponding)}
-\vspace{-0.5cm}
 \begin{footnotesize}
 \begin{center}
 \begin{tabular}{|c|c|ccc|}
@@ -115,7 +119,6 @@ Zerg & TwoHatchMuta & fast\_mutas & Mutalisk, Gas & early air raid \\
 
 \begin{table}[h]
 \caption{Openings distributions for Terran in all the match-ups}
-\vspace{-0.5cm}
 \begin{center}
 \begin{tabular}{|c|cc|cc|cc|}
 \hline
@@ -145,26 +148,25 @@ unknown 	& 93 	& 9.3   & 34 	& 5.9   & 43 	& 5.0 \\ \hline
 \end{table}
 
 \begin{figure}[htp]
-\centerline{\includegraphics[width=0.7\columnwidth]{images/PvTfastDT.png}}
+\centerline{\includegraphics[width=0.6\columnwidth]{images/PvTfastDT.png}}
 \caption{Protoss vs Terran distribution of first appearance of Dark Templars (Protoss invisible unit).}
 \label{PvTfastDT}
 \end{figure}
 
 \begin{figure}[htp]
-\centerline{\includegraphics[width=0.9\columnwidth]{images/TvZraxFE.png}}
+\centerline{\includegraphics[width=0.7\columnwidth]{images/TvZraxFE.png}}
 \caption{Terran vs Zerg Barracks and first Expansion timings (Terran). The bottom left cluster (squares) is the one labeled as \textit{fast\_exp}.}
 \label{TvZraxFE}
 \end{figure}
 
 \begin{figure}[htp]
-\centerline{\includegraphics[width=0.9\columnwidth]{images/PvPspeedzeal.png}}
+\centerline{\includegraphics[width=0.7\columnwidth]{images/PvPspeedzeal.png}}
 \caption{Protoss vs Protoss Ground Attack +1 and Zealot Legs upgrades timings. The bottom left cluster (squares) is the one labeled as \textit{speedzeal}.}
 \label{PvPspeedzeal}
 \end{figure}
 
 \begin{figure}[htp]
-\centerline{\includegraphics[width=0.9\columnwidth]{images/ZvPmutas.png}}
-\vspace{-0.5cm}
+\centerline{\includegraphics[width=0.7\columnwidth]{images/ZvPmutas.png}}
 \caption{Zerg vs Protoss time of the third Hatch and first appearance of Mutalisks. The bottom left cluster (squares) is the one labeled as \textit{mutas}.}
 \label{ZvPmutas}
 \end{figure}
@@ -176,7 +178,7 @@ Finally, some replays are labeled two or three times with different labels (due 
 Our predictive model is a Bayesian program, it can be seen as the ``Bayesian network'' represented in Figure~\ref{BNPrediction}. It is a generative model and this is of great help to deal with the parts of the observations' space where we do not have too much data (RTS games tend to diverge from one another as the number of possible actions grow exponentially). Indeed, we can model our uncertainty by putting a large standard deviation on too rare observations and generative models tend to converge with fewer observations than discriminative ones \citep{Jordan}. Here is the description of our Bayesian program:
 
 \begin{figure}[htp]
-\centerline{\includegraphics[width=0.6\columnwidth]{images/OpeningPrediction2.pdf}}
+\centerline{\includegraphics[width=0.4\columnwidth]{images/OpeningPrediction2.pdf}}
 \caption{Graph representation of the opening (and tech tree) prediction model}
 \label{BNPrediction}
 \end{figure}
@@ -198,66 +200,110 @@ There are 810 build trees for Terran, 346 for Protoss and 261 for Zerg ($\approx
 \subsubsection{Decomposition}
 The joint distribution of our model is the following:
 \begin{eqnarray*}
-    & & P(T, BuildTree, O_1 \dots O_N, Op^t, Op^{t-1}, \lambda) \\ 
-& = &   P(Op^t | Op^{t-1}) \\
-    & & P(Op^{t-1}) \\
-    & & P(BuildTree | Op^t) \\
-    & & P(O_{\llbracket 1 \dots N\rrbracket}) \\
-    & & P(\lambda | BuildTree, O_{\llbracket 1 \dots N\rrbracket}) \\
-    & & P(T | BuildTree, Op^t) 
+    & & \PP(T, BuildTree, O_1 \dots O_N, Op^t, Op^{t-1}, \lambda) \\ 
+& = &   \PP(Op^t | Op^{t-1}) \\
+    & & \PP(Op^{t-1}) \\
+    & & \PP(BuildTree | Op^t) \\
+    & & \PP(O_{\llbracket 1 \dots N\rrbracket}) \\
+    & & \PP(\lambda | BuildTree, O_{\llbracket 1 \dots N\rrbracket}) \\
+    & & \PP(T | BuildTree, Op^t) 
 \end{eqnarray*}
 This can also be see as Figure~\ref{BNPrediction}.
 
 \subsubsection{Forms}
 \begin{itemize}
-\item $P(Op^t | Op^{t-1})$ is optional, we use it as a filter so that the previous inference impacts the current one. We use a functional Dirac:
+\item $\PP(Op^t | Op^{t-1})$ is optional, we use it as a filter so that the previous inference impacts the current one. We use a functional Dirac:
 \begin{eqnarray*}
-& & P(Op^t|Op^{t-1})\ \  (Dirac)\\
+& & \PP(Op^t|Op^{t-1})\ \  (Dirac)\\
 & = & 1\ \mathrm{if}\ Op^t = Op^{t-1}\\
 & = & 0\ \mathrm{else}
 \end{eqnarray*}
-This does not prevent our model to switch predictions, it just uses previous inference posterior $P(Op^{t-1}$ to average $P(Op^t)$.
+This does not prevent our model to switch predictions, it just uses previous inference posterior $\PP(Op^{t-1}$ to average $\PP(Op^t)$.
 
-\item $P(Op^{t-1})$ copied from one inference to another (mutated from $P(Op^t)$). The first $P(Op^{t-1})$ is bootstrapped with the uniform distribution, we could also use a prior on openings in the given match-up.
-\item $P(BuildTree | Op^t)$ is learned from the labeled replays. $P(BuildTree|Op^t)$ are $\mathrm{card}(\{openings\})$ different histogram over the values of $BuildTree$.
-\item $P(O_{\llbracket 1 \dots N\rrbracket})$ is unspecified, we put the uniform distribution (we could use a prior over the most frequent observations).
-\item $P(\lambda | BuildTree, O_{\llbracket 1 \dots N\rrbracket})$ is a functional Dirac that restricts $BuildTree$ values to the ones than can co-exist with the observations.
+\item $\PP(Op^{t-1})$ copied from one inference to another (mutated from $\PP(Op^t)$). The first $\PP(Op^{t-1})$ is bootstrapped with the uniform distribution, we could also use a prior on openings in the given match-up.
+\item $\PP(BuildTree | Op^t)$ is learned from the labeled replays. $\PP(BuildTree|Op^t)$ are $\mathrm{card}(\{openings\})$ different histogram over the values of $BuildTree$.
+\item $\PP(O_{\llbracket 1 \dots N\rrbracket})$ is unspecified, we put the uniform distribution.
+\item $\PP(\lambda | BuildTree, O_{\llbracket 1 \dots N\rrbracket})$ is a functional Dirac that restricts $BuildTree$ values to the ones than can co-exist with the observations.
 \begin{eqnarray*}
-& & P(\lambda = 1 | buildTree, o_{\llbracket 1 \dots N\rrbracket}) \\
+& & \PP(\lambda = 1 | buildTree, o_{\llbracket 1 \dots N\rrbracket}) \\
 & = & 1\ \mathrm{if\ } buildTree \ \mathrm{can\ exist\ with\ } o_{\llbracket 1\dots N\rrbracket} \\
 & = & 0\ \mathrm{else}
 \end{eqnarray*}
 A $BuildTree$ value ($buildTree$) is compatible with the observations if it covers them fully. For instance, $BuildTree=\{pylon, gate, core\}$ is compatible with $o_{\#core} = 1$ but it is not compatible with $o_{\#forge} = 1$. In other words, $buildTree$ is incompatible with $o_{\llbracket 1\dots N\rrbracket}$ \textit{iff} $\{o_{\llbracket 1\dots N\rrbracket} \backslash \{o_{\llbracket 1\dots N\rrbracket} \wedge buildTree\}\} \neq \emptyset$.
-\item $P(T | BuildTree, Op^t)$ are ``bell shape'' distributions (discretized normal distributions). There is one bell shape per couple $(opening, buildTree)$. The parameters of these discrete Gaussian distributions are learned from the labeled replays.
+\item $\PP(T | BuildTree, Op^t)$ are ``bell shape'' distributions (discretized normal distributions). There is one bell shape per couple $(opening, buildTree)$. The parameters of these discrete Gaussian distributions are learned from the labeled replays.
 \end{itemize}
 
 \subsubsection{Identification (learning)}
-The learning of the $P(BuildTree | Op^t)$ histogram is straight forward counting of occurrences from the labeled replays. The learning of the $P(T | BuildTree, Op^t)$ bell shapes parameters takes into account the uncertainty of the couples $(buildTree, opening)$ for which we have few observations. Indeed, the normal distribution $P(T|buildTree, opening)$ begins with a high $\sigma^2$, and \textbf{not} a Dirac with $\mu$ on the seen $T$ value and $sigma=0$. This accounts for the fact that the first observation may have been an outlier. This learning process is independent on the order of the stream of examples, seeing point A and then B or B and then A in the learning phase produces the same result. 
+The learning of the $\PP(BuildTree | Op^t)$ histogram is straight forward counting of occurrences from the labeled replays with ``add-one smoothing'' (Laplace's law of succession \citep{Jaynes}). The learning of the $\PP(T | BuildTree, Op^t)$ bell shapes parameters takes into account the uncertainty of the couples $(buildTree, opening)$ for which we have few observations. Indeed, the normal distribution $\PP(T|buildTree, opening)$ begins with a high $\sigma^2$, and \textbf{not} a Dirac with $\mu$ on the seen $T$ value and $sigma=0$. This accounts for the fact that the first observation may have been an outlier. This learning process is independent on the order of the stream of examples, seeing point A and then B or B and then A in the learning phase produces the same result. 
 
 \begin{figure}[htp]
-\centerline{\includegraphics[width=1.0\columnwidth]{images/BW_HeatMap_knowing_ReaverDrop.png}}
-\caption{$P(Time, BuildTree | Opening^t=ReaverDrop)$}
+\centerline{\includegraphics[width=0.7\columnwidth]{images/BW_HeatMap_knowing_ReaverDrop.png}}
+\caption{$\PP(Time, BuildTree | Opening^t=ReaverDrop)$}
 \label{noise}
 \end{figure}
 
 
 \subsubsection{Questions}
 %%%\begin{eqnarray*}
-%%%P(Op|T=t, O_{1:N}=o_{1:N}, \lambda = 1) \\
-%%%\propto \frac{1} {P(o_{1:N}).P(\lambda).P(t)} \\
-%%%\sum_{BuildTree} P(Op).P(BuildTree|Op).P(o_{1:N})\\
-%%%.P(\lambda|BuildTree,o_{1:N}).P(t|BuildTree,Op)
+%%%\PP(Op|T=t, O_{1:N}=o_{1:N}, \lambda = 1) \\
+%%%\propto \frac{1} {\PP(o_{1:N}).\PP(\lambda).\PP(t)} \\
+%%%\sum_{BuildTree} \PP(Op).\PP(BuildTree|Op).\PP(o_{1:N})\\
+%%%.\PP(\lambda|BuildTree,o_{1:N}).\PP(t|BuildTree,Op)
 %%%\end{eqnarray*}
 The question that we will ask in all the benchmarks is:
 \begin{eqnarray*}
- & P(Op|T=t, O_{\llbracket 1\dots N\rrbracket}=o_{\llbracket 1\dots N\rrbracket}, \lambda = 1) \\
- & \propto P(Op).P(o_{\llbracket 1\dots N\rrbracket})\\
- & \times \sum_{BuildTree} P(\lambda | BuildTree, o_{\llbracket 1\dots N\rrbracket})\\
- & .P(BuildTree|Op).P(t|BuildTree, Op)
+ & \PP(Op|T=t, O_{\llbracket 1\dots N\rrbracket}=o_{\llbracket 1\dots N\rrbracket}, \lambda = 1) \\
+ & \propto \PP(Op).\PP(o_{\llbracket 1\dots N\rrbracket})\\
+ & \times \sum_{BuildTree} \PP(\lambda | BuildTree, o_{\llbracket 1\dots N\rrbracket})\\
+ & .\PP(BuildTree|Op).\PP(t|BuildTree, Op)
 \end{eqnarray*}
-Note that if we see $P(BuildTree, Time)$ as a plan, asking $P(BuildTree|Opening, Time)$ boils down to use our ``plan recognition'' mode as a planning algorithm, which could provide good approximations of the optimal goal set \citep{Ramirez}. This gives us a distribution on the build trees to follow (build orders) to achieve a given opening.
+Note that if we see $\PP(BuildTree, Time)$ as a plan, asking $\PP(BuildTree|Opening, Time)$ boils down to use our ``plan recognition'' mode as a planning algorithm, which could provide good approximations of the optimal goal set \citep{Ramirez}. This gives us a distribution on the build trees to follow (build orders) to achieve a given opening.
+
+
+To sum-up, the full Bayesian program is:
+\begin{eqnarray*}
+BP
+\begin{cases}
+Desc.
+    \begin{cases}
+    Spec. (\pi)
+        \begin{cases}
+        Variables\\
+    T, BuildTree, O_1 \dots O_N, Op^t, Op^{t-1}, \lambda \\ 
+        Decomposition\\
+            \PP(T, BuildTree, O_1 \dots O_N, Op^t, Op^{t-1}, \lambda) \\ 
+        =   \PP(Op^t | Op^{t-1}) \PP(Op^{t-1}) \PP(BuildTree | Op^t) \\
+            \PP(O_{\llbracket 1 \dots N\rrbracket}) \PP(\lambda | BuildTree, O_{\llbracket 1 \dots N\rrbracket}) \PP(T | BuildTree, Op^t) \\
+        Forms\\
+            \PP(Op^t | Op^{t-1})\sim functional\ Dirac\ \mathrm{(filtering)}\\
+            \PP(BuildTree | Op^t)\sim Categorical(\theta)\\
+%%% \mathrm{histogram} \\
+            \PP(\lambda | BuildTree, O_{\llbracket 1 \dots N\rrbracket})\sim functional\ Dirac\ \mathrm{(coherence)}\\ 
+%%%\ of\ observations\ with\ buildtree)}\\
+            %%%\PP(T | BuildTree, Op^t)\sim BellShape(\mu, \sigma)
+            \PP(T | BuildTree=bt, Op^t=op) \sim Discrete\mathcal{N}(\mu_{bt,op},\sigma^2_{bt,op})\\
+%%%\mathrm{bell\ shape\ (discrete\ normal)}\\
+        \end{cases}\\
+    Identification\\
+            \PP(BuildTree=bt | Op^t=op) = \theta_{bt,op} = \frac{1 + \mathrm{count}(bt,op)}{\#BuildTree + \mathrm{count}(op)}\\
+            (\mu_{bt,op},\sigma_{bt,op})_{\mathrm{ML}} = \argmax_{\mu,\sigma}\PP(T|BuildTree=bt, Op^t=op; \mu,\sigma)\\
+%%% \mathrm{maximum\ likelihood\ }\{(\mu,\sigma^2)\}\\
+    \end{cases}\\
+Question \\
+ \PP(Op|T=t, O_{\llbracket 1\dots N\rrbracket}=o_{\llbracket 1\dots N\rrbracket}, \lambda = 1) \\
+\end{cases}
+\end{eqnarray*}
+
+
+\subsection{Tech Tree Prediction Model}
+%\subsubsection{Variables}
+%\subsubsection{Decomposition}
+%\subsubsection{Forms}
+%\subsubsection{Identification (learning)}
+%\subsubsection{Questions}
 
 \subsection{Results on StarCraft}
+
 
 \subsubsection{Prediction}
 
@@ -270,30 +316,24 @@ For each match-up, we ran cross-validation testing with 9/10th of the dataset us
 After 3 minutes, a Terran player will have or be building his first supply depot, barracks, refinery (gas), and at least factory or expansion. A Zerg player would have his first overlord, zergling pool, extractor (gas) and most of the time his expansion and lair tech. A Protoss player would have his first pylon, gateway, assimilator (gas), cybernectics core, and sometimes his robotics center, or forge and expansion.
 
 \begin{figure}[htp]
-\centerline{\includegraphics[width=1.0\columnwidth]{images/TvP_prediction.png}}
-\vspace{-0.2cm}
-\centerline{\includegraphics[width=1.0\columnwidth]{images/TvPx_prediction.png}}
-\vspace{-0.3cm}
-\caption{Evolution of $P(Opening)$ with increasing observations in a TvP match-up, with Weber's labeling on top, our labeling on the bottom. The x-axis corresponds to the construction of buildings.}
+\centerline{\includegraphics[width=0.8\columnwidth]{images/TvP_prediction.png}}
+\centerline{\includegraphics[width=0.8\columnwidth]{images/TvPx_prediction.png}}
+\caption{Evolution of $\PP(Opening)$ with increasing observations in a TvP match-up, with Weber's labeling on top, our labeling on the bottom. The x-axis corresponds to the construction of buildings.}
 \label{prediction}
-\vspace{-0.5cm}
 \end{figure}
 
-Table~\ref{results} sums up all the prediction probabilities (scores) of our model in all the match-ups with both labeling of the game logs. Please note that when an opening is mispredicted, the distribution on openings is often not $P(badopening)=1, P(others)=0$ and that we can extract some value out of these distributions. Also, we observed that $P(Opening=unknown)>P(others)$ is often a case of misprediction: our bot would use the next prediction in this case. Figure~\ref{prediction} shows the evolution of the distribution $P(Opening)$ during a replay for Weber's and our labelings. Figure~\ref{noise} shows the resistance of our model to noise. We randomly removed some observations (buildings, attributes), from 1 to 15, knowing that for Protoss and Terran we use 16 buildings observations and 17 for Zerg. We think that our model copes well with noise because it backtracks unseen observations: for instance if we have only the $core$ observation, it will work with build trees containing $core$ that will passively infer unseen $pylon$ and $gate$. Also, uncertainty is handled natively.
+Table~\ref{results} sums up all the prediction probabilities (scores) of our model in all the match-ups with both labeling of the game logs. Please note that when an opening is mispredicted, the distribution on openings is often not $\PP(badopening)=1, \PP(others)=0$ and that we can extract some value out of these distributions. Also, we observed that $\PP(Opening=unknown)>\PP(others)$ is often a case of misprediction: our bot would use the next prediction in this case. Figure~\ref{prediction} shows the evolution of the distribution $\PP(Opening)$ during a replay for Weber's and our labelings. Figure~\ref{noise} shows the resistance of our model to noise. We randomly removed some observations (buildings, attributes), from 1 to 15, knowing that for Protoss and Terran we use 16 buildings observations and 17 for Zerg. We think that our model copes well with noise because it backtracks unseen observations: for instance if we have only the $core$ observation, it will work with build trees containing $core$ that will passively infer unseen $pylon$ and $gate$. Also, uncertainty is handled natively.
 
 
 
 \begin{figure}[htp]
-\centerline{\includegraphics[width=1.0\columnwidth]{images/ZvP2.png}}
-\vspace{-0.2cm}
-\centerline{\includegraphics[width=1.0\columnwidth]{images/PvZ2.png}}
-\vspace{-0.3cm}
+\centerline{\includegraphics[width=0.7\columnwidth]{images/ZvP2.png}}
+\centerline{\includegraphics[width=0.7\columnwidth]{images/PvZ2.png}}
 \caption{Two extreme evolutions of the 3 probabilities of opening recognition with increasing noise (15 missing attributes/observations/buildings correspond to 93.75\% missing information for Protoss and Terran openings prediction and 88.23\% of missing attributes for Zerg openings prediction). Zerg opening prediction probabilitly on top, Protoss bottom.}
 \label{noise}
 \end{figure}
 
-\begin{table*}[ht] \caption{Prediction probabilities for all the match-ups}
-\vspace{-0.5cm}
+\begin{sidewaystable}[ht] \caption{Prediction probabilities for all the match-ups}
 \begin{center}
 \begin{tabular}{|c|ccc|ccc|ccc|ccc|ccc|ccc|}
 \hline
@@ -349,7 +389,7 @@ ZvZ & 0.69 & 0.64 & 0.67 & 0.73 & 0.74 & 0.77 & 0.7 & 0.73 & 0.73
 \end{tabular}
 \label{results}
 \end{center}
-\end{table*}
+\end{sidewaystable}
 
 
 \subsubsection{Performances}
@@ -357,7 +397,6 @@ The first iteration of this model was not making use of the structure imposed by
 
 \begin{table}[h]
 \caption{Extremes of computation time values (in seconds, C2D 2.8Ghz)}
-\vspace{-0.5cm}
 \begin{center}
 \begin{tabular}{|c|cc|cc|}
 \hline
@@ -380,13 +419,13 @@ Z \begin{tiny}(Zerg)\end{tiny} & 896 & 0.089014 & 0.00796715 & 0.00123551 \\ \hl
 \subsection{Extensions}
 
 \subsubsection{Possible Uses}
-Developing beforehand a RTS game AI that specifically deals with whatever strategies the players will come up is very hard. And even if game developers were willing to patch their AI afterwards, it would require a really modular design and a lot of work to treat each strategy. With our model, the AI can adapt to the evolutions in play by learning its parameters from the replay, and it can dynamically adapt during the games by using the reverse question $P(BuildTree | Opening,Time)$, or even $P(TechTree | Opening, Time)$ if we use a $TechTree$ variable encoding buildings and technology upgrades. This question would give the distribution over technology trees knowing the opening we want to perform at which time. This would allow for the bot to dynamically choose/change build orders.
+Developing beforehand a RTS game AI that specifically deals with whatever strategies the players will come up is very hard. And even if game developers were willing to patch their AI afterwards, it would require a really modular design and a lot of work to treat each strategy. With our model, the AI can adapt to the evolutions in play by learning its parameters from the replay, and it can dynamically adapt during the games by using the reverse question $\PP(BuildTree | Opening,Time)$, or even $\PP(TechTree | Opening, Time)$ if we use a $TechTree$ variable encoding buildings and technology upgrades. This question would give the distribution over technology trees knowing the opening we want to perform at which time. This would allow for the bot to dynamically choose/change build orders.
 
 We could also use this model in a commentary assistant AI. In the StarCraft and StarCraft 2 communities, there are a lot of \gloss{pro-gamer} tournaments that are commented and we could provide a tool for commentators to estimate the probabilities or different openings or technology paths. As in commented poker matches, where the probabilities of different hands are drawn on screen for the spectators, we could display the probabilities of openings. In such a setup we could use more features as the observers and commentators can see everything that happens (upgrades, units) and we limited ourselves to ``key'' buildings in the work presented in this paper.
 
 \subsubsection{Improvements}
 
-First, our prediction model can be upgraded to have a higher recognition rate: we could reason about $t+1$ explicitly before computing the distribution over possible openings at $t$ and thus compute the distribution over technology trees at $t+1$. Perhaps it would increase the results of $P(Opening|Observations)$, but it almost surely would increase $P(BuildTree^{t+1}|Observations)$ which is important for late game predictions. We could also make use of more features as we currently only use at most 20 features (only buildings), and never all at once. Perhaps also that incorporating priors per match-up would lead to better results.
+First, our prediction model can be upgraded to have a higher recognition rate: we could reason about $t+1$ explicitly before computing the distribution over possible openings at $t$ and thus compute the distribution over technology trees at $t+1$. Perhaps it would increase the results of $\PP(Opening|Observations)$, but it almost surely would increase $\PP(BuildTree^{t+1}|Observations)$ which is important for late game predictions. We could also make use of more features as we currently only use at most 20 features (only buildings), and never all at once. Perhaps also that incorporating priors per match-up would lead to better results.
 
 Then, we could feed it with \textit{more} replays during the learning by scrapping more progamers level replays websites. Also, we could learn from replays of bot vs bot matches. For the learning part, the labeling of replays is very important, and our labeling methods can be improved. 
 We could explore auto-supervised learning \citep{AutoSuperLearning}. 
@@ -395,10 +434,10 @@ or the game time at which the label is the most relevant, as openings are often 
 
 Finally, a hard problem is detecting the ``fake'' builds of very highly skilled players. Indeed, some progamers have build orders which purpose are to fool the opponent into thinking that they are performing opening A while they are doing B. %For instance they could ``take early gas'' leading the opponent to think they are going to do tech units, not gather gas 
 For instance, they could leadthe opponent to think they are going to \textit{tech} 
-and perform an early rush instead. We think that this can be handled by our model by changing $P(Opening|LastOpening)$ by $P(Opening|LastOpening, LastObservations)$ and adapting the influence of the last prediction with regard to the last observations (i.e., we think we can learn some ``fake'' label on replays).
+and perform an early rush instead. We think that this can be handled by our model by changing $\PP(Opening|LastOpening)$ by $\PP(Opening|LastOpening, LastObservations)$ and adapting the influence of the last prediction with regard to the last observations (i.e., we think we can learn some ``fake'' label on replays).
 
-\section{Army adaptation}
-\subsection{Model}
+\section{Adaptation}
+\subsection{Army Adaptation Model}
 We downloaded more than 9000 replays to keep 7708 uncorrupted, 1v1 replays of very high level StarCraft games (pro-gamers leagues and international tournaments) from specialized websites\footnote{\url{http://www.teamliquid.net}, \url{http://www.gosugamers.net}, \url{http://www.iccup.com}}. Then, we ran them using BWAPI\footnote{\url{http://code.google.com/p/bwapi/}} and dumped units positions, pathfinding and regions, resources, orders, vision events, and for attacks (we trigger a robust attack tracking heuristic when a unit dies and there are at least two military units around): types, positions, units engaged on each side, and outcomes. Basically, every BWAPI event was recorded, the dataset, its source code, and this model implementation are freely available\footnote{\url{http://snippyhollow.github.com/bwrepdump/}}. 
 
 %\subsection{Army Composition Model}
@@ -409,7 +448,6 @@ we can reason on which mixture of clusters the opponent is probably going to hav
 \centerline{\includegraphics[width=0.55\columnwidth]{images/army_composition_model.pdf}}
 \caption{Graphical (plate notation) representation of the army composition Bayesian model, gray variables are known while gray hatched variables are given by distributions on their values. $C_t$ can also be known (if a decision was taken on a subsequent model).}
 \label{BN}
-\vspace{-0.5cm}
 \end{figure}
 
 \subsubsection{Variables}
@@ -517,7 +555,7 @@ disparity & in \% & m & ws & m & ws & m & ws & m & ws & m & ws& m & ws \\
  %& measure & \multicolumn{2}{|c|}{$d$ for $k=0$} & \multicolumn{2}{|c|}{$k$ for $d=1$} & \multicolumn{2}{|c|}{$k$ for $d=2$} & \multicolumn{2}{|c|}{$k$ for $d=3$} \\
 \end{tabular}
 \label{results}
-\caption{Winner rediction scores (in \%) for 3 main metrics. For the left columns (``m''), we considered only military units. For the right columns (``ws'') we also considered static defense and workers. The ``heuristic'' metric is a baseline heuristic for battle winner prediction for comparison using army values, while ``just prob.'' only considers $P(C_c|EC)$ to predict the winner, and ``prob$\times$heuristic'' balances the heuristic's predictions with $\sum_{C_c,EC}P(C_c|EC)P(EC)$.}
+\caption{Winner prediction scores (in \%) for 3 main metrics. For the left columns (``m''), we considered only military units. For the right columns (``ws'') we also considered static defense and workers. The ``heuristic'' metric is a baseline heuristic for battle winner prediction for comparison using army values, while ``just prob.'' only considers $P(C_c|EC)$ to predict the winner, and ``prob$\times$heuristic'' balances the heuristic's predictions with $\sum_{C_c,EC}P(C_c|EC)P(EC)$.}
 
 \end{footnotesize}
 \end{center}
@@ -529,7 +567,6 @@ We preferred robustness to precision and thus we did not remove outliers: better
 \centerline{\includegraphics[width=0.55\columnwidth]{images/GMM_ISO_Z2.png}}
 \label{isoz}
 \caption{2 dimensional Isomap projection of a small dataset of battles for Zerg (vs Protoss) with most probable Gaussian mixture model components as labels.}
-\vspace{-0.2cm}
 \end{figure}
 
 %\subsection{Benchmark of the Clustering}
@@ -539,7 +576,7 @@ We also plotted the generated clusters in all kind of way, Figure~\ref{isoz} sho
 %Finally, in the absence of ground truth to directly evaluate the whole model, we can only 
 
 \begin{figure*}[htp]
-\centerline{\includegraphics[width=1.0\columnwidth]{images/PvP_small.png}}
+\centerline{\includegraphics[width=0.7\columnwidth]{images/PvP_small.png}}
 %\centerline{\includegraphics[width=2.1\columnwidth]{PvZ2.png}}
 \caption{Parallel plot of a small dataset of Protoss (vs Protoss, i.e. in the PvP match-up) army clusters on most important unit types (for the match-up). Each normalized vertical axis represents the percentage of the units of the given unit type in the army composition (we didn't remove outliers, so most top (tip) vertices represent 100\%), except for the rightmost (framed) which links to the most probable GMM component. Note that several traces can (and do) go through the same edge.}
 \label{parallelplot}
@@ -581,7 +618,6 @@ We also plotted the generated clusters in all kind of way, Figure~\ref{isoz} sho
 \centerline{\includegraphics[width=0.55\columnwidth]{images/Z_EC_knowing_ECnext.png}}
 \caption{Dynamics of clusters: $\PP(EC^t|EC^{t+1})$ for Zerg}
 \label{ecknowingecnext}
-\vspace{-0.2cm}
 \end{figure}
 
 %%% \begin{figure}[htp]
@@ -592,15 +628,14 @@ We also plotted the generated clusters in all kind of way, Figure~\ref{isoz} sho
 Here, we focused on asking $\PP(U_{1:N}^{t+1}|eu{1:M}^t, tt^t, \lambda=1)$, and evaluated (in the absence of ground truth for full armies compositions) the two key components that are $\PP(U_{1:N}|C)$ (or $\PP(EC_{1:M}|EC)$) and $\PP(C_c|EC)$. Many other questions can be asked: $\PP(TT^t|eu_{1:M}^t)$ can help us adapt our tech tree development to the opponent's army. If we know the opponent's army composition only partially, we can benefit of knowledge about $ETT$ to know what is possible, but also probable, by asking $P(EC^t|Observations)$.
 
 
-We presented a probabilistic model inferring the best army composition given what was previously seen (from replays, or previous games), integrating adaptation to the opponent with other constraints (tactics). One of the main advantages of this approach is to be able to deal natively with incomplete information, due to player's intentions, and to the fog of war in RTS. The army composition dimensionality reduction (clustering: unsupervised) can be applied to any game and coupled with other techniques, for instance for situation assessment in case-based planning. The results in battle outcome prediction (from few information) shows its situation assessment potential. Finally, we will use this model in our StarCraft AI competition entry bot as it facilitates adaptive decision-making on the production plan. The main research direction is now to find a way to evaluate the full model integrated to a bot, both for performance and for fun.
+We presented a probabilistic model inferring the best army composition given what was previously seen (from replays, or previous games), integrating adaptation to the opponent with other constraints (tactics). One of the main advantages of this approach is to be able to deal natively with incomplete information, due to player's intentions, and to the fog of war in RTS. The army composition dimensionality reduction (clustering: unsupervised) can be applied to any game and coupled with other techniques, for instance for situation assessment in case-based planning. The results in battle outcome prediction (from few information) shows its situation assessment potential. Finally, we will use this model in our StarCraft AI competition entry bot as it facilitates adaptive decision-making on the production plan. The main research direction is now to find a way to evaluate the full model integrated to a bot, both for performance of the bot and for the fun of a human player.
 
 
-\section{Strategy Adaptation Model}
-\section{Results on StarCraft}
+\subsection{Results on StarCraft}
 
 \begin{quotation}\textit{
 However beautiful the strategy, you should occasionally look at the results.
 } Winston Churchill\end{quotation}
 
-\section{Extensions?}
+\subsection{Extensions}
 

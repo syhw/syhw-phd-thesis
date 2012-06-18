@@ -1,14 +1,19 @@
 \chapter{RTS AI: \textit{StarCraft: Broodwar}}
 
-\section{How does the game work: gameplay}
-We first introduce the basic components of a real-time strategy (RTS) game. In a RTS, players need to gather resources to build military units and defeat their opponents. To that end, they often have \textit{worker units} (or extraction structures) than can gather resources needed to build \textit{workers}, \textit{buildings}, \textit{military units} and \textit{research upgrades}. Workers are often also builders (as in StarCraft) and are weak in fights compared to military units. Resources may have different uses, for instance in StarCraft: minerals are used for everything, whereas gas is only required for advanced buildings or military units, and technology upgrades. Buildings and research upgrades define technology trees (directed acyclic graphs) and each state of a ``tech tree'' allow for different unit type production abilities and unit spells/abilities. The military can be of different types, any combinations of ranged, casters, contact attack, zone attacks, big, small, slow, fast, invisible, flying... Units can have attacks and defenses that counter each others as in rock-paper-scissors. 
+\section{How does the game work}
 
+\subsection{RTS Gameplay}
+We first introduce the basic components of a real-time strategy (RTS) game. In a RTS, players need to gather resources to build military units and defeat their opponents. To that end, they often have \textit{worker units} (or extraction structures) than can gather resources needed to build \textit{workers}, \textit{buildings}, \textit{military units} and \textit{research upgrades}. Workers are often also builders (as in StarCraft) and are weak in fights compared to military units. Resources may have different uses, for instance in StarCraft: minerals are used for everything, whereas gas is only required for advanced buildings or military units, and technology upgrades. Buildings and research upgrades define technology trees (directed acyclic graphs) and each state of a \newglossaryentry{techtree}{name={tech tree},description={abbrev. for ``technological tree'', state of the technology (buildings, researches, upgrades) of a player}}\glos{techtree} (or \newglossaryentry{buildtree}{name={build tree},description={abbrev. for ``buildings tree'', state of the buildings (and thus production) unlocked by a player}}\glos{buildtree}) allow for different unit type production abilities and unit spells/abilities. The military units can be of different types, any combinations of ranged, casters, contact attack, zone attacks, big, small, slow, fast, invisible, flying... In the end, a central part of the gameplay is that units can have attacks and defenses that counter each others as in a soft rock-paper-scissors. 
+
+\subsection{A StarCraft Game}
+
+
+\section{Challenges}
 In combinatorial game theory terms, competitive StarCraft is a zero sum, partial-information, deterministic strategy game.
-
-\section{Problems, resolutions}
 
 \begin{figure}[!ht]
 \begin{center}
+\begin{small}
 \begin{tikzpicture}
   \path[mindmap,concept color=black!80!white,text=white]
     node[concept] {RTS AI: predict, decide, perform}
@@ -17,25 +22,28 @@ In combinatorial game theory terms, competitive StarCraft is a zero sum, partial
       node[concept] {Micro}
       child[concept color=red!80!magenta] { node[concept] {React} }
       child { node[concept] {Optimize} }
-      child[concept color=blue!80!cyan] { node[concept] {Cooperate} }
+      child[concept color=blue!30!cyan] { node[concept] {Cooperate} }
     }
-    child[concept color=cyan!90!black] { % TODO change color
+    child[concept color=blue!80!black] { % TODO change color
       node[concept] {Tactics}
       child[concept color=red!80!magenta] { node[concept] {When?} }
       child { node[concept] {Where?} }
-      child[concept color=blue!80!cyan] { node[concept] {How?} }
+      child[concept color=blue!30!cyan] { node[concept] {How?} }
     }
     child[concept color=green!70!black] {
       node[concept] {Strategy}
-      child[concept color=red!80!magenta] { node[concept] {Aggressivity} }
-      child { node[concept] {Spendings balance} }
-      child[concept color=blue!80!cyan] { node[concept] {Army composition} }
+      child[concept color=red!80!magenta] { node[concept] {Initiative} }
+      child { node[concept] {Army composition} }
+      child[concept color=blue!30!cyan] { node[concept] {Spendings balance} }
     };  
 \end{tikzpicture}
+\end{small}
 \end{center}
 \label{fig:mindmapRTS}
 \caption{A mind-map of RTS AI XXX TODO}
 \end{figure}
+
+StarCraft subsumes Wargus, which has an estimated mean branching factor $1.5.10^3$ \citep{LTW} (Chess: $\approx 35$, Go: $<360$). \cite{bgweberPhD} find a branching factor of $> 1.10^6$ for StarCraft. The game complexity is roughly $10^11500$, versus the Shannon number for Chess ($10^43$).
 
 \section{Task decomposition and linking}
 \begin{figure}[!ht]
