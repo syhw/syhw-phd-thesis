@@ -1,35 +1,37 @@
 \documentclass[a4paper,11pt,twoside]{memoir}
 
-%%%%%%%%%%% Mes packages
-\usepackage{amsfonts, amsmath, amssymb, amstext, amsthm, latexsym}
-\usepackage{stmaryrd}
-\usepackage{graphicx, epsfig, wrapfig}
-\usepackage{exscale}
+%%% PACKAGES:
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{amsfonts,amsmath,amssymb,amstext,amsthm,amsbsy,amsopn}
+\usepackage{mathrsfs,latexsym,stmaryrd}
+\usepackage{graphicx, epsfig, wrapfig, exscale}
 \usepackage{algorithm,algpseudocode}
-\usepackage{amsbsy}
-\usepackage{amsopn}
 \usepackage{lettrine}
 \usepackage{natbib}
 \usepackage{rotating}
-\usepackage[utf8]{inputenc}
-%\usepackage[latin1]{inputenc}
-\usepackage{fullpage}
 \usepackage{url}
 \usepackage{xspace}
 \usepackage{enumerate}
-\usepackage[english]{babel}
 \usepackage{textcomp}
-\usepackage{pdfpages}
 \usepackage{multirow}
-\usepackage{rotating}
-\usepackage{mathrsfs}
-\input{pdfspecific.tex}
-%\input{htmlspecific.tex}
-
+\usepackage{ulem}
+\usepackage{cclicenses}
 \usepackage{tikz}
 \usetikzlibrary{shapes,arrows,mindmap,trees}
 \usetikzlibrary{decorations.pathmorphing}
 \usetikzlibrary{decorations.markings}
+
+
+%%% VARIABLE CONF:
+
+\input{pdfspecific.tex}    % hyperref, backrefs, pdfinfo 
+%\input{htmlspecific.tex}  % hyperref for HTML
+\usepackage{fullpage}      % for electronic viewing (no headers)
+
+
+%%% FONT:
 
 %\usepackage{newcent}
 %\usepackage{tgbonum}
@@ -37,19 +39,32 @@
 %\usepackage{DejaVuSerif}
 %\usepackage[default]{droidserif}
 %\usepackage{fouriernc}
-%%%%%\usepackage{kmath,kerkis}
+%\usepackage{kmath,kerkis}
 
 %\usepackage{palatino}
 %\usepackage[sc]{mathpazo}
 %\linespread{1.05}
 \usepackage[T1]{fontenc}
 
-\usepackage{ulem}
+
+%%% TOC:
+
 %\usepackage[toc,page]{appendix} 
 \usepackage[toc]{glossaries}
 \makeglossaries
+\usepackage{minitoc}
+\setlength{\mtcindent}{24pt}
+\renewcommand{\mtcoffset}{0pt}
+\mtcsetoffset{minitoc}{0pt}
+\setlength{\mtcskipamount}{\bigskipamount}
+\setcounter{minitocdepth}{1} %%% can change to 2
+\renewcommand{\mtcfont}{\small\rmfamily\upshape\mdseries}
+\renewcommand{\mtcSfont}{\small\rmfamily\upshape\bfseries}
+\renewcommand{\mtctitle}{}
+\def\chaptertoc{\minitoc \vskip 16pt}
 
-%%%%%%%%%%% Mes commandes
+
+%%% Mes commandes
 \newcommand{\noi}{\noindent}
 \newcommand{\II}{\mbox{\large 1\hskip -0,353em 1}}
 \newcommand{\MR}{\mathcal{R}}
@@ -69,28 +84,16 @@
 \newtheorem*{mythm}{Theorem}
 \newtheorem*{mydef}{Definition}
 \newtheorem*{myproof}{Proof}
-
-
-%\include{titre/titre}
-\include{titre/template}
-
-\linespread{1.12}
-%\date{}
-
 \newcommand{\PP}{
 \mathrm{P}
 }
 
-\usepackage{minitoc}
-\setlength{\mtcindent}{24pt}
-\renewcommand{\mtcoffset}{0pt}
-\mtcsetoffset{minitoc}{0pt}
-\setlength{\mtcskipamount}{\bigskipamount}
-\setcounter{minitocdepth}{1} %%% can change to 2
-\renewcommand{\mtcfont}{\small\rmfamily\upshape\mdseries}
-\renewcommand{\mtcSfont}{\small\rmfamily\upshape\bfseries}
-\renewcommand{\mtctitle}{}
-\def\chaptertoc{\minitoc \vskip 16pt}
+
+\include{titre/template}
+
+
+\linespread{1.12}
+%\date{}
 
 \begin{document}
 
@@ -107,6 +110,8 @@
 \newcommand{\gloss}[1]{\glspl{#1}*}
 \newcommand{\Glos}[1]{\Gls{#1}*}
 \newcommand{\Gloss}[1]{\Glspl{#1}*}
+
+%%%\byncsa
 
 \include{chapters/notations}
 \include{chapters/intro}
