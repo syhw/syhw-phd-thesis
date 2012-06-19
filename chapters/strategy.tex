@@ -21,8 +21,8 @@ Sun Tzu\end{quotation}
 \begin{itemize}
 \item Problem: take the winning strategy in the absolute (knowing everything: complete observations, players intentions, effects of each possible actions).
 \item Problem that we solve: take the winning strategy (in average) knowing what we saw from the opponent and our model of the game. 
-\item Type: prediction is an ``inference under uncertainty'' problem; adaptation given what we know is a ``planning under constraints'' problem. 
-\item Complexity: EXPTIME-complete (as for Chess and Go). StarCraft subsumes Wargus, which has an estimated mean branching factor $1.5.10^3$ \citep{LTW} (Chess: $\approx 35$, Go: $<360$). \cite{bgweberPhD} find a branching factor of $> 1.10^6$ for StarCraft. The game complexity is roughly $10^11500$, versus the Shannon number for Chess ($10^43$). Our solutions are real-time on a laptop.
+\item Type: prediction is problem of \textit{inference under uncertainty}; adaptation given what we know is a problem of \textit{planning under constraints}.
+\item Complexity: EXPTIME-complete (as for Chess and Go \citep{Robson83}). Our solutions are real-time on a laptop.
 %\item Results: better resistance to noise, which is fundamental in real setup RTS gameplay (fog of war). Full Bayesian model down to adaptation actions some day?
 %\item Conclusion and perspectives: a way to encode and use gameplay/structural knowledge 
 \end{itemize}
