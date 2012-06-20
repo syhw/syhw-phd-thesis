@@ -79,7 +79,7 @@ The selection of the features along with the opening labels is the supervised pa
 For the clustering part, we tried k-means, expectation-maximization (EM) with equal shape (bivariate normal distribution with proportional covariances matrices) and EM with the normal distribution shapes and volumes chosen with a Bayesian information criterion (BIC). Best BIC models were almost always the most agreeing with expert knowledge (15/17 labels). We used the R package Mclust \citep{Mclust,Mclust2} to perform full EM clustering. We produce ``2 bins clustering'' for each set of features (corresponding to each opening), and label the replays belonging to the cluster with the lower norm of features' appearances (that is exactly the purpose of our features). Figures~\ref{PvPspeedzeal} %\ref{TvZraxFE}
 and \ref{ZvPmutas} show the clusters out of EM with the features of the corresponding openings. We thought of clustering because there are two cases in which you build a specific military unit of research a specific upgrade: either it is part of your opening, or it is part of your longer term game plan or even in reaction to the opponent. So the distribution over the time at which a feature appears is bimodal, with one (sharp) mode corresponding to ``opening with it'' and the other for the rest of the games, as can be seen in Figure~\ref{PvTfastDT}.
 
-\begin{table*}[ht] \caption{Opening/Strategies labels of the replays (Weber's and ours are not always corresponding)}
+\begin{table}[ht] \caption{Opening/Strategies labels of the replays (Weber's and ours are not always corresponding)}
 \begin{footnotesize}
 \begin{center}
 \begin{tabular}{|c|c|ccc|}
@@ -115,7 +115,7 @@ Zerg & TwoHatchMuta & fast\_mutas & Mutalisk, Gas & early air raid \\
 \label{labels}
 \end{center}
 \end{footnotesize}
-\end{table*}
+\end{table}
 
 \begin{table}[h]
 \caption{Openings distributions for Terran in all the match-ups}

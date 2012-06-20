@@ -13,7 +13,7 @@ truc
 We first introduce the basic components of a real-time strategy (RTS) game. The player is usually referred as the ``commander'' and perceives the world in an allocentric ``God's view'', performing mouse and keyboard actions to give orders to units (or squads of units) within a circumvented area (the ``map''). In a RTS, players need to gather resources to build military units and defeat their opponents. To that end, they often have \textit{worker units} (or extraction structures) than can gather resources needed to build \textit{workers}, \textit{buildings}, \textit{military units} and \textit{research upgrades}. Workers are often also builders (as in StarCraft) and are weak in fights compared to military units. Resources may have different uses, for instance in StarCraft: minerals are used for everything, whereas gas is only required for advanced buildings or military units, and technology upgrades. Buildings and research upgrades define technology trees (directed acyclic graphs) and each state of a 
 \newglossaryentry{techtree}{name={tech tree},description={abbreviation for ``technological tree'', state of the technology (buildings, researches, upgrades) which are unlocked/available to a given player.}}
 %\newglossaryentry{techtree}{name={tech tree},description={abbr. for ``technological tree'', the state of buildings and technologies evolution (technologies which are unlocked) of a given player}}
-\glos{techtree} (or \newglossaryentry{buildtree}{name={build tree},description={abbrev. for ``buildings tree'', state of the buildings (and thus production) unlocked by a player}}\glos{buildtree}) allow for different unit type production abilities and unit spells/abilities. The military units can be of different types, any combinations of ranged, casters, contact attack, zone attacks, big, small, slow, fast, invisible, flying... In the end, a central part of the gameplay is that units can have attacks and defenses that counter each others as in a soft rock-paper-scissors. 
+\glos{techtree} (or \newglossaryentry{buildtree}{name={build tree},description={abbrev. for ``buildings tree'', state of the buildings (and thus production) unlocked by a player}}\glos{buildtree}) allow for different unit type production abilities and unit spells/abilities. The military units can be of different types, any combinations of ranged, casters, contact attack, zone attacks, big, small, slow, fast, invisible, flying... In the end, a central part of the gameplay is that units can have attacks and defenses that counter each others as in a soft rock-paper-scissors. Also, from a player point of view, most RTS games are only partially observable due to the \textit{\glos{fogofwar}} which hides units and new buildings which are not in sight range of the player's units. 
 
 
 In chronological order, RTS include (but are not limited to): Ancient Art of War, Herzog Zwei, Dune II, Warcraft, Command \& Conquer, Warcraft II, C\&C: Red Alert, Total Annihilation, Age of Empires, StarCraft, Age of Empires II, Tzar, Cossacks, Homeworld, Battle Realms, Ground Control, Spring Engine games, Warcraft III, Total War, Warhammer 40k, Sins of a Solar Empire, Supreme Commander, StarCraft II. The differences in gameplay are in the order of number, nature and gathering methods of resources; along with construction, research and production mechanics. The duration of games vary from 15 minutes for the fastest to (1-3) hours for the ones with the biggest maps and longest gameplays. We will now focus on StarCraft, which was the focus of our implementation.
@@ -26,7 +26,7 @@ In chronological order, RTS include (but are not limited to): Ancient Art of War
 StarCraft sold 9.5 millions licenses worldwide, 4.5 millions in South Korea alone \citep{StarCraftNumbers}, and reigned on competitive RTS tournaments for more than a decade. Numerous international competitions (World Cyber Games, Electronic Sports World Cup, BlizzCon, OnGameNet StarLeague, MBCGame StarLeague) and professional gaming (mainly in South Korea \citep{Chee05}) produced a massive amount of data of highly skilled human players. In South Korea, there are two TV channels dedicated to broadcasting competitive video games, particularly StarCraft. The average salary of a \glos{pro-gamer} there was up to 4 times the average South Korean salary \citep{MYMPGM} (up to \$200,000/year on contract for NaDa). Professional gamers perform about 300 actions (mouse and keyboard clicks) per minute while following and adapting their strategies, while their hearts reach 160 beats per minute (BPM are displayed live in some tournaments). StarCraft II is currently (2012) taking over StarCraft in competitive gaming but a) there is still a strong pool of highly skilled StarCraft players and b) StarCraft II has a really similar gameplay.
 
 
-StarCraft (like most RTS) has a \textit{\glos{replay}} mechanism, which enables to record every player's actions such that the state of the game can be deterministically re-simulated. The only piece of stochasticity comes from ``attack miss rates'' ($\approx 47\%$) when a unit is on a lower ground than its target. These randomness generator seed is saved along with the actions in the replay. All high level players use this feature heavily either to improve their play or study opponents' styles. Observing replays allows player to see what happened under the \glos{fogofwar}, so that they can understand timing of technologies and attacks, and find clues/evidences leading to infer the strategy as well as weak points.
+StarCraft (like most RTS) has a \textit{\glos{replay}} mechanism, which enables to record every player's actions such that the state of the game can be deterministically re-simulated. The only piece of stochasticity comes from ``attack miss rates'' ($\approx 47\%$) when a unit is on a lower ground than its target. These randomness generator seed is saved along with the actions in the replay. All high level players use this feature heavily either to improve their play or study opponents' styles. Observing replays allows player to see what happened under the \textit{\glos{fogofwar}}, so that they can understand timing of technologies and attacks, and find clues/evidences leading to infer the strategy as well as weak points.
 
 
 In StarCraft, there are three factions with very different units and technology trees:
@@ -35,12 +35,39 @@ In StarCraft, there are three factions with very different units and technology 
     \item \textit{Protoss}: advanced psionic aliens with expensive, slow to produce but resistant units.
     \item \textit{Zerg}: insectoid alien race with cheap, quick to produce but weak units.
 \end{itemize}
-All factions use workers to gather resources, and all other characteristics are different: from military units to ``\gloss{techtree}'', gameplay styles. Races are so different that highly skilled players focus on playing with a single race. There are two types of resources, often located close together, minerals and gas. From minerals, one can build basic buildings and units, which opens the path to more advanced buildings, technologies and units, which will in turn all require gas to be produced. While minerals can be gathered at an increasing rate (bounded asymptotically) the more workers are put at work, the gas gathering rate is quickly limited to 3 workers per gas geyser (i.e. per base).
+All factions use workers to gather resources, and all other characteristics are different: from military units to ``\gloss{techtree}'', gameplay styles. Races are so different that highly skilled players focus on playing with a single race. There are two types of resources, often located close together, minerals and gas. From minerals, one can build basic buildings and units, which opens the path to more advanced buildings, technologies and units, which will in turn all require gas to be produced. While minerals can be gathered at an increasing rate (bounded asymptotically) the more workers are put at work, the gas gathering rate is quickly limited to 3 workers per gas geyser (i.e. per base). There is another third type of ``special'' resource (called \newglossaryentry{supply}{name=supply,description={maximum number of units that a player can control at a given time, can be increased up to a hard limit (200 in StarCraft).}}\textit{\glos{supply}}), which is the current limit of population a player can control. It can be upgraded by building special buildings (Protoss Pylons, Terran Supply Depot) or units (Zerg Overlord), giving 9 to 10 additional supply, up to a hard limit of 200. Some units cost more supply than others (from 0.5 for a Zergling to 8 for a Protoss Carrier or Terran Battlecruiser).
 
 
 \newglossaryentry{opening}{name=opening,description={in Chess as in RTS games: the first strategic moves of the game, the strategy of the early game},plural=openings}
 \newglossaryentry{buildorder}{name=build order,description={a formal specification of timings (most often indexed on total population count) at which to perform build actions in the early game.}}
-To reach a competitive amateur level, players have to study \gloss{opening} and hone their \gloss{buildorder}.
+To reach a competitive amateur level, players have to study \textit{\gloss{opening}} and hone their \textit{\gloss{buildorder}}. An opening corresponds to the first strategic moves of a game, as in other abstract strategy games (Chess, Go). They are classified/labeled with names from high level players. A build-order is a formally described and accurately timed sequence of buildings to construct in the beginning. As there is a bijection between optimal population and time (in the beginning, before any fight), build orders are indexed on the total population of the player as in the following example for Protoss:
+%%%\begin{verbatim}
+%%%population-thing to build
+%%%8-Pylon 
+%%%10-Gateway 
+%%%12-Gas Assimilator
+%%%13-Make Zealot Once Gateway completes 
+%%%16-Pylon 
+%%%18-Core
+%%%20-Make Zealot 
+%%%22-Pylon, make Dragoon
+%%%27-Start Dragoon Range Upgrade, Pylon 
+%%%30-Robotics Facility, Gateway
+%%%32-Pylon 
+%%%37-Make Shuttle, Start cutting Probes (don't make probes anymore for now) 
+%%%39-Observatory, Then Robotic Fac. 
+%%%43-make observer 
+%%%44-Pylon 
+%%%48-Make Reaver 
+%%%52-Pylon, Start Back Probe Production (make probes again) 
+%%%\end{verbatim}
+\begin{table}
+HERE BO THAT WE FOLLOWED
+\end{table}
+``Cutting'' workers (here, Probes for Protoss) production is a common feat of highly optimized ``timing attacks'' builds.
+
+
+At the highest levels of play, StarCraft games usually last between 6 (shortest games, with a successful rush from one of the player) to 30 minutes (long economically and technologically developed game). We now present the evolution of a game following the build order presented in table SEE ABOVE.
 
 
 \begin{figure}[!ht]
