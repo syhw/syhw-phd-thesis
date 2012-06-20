@@ -48,7 +48,7 @@ This is not the case in most of the games though, in decreasing order of resolut
 \begin{itemize}
 \item RPG \gls{npc} often have at least 10 times more hit points (health points) than their human counterparts in equal numbers,
 \item FPS bots can see through walls and use perfect aiming,
-\item RTS bots see through the ``fog of war'' and have free additional resources.
+\item RTS bots see through the ``\newglossaryentry{fogofwar}{name={fog of war},description={hiding of some of the features (most often units and new buildings) for places where a player does not have units in range of sight.}}\glos{fogofwar}'' and have free additional resources.
 \end{itemize}
 How do we build game robotic players (``bots'', AI, \gls{npc}) which can provide some challenge, or be helpful without being frustrating, while staying fun?
 
@@ -679,15 +679,13 @@ Both believability and performance require to deal with uncertainty of the game 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
 \section{RTS}
-As RTS are the central focus on this thesis, we will discuss specific problems and solution more in depth in their dedicated chapters, simply brushing here the underlying major research problems.
+As RTS are the central focus on this thesis, we will discuss specific problems and solution more in depth in their dedicated chapters, simply brushing here the underlying major research problems. Major RTS include the Command\&Conquer, Warcraft, StarCraft, Age of Empires and Total Annihilation series.
 
 \subsection{Gameplay and AI}
-RTS gameplay consist in gathering resources, building up an economic and military power through growth and technology, to defeat your opponent by destroying his base, army and economy. It requires dealing with strategy, tactics, and units management (often called micro-management) in real-time. Strategy consist in what will be done in the long term as well as predicting what the enemy is doing. It particularly deals with the economy/army trade-off estimation, army composition, long-term planning. The three aggregate indicators for strategy are aggression, production, and technology. The tactical aspect of the gameplay is dominated by military moves: when, where (with regard to topography and weak points), how to attack or defend. This implies dealing with \textit{extensional} (what the invisible units under ``fog of war'' are doing) and \textit{intentional} (what will the visible enemy units do) uncertainty. Finally, at the actions/motor level, micro-management is the art of maximizing the effectiveness of the units \textit{i.e.} the damages given/damages received ratio. For instance: retreat and save a wounded unit so that the enemy units would have to chase it either boosts your firepower or weakens the opponent's. Both \citep{Human-LevelAIKillerApplication} and \cite{gunn} propose that RTS AI is one of the most challenging genres, because all levels in the hierarchy of decisions are of importance.
+RTS gameplay consist in gathering resources, building up an economic and military power through growth and technology, to defeat your opponent by destroying his base, army and economy. It requires dealing with strategy, tactics, and units management (often called micro-management) in real-time. Strategy consist in what will be done in the long term as well as predicting what the enemy is doing. It particularly deals with the economy/army trade-off estimation, army composition, long-term planning. The three aggregate indicators for strategy are aggression, production, and technology. The tactical aspect of the gameplay is dominated by military moves: when, where (with regard to topography and weak points), how to attack or defend. This implies dealing with \textit{extensional} (what the invisible units under ``\glos{fogofwar}'' are doing) and \textit{intentional} (what will the visible enemy units do) uncertainty. Finally, at the actions/motor level, micro-management is the art of maximizing the effectiveness of the units \textit{i.e.} the damages given/damages received ratio. For instance: retreat and save a wounded unit so that the enemy units would have to chase it either boosts your firepower or weakens the opponent's. Both \citep{Human-LevelAIKillerApplication} and \cite{gunn} propose that RTS AI is one of the most challenging genres, because all levels in the hierarchy of decisions are of importance.
 %%% incompleteness of information yielding uncertainty
 
-In chronological order, RTS include (but are not limited to): Ancient Art of War, Herzog Zwei, Dune II, Warcraft, Command \& Conquer, Warcraft II, C\&C: Red Alert, Total Annihilation, Age of Empires, StarCraft, Age of Empires II, Tzar, Cossacks, Homeworld, Battle Realms, Ground Control, Spring Engine games, Warcraft III, Total War, Warhammer 40k, Sins of a Solar Empire, Supreme Commander, StarCraft II. 
-
-XXX ???
+More will be said about RTS in the dedicated chapter~\ref{chapter:rts}.
 
 \subsubsection{State of the art}
 \citet{Buro04callfor} called for AI research in RTS games and identified the technical challenges as adversarial planning under uncertainty, learning and opponent modeling, and spatial and temporal reasoning.  
@@ -807,7 +805,7 @@ Randomness can be inherent to the gameplay. In board games and table top role-pl
 \gls{mdp} can be solved through dynamic programming or the Bellman value iteration algorithm \citep{Bellman}. In video games, the sheer size of $S$ and $A$ make it intractable to use \gls{mdp} directly on the whole AI task, but they are used (in research) either locally or at abstracted levels of decision. Randomness inherent to the process is one of the sources of intentional uncertainty, and we can consider player's intentions in this stochastic framework. Modeling this source of uncertainty is part of the challenge of writing game AI models.
 
 \subsection{Partial observations}
-Partial information is another source of randomness, which is found in shi-fu-mi, poker, \glos{RTS} and \glos{FPS} games, to name a few. We will not go down to the fact that the throwing of the dice seemed random because we only have partial information about its physics, or of the seed of the deterministic random generator that produced its outcome. Here, partial observations refer to the part of the game state which is deliberatively hidden between players (from a gameplay point of view): hidden hands in poker or hidden units in \glos{RTS} games due to the ``fog of war''. In decision-making theory, partial observations are dealt with in the framework of a \newacronym{pomdp}{POMDP}{partially observable Markov decision process}\glos{pomdp} \citep{Sondik}. A \gls{pomdp} is a tuple $(S,A,O,T,\Omega,R)$ with $S,A,T,R$ as in a \gls{mdp} and:
+Partial information is another source of randomness, which is found in shi-fu-mi, poker, \glos{RTS} and \glos{FPS} games, to name a few. We will not go down to the fact that the throwing of the dice seemed random because we only have partial information about its physics, or of the seed of the deterministic random generator that produced its outcome. Here, partial observations refer to the part of the game state which is deliberatively hidden between players (from a gameplay point of view): hidden hands in poker or hidden units in \glos{RTS} games due to the \glos{fogofwar}. In decision-making theory, partial observations are dealt with in the framework of a \newacronym{pomdp}{POMDP}{partially observable Markov decision process}\glos{pomdp} \citep{Sondik}. A \gls{pomdp} is a tuple $(S,A,O,T,\Omega,R)$ with $S,A,T,R$ as in a \gls{mdp} and:
 \begin{itemize}
     \item $O$ a finite set of observations
     \item $\Omega$ conditional observations probabilities specifying: $\PP(O^{t+1}|S^{t+1},A^t)$
@@ -934,6 +932,6 @@ RTS (n: 86) & 1.791 & 1.849 & 1.687 & 1.814 & 0.221 & 0.453 \\
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
-\section{An interesting problem}
-\subsection{Simulated but stochastic}
-Human players (ally or foes), and sometimes (most of the time) stochasticity in the rules of the game (fog of war, randomness, etc.).
+%%% \section{An interesting problem}
+%%% \subsection{Simulated but stochastic}
+%%% Human players (ally or foes), and sometimes (most of the time) stochasticity in the rules of the game (fog of war, randomness, etc.).
