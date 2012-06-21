@@ -16,7 +16,7 @@ We first introduce the basic components of a real-time strategy (RTS) game. The 
 \glos{techtree} (or \newglossaryentry{buildtree}{name={build tree},description={abbrev. for ``buildings tree'', state of the buildings (and thus production) unlocked by a player}}\glos{buildtree}) allow for different unit type production abilities and unit spells/abilities. The military units can be of different types, any combinations of ranged, casters, contact attack, zone attacks, big, small, slow, fast, invisible, flying... In the end, a central part of the gameplay is that units can have attacks and defenses that counter each others as in a soft rock-paper-scissors. Also, from a player point of view, most RTS games are only partially observable due to the \textit{\glos{fogofwar}} which hides units and new buildings which are not in sight range of the player's units. 
 
 
-In chronological order, RTS include (but are not limited to): Ancient Art of War, Herzog Zwei, Dune II, Warcraft, Command \& Conquer, Warcraft II, C\&C: Red Alert, Total Annihilation, Age of Empires, StarCraft, Age of Empires II, Tzar, Cossacks, Homeworld, Battle Realms, Ground Control, Spring Engine games, Warcraft III, Total War, Warhammer 40k, Sins of a Solar Empire, Supreme Commander, StarCraft II. The differences in gameplay are in the order of number, nature and gathering methods of resources; along with construction, research and production mechanics. The duration of games vary from 15 minutes for the fastest to (1-3) hours for the ones with the biggest maps and longest gameplays. We will now focus on StarCraft, which was the focus of our implementation.
+In chronological order, RTS include (but are not limited to): Ancient Art of War, Herzog Zwei, Dune II, Warcraft, Command \& Conquer, Warcraft II, C\&C: Red Alert, Total Annihilation, Age of Empires, StarCraft, Age of Empires II, Tzar, Cossacks, Homeworld, Battle Realms, Ground Control, Spring Engine games, Warcraft III, Total War, Warhammer 40k, Sins of a Solar Empire, Supreme Commander, StarCraft II. The differences in gameplay are in the order of number, nature and gathering methods of resources; along with construction, research and production mechanics. The duration of games vary from 15 minutes for the fastest to (1-3) hours for the ones with the biggest maps and longest gameplays. We will now focus on StarCraft, on which our robotic player is implemented.
 
 
 \subsection{A StarCraft Game}
@@ -35,12 +35,22 @@ In StarCraft, there are three factions with very different units and technology 
     \item \textit{Protoss}: advanced psionic aliens with expensive, slow to produce but resistant units.
     \item \textit{Zerg}: insectoid alien race with cheap, quick to produce but weak units.
 \end{itemize}
-All factions use workers to gather resources, and all other characteristics are different: from military units to ``\gloss{techtree}'', gameplay styles. Races are so different that highly skilled players focus on playing with a single race. There are two types of resources, often located close together, minerals and gas. From minerals, one can build basic buildings and units, which opens the path to more advanced buildings, technologies and units, which will in turn all require gas to be produced. While minerals can be gathered at an increasing rate (bounded asymptotically) the more workers are put at work, the gas gathering rate is quickly limited to 3 workers per gas geyser (i.e. per base). There is another third type of ``special'' resource (called \newglossaryentry{supply}{name=supply,description={maximum number of units that a player can control at a given time, can be increased up to a hard limit (200 in StarCraft).}}\textit{\glos{supply}}), which is the current limit of population a player can control. It can be upgraded by building special buildings (Protoss Pylons, Terran Supply Depot) or units (Zerg Overlord), giving 9 to 10 additional supply, up to a hard limit of 200. Some units cost more supply than others (from 0.5 for a Zergling to 8 for a Protoss Carrier or Terran Battlecruiser).
 
+All factions use workers to gather resources, and all other characteristics are different: from military units to ``\gloss{techtree}'', gameplay styles. Races are so different that highly skilled players focus on playing with a single race. There are two types of resources, often located close together, minerals and gas. From minerals, one can build basic buildings and units, which opens the path to more advanced buildings, technologies and units, which will in turn all require gas to be produced. While minerals can be gathered at an increasing rate (bounded asymptotically) the more workers are put at work, the gas gathering rate is quickly limited to 3 workers per gas geyser (i.e. per base). There is another third type of ``special'' resource (called \newglossaryentry{supply}{name=supply,description={maximum number of units that a player can control at a given time, can be increased up to a hard limit (200 in StarCraft).}}\textit{\glos{supply}}), which is the current limit of population a player can control. It can be upgraded by building special buildings (Protoss Pylon, Terran Supply Depot) or units (Zerg Overlord), giving 9 to 10 additional supply, up to a hard limit of 200. Some units cost more supply than others (from 0.5 for a Zergling to 8 for a Protoss Carrier or Terran Battlecruiser). In Figure~\ref{fig:SC_eco}, we show the very basics of Protoss economy and buildings. %In Figure~\ref{fig:SC_battle}, we show
+
+\newglossaryentry{mini-map}{name=mini-map,description={radar view of the full game area, shown in the bottom corner of the interface in StarCraft.}}
+\begin{figure}[!ht]
+\begin{center}
+\includegraphics[width=13cm]{images/SC_eco.png}
+\label{fig:SC_eco}
+\caption{A StarCraft screenshot of a Protoss base, with annotations. The interface (heads up display at the bottom) shows the \textit{\glos{mini-map}}. The center of the interface (bottom) shows the selected unit (or group of units), here the Protoss Nexus (main economical building, producing workers and to which resources are brought) which is in the center of the screen and circled in green. The bottom right part shows the possible actions (here build a Protoss Probe or set a rally point). The top right of the screen shows the minerals (442), gas (208) and \glos{supply} (25 total on 33 current maximum). The dotted lines demarcate economical parts with active workers: red for minerals mining and green for gas gathering. The plain cut outs of buildings show: a Pylon (white), a Forge (orange, for upgrades and access to static defense), a Cybernetics Core (yellow, for technological upgrades and expanding the tech tree), a Gateway (pink, producing ground units), a Photon Cannon (blue, static defense).}
+\end{center}
+\end{figure}
 
 \newglossaryentry{opening}{name=opening,description={in Chess as in RTS games: the first strategic moves of the game, the strategy of the early game},plural=openings}
 \newglossaryentry{buildorder}{name=build order,description={a formal specification of timings (most often indexed on total population count) at which to perform build actions in the early game.}}
-To reach a competitive amateur level, players have to study \textit{\gloss{opening}} and hone their \textit{\gloss{buildorder}}. An opening corresponds to the first strategic moves of a game, as in other abstract strategy games (Chess, Go). They are classified/labeled with names from high level players. A build-order is a formally described and accurately timed sequence of buildings to construct in the beginning. As there is a bijection between optimal population and time (in the beginning, before any fight), build orders are indexed on the total population of the player as in the following example for Protoss:
+To reach a competitive amateur level, players have to study \textit{\gloss{opening}} and hone their \textit{\gloss{buildorder}}. An opening corresponds to the first strategic moves of a game, as in other abstract strategy games (Chess, Go). They are classified/labeled with names from high level players. A build-order is a formally described and accurately timed sequence of buildings to construct in the beginning. As there is a bijection between optimal population and time (in the beginning, before any fight), build orders are indexed on the total population of the player as in the example for Protoss in table~\ref{bo:two_gates_goon_range}. 
+At the highest levels of play, StarCraft games usually last between 6 (shortest games, with a successful rush from one of the player) to 30 minutes (long economically and technologically developed game).
 %%%\begin{verbatim}
 %%%population-thing to build
 %%%8-Pylon 
@@ -55,29 +65,46 @@ To reach a competitive amateur level, players have to study \textit{\gloss{openi
 %%%30-Robotics Facility, Gateway
 %%%32-Pylon 
 %%%37-Make Shuttle, Start cutting Probes (don't make probes anymore for now) 
-%%%39-Observatory, Then Robotic Fac. 
+%%%39-Observatory, Then Robotic Support Bay
 %%%43-make observer 
 %%%44-Pylon 
 %%%48-Make Reaver 
 %%%52-Pylon, Start Back Probe Production (make probes again) 
 %%%\end{verbatim}
 \begin{table}
-HERE BO THAT WE FOLLOWED
+\begin{center}
+\begin{tabular}{|l|l|l|}
+\hline
+Supply & Build & Note \\
+\hline
+8 & Pylon & ``supply/psi/control/population'' building \\
+10 & Gateway & units producing structure \\
+12 & Assimilator & constructed on a gas geyser, to gather gas \\
+14 & Cybernetics Core & technological building \\
+16 & Pylon & ``supply/psi/control/population'' building \\
+16 & Range & it is a research/tech \\
+16 & Dragoon & first military unit \\
+\hline
+\end{tabular}
+\end{center}
+\caption{An example of the beginning of a ``2 Gates Goon Range'' Protoss build order which focus on building dragoons and their attack range upgrade quickly.}
+\label{bo:two_gates_goon_range}
 \end{table}
-``Cutting'' workers (here, Probes for Protoss) production is a common feat of highly optimized ``timing attacks'' builds.
 
+%``Cutting'' workers (here, Probes for Protoss) production is a common feat of highly optimized ``timing attacks'' builds.
 
-At the highest levels of play, StarCraft games usually last between 6 (shortest games, with a successful rush from one of the player) to 30 minutes (long economically and technologically developed game). We now present the evolution of a game following the build order presented in table SEE ABOVE.
-
+We now present the evolution of a game (Figures~\ref{fig:SC_game1} and \ref{fig:SC_game2}) during which we tried to follow the build order presented in table~\ref{bo:two_gates_goon_range} (``2 Gates Goon Range''\footnote{On Teamliquid: \url{http://wiki.teamliquid.net/starcraft/2_Gate_Goon_Range_(vs._Terran)}}) but we had to adapt to the fact that the opponent was Zerg (possibility for a faster rush) by building a Gateway at 9 supply and building a Zealot (ground contact unit) before the first Dragoon.
 
 \begin{figure}[!ht]
 \begin{center}
-\includegraphics[width=7.8cm]{images/SC_game/SC_start_game.png}
-\includegraphics[width=7.8cm]{images/SC_game/SC_first_gate.png}
-\includegraphics[width=7.8cm]{images/SC_game/SC_scout_opponent.png}
-\includegraphics[width=7.8cm]{images/SC_game/SC_expand.png}
-\includegraphics[width=7.8cm]{images/SC_game/SC_upgrade_attack.png}
+\begin{tabular}{cc}
+\includegraphics[width=7.8cm]{images/SC_game/SC_start_game.png} &
+\includegraphics[width=7.8cm]{images/SC_game/SC_first_gate.png} \\
+\includegraphics[width=7.8cm]{images/SC_game/SC_scout_opponent.png} & 
+\includegraphics[width=7.8cm]{images/SC_game/SC_expand.png} \\ 
+\includegraphics[width=7.8cm]{images/SC_game/SC_upgrade_attack.png} & 
 \includegraphics[width=7.8cm]{images/SC_game/SC_queue_production.png}
+\end{tabular}
 %SC_first_pylon.png
 \label{fig:SC_game1}
 \caption{Start and economical parts of a StarCraft game. The order of the screenshots goes from left to right and from top to bottom.}

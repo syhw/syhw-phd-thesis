@@ -1,4 +1,19 @@
 \chapter{Micro-management}
+\chaptertoc
+\begin{quotation}
+\textit{lala}\\
+TODO
+\end{quotation}
+
+TODO: 
+revize bibliography\\
+add detailed fight\\
+add example image\\
+add graphical model??\\
+explain targeting heuristic\\
+s/Extensions/Conclusion:possible uses and current use\\
+
+
 \begin{figure}[!ht]
 \begin{center}
 \includegraphics[width=13cm]{images/starcraft_bbq_concept_MICRO.pdf}
@@ -9,19 +24,18 @@
 
 \section{Units Management}
 \begin{itemize}
-\item Problem: optimal control of units in a (real-time) huge adversarial actions space (collisions, accelerations, terrain, damages, areas of effects, foes, goals...).
-\item Problem that we solve: efficient coordinated control of units incorporating all low level actions and inputs, plus higher level orders and representations.
-\item Type: strictly, it can be modeled as a \glos{pomdp}; it is a problem of \textit{multi-agent control in an adversarial environment}.
-\item Complexity: PSPACE-complete \citep{Papadimitriou87,GamingComplexity}. Our solutions are real-time on a laptop.
+\item \underline{Problem:} optimal control of units in a (real-time) huge adversarial actions space (collisions, accelerations, terrain, damages, areas of effects, foes, goals...).
+\item \underline{Problem that we solve:} efficient coordinated control of units incorporating all low level actions and inputs, plus higher level orders and representations.
+\item \underline{Type:} strictly, it can be modeled as a \glos{pomdp}; it is a problem of \textit{multi-agent control in an adversarial environment}.
+\item \underline{Complexity:} PSPACE-complete \citep{Papadimitriou87,GamingComplexity}. Our solutions are real-time on a laptop.
 \end{itemize}
 
 
-
-In this paper, we focus on micro-management, which is the art of maximizing the effectiveness of the units \textit{i.e.} the damages given/damages received ratio. For instance: retreat and save a wounded unit so that the enemy units would have to chase it either boosts your firepower or weakens the opponent's. 
-In the field of units control, the dimension of the set of possible actions each micro-turn (for instance: 1/24th of a second in StarCraft) constrains reasoning about the state of the game to be hierarchical, with different levels of granularity. In most RTS games, a unit can go (at least) in its 24 surrounding tiles (see Figure~3, combination of N, S, E, W up to the 2nd order), 
+In this part, we focus on micro-management, which is the art of maximizing the effectiveness of the units \textit{i.e.} the damages given/damages received ratio. For instance: retreat and save a wounded unit so that the enemy units would have to chase it either boosts your firepower or weakens the opponent's. 
+In the field of units control, the dimension of the set of possible actions each micro-turn (for instance: 1/24th of a second in StarCraft) constrains reasoning about the state of the game to be hierarchical, with different levels of granularity. In most RTS games, a unit can go (at least) in its 24 surrounding tiles (see Figure~\ref{fig:sc_fight}, combination of N, S, E, W up to the 2nd order), 
 stay where it is, attack, and sometimes cast different spells: more than 26 possible actions each turn. Even if we consider only 8 possible directions, stay, and attack, with $N$ units, there are $10^N$ possible combinations each turn (all units make a move each turn). As large battles in StarCraft account for \textit{at least} 20 units on each side, optimal units control hides in too big a search space to be fully explored in real-time (sub-second reaction at least) on normal hardware, even if we take only one decision per unit per second.
 
-We present a distributed sensory-motor model for micro-management, able to handle both the complexity of unit control and the need of hierarchy (see Figure~1). This paper focuses on the part inside the dotted line. We treat the units independently, thus reducing the complexity (no communication between ``Bayesian units''), and allows to take higher-level orders into account along with local situation handling. For instance: the tactical planner may decide to retreat, or go through a choke under enemy fire, each Bayesian unit will have the higher-level order as a sensory input, along with topography, foes and allies positions. From its perception, our Bayesian robot \cite{Lebeltel04} can compute the distribution over its motor control. The sensory inputs given to a ``Bayesian unit'' controls its objective(s) or goal(s) and the parametrization of his probabilistic model controls its behavior and degree of freedom. As an illustration (only), two of the extreme cases are $P(Direction=x|Objective=x)=1$: no freedom, $P(Direction=x|Objective=y)=P(Direction=x)$: no influence of the objective. The performances of our models are evaluated against the original StarCraft AI and a reference AI and have proved excellent in this benchmark setup.
+We present a distributed sensory-motor model for micro-management, able to handle both the complexity of unit control and the need of hierarchy (see Figure~\ref{fig:conceptMICRO}). This paper focuses on the part inside the dotted line. We treat the units independently, thus reducing the complexity (no communication between ``Bayesian units''), and allows to take higher-level orders into account along with local situation handling. For instance: the tactical planner may decide to retreat, or go through a choke under enemy fire, each Bayesian unit will have the higher-level order as a sensory input, along with topography, foes and allies positions. From its perception, our Bayesian robot \cite{Lebeltel04} can compute the distribution over its motor control. The sensory inputs given to a ``Bayesian unit'' controls its objective(s) or goal(s) and the parametrization of his probabilistic model controls its behavior and degree of freedom. As an illustration (only), two of the extreme cases are $P(Direction=x|Objective=x)=1$: no freedom, $P(Direction=x|Objective=y)=P(Direction=x)$: no influence of the objective. The performances of our models are evaluated against the original StarCraft AI and a reference AI and have proved excellent in this benchmark setup.
 
 
 \section{Related Works}
@@ -42,7 +56,7 @@ confidence bounds tree (UCT) planning (coming from Go AI) \citep{UCT}
  samples through the (rigorously intractable) plans space by 
 incrementally building the actions tree through Monte-Carlo sampling. 
 UCT for tactical assault planning \citep{UCT} in RTS does not require to encode human knowledge (by opposition to Monte-Carlo planning) but it is very costly, both in learning and running time, to go down to units control on RTS problems. 
-Our model subsumes potential fields \citep{Hagelback2009}, which are powerful and used in new generation RTS AI to handle threat, as some of our Bayesian unit sensory inputs are potential damages and tactical goodness (height for the moment) of positions. Our model provides flocking and local (subjective to the unit) influences on the pathfinding as in \citep{teamCompositionRTS}. In their paper, Preuss \textit{et al.} are driven by the same quest for a more natural and efficient behavior for units in RTS. Finally, there are some cognitive approaches to RTS AI \citep{SORTS}, and we particularly agree with Wintermute \textit{et al.} analysis of RTS AI problems. Our model has some similarities: separate and different agents for different levels of abstraction/reasoning and also a perception-action approach (see Figure~1).
+Our model subsumes potential fields \citep{Hagelback2009}, which are powerful and used in new generation RTS AI to handle threat, as some of our Bayesian unit sensory inputs are potential damages and tactical goodness (height for the moment) of positions. Our model provides flocking and local (subjective to the unit) influences on the pathfinding as in \citep{teamCompositionRTS}. In their paper, Preuss \textit{et al.} are driven by the same quest for a more natural and efficient behavior for units in RTS. Finally, there are some cognitive approaches to RTS AI \citep{SORTS}, and we particularly agree with Wintermute \textit{et al.} analysis of RTS AI problems. Our model has some similarities: separate and different agents for different levels of abstraction/reasoning and also a perception-action approach (see Figure~\ref{fig:conceptMICRO}).
 
 
 \section{A Bayesian Model for Units Control}
@@ -69,12 +83,12 @@ We use Bayesian programming as an alternative to logic, transforming incompleten
 \begin{center}
 \includegraphics[width=7cm]{images/unit_HFSM.pdf}
 \end{center}
-\label{fig:HFSM}
+\label{fig:unit_HFSM}
 \caption{Bayesian unit modal FSM, detail on the fight mode. Stripped modes are Bayesian.}
 \end{figure}
 
 We propose to model units as sensory-motor robots described within the Bayesian robot programming framework \citep{Lebeltel04}. A Bayesian model uses and reasons on distributions instead of predicates, which deals directly with uncertainty. %Basically, a Bayesian unit will be attracted or repulsed by its sensory inputs. 
-Our Bayesian units are simple hierarchical finite states machines (states can be seen as modes) that can scout, fight and move (see Figure~2). Each unit type has a reload rate and attack duration, so their fight mode will be like:
+Our Bayesian units are simple hierarchical finite states machines (states can be seen as modes) that can scout, fight and move (see Figure~\ref{fig:unit_HFSM}). Each unit type has a reload rate and attack duration, so their fight mode will be like:
 \begin{algorithmic}
 \If {$canFire \wedge t = selectTarget() \wedge inRange(t)$}
     \State {$attack(t)$}
@@ -87,7 +101,7 @@ Our Bayesian units are simple hierarchical finite states machines (states can be
 The unit needs to determine where to go when fleeing and moving during a fight, optimally with regard to its target and the attacking enemies, while avoiding collisions (which results in blocked units and time lost) as much as possible. $flee()$ and $fightMove()$ call the Bayesian model (expressed in Bayesian programming, see section 3.) that follows:
 \subsubsection{Variables}
 \begin{itemize}
-\item $Dir_{i \in \llbracket 0 \dots n\rrbracket } \in \{True, False\}$: at least one variable for each atomic direction the unit can go to. $P(Dir_i = True) = 1$ (also noted $P(Dir_i) = 1$) means that the unit will certainly go in direction $i$ ($\Leftrightarrow \mathbf{D}[i]$). For example, in StarCraft we use the 24 atomic directions (48 for the smallest and fast units as we use a proportional scale) plus the current unit position (stay where it is) as shown in Figure~3. We could use one variable with 24 directions, the approach would be the same. %%% Note that $i \in \llbracket 0 \dots n\rrbracket \Leftrightarrow \mathbf{D}[i] \in \mathbf{D}$.
+\item $Dir_{i \in \llbracket 0 \dots n\rrbracket } \in \{True, False\}$: at least one variable for each atomic direction the unit can go to. $P(Dir_i = True) = 1$ (also noted $P(Dir_i) = 1$) means that the unit will certainly go in direction $i$ ($\Leftrightarrow \mathbf{D}[i]$). For example, in StarCraft we use the 24 atomic directions (48 for the smallest and fast units as we use a proportional scale) plus the current unit position (stay where it is) as shown in Figure~\ref{fig:sc_fight}. We could use one variable with 24 directions, the approach would be the same. %%% Note that $i \in \llbracket 0 \dots n\rrbracket \Leftrightarrow \mathbf{D}[i] \in \mathbf{D}$.
 \item $Obj_{i \in \llbracket 0 \dots n\rrbracket } \in \{True, False\}$: direction of the objective (given by a higher rank model). $P(Obj_i) = 1$ means that the direction $i$ is totally in the direction of the objective (move, retreat or offensive position computed by the strategic or tactical manager). In our StarCraft AI, we use the scalar product between the direction $i$ and the objective vector (output of the pathfinding) with a minimum value of $0.01$ so that the probability to go in a given direction is proportional to its alignment with the objective. Note that some situation have a null objective (the unit is free to move).
 \item $Dmg_{i \in \llbracket 0 \dots n\rrbracket } \in [Damage Values]$ for instance, with $ubhp$ standing as unit base hit points, $Dmg_i \in \left\{0, \llbracket 0\dots \frac{ubhp}{2}\rrbracket, \rrbracket \frac{ubhp}{2} \dots ubhp\llbracket, \llbracket ubhp \dots +\inf\llbracket \right\}$. This will act as subjective potential fields \citep{Hagelback2009} in which the (repulsive) influence of the potential damages map depends on the unit type. In our StarCraft AI, this is directly drawn from two constantly updated potential damage maps (air, ground). For instance, it allows our scouting units to avoid potential attacks as much as possible.
 \item $A_{i \in \llbracket 0 \dots n\rrbracket } \in \{None, Small, Big\}$: occupation of the direction $i$ by a allied unit. The model can effectively use many values (other than ``occupied/free'') because directions may be multi-scale (for instance we indexed the scale on the size of the unit) and, in the end, small and/or fast units have a much smaller footprint, collision wise, than big and/or slow. In our AI, instead of direct positions of allied units, we used their (linear) interpolation $\frac{\mathbf{|}unit, \mathbf{D}[i]\mathbf{|}}{unit\_speed}$ frames later (to avoid squeezing/expansion).
@@ -153,7 +167,7 @@ $$P(Dir_{1:n} \mathbf{|} Obj_{1:n}, Dmg_{1:n}, A_{1:n}, E_{1:n}, Occ_{1:n}, Att_
 From there, the unit can either go in the most probable $Dir_i$ or sample through them. We describe the effect of this choice in the next section.
 
 \section{Results on StarCraft}
-StarCraft micro-management involves ground, flying, ranged, contact, static, moving (at different speeds), small and big units (see Figure~3). Units may also have splash damage, spells, and different types of damages whose amount will depend on the target size. It yields a rich states space and needs control to be very fast: human progamers can perform up to 400 ``actions per minute'' in intense fights. The problem for them is to know which actions are effective and the most rewarding to spend their actions efficiently. A robot does not have such physical limitations, but yet, badly chosen actions have negative influence on the issue of fights. %The problem is to identify what has to be done and what can be done, in real-time.
+StarCraft micro-management involves ground, flying, ranged, contact, static, moving (at different speeds), small and big units (see Figure~\ref{fig:sc_fight}). Units may also have splash damage, spells, and different types of damages whose amount will depend on the target size. It yields a rich states space and needs control to be very fast: human progamers can perform up to 400 ``actions per minute'' in intense fights. The problem for them is to know which actions are effective and the most rewarding to spend their actions efficiently. A robot does not have such physical limitations, but yet, badly chosen actions have negative influence on the issue of fights. %The problem is to identify what has to be done and what can be done, in real-time.
 \begin{figure}
 \begin{center}
 \includegraphics[width=8cm]{images/SC_fight_3b.png}
@@ -176,7 +190,7 @@ We produced three different AI to run experiments with, along with the original 
 \item Bayesian AI sampling (BAIS): this AI follows the model of section~4.2 and samples through $Dir_i$ according to their probability ($\Leftrightarrow$ according to $Dir$ distribution).
 \end{itemize}
 
-The experiments consisted in having the AIs fight against each others on a micro-management scenario with mirror matches of 12 and 36 ranged ground units (Dragoons). In the 12 units setup, the unit movements during the battle is easier (less collision probability) than in the 36 units setup. We instantiate only the army manager (no economy in this special maps), one units group manager and as many Bayesian units as there are units provided to us in the scenario. The results are presented in Figure~3.
+The experiments consisted in having the AIs fight against each others on a micro-management scenario with mirror matches of 12 and 36 ranged ground units (Dragoons). In the 12 units setup, the unit movements during the battle is easier (less collision probability) than in the 36 units setup. We instantiate only the army manager (no economy in this special maps), one units group manager and as many Bayesian units as there are units provided to us in the scenario. The results are presented in Table~\ref{tab:win_ratios}.
 
 \definecolor{grey}{rgb}{0.7,0.7,0.7}
 \begin{figure}[!ht]
