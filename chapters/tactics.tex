@@ -1,5 +1,4 @@
 \chapter{Tactics}
-\chaptertoc
 \begin{quotation}
 \textit{Strategy without tactics is the slowest route to victory. Tactics without strategy is the noise before defeat.}\\
 \begin{flushright}Sun Tzu (The Art of War, 476-221 BC)\end{flushright}
@@ -34,6 +33,9 @@
 
 %%% “SUCCESS: to laugh often and much; to win the respect of intelligent people and the affection of children; to earn the appreciation of honest critics and endure the betrayal of false friends; to appreciate beauty, to find the best in others; to leave the world a bit better, whether by a healthy child, a garden patch or a redeemed social condition ; to know even one life has breathed easier because you have lived. This is to have succeeded.” Emerson
 
+\lettrine{I}{ntro}
+
+\chaptertoc
 
 \begin{itemize}
 \item Problem: make the most efficient tactical decisions (attacks and defenses) in the absolute (knowing everything: armies positions, players intentions, effects of each possible actions).
@@ -65,11 +67,6 @@ In their study on human like characteristics in RTS games, Hagelb\"{a}ck and Joh
 \section{What are Tactics?}
 In this part, we focus on tactics, in between strategy (high-level) and micro-management (lower-level), as seen in Fig.~\ref{fig:sc_abstraction_tactics}. We propose a model which can either predict enemy attacks or give us a distribution on where and how to attack the opponent. Information from the higher-level strategy constrains what types of attacks are possible. As shown in Fig.~\ref{fig:sc_abstraction_tactics}, information from units positions (or possibly an enemy units particle filter as in \cite{weber2011aiide}) constrains where the armies can possibly be in the future. In the context of our StarCraft bot, once we have a decision: we generate a goal (attack order) passed to units groups (see Fig.\ref{fig:conceptTACTICS}). A Bayesian model for micro-management \cite{SYNNAEVE:Micro}, in which units are attracted or repulsed by dynamic (goal, units, damages) and static (terrain) influence maps, actually moves the units in StarCraft. Other previous works on strategy prediction \cite{SYNNAEVE:StratPred,SYNNAEVE:OpeningPred} allows us to infer the enemy tech tree and strategies from incomplete information (due to the fog of war).
 
-\begin{figure}[htp]
-\centerline{\includegraphics[width=7cm]{images/starcraft_levels_abstraction_light.pdf}}
-\caption{Gameplay levels of abstraction for RTS games, compared with their level of direct (and complete) information and orders of magnitudes of time to chance their policies.}
-\label{fig:sc_abstraction_tactics}
-\end{figure}
 
 Units have different abilities, which leads to different possible tactics. Each faction has invisible (temporarily or permanently) units, flying transport units, flying attack units and ground units. Some units can only attack ground or air units, some others have splash damage attacks, immobilizing or illusion abilities. Fast and mobile units are not cost-effective in head-to-head fights against slower bulky units. We used the gamers' vocabulary to qualify different types of tactics: \textit{ground} attacks (raids or pushes) are the most normal kind of attacks, carried by basic units which cannot fly. Then comes \textit{air} attacks (air raids), which use flying units mobility to quickly deal damage to undefended spots. \textit{Invisible} attacks exploit the weaknesses (being them positional or technological) in detectors of the enemy to deal damage without retaliation. Finally, \textit{drops} are attacks using ground units transported by air, combining flying units mobility with cost-effectiveness of ground units, at the expense of vulnerability during transit.
 

@@ -1,11 +1,14 @@
 \chapter{RTS AI: \textit{StarCraft: Broodwar}}
-\chaptertoc
 \newglossaryentry{micro}{name=micro-management,description={gameplay actions that are manually addressed by the player; the way of maximizing one's army efficiency by using the units to the maximum of their potential.}}
 
 \begin{quotation}\textit{
 We think of life as a journey with a destination (success, heaven). But we missed the point. It was a musical thing, we were supposed to sing and dance while music was being played.}\\
 \begin{flushright}Alan Watts\end{flushright}
 \end{quotation}
+
+\lettrine{T}{his} chapter explains the basics of RTS gameplay, particularly StarCraft. We then list the (computational) challenges brought by RTS gameplay. We present a transversal decomposition of the RTS AI domain in levels of abstractions (strategy, tactics, \glos{micro}), which we will use for the rest of the dissertation.
+
+\chaptertoc
 
 \section{How does the game work}
 
@@ -125,9 +128,9 @@ We now present the evolution of a game (Figures~\ref{fig:SC_game1} and \ref{fig:
 their early tech tree. Thus, knowing to be safe from an early attack (``rush''), the player decides to go for a defensive and economical strategy for now. Picture 4 shows the player ``expanding'', which is the act of making another base at a new resource location, for economical purposes. In picture 5, we can see the upgrading of the ground weapons along with 4 ranged military units, staying in defense at the expansion. This is a technological decision of losing a little of potential ``quick military power'' (from military units which could have been produced for this minerals and gas) in exchange of global upgrade for all units (alive and to be produced), for the whole game. This is an investment in both resources and time. Picture 6 showcases the production queue of a Gateway as well as workers transferring to a second expansion (third base). Being safe and having expanded his \glos{techtree} to a point where the army composition is well-rounded, the player opted for a strategy to win by profiting from an economical lead. Figure~\ref{fig:SC_game2} shows the aggressive moves of the same player: in picture 7, we can see a flying transport with artillery and area of effect ``casters'' in it. The goal of such an attack is not to win the game right away but to weaken the enemy's economy: each lost worker has to be produced, and, mainly, the missing gathering time adds up quite quickly. In picture 8, the transport in unloaded directly inside the enemy's base, causing huge damages to their economy (killing workers, Zerg Drones). This is the use of a specialized tactics, which can change the course of a game. At the same time, it involves only few units (a flying transport and its cargo), allowing for the main army to stay in defense at base. It capitalizes on the maneuverability of the flying Protoss Shuttle, the technological advancements allowing area of effects attacks and the large zone that the opponent has to cover to defend against it. In picture 9, an invisible attacking unit (circled in white) is harassing the oblivious enemy's army. This is an example of how technology advance on the opponent can be game changing (the opponent does not have detection in range, thus is vulnerable to cloaked units). Finally, picture 10 shows the final attack, with a full ground army marching on the enemy's base.
 
 
-\section{Challenges}
+\section{RTS AI Challenges}
 In combinatorial game theory terms, competitive StarCraft (1 vs. 1) is a zero sum, partial-information, deterministic\footnote{The only stochasticity is in attacks failures (miss rate) from lower grounds to higher grounds, which is easily averaged.} strategy game. 
-StarCraft subsumes Wargus, which has an estimated mean branching factor $1.5.10^3$ \citep{LTW} (Chess: $\approx 35$, Go: $<360$). \cite{bgweberPhD} finds a branching factor greater than $1.10^6$ for StarCraft. In a given game (with maximum map size) the (maximum) number of possible positions is roughly of $10^{11500}$, versus the Shannon number for Chess ($10^{43}$) \citep{Shannon_1950}. 
+StarCraft subsumes Wargus (Warcraft II open source clone), which has an estimated mean branching factor $1.5.10^3$ \citep{LTW} (Chess: $\approx 35$, Go: $<360$): \cite{bgweberPhD} finds a branching factor greater than $1.10^6$ for StarCraft. In a given game (with maximum map size) the (maximum) number of possible positions is roughly of $10^{11500}$, versus the Shannon number for Chess ($10^{43}$) \citep{Shannon_1950}. Also, we believe strategies are much more balanced in StarCraft than in most other games. Otherwise, how could it be that more than a decade of professional gaming on StarCraft did not converge to a finite set of fixed (imbalanced) strategies?
 
 Humans deal with this complexity by abstracting away strategy from low level actions: there are some highly restrictive constraints on where it is efficient (``optimal'') to place economical main buildings (Protoss Nexus, Terran Command Center, Zerg Hatchery/Lair/Hive) close to minerals spots and gas geysers. Low-level \glos{micro} decisions have high \textit{horizontal continuity} and humans see these tasks more like playing a musical instrument skillfully. Finally, the continuum of strategies is analyzed by players and some distinct strategies are identified as some kinds of ``invariants'', or ``entry points'' or ``principal components''. From there, strategic decisions impose some (sometimes hard) constraints on the possible tactics, and the complexity is broken by considering only the interesting state space due to this high \textit{vertical continuity}.
 
@@ -141,12 +144,12 @@ Most challenges of RTS games have been identified by \citep{Buro03,Buro04callfor
     \item Collaboration (teamplay), which we will not deal with here: a lot has to do with efficient communication and ``teammate modeling''.
 \end{itemize}
 As we have seen previously more generally for multi-player video games, all these challenges can be handled by Bayesian modeling. %The Cox-Jaynes theorem particularly comes to mind from ``induction scandal'' 
+While acknowledging these challenges for RTS AI, we now propose a different task decomposition, in which different tasks will solve some parts of these problems at their respective levels.
+
+% TODO ?
 
 
-TODO TODO TODO
-% TODO TODO TODO
-
-
+\section{Tasks decomposition and linking}
 \begin{figure}[!ht]
 \begin{center}
 \begin{small}
@@ -176,13 +179,35 @@ TODO TODO TODO
 \end{small}
 \end{center}
 \label{fig:mindmapRTS}
-\caption{A mind-map of RTS AI XXX TODO}
+\caption{A mind-map of RTS AI. This is the tasks decomposition that we will use for the rest of the thesis.}
+\end{figure}
+
+We decided to decompose RTS AI in the three levels which are used by the gamers to describe the games: \textit{strategy}, \textit{tactics}, \textit{micro-management}. We remind the reader that parts of the map not in the sight range of the player's units are under \textit{\glos{fogofwar}}, so the player has only partial information about the enemy buildings and army. The way by which we expand the tech tree, the specific units composing the army, and the general stance (aggressive or defensive) form what we call \textit{strategy}. At the lower level, the actions performed by the player (human or not) to optimize the effectiveness of its units is called \textit{\glos{micro}}. In between lies \textit{tactics}: where to attack, and how. A good human player takes much data in consideration when choosing: are there flaws in the defense? Which spot is more worthy to attack? How much am I vulnerable for attacking here? Is the terrain (height, chokes) to my advantage? The concept of strategy is a little more abstract: at the beginning of the game, it is closely tied to the build order and the intention of the first few moves and is called the \textit{opening}, as in Chess. Then, the long term strategy can be partially summed up by three signals/indicators:
+\begin{itemize}
+    \item aggression: how much is the player aggressive or defensive?
+    \item initiative: how much is the player adapting to the opponent's strategy vs. how much is the player being original?
+    \item technology/production/economy (tech/army/eco) distribution of resources: how much is the player spending (relatively) in these three domains?
+\end{itemize}
+\newglossaryentry{expand}{name=expand,description={either placement of a new base or the action to take a new base (to collect more resources).}}
+At high levels of play, the tech/army/eco balance is putting a hard constraint on the aggression and initiative directions: if a player invested heavily in their army production, they should attack soon to leverage this investment. To the contrary, all other things being equal, when a player \gloss{expand}, they are being weak until the expansion repaid itself, so they should play defensively. Finally, there are some technologies (researches or upgrades) which unlocks an ``attack timing'' or ``attack window'', for instance when a player unlocks an invisible technology (or unit) before that the opponent has detection technology (detectors). On the other hand, while ``teching'' (researching technologies or expanding the \glos{techtree}), particularly when there are many intermediate technological steps, the player is vulnerable because of the immediate investment they made, which did not pay off yet.
+
+From this RTS domain tasks decomposition, we can draw the mind map given in Figure~\ref{fig:mindmapRTS}. We also characterized these levels of abstractions by:
+\begin{itemize}
+    \item the conditioning the decisions on one level have on the other, as discussed above.
+    \item the quantity of direct information that a player can hope to get on the choices of their opponent. While a player can see directly the micro-management of their enemy (movements of units on the battlefront), they cannot observe all the tactics, and a big part of tactics gameplay is to hide or fake them well. Moreover, key technological buildings are sometimes hidden, and the player has to form beliefs about the long term strategy of the opponent (without being in their head).
+    \item the time which is required to switch behaviors of a given level. For instance a change of strategy will require to either \textit{a)} (technology) build at least two buildings or a building and a research/upgrade, \textit{b)} (army) build a few units, \textit{c)} take a new expansion (new base). A change of tactics corresponds to a large repositioning of the army(ies), while a change in micro-management is very quick (like moving units out of an area-of-effect damage zone).
+\end{itemize}
+This is shown in Figure~\ref{fig:sc_abstractions_tactics}. We will discuss the state of the art for the each of these subproblems (and the challenges listed above) in their respective parts.
+
+\begin{figure}[htp]
+\centerline{\includegraphics[width=7cm]{images/starcraft_levels_abstraction_light.pdf}}
+\caption{Gameplay levels of abstraction for RTS games, compared with their level of direct (and complete) information and orders of magnitudes of time to chance their policies.}
+\label{fig:sc_abstraction_tactics}
 \end{figure}
 
 
-\section{Task decomposition and linking}
-%Real-time strategy (RTS) gameplay consist in producing and managing group of units with attacks and movements specificities in order to defeat an enemy. Most often, it is required to gather resources and build up an economic and military power while expanding a technology tree. 
-We remind that parts of the map not in the sight range of the player's units are under \textit{\glos{fogofwar}}, so the player only has partial information about the enemy buildings and army. The way by which we expand the tech tree, the specific units composing the army, and the general stance (aggressive or defensive) form what we call \textit{strategy}. At the lower level, the actions performed by the player (human or not) to optimize the effectiveness of its units is called \textit{\glos{micro}}. In between lies \textit{tactics}: where to attack, and how. A good human player takes much data in consideration when choosing: are there flaws in the defense? Which spot is more worthy to attack? How much am I vulnerable for attacking here? Is the terrain (height, chokes) to my advantage? etc.
+To conclude, we will now present our works on these domains (strategy, tactics, micro-management) in separate chapters. In Figure~\ref{fig:conceptbbq}, we present the flow of informations between the different inference and decision-making parts of the bot architecture. One can also view this problem as having a good model of one's strategy, one's opponent strategy, and taking decisions. The software architecture that we propose is to have services building and maintaining the model of the enemy as well as our state, and decision-making modules using all this information to give orders to actuators (filled in gray in Fig.~\ref{fig:conceptbbq}).
+
 \begin{figure}[!ht]
 \begin{center}
 \includegraphics[width=13cm]{images/starcraft_bbq_concept.pdf}
@@ -190,7 +215,5 @@ We remind that parts of the map not in the sight range of the player's units are
 \label{fig:conceptbbq}
 \caption{Information-centric view of the architecture of the major components of the bot. Arrows are labeled with the information or orders they convey: dotted arrows are convey constraints, double lined arrows convey distributions, plain and simple arrows convey direct information or orders. The gray parts perform game actions (as the physical actions of the player on the keyboard and mouse).}
 \end{figure}
-
-In Fig.~\ref{fig:conceptbbq}, we present the flow of informations between the different inference and decision-making parts of the bot architecture. One can also view this problem as having a good model of one's strategy, one's opponent strategy, and taking decisions. The software architecture that we propose is to have services building and maintaining the model of the enemy as well as our state, and decision-making modules using all this information to give orders to actuators.
 
 
