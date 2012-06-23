@@ -4,11 +4,14 @@
 %%% Nothing in Nature is random. ... A thing appears random only through the incompleteness of our knowledge.
 %%% - Benedict Spinoza -
 
-\begin{quotation}\textit{
-On voit, par cet Essai, que la théorie des probabilités n'est, au fond, que le bon sens réduit au calcul; elle fait apprécier avec exactitude ce que les esprits justes sentent par une sorte d'instinct, sans qu'ils puissent souvent s'en rendre compte.
+\begin{quotation}
+\noindent
+\textit{On voit, par cet Essai, que la théorie des probabilités n'est, au fond, que le bon sens réduit au calcul; elle fait apprécier avec exactitude ce que les esprits justes sentent par une sorte d'instinct, sans qu'ils puissent souvent s'en rendre compte.
 \vspace{0.2cm} \\
 One sees, from this Essay, that the theory of probabilities is basically just common sense reduced to calculus; it makes one appreciate with exactness that which accurate minds feel with a sort of instinct, often without being able to account for it.}
-\begin{flushright}Pierre-Simon de Laplace (1814)\end{flushright}\end{quotation}
+%\vspace{0.2cm} \\
+\begin{flushright}Pierre-Simon de Laplace (Essai philosophique sur les probabilit\'{e}s, 1814)\end{flushright}\end{quotation}
+%\begin{flushright}Pierre-Simon de Laplace (1814)\end{flushright}\end{quotation}
 
 \lettrine{H}{ere}, we now present the use of probability theory as an alternative to logic, transforming incompleteness into uncertainty. Bayesian models can deal with both intentional and extensional uncertainty, that is: uncertainty coming from intentions of the players or the stochasticity of the game, as well as uncertainty coming from imperfect information and the model's limits. We will first show how these problems are addressed by probabilities and how to structure a full Bayesian program. We illustrate the approach with a model evaluated on a simulated \glos{MMORPG} situation.
 
@@ -48,9 +51,10 @@ Autonomy is the ability to deal with new states, the challenge of autonomous cha
 \end{figure}
 
 
-The reverend Thomas Bayes is the first credited to have worked on inversing probabilities: by knowing something about the probability of $A$ given $B$, how can one draw conclusions on the probability of $B$ given $A$? Bayes theorem states: $$\PP(A|B) = \frac{\PP(B|A)P(A)}{\PP(B)}$$
+The reverend Thomas Bayes is the first credited to have worked on inversing probabilities: by knowing something about the probability of $A$ given $B$, how can one draw conclusions on the probability of $B$ given $A$? Bayes theorem states: $$\PP(A|B) = \frac{\PP(B|A)\PP(A)}{\PP(B)}$$
 \cite{Laplace} rediscovered this theorem and published the work of inductive reasoning by using probabilities. Later, by extending logic to \textit{plausible reasoning}, \cite{Jaynes} arrived at the same properties than \cite{Kolmogorov33} probability theory. Plausible reasoning originates from logic, whose statements have degrees of plausibility represented by real numbers. %We note ``the conditional plausibility that A is true, given that B is true'' $A|B$.
-Adding consistency: a) all the possible ways to reach a conclusion leads to the same result, b) information cannot be ignored, c) two equal states of knowledge have the same plausibilities; Jaynes derived the ``product-rule'' ($\PP(AB)=\PP(A\cap B)=\PP(A|B)\PP(B)$) and the ``sum-rule'' ($\PP(A+B)=\PP(A)+\PP(B)-\PP(AB)$ or $\PP(A\cup B) = \PP(A)+\PP(B)-\PP(A\cap B)$) of probabilities. As for rules of inferences, the links between logic and plausible reasoning are direct, with $C=[A\Rightarrow B]$:
+Adding consistency: a) all the possible ways to reach a conclusion leads to the same result, b) information cannot be ignored, c) two equal states of knowledge have the same plausibilities; Cox %%% Jaynes too
+derived the ``product-rule'' ($\PP(AB)=\PP(A\cap B)=\PP(A|B)\PP(B)$) and the ``sum-rule'' ($\PP(A+B)=\PP(A)+\PP(B)-\PP(AB)$ or $\PP(A\cup B) = \PP(A)+\PP(B)-\PP(A\cap B)$) of probabilities. As for rules of inferences, the links between logic and plausible reasoning are direct, with $C=[A\Rightarrow B]$:
 \begin{itemize}
     \item modus ponens $$\frac{[A\Rightarrow B] \wedge [A=true]}{B=true}$$ translates to $$\PP(B|AC)=\frac{\PP(AB|C)}{\PP(A|C)}$$
     \item modus tollens $$\frac{[A\Rightarrow B] \wedge [B=false]}{A=false}$$ translates to $$\PP(A|C\neg B)=\frac{\PP(A \neg B|C)}{\PP(\neg B|C)}$$
@@ -71,7 +75,7 @@ A system for reasoning which satisfies:
 \end{itemize}
 is isomorphic to probability theory.
 \end{mythm}
-So the degrees of belief of any consistent induction mechanism, verify Kolmogorov's axioms. \cite{DeFinetti37} showed that if reasoning is made in a system which is not isomorphic to probability theory, then it is always possible to find a \textit{Dutch book} (a set of bets which guarantees a profit regardless of the outcomes).
+So the degrees of belief of any consistent induction mechanism, verify Kolmogorov's axioms. \cite{DeFinetti37} showed that if reasoning is made in a system which is not isomorphic to probability theory, then it is always possible to find a \textit{Dutch book} (a set of bets which guarantees a profit regardless of the outcomes). %%% ``Probability does not exist''
 
 
 Inspired by plausible reasoning, we present Bayesian programming, a formalism that can be used to describe entirely any kind of Bayesian model. It subsumes Bayesian networks and Bayesian maps, as it is equivalent to probabilistic factor graphs \cite{Diard03}. There are mainly two parts in a \newacronym{BP}{BP}{Bayesian program}\glos{BP}, the \textbf{description} of how to compute the joint distribution, and the \textbf{question(s)} that it will be asked. 
@@ -108,7 +112,7 @@ Question
 %\end{small}
 
 
-For the use of Bayesian programming in sensory-motor systems, see \citep{PRDMSMS}. For its use in cognitive modeling, see \citep{Colas10}. For its first use in video games (first person shooter gameplay, Unreal Tournament), see \citep{LeHy04}. \$\$\$
+For the use of Bayesian programming in sensory-motor systems, see \citep{PRDMSMS}. For its use in cognitive modeling, see \citep{Colas10}. For its first use in video games (first person shooter gameplay, Unreal Tournament), see \citep{LeHy04}.
 
 
 To sum-up, by viewing probabilities as an extension of logic, the method by which to build Bayesian models gets clearer: there is a strong parallel between writing a Bayesian program and logic or declarative programming. In order:
@@ -130,7 +134,10 @@ In the following, we will show this method applied to a simulated \glos{MMORPG} 
 %%% \end{itemize}
 
 \section{Modeling of a Bayesian MMORPG player}
-We will now present a model of a \glos{MMORPG} player with the Bayesian programming framework \citep{SYNNAEVE:MMORPG}. A role-playing game (RPG) consist in the incarnation by the human player of an avatar with a class (warrior, wizard, rogue, priest...) having different skills, spells, items, health points, stamina/energy/mana (magic energy) points. Massively Multi-Player Online Role-Playing Games (e.g. World of Warcraft, AION, EVE Online, Star Wars: The Old Republic) consist in controlling a single character, which can earn experience, as well as equip always better items to increase its health points, damage per second and other skills (heals, enhancements...). Players are immersed in a unique and persistent (thus the ``massively multi-player'') world, with its history and epic battles. Players have to combat each others (\glos{PvP}) due to the factions they belong to. They also have to team-up and battle against the environment (\glos{PvE}) to aquire better items and level-up. This is a cooperative task in which human players fight together against different NPC. And more specifically here, we modeled the ``druid'' class, which is complex because it can cast spells to deal damages or other negative effects as well as to heal allies or enhance their capacities (``buff'' them). The model described here deals only with a sub-task of a global AI for autonomous NPC. The problem that we try to solve is: how do we choose which skill to use and on which target in a PvE battle? Possible targets are all our allies and foes. Possible skills are all that we know, we will just try and get a distribution over target and skills and pick the most probable combination that is yet possible to achieve (enough energy/mana, no cooldown). For that, we first choose what should be the target given all surrounding variables: is an ally near death that he should be healed, which foe should we focus our attacks on? Once we have the distribution over possible targets, we search the distribution about our skills, pondered by the one on targets. However, some variables can be things that humans subconsciously interpolate from perceptions.
+We will now present a model of a \glos{MMORPG} player with the Bayesian programming framework \citep{SYNNAEVE:MMORPG}. A role-playing game (RPG) consist in the incarnation by the human player of an avatar with a class (warrior, wizard, rogue, priest...) having different skills, spells, items, health points, stamina/energy/mana (magic energy) points. Massively Multi-Player Online Role-Playing Games (e.g. World of Warcraft, AION, EVE Online, Star Wars: The Old Republic) consist in controlling a single character, which can earn experience, as well as equip always better items to increase its health points, damage per second and other skills (heals, enhancements...). Players are immersed in a unique and persistent (thus the ``massively multi-player'') world, with its history and epic battles. Players have to combat each others (\glos{PvP}) due to the factions they belong to. They also have to team-up and battle against the environment (\glos{PvE}) to aquire better items and level-up. This is a cooperative task in which human players fight together against different NPC. 
+
+
+More specifically here, we modeled the ``druid'' class, which is complex because it can cast spells to deal damages or other negative effects as well as to heal allies or enhance their capacities (``buff'' them). The model described here deals only with a sub-task of a global AI for autonomous NPC. The problem that we try to solve is: how do we choose which skill to use and on which target in a PvE battle? Possible targets are all our allies and foes. Possible skills are all that we know, we will just try and get a distribution over target and skills and pick the most probable combination that is yet possible to achieve (enough energy/mana, no cooldown/reload time). For that, we first choose what should be the target given all surrounding variables: is an ally near death that he should be healed, which foe should we focus our attacks on? Once we have the distribution over possible targets, we search the distribution about our skills, pondered by the one on targets. However, some variables can be things that humans subconsciously interpolate from perceptions.
 
 \subsection{Variables}
 

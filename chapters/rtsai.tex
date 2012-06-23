@@ -2,9 +2,8 @@
 \chaptertoc
 
 \begin{quotation}\textit{
-lala}
-\\
-truc
+We think of life as a journey with a destination (success, heaven). But we missed the point. It was a musical thing, we were supposed to sing and dance while music was being played.}\\
+\begin{flushright}Alan Watts\end{flushright}
 \end{quotation}
 
 \section{How does the game work}
@@ -93,7 +92,7 @@ Supply & Build & Note \\
 
 %``Cutting'' workers (here, Probes for Protoss) production is a common feat of highly optimized ``timing attacks'' builds.
 
-We now present the evolution of a game (Figures~\ref{fig:SC_game1} and \ref{fig:SC_game2}) during which we tried to follow the build order presented in table~\ref{bo:two_gates_goon_range} (``2 Gates Goon Range''\footnote{On Teamliquid: \url{http://wiki.teamliquid.net/starcraft/2_Gate_Goon_Range_(vs._Terran)}}) but we had to adapt to the fact that the opponent was Zerg (possibility for a faster rush) by building a Gateway at 9 supply and building a Zealot (ground contact unit) before the first Dragoon.
+We now present the evolution of a game (Figures~\ref{fig:SC_game1} and \ref{fig:SC_game2}) during which we tried to follow the build order presented in table~\ref{bo:two_gates_goon_range} (``2 Gates Goon Range''\footnote{On Teamliquid: \url{http://wiki.teamliquid.net/starcraft/2_Gate_Goon_Range_(vs._Terran)}}) but we had to adapt to the fact that the opponent was Zerg (possibility for a faster rush) by building a Gateway at 9 supply and building a Zealot (ground contact unit) before the first Dragoon. The first screenshot (image 1 in Figure~\ref{fig:SC_game1}) is at the very start of the game: 4 Probes (Protoss workers), and one Nexus (Protoss main building, producing workers and depot point for resources). In picture 2 in the same Figure (\ref{fig:SC_game1}), the first gate is being built. In picture 3, the player scouts their opponent, thus gathering the first bits of information about their race and tech tree. Picture 4 shows the player ``expading'', which is the act of making another base at a new resource location, for economical purposes. In picture 5, we can see the upgrading of the ground weapons along with 4 ranged military units, staying in defense at the expansion. Picture 6 showcases the production queue of a Gateway as well as workers transferring to a second expansion (third base). Figure~\ref{fig:SC_game2} shows the aggressive moves of the same player: in picture 7, we can see a flying transport with artillery and area of effect ``casters'' in it. In picture 8, the transport in unloaded directly inside the enemy's base, causing huge damages to their economy. In picture 9, an invisible attacking unit (circled in white) is harassing the oblivious enemy's army. Finally, picture 10 shows the final attack, with a full ground army, on the enemy's base.
 
 \begin{figure}[!ht]
 \begin{center}
@@ -113,17 +112,19 @@ We now present the evolution of a game (Figures~\ref{fig:SC_game1} and \ref{fig:
 
 \begin{figure}[!ht]
 \begin{center}
-\includegraphics[width=7.8cm]{images/SC_game/SC_drop2a.png}
-\includegraphics[width=7.8cm]{images/SC_game/SC_drop2b.png}
-\includegraphics[width=7.8cm]{images/SC_game/SC_dt_army.png}
+\begin{tabular}{cc}
+\includegraphics[width=7.8cm]{images/SC_game/SC_drop2a.png} &
+\includegraphics[width=7.8cm]{images/SC_game/SC_drop2b.png} \\
+\includegraphics[width=7.8cm]{images/SC_game/SC_dt_army.png} & 
 \includegraphics[width=7.8cm]{images/SC_game/SC_final_attack.png}
+\end{tabular}
 \label{fig:SC_game2}
 \caption{Military moves from a StarCraft (PvT) game. The order of the screenshots goes from left to right and from top to bottom.}
 \end{center}
 \end{figure}
 
 \section{Challenges}
-In combinatorial game theory terms, competitive StarCraft is a zero sum, partial-information, deterministic strategy game.
+In combinatorial game theory terms, competitive StarCraft (1 vs. 1) is a zero sum, partial-information, deterministic strategy game.
 
 \begin{figure}[!ht]
 \begin{center}
@@ -157,9 +158,11 @@ In combinatorial game theory terms, competitive StarCraft is a zero sum, partial
 \caption{A mind-map of RTS AI XXX TODO}
 \end{figure}
 
-StarCraft subsumes Wargus, which has an estimated mean branching factor $1.5.10^3$ \citep{LTW} (Chess: $\approx 35$, Go: $<360$). \cite{bgweberPhD} find a branching factor of $> 1.10^6$ for StarCraft. The game complexity is roughly $10^11500$, versus the Shannon number for Chess ($10^43$).
+StarCraft subsumes Wargus, which has an estimated mean branching factor $1.5.10^3$ \citep{LTW} (Chess: $\approx 35$, Go: $<360$). \cite{bgweberPhD} finds a branching factor greater than $1.10^6$ for StarCraft. The game complexity is roughly $10^{11500}$, versus the Shannon number for Chess ($10^{43}$).
 
 \section{Task decomposition and linking}
+%Real-time strategy (RTS) gameplay consist in producing and managing group of units with attacks and movements specificities in order to defeat an enemy. Most often, it is required to gather resources and build up an economic and military power while expanding a technology tree. 
+We remind that parts of the map not in the sight range of the player's units are under \textit{\glos{fogofwar}}, so the player only has partial information about the enemy buildings and army. The way by which we expand the tech tree, the specific units composing the army, and the general stance (aggressive or defensive) form what we call \textit{strategy}. At the lower level, the actions performed by the player (human or not) to optimize the effectiveness of its units is called \textit{micro-management}. In between lies \textit{tactics}: where to attack, and how. A good human player takes much data in consideration when choosing: are there flaws in the defense? Which spot is more worthy to attack? How much am I vulnerable for attacking here? Is the terrain (height, chokes) to my advantage? etc.
 \begin{figure}[!ht]
 \begin{center}
 \includegraphics[width=13cm]{images/starcraft_bbq_concept.pdf}
@@ -170,13 +173,4 @@ StarCraft subsumes Wargus, which has an estimated mean branching factor $1.5.10^
 
 In Fig.~\ref{fig:conceptbbq}, we present the flow of informations between the different inference and decision-making parts of the bot architecture. One can also view this problem as having a good model of one's strategy, one's opponent strategy, and taking decisions. The software architecture that we propose is to have services building and maintaining the model of the enemy as well as our state, and decision-making modules using all this information to give orders to actuators.
 
-\begin{itemize}
-\item Problem: build a real-scale software piece which is maintainable
-\item State of the art: shared memories, shared states
-\item Our take: we transmit distributions, states stay in modules
-\item Results: XXX (atm too much state), also competitions results
-\end{itemize}
-
-% XXX 
-XXX Real-time strategy (RTS) gameplay consist in producing and managing group of units with attacks and movements specificities in order to defeat an enemy. Most often, it is required to gather resources and build up an economic and military power while expanding a technology tree. Parts of the map not in the sight range of the player's units are under \textit{\glos{fogofwar}}, so the player only has partial information about the enemy buildings and army. The way by which we expand the tech tree, the specific units composing the army, and the general stance (aggressive or defensive) form what we call \textit{strategy}. At the lower level, the actions performed by the player (human or not) to optimize the effectiveness of its units is called \textit{micro-management}. In between lies \textit{tactics}: where to attack, and how. A good human player takes much data in consideration when choosing: are there flaws in the defense? Which spot is more worthy to attack? How much am I vulnerable for attacking here? Is the terrain (height, chokes) to my advantage? etc.
 

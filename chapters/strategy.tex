@@ -1,14 +1,9 @@
 \chapter{Strategy}
 \chaptertoc
-
-%Strategy without tactics is the slowest route to victory. Tactics without strategy is the noise before defeat. Sun Tzu
-
-
 \begin{quotation}\textit{
 All men can see these tactics whereby I conquer, but what none can see is the strategy out of which victory is evolved.}\\
-Sun Tzu\end{quotation}
-
-
+\begin{flushright}Sun Tzu (The Art of War, 476-221 BC)\end{flushright}
+\end{quotation}
 
 \begin{figure}[!ht]
 \begin{center}
@@ -22,7 +17,7 @@ Sun Tzu\end{quotation}
 \item Problem: take the winning strategy in the absolute (knowing everything: complete observations, players intentions, effects of each possible actions).
 \item Problem that we solve: take the winning strategy (in average) knowing what we saw from the opponent and our model of the game. 
 \item Type: prediction is problem of \textit{inference from incomplete informations}; adaptation given what we know is a problem of \textit{planning under constraints}.
-\item Complexity: EXPTIME-complete (as for Chess and Go \citep{Robson83}). Our solutions are real-time on a laptop.
+\item Complexity: EXPTIME-complete\footnote{simple StarCraft decision problems are NP-hard \citep{GamingComplexity}, basic StarCraft strategy with full information (remember StarCraft is partially observable) is mappable to the Generalized Geography problem and thus is PSPACE-hard \citep{Lichtenstein78}}, as for Chess \citep{Fraenkel81} and Go (with Japanese ko rules) \citep{Robson83}. Our solutions are real-time on a laptop.
 %\item Results: better resistance to noise, which is fundamental in real setup RTS gameplay (fog of war). Full Bayesian model down to adaptation actions some day?
 %\item Conclusion and perspectives: a way to encode and use gameplay/structural knowledge 
 \end{itemize}
@@ -275,13 +270,13 @@ Desc.
         =   \PP(Op^t | Op^{t-1}) \PP(Op^{t-1}) \PP(BuildTree | Op^t) \\
             \PP(O_{\llbracket 1 \dots N\rrbracket}) \PP(\lambda | BuildTree, O_{\llbracket 1 \dots N\rrbracket}) \PP(T | BuildTree, Op^t) \\
         Forms\\
-            \PP(Op^t | Op^{t-1})\sim functional\ Dirac\ \mathrm{(filtering)}\\
-            \PP(BuildTree | Op^t)\sim Categorical(\theta)\\
+            \PP(Op^t | Op^{t-1}) = functional\ Dirac\ \mathrm{(filtering)}\\
+            \PP(BuildTree | Op^t) = Categorical(\theta)\\
 %%% \mathrm{histogram} \\
-            \PP(\lambda | BuildTree, O_{\llbracket 1 \dots N\rrbracket})\sim functional\ Dirac\ \mathrm{(coherence)}\\ 
+            \PP(\lambda | BuildTree, O_{\llbracket 1 \dots N\rrbracket}) = functional\ Dirac\ \mathrm{(coherence)}\\ 
 %%%\ of\ observations\ with\ buildtree)}\\
-            %%%\PP(T | BuildTree, Op^t)\sim BellShape(\mu, \sigma)
-            \PP(T | BuildTree=bt, Op^t=op) \sim Discrete\mathcal{N}(\mu_{bt,op},\sigma^2_{bt,op})\\
+            %%%\PP(T | BuildTree, Op^t) = BellShape(\mu, \sigma)
+            \PP(T | BuildTree=bt, Op^t=op) = Discrete\mathcal{N}(\mu_{bt,op},\sigma^2_{bt,op})\\
 %%%\mathrm{bell\ shape\ (discrete\ normal)}\\
         \end{cases}\\
     Identification\\
