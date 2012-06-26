@@ -15,7 +15,7 @@ Life is the sum of all your choices.}
 \begin{itemize}
 \item \underline{Problem:} optimal control of units in a (real-time) huge adversarial actions space (collisions, accelerations, terrain, damages, areas of effects, foes, goals...).
 \item \underline{Problem that we solve:} efficient coordinated control of units incorporating all low level actions and inputs, plus higher level orders and representations.
-\item \underline{Type:} strictly, it can be modeled as a \glos{pomdp}; it is a problem of \textit{multi-agent control in an adversarial environment}.
+\item \underline{Type:} it is a problem of \textit{multi-agent control in an adversarial environment}. Strictly, it can be modeled as a \glos{pomdp} for each unit independently with $S$ the states of all the other units (enemies and allied altogether) which are known through observations $O$ by conditional observations probabilities $\Omega$, with $A$ the set of actions for the given unit, $T$ transition probabilities between states and depending on actions, and the reward function $R$ based on goal execution, unit survivability and so on... It can also be viewed as a (gigantic) \glos{pomdp} solving the problem for all (controlled units) at once, the advantage is that all states $S$ for allied units is known, the disadvantage is that the combinatorics of $T$ and $A$ make it intractable for other things than toy problems.
 \item \underline{Complexity:} PSPACE-complete \citep{Papadimitriou87,GamingComplexity}. Our solutions are real-time on a laptop.
 \end{itemize}
 
