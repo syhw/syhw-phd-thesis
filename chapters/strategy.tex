@@ -1,4 +1,5 @@
 \chapter{Strategy}
+\label{chapter:strategy}
 \begin{quotation}\textit{
 All men can see these tactics whereby I conquer, but what none can see is the strategy out of which victory is evolved.}\\
 \begin{flushright}Sun Tzu (The Art of War, 476-221 BC)\end{flushright}
@@ -12,8 +13,8 @@ All men can see these tactics whereby I conquer, but what none can see is the st
 \begin{center}
 \includegraphics[width=13cm]{images/starcraft_bbq_concept_STRATEGY.pdf}
 \end{center}
-\label{fig:conceptSTRATEGY}
 \caption{Information-centric view of the architecture of the bot, the part concerning this chapter is in the dotted rectangle}
+\label{fig:conceptSTRATEGY}
 \end{figure}
 
 \begin{itemize}
@@ -197,7 +198,7 @@ There are 810 build trees for Terran, 346 for Protoss and 261 for Zerg ($\approx
 
 \subsubsection{Decomposition}
 The joint distribution of our model is the following:
-\begin{eqnarray*}
+\begin{eqnarray}
     & & \PP(T, BuildTree, O_1 \dots O_N, Op^t, Op^{t-1}, \lambda) \\ 
 & = &   \PP(Op^t | Op^{t-1}) \\
     & & \PP(Op^{t-1}) \\
@@ -205,7 +206,7 @@ The joint distribution of our model is the following:
     & & \PP(O_{\llbracket 1 \dots N\rrbracket}) \\
     & & \PP(\lambda | BuildTree, O_{\llbracket 1 \dots N\rrbracket}) \\
     & & \PP(T | BuildTree, Op^t) 
-\end{eqnarray*}
+\end{eqnarray}
 This can also be see as Figure~\ref{BNPrediction}.
 
 \subsubsection{Forms}
@@ -249,12 +250,12 @@ The learning of the $\PP(BuildTree | Op^t)$ histogram is straight forward counti
 %%%.\PP(\lambda|BuildTree,o_{1:N}).\PP(t|BuildTree,Op)
 %%%\end{eqnarray*}
 The question that we will ask in all the benchmarks is:
-\begin{eqnarray*}
+\begin{eqnarray}
  & \PP(Op|T=t, O_{\llbracket 1\dots N\rrbracket}=o_{\llbracket 1\dots N\rrbracket}, \lambda = 1) \\
  & \propto \PP(Op).\PP(o_{\llbracket 1\dots N\rrbracket})\\
  & \times \sum_{BuildTree} \PP(\lambda | BuildTree, o_{\llbracket 1\dots N\rrbracket})\\
  & .\PP(BuildTree|Op).\PP(t|BuildTree, Op)
-\end{eqnarray*}
+\end{eqnarray}
 Note that if we see $\PP(BuildTree, Time)$ as a plan, asking $\PP(BuildTree|Opening, Time)$ boils down to use our ``plan recognition'' mode as a planning algorithm, which could provide good approximations of the optimal goal set \citep{Ramirez}. This gives us a distribution on the build trees to follow (build orders) to achieve a given opening.
 
 
@@ -394,7 +395,7 @@ ZvZ & 0.69 & 0.64 & 0.67 & 0.73 & 0.74 & 0.77 & 0.7 & 0.73 & 0.73
 The first iteration of this model was not making use of the structure imposed by the game in the form of ``possible build trees'' and was at best very slow, at worst intractable without sampling. With the model presented here, the performances are ready for production as shown in Table~\ref{CPU}. The memory footprint is around 3.5Mb on a 64bits machine. Learning computation time is linear in the number of games logs events ($O(N)$ with $N$ observations), which are bounded, so it is linear in the number of game logs. It can be serialized and done only once when the dataset changes. The prediction computation corresponds to the sum in the question (III.B.5) and so its computational complexity is in $O(N\cdot M)$ with $N$ build trees and $M$ possible observations, as $M << N$, we can consider it linear in the number of build trees (values of $BuildTree$).
 
 \begin{table}[h]
-\caption{Extremes of computation time values (in seconds, C2D 2.8Ghz)}
+\caption{Extremes of computation time values (in seconds, Core 2 Duo 2.8Ghz)}
 \begin{center}
 \begin{tabular}{|c|cc|cc|}
 \hline
@@ -414,7 +415,40 @@ Z \begin{tiny}(Zerg)\end{tiny} & 896 & 0.089014 & 0.00796715 & 0.00123551 \\ \hl
 \end{center}
 \end{table}
 
-\subsection{Extensions}
+\subsubsection{Openings strengths and weaknesses}
+
+\begin{table}[ht] 
+\begin{footnotesize}
+\begin{center}
+\begin{tabular}{|l|ccccc|}
+\hline
+\begin{tiny}Zerg | Protoss\end{tiny} & two gates & fast dt & reaver drop & corsair & nony\\
+\hline
+speedlings &  0.417& 0.75 & NED & NED & 0.5 \\
+lurkers &  NED & 0.493& NED & 0.445 & 0.533\\
+fast mutas &  NED & 0.506& 0.5 & 0.526& 0.532\\
+\hline
+\end{tabular}
+\begin{tabular}{|l|cccc|}
+\hline
+\begin{tiny}Terran | Protoss\end{tiny} & fast dt & reaver drop & corsair & nony\\
+\hline
+%%% bio &  NED & NED & NED & NED & NED & NED \\
+%%% unknown &  NED & NED & 0.5 & NED & NED & NED \\
+%%% drop &  NED & NED & NED & NED & NED & NED \\
+two facto &  0.552& 0.477& NED & 0.578\\
+rax fe &  0.579& 0.478& 0.364& 0.584\\
+%%% vultures &  NED & NED & NED & NED & NED & NED \\
+\hline
+\end{tabular}
+\caption{Opening/Strategies labels counted for victories against each others for the PvZ (top, on 1408 games) and PvT (bottom, on 1657 games) match-ups. NED stands for Not Enough Data to conclude a preference/discrepancy towards one opening. The results should be read as win rates of columns openings vs lines openings.}
+\end{center}
+\end{footnotesize}
+\label{table:openingcontingency}
+\end{table}
+
+
+\subsection{Discussion}
 
 \subsubsection{Possible Uses}
 Developing beforehand a RTS game AI that specifically deals with whatever strategies the players will come up is very hard. And even if game developers were willing to patch their AI afterwards, it would require a really modular design and a lot of work to treat each strategy. With our model, the AI can adapt to the evolutions in play by learning its parameters from the replay, and it can dynamically adapt during the games by using the reverse question $\PP(BuildTree | Opening,Time)$, or even $\PP(TechTree | Opening, Time)$ if we use a $TechTree$ variable encoding buildings and technology upgrades. This question would give the distribution over technology trees knowing the opening we want to perform at which time. This would allow for the bot to dynamically choose/change build orders.
@@ -461,7 +495,7 @@ This way, we counted 273 probable tech tree values for Protoss, 211 for Zerg, an
 
 \subsubsection{Decomposition}
 The joint distribution of our model is the following:
-\begin{eqnarray*}
+\begin{eqnarray}
 & & \PP(TT^t,C_{t}^{t+1},C_{c}^{t+1},C_{m}^{t+1},C_{f}^{t+1},\\
 & & ETT^t,EC^{t},EC^{t+1},U_{1:N}^{t+1},EU_{1:M}^{t}) \\
 & = & \PP(EU_{1:M}^t|EC^t)\PP(EC^t|EC^{t+1})\\
@@ -469,7 +503,7 @@ The joint distribution of our model is the following:
 & \times & \PP(C_{c}^{t+1}|EC^{t+1})\PP(C_{t}^{t+1})\PP(TT^t)\PP(C_{f}^{t+1}|TT^{t})\\
 & \times & \PP(\lambda|C_{f}^{t+1},C_{m}^{t+1})\PP(C_{m}^{t+1}|C_{t}^{t+1},C_{c}^{t+1})\\
 & \times & \PP(U_{1:N}^{t+1}|C_{f}^{t+1})
-\end{eqnarray*}
+\end{eqnarray}
 This can also be see as Figure~\ref{BN}.
 
 
@@ -509,7 +543,7 @@ For the categorical probability tables, we used Laplace rule of succession (``ad
 
 \subsubsection{Questions}
 The question that we ask to know which units to produce is:
-\begin{eqnarray*}
+\begin{eqnarray}
  & & \PP(U_{1:N}^{t+1} | eu_{1:M}^t, tt^t, \lambda = 1) \\
  & \propto & \sum_{ETT^t, EC^t, EC^{t+1}}[\PP(EC^{t+1}|ETT^t)\PP(ETT^t)\\
  & \times & \PP(eu_{1:M}^t|EC^t) \\
@@ -517,13 +551,13 @@ The question that we ask to know which units to produce is:
  & \times & \PP(C_{t}^{t+1})\PP(C_{f}^{t+1}|tt^{t})\\
  & \times & \PP(\lambda|C_{f}^{t+1},C_{m}^{t+1})\\
  & \times & \PP(U_{1:N}^{t+1}|C_f^{t+1})]]
-\end{eqnarray*}
+\end{eqnarray}
 or we can sample $U_{1:N}^{t+1}$ from $P(C_f^{t+1})$ or even from $c_f^{t+1}$ (a realization of $C_f^{t=1}$) if we ask $\PP(C_f^{t+1} | eu_{1:M}^t, tt^t, \lambda = 1)$. Note that here we do not know fully neither the value of $ETT$ nor of $C_t$ so we take the most information that we have into account. The evaluation of the question is proportional to $|ETT|\times |EC|^2\times |C|^4 = V'\times K'^2 \times K^4$. But we do not have to sum on the 4 types of $C$ in practice: $\PP(C_m|C_t,C_c)$ is a simple linear combination of vectors and $\PP(\lambda=1|C_f,C_m)$ is a linear filter function, so we just have to sum on $C_c$ and practical complexity is proportional to $V'\times K'^2 \times K$. As we have most often $\approx 10$ Gaussian components in our GMM, $K$ or $K'$ are in the order of 10 (5 to 12 in practice), while $V$ and $V'$ are between 211 and 517 as noted above.
 
 To benchmark our clustering, we use a slightly different model in which $\PP(EC^{t+1})=\PP(EC^t)$ (we want to know which army counters the other in a given battle). The question that we will ask is $\PP(C_c^{t+1}|eu_{1:M}^t)$.
 
 \setlength{\tabcolsep}{5pt}
-\begin{table*}[ht]
+\begin{table}[ht]
 \caption{Summary of the clustering evaluation (for GMM), main metrics}
 \begin{center}
 \begin{footnotesize}
@@ -557,7 +591,7 @@ disparity & in \% & m & ws & m & ws & m & ws & m & ws & m & ws& m & ws \\
 
 \end{footnotesize}
 \end{center}
-\end{table*}
+\end{table}
 All the results presented in this section represent the nine match-ups (races combinations) in 1 versus 1 (duel) of StarCraft. We worked with a data-set of 7708 replays of highly skilled human players. For each match-up, we set aside 100 test matches, and use the remaining of the dataset for learning. Performance wise, for the biggest dataset (PvT) the learning part takes around 100 second on a 2.8 Ghz Core 2 Duo CPU (and it is easily serializable) for 2408 games (57 seconds to fit and select the GMM, and 42 seconds to fill the probability tables). %The time to parse all the dataset is far larger (617 seconds with a SSD). %Each inference (question) step takes around $YYY$ second. 
 We preferred robustness to precision and thus we did not remove outliers: better scores can easily be achieved by considering only stereotypical armies/battles, or more amateur players (which styles are less pronounced). 
 
@@ -573,12 +607,12 @@ To benchmark our clustering methods (home-made, K-means, GMM), we reduced battle
 We also plotted the generated clusters in all kind of way, Figure~\ref{isoz} shows a 2D Isomap projection of the battles on a small dataset. Figure~\ref{parallelplot} simply lays out the concept of \textit{army composition} and expert gamers recognized the clusters clearly identified by the clustering (GMM). Figure~\ref{ecknowingecnext} showcases the dynamics of clusters components: $P(EC^t|EC^{t+1}$, for Zerg (vs Protoss) for $\Delta t$ of 2 minutes. As shown in Figure~\ref{bbq_dataflow}, this model is part of the strategy module of our next AIIDE competition bot.
 %Finally, in the absence of ground truth to directly evaluate the whole model, we can only 
 
-\begin{figure*}[htp]
+\begin{figure}[htp]
 \centerline{\includegraphics[width=0.7\columnwidth]{images/PvP_small.png}}
 %\centerline{\includegraphics[width=2.1\columnwidth]{PvZ2.png}}
 \caption{Parallel plot of a small dataset of Protoss (vs Protoss, i.e. in the PvP match-up) army clusters on most important unit types (for the match-up). Each normalized vertical axis represents the percentage of the units of the given unit type in the army composition (we didn't remove outliers, so most top (tip) vertices represent 100\%), except for the rightmost (framed) which links to the most probable GMM component. Note that several traces can (and do) go through the same edge.}
 \label{parallelplot}
-\end{figure*}
+\end{figure}
 
 
 
@@ -635,5 +669,5 @@ We presented a probabilistic model inferring the best army composition given wha
 However beautiful the strategy, you should occasionally look at the results.
 } Winston Churchill\end{quotation}
 
-\subsection{Extensions}
+\subsection{Discussion}
 

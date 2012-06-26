@@ -109,4 +109,205 @@ RTS & 1.941 & 1.692 & 86 & 1.912 & 1.808 & 86 & 1.706 & 1.673 & 83 & 1.882 & 1.7
 \caption{Results of the survey (means) for ``top'' players and the ``rest'' of answers, along with the total number of answers (n).}
 \end{sidewaystable}
 
+%\chapter{Strategy}
+%
+%\section{Openings }
+%NED stands for Not Enough Data\\
+%Win rates of columns vs lines\\
+%
+%\begin{tabular}{|l|cccccc|}
+%\hline
+% & two gates & fast dt & speedzeal & reaver drop & corsair & nony\\
+%\hline
+%two gates &  0.5 & NED & NED & NED & NED & NED \\
+%fast dt &  NED & 0.5 & NED & 0.454545454545 & NED & 0.445544554455 \\
+%speedzeal &  NED & NED & NED & NED & NED & NED \\
+%reaver drop &  NED & 0.545454545455 & NED & NED & NED & 0.608695652174 \\
+%corsair &  NED & NED & NED & NED & NED & NED \\
+%nony &  NED & 0.554455445545 & NED & 0.391304347826 & NED & 0.5 \\
+%\hline
+%\end{tabular}
+%PvP Total Games: 296
+
+%%% \begin{tabular}{|l|cccccc|}
+%%% \hline
+%%%  & two gates & fast dt & unknown & reaver drop & corsair & nony\\
+%%% \hline
+%%% bio &  NED & NED & NED & NED & NED & NED \\
+%%% unknown &  NED & NED & 0.5 & NED & NED & NED \\
+%%% drop &  NED & NED & NED & NED & NED & NED \\
+%%% two facto &  NED & 0.552083333333 & NED & 0.477272727273 & NED & 0.578212290503 \\
+%%% rax fe &  NED & 0.579439252336 & NED & 0.478260869565 & 0.363636363636 & 0.58371040724 \\
+%%% vultures &  NED & NED & NED & NED & NED & NED \\
+%%% \hline
+%%% \end{tabular}
+%%% PvT Total Games: 1657
+ 
+
+%%% \begin{tabular}{|l|ccccccc|}
+%%% \hline
+%%%  & two gates & fast dt & unknown & speedzeal & reaver drop & corsair & nony\\
+%%% \hline
+%%% hydras &  NED & NED & NED & NED & NED & NED & NED \\
+%%% unknown &  NED & NED & NED & NED & NED & NED & NED \\
+%%% speedlings &  0.416666666667 & 0.75 & NED & NED & NED & NED & 0.5 \\
+%%% lurkers &  NED & 0.492537313433 & NED & NED & NED & 0.444444444444 & 0.532981530343 \\
+%%% fast mutas &  NED & 0.50641025641 & NED & NED & 0.5 & 0.526315789474 & 0.531590413943 \\
+%%% \hline
+%%% \end{tabular}
+%%% PvZ Total Games: 1408
+
+
+%\begin{tabular}{|l|cccccc|}
+%\hline
+% & bio & unknown & drop & two facto & rax fe & vultures\\
+%\hline
+%bio &  NED & NED & NED & NED & NED & NED \\
+%unknown &  NED & NED & NED & NED & NED & NED \\
+%drop &  NED & NED & NED & NED & NED & NED \\
+%two facto &  NED & NED & NED & 0.5 & 0.517985611511 & NED \\
+%rax fe &  NED & NED & NED & 0.482014388489 & 0.5 & NED \\
+%vultures &  NED & NED & NED & NED & NED & NED \\
+%\hline
+%\end{tabular}
+%TvT Total Games: 332
+%
+%\begin{tabular}{|l|cccc|}
+%\hline
+% & unknown & speedlings & lurkers & fast mutas\\
+%\hline
+%rax fe &  NED & NED & 0.546357615894 & 0.526315789474 \\
+%drop &  NED & NED & NED & NED \\
+%two facto &  NED & NED & NED & 0.379310344828 \\
+%unknown &  0.5 & NED & NED & NED \\
+%bio &  NED & NED & 0.5 & 0.7 \\
+%\hline
+%\end{tabular}
+%TvZ Total Games: 1520
+%
+%
+%\begin{tabular}{|l|cccc|}
+%\hline
+% & unknown & speedlings & lurkers & fast mutas\\
+%\hline
+%unknown &  NED & NED & NED & NED \\
+%speedlings &  NED & 0.5 & NED & 0.388888888889 \\
+%lurkers &  NED & NED & NED & NED \\
+%fast mutas &  NED & 0.611111111111 & NED & 0.5 \\
+%\hline
+%\end{tabular}
+%ZvZ Total Games: 148
+
+
+\chapter{StarCraft AI}
+
+\section{Algorithms}
+
+\begin{algorithm}
+\caption{(Simplified) Target selection heuristic, efficiently implemented with a enemy units $\leftrightarrow$ damages bidirectional map.}
+\label{alg:targetselection}
+\begin{algorithmic}
+%%% \Function{get\_incoming\_damages}{eunit}
+%%% \EndFunction
+%%% \Function{add\_incoming\_damages}{eunit}
+%%% \EndFunction
+%%% \Function{remove\_incoming\_damages}{eunit}
+%%% \EndFunction
+%%% \Function{get\_priority\_targets}{unit}
+%%% \EndFunction
+\Function{on\_death}{$unit$}
+\State $remove\_incoming\_damages(unit.target, damages(unit,unit.target))$
+\EndFunction
+
+\Function{register\_target}{$unit, target$}
+\State $add\_incoming\_damages(target, damages(unit, target))$
+\State $unit.target \leftarrow target$
+\EndFunction
+
+\Function{select\_target}{$unit$}
+\ForAll{$eunit \in focus\_fire\_order(enemy\_units)$}
+    \If{$eunit.type \in priority\_targets(unit.type)$}
+        \If{$in\_range(unit, eunit)$}
+            \State $register\_target(unit, eunit)$
+        \ElsIf{$unit.prio\_target ==$ NULL}
+            \State $unit.prio\_target \leftarrow eunit$
+        \EndIf 
+    \EndIf 
+\EndFor
+\If{$unit.target ==$ NULL}
+    \ForAll{$eunit \in focus\_fire\_order(enemy\_units)$}
+        \If{$in\_range(unit, eunit)$}
+            \State $register\_target(unit, eunit)$
+        \EndIf 
+    \EndFor
+\EndIf
+\If{$unit.target ==$ NULL \textbf{and} $unit.prio\_target ==$ NULL} %%% TODO formatting
+    $unit.prio\_target \leftarrow closer(unit, enemy\_units)$
+\EndIf
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+\caption{Flow algorithm making sure there are no convex closures}
+\label{alg:flood}
+\begin{algorithmic}
+\Function{init}{$region$}
+    %\State $\{Flow_{i,j} \leftarrow -1 | Flow_{i,j} \in region\}$
+    %\State $\{Dir_{i,j} \leftarrow (0,0) | Dir_{i,j} \in region\}$
+    \State $\{dir_{i,j} \leftarrow list() | (i,j) \in region\}$
+    \State $updated \leftarrow \{(i,j) | (i,j) \in entrance(region)\}$
+    %\State $\{Flow_{i,j} \leftarrow 1 | (i,j) \in Updated\}$
+    \State $\{dir_{i,j} \leftarrow dir\_towards(region) | (i,j) \in updated\}$
+    %\While{$(\exists Flow_{i,j} == -1) \ \mathrm{or}\ (\exists Dir_{i,j} == (0,0))$}
+    \While{$\exists dir_{i,j} == list()$}
+        \State $(sources,new\_updated) \leftarrow neighbours\_couples(updated)$
+        \ForAll{$((x,y),(i,j)) \in (sources,new\_updated)$}
+            %\If{$(i-x,j-y) \neq Dir_{x,y}$}
+            \If{$(x-i,y-j) \notin dir_{x,y}$}
+                \State $dir_{i,j}.append((i-x, j-y))$
+            %    \State $Flow_{i,j} += 1$
+            \EndIf
+        \EndFor
+        \State $updated \leftarrow new\_updated$
+    \EndWhile
+\EndFunction
+
+\Function{build}{$i,j$}
+\ForAll{$(x,y) \in neighbours(i,j)$}
+    \State $dir_{x,y}.remove((x-i, y-j))$
+    \If{$dir_{x,y}.empty()$}
+        \State $build(x,y)$
+    \EndIf
+\EndFor
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+\caption{Production/Construction Planning}
+\label{alg:planning}
+\begin{algorithmic}
+\Function{init}{}
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\section{Figures}
+
+\begin{figure}[ht]
+\begin{center}
+\includegraphics[width=8cm]{images/trailing_pheromones.pdf}
+\caption{Example of trailing repulsive charges (repulsive ``pheromones'') at already visited positions for Bayesian units to avoid being blocked by local optimums. The trajectory is indicated by the increasing numbers (most recent unit position in 19) and the (decaying) strength of the trailing repulsion is weaker in green and stronger in red. Related to \ref{BayesianUnitCCL}.}
+\label{fig:BayesianTrailingPheromone}
+\end{center}
+\end{figure}
+
+\begin{figure}[ht]
+\begin{center}
+\includegraphics[width=8cm]{images/UnitsGroup_BayesianUnits.pdf}
+\caption{Example of the decision taken at the units group level from ``compressed'' information in the form of the distribution on $Dir$ for each Bayesian unit. This can be viewed as a simple optimization problem (maximize sum of probabilities of decisions taken) or as a constraint satisfaction problem (CSP) like ``no unit should be left behind/die/dissatisfied''. Related to \ref{BayesianUnitCCL}}
+\label{fig:BayesianUnitsGroup}
+\end{center}
+\end{figure}
 
