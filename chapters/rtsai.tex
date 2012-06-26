@@ -23,7 +23,7 @@ In chronological order, RTS include (but are not limited to): Ancient Art of War
 
 
 \subsection{A StarCraft Game}
-\textit{StarCraft} is a science-fiction RTS game released by Blizzard Entertainment$^{TM}$ in March 1998. It was quickly expanded into \textit{StarCraft: Brood War} (SC: BW) in November 1998. In the following, when referring to StarCraft, we mean StarCraft with the Brood War expansion. StarCraft is a canonical RTS game in the sense that it helped define the genre and most gameplay mechanics seen in other RTS games are present in StarCraft. It is as much based on strategy than tactics, by opposition to the Age of Empires and Total Annihilation series. In the following of the thesis, we will focus on duel mode, also known as 1 vs. 1 (1v1). Team-play (2v2 and higher) and ``free for all'' are very interesting but were not studied in the framework of this research. These game modes particularly add a layer of coordination and bluff respectively.
+\textit{StarCraft} is a science-fiction RTS game released by Blizzard Entertainment$^{TM}$ in March 1998. It was quickly expanded into \textit{StarCraft: Brood War} (SC: BW) in November 1998. In the following, when referring to StarCraft, we mean StarCraft with the Brood War expansion. StarCraft is a canonical RTS game in the sense that it helped define the genre and most gameplay mechanics seen in other RTS games are present in StarCraft. It is as much based on strategy than tactics, by opposition to the Age of Empires and Total Annihilation series in which strategy is prevalent. In the following of the thesis, we will focus on duel mode, also known as 1 vs. 1 (1v1). Team-play (2v2 and higher) and ``free for all'' are very interesting but were not studied in the framework of this research. These game modes particularly add a layer of coordination and bluff respectively.
 
 
 StarCraft sold 9.5 millions licenses worldwide, 4.5 millions in South Korea alone \citep{StarCraftNumbers}, and reigned on competitive RTS tournaments for more than a decade. Numerous international competitions (World Cyber Games, Electronic Sports World Cup, BlizzCon, OnGameNet StarLeague, MBCGame StarLeague) and professional gaming (mainly in South Korea \citep{Chee05}) produced a massive amount of data of highly skilled human players. In South Korea, there are two TV channels dedicated to broadcasting competitive video games, particularly StarCraft. The average salary of a \glos{pro-gamer} there was up to 4 times the average South Korean salary \citep{MYMPGM} (up to \$200,000/year on contract for NaDa). Professional gamers perform about 300 actions (mouse and keyboard clicks) per minute while following and adapting their strategies, while their hearts reach 160 beats per minute (BPM are displayed live in some tournaments). StarCraft II is currently (2012) taking over StarCraft in competitive gaming but a) there is still a strong pool of highly skilled StarCraft players and b) StarCraft II has a really similar gameplay.
@@ -39,14 +39,14 @@ In StarCraft, there are three factions with very different units and technology 
     \item \textit{Zerg}: insectoid alien race with cheap, quick to produce but weak units.
 \end{itemize}
 
-All factions use workers to gather resources, and all other characteristics are different: from military units to ``\gloss{techtree}'', gameplay styles. Races are so different that highly skilled players focus on playing with a single race. There are two types of resources, often located close together, minerals and gas. From minerals, one can build basic buildings and units, which opens the path to more advanced buildings, technologies and units, which will in turn all require gas to be produced. While minerals can be gathered at an increasing rate (bounded asymptotically) the more workers are put at work, the gas gathering rate is quickly limited to 3 workers per gas geyser (i.e. per base). There is another third type of ``special'' resource (called \newglossaryentry{supply}{name=supply,description={maximum number of units that a player can control at a given time, can be increased up to a hard limit (200 in StarCraft).}}\textit{\glos{supply}}), which is the current limit of population a player can control. It can be upgraded by building special buildings (Protoss Pylon, Terran Supply Depot) or units (Zerg Overlord), giving 9 to 10 additional supply, up to a hard limit of 200. Some units cost more supply than others (from 0.5 for a Zergling to 8 for a Protoss Carrier or Terran Battlecruiser). In Figure~\ref{fig:SC_eco}, we show the very basics of Protoss economy and buildings. %In Figure~\ref{fig:SC_battle}, we show
+All factions use workers to gather resources, and all other characteristics are different: from military units to ``\gloss{techtree}'', gameplay styles. Races are so different that highly skilled players focus on playing with a single race (but against all three others). There are two types of resources, often located close together, minerals and gas. From minerals, one can build basic buildings and units, which opens the path to more advanced buildings, technologies and units, which will in turn all require gas to be produced. While minerals can be gathered at an increasing rate (bounded asymptotically) the more workers are put at work, the gas gathering rate is quickly limited to 3 workers per gas geyser (i.e. per base). There is another third type of ``special'' resource (called \newglossaryentry{supply}{name=supply,description={maximum number of units that a player can control at a given time, can be increased up to a hard limit (200 in StarCraft).}}\textit{\glos{supply}}), which is the current limit of population a player can control. It can be upgraded by building special buildings (Protoss Pylon, Terran Supply Depot) or units (Zerg Overlord), giving 9 to 10 additional supply, up to a hard limit of 200. Some units cost more supply than others (from 0.5 for a Zergling to 8 for a Protoss Carrier or Terran Battlecruiser). In Figure~\ref{fig:SC_eco}, we show the very basics of Protoss economy and buildings. %In Figure~\ref{fig:SC_battle}, we show
 
 \newglossaryentry{mini-map}{name=mini-map,description={radar view of the full game area, shown in the bottom corner of the interface in StarCraft.}}
 \begin{figure}[!ht]
 \begin{center}
 \includegraphics[width=13cm]{images/SC_eco.png}
-\label{fig:SC_eco}
 \caption{A StarCraft screenshot of a Protoss base, with annotations. The interface (heads up display at the bottom) shows the \textit{\glos{mini-map}}. The center of the interface (bottom) shows the selected unit (or group of units), here the Protoss Nexus (main economical building, producing workers and to which resources are brought) which is in the center of the screen and circled in green. The bottom right part shows the possible actions (here build a Protoss Probe or set a rally point). The top right of the screen shows the minerals (442), gas (208) and \glos{supply} (25 total on 33 current maximum). The dotted lines demarcate economical parts with active workers: red for minerals mining and green for gas gathering. The plain cut outs of buildings show: a Pylon (white), a Forge (orange, for upgrades and access to static defense), a Cybernetics Core (yellow, for technological upgrades and expanding the tech tree), a Gateway (pink, producing ground units), a Photon Cannon (blue, static defense).}
+\label{fig:SC_eco}
 \end{center}
 \end{figure}
 
@@ -74,7 +74,7 @@ At the highest levels of play, StarCraft games usually last between 6 (shortest 
 %%%48-Make Reaver 
 %%%52-Pylon, Start Back Probe Production (make probes again) 
 %%%\end{verbatim}
-\begin{table}
+\begin{table}[ht]
 \begin{center}
 \begin{tabular}{|l|l|l|}
 \hline
@@ -106,8 +106,8 @@ Supply & Build & Note \\
 \includegraphics[width=7.8cm]{images/SC_game/SC_queue_production.png}
 \end{tabular}
 %SC_first_pylon.png
-\label{fig:SC_game1}
 \caption{Start and economical parts of a StarCraft game. The order of the screenshots goes from left to right and from top to bottom.}
+\label{fig:SC_game1}
 \end{center}
 \end{figure}
 
@@ -119,8 +119,8 @@ Supply & Build & Note \\
 \includegraphics[width=7.8cm]{images/SC_game/SC_dt_army.png} & 
 \includegraphics[width=7.8cm]{images/SC_game/SC_final_attack.png}
 \end{tabular}
-\label{fig:SC_game2}
 \caption{Military moves from a StarCraft (PvT) game. The order of the screenshots goes from left to right and from top to bottom.}
+\label{fig:SC_game2}
 \end{center}
 \end{figure}
 
@@ -178,8 +178,8 @@ While acknowledging these challenges for RTS AI, we now propose a different task
 \end{tikzpicture}
 \end{small}
 \end{center}
-\label{fig:mindmapRTS}
 \caption{A mind-map of RTS AI. This is the tasks decomposition that we will use for the rest of the thesis.}
+\label{fig:mindmapRTS}
 \end{figure}
 
 We decided to decompose RTS AI in the three levels which are used by the gamers to describe the games: \textit{strategy}, \textit{tactics}, \textit{micro-management}. We remind the reader that parts of the map not in the sight range of the player's units are under \textit{\glos{fogofwar}}, so the player has only partial information about the enemy buildings and army. The way by which we expand the tech tree, the specific units composing the army, and the general stance (aggressive or defensive) form what we call \textit{strategy}. At the lower level, the actions performed by the player (human or not) to optimize the effectiveness of its units is called \textit{\glos{micro}}. In between lies \textit{tactics}: where to attack, and how. A good human player takes much data in consideration when choosing: are there flaws in the defense? Which spot is more worthy to attack? How much am I vulnerable for attacking here? Is the terrain (height, chokes) to my advantage? The concept of strategy is a little more abstract: at the beginning of the game, it is closely tied to the build order and the intention of the first few moves and is called the \textit{opening}, as in Chess. Then, the long term strategy can be partially summed up by three signals/indicators:
@@ -193,16 +193,16 @@ At high levels of play, the tech/army/eco balance is putting a hard constraint o
 
 From this RTS domain tasks decomposition, we can draw the mind map given in Figure~\ref{fig:mindmapRTS}. We also characterized these levels of abstractions by:
 \begin{itemize}
-    \item the conditioning the decisions on one level have on the other, as discussed above.
+    \item the conditioning that the decisions on one abstraction level have on the other, as discussed above: strategy conditions tactics which conditions low-level actions (that does not mean than there cannot be some feedback going up the hierarchy).
     \item the quantity of direct information that a player can hope to get on the choices of their opponent. While a player can see directly the micro-management of their enemy (movements of units on the battlefront), they cannot observe all the tactics, and a big part of tactics gameplay is to hide or fake them well. Moreover, key technological buildings are sometimes hidden, and the player has to form beliefs about the long term strategy of the opponent (without being in their head).
     \item the time which is required to switch behaviors of a given level. For instance a change of strategy will require to either \textit{a)} (technology) build at least two buildings or a building and a research/upgrade, \textit{b)} (army) build a few units, \textit{c)} take a new expansion (new base). A change of tactics corresponds to a large repositioning of the army(ies), while a change in micro-management is very quick (like moving units out of an area-of-effect damage zone).
 \end{itemize}
-This is shown in Figure~\ref{fig:sc_abstraction_tactics}. We will discuss the state of the art for the each of these subproblems (and the challenges listed above) in their respective parts.
+This is shown in Figure~\ref{fig:sc_abstraction_times}. We will discuss the state of the art for the each of these subproblems (and the challenges listed above) in their respective parts.
 
 \begin{figure}[htp]
 \centerline{\includegraphics[width=7cm]{images/starcraft_levels_abstraction_light.pdf}}
 \caption{Gameplay levels of abstraction for RTS games, compared with their level of direct (and complete) information and orders of magnitudes of time to chance their policies.}
-\label{fig:sc_abstraction_tactics}
+\label{fig:sc_abstraction_times}
 \end{figure}
 
 
@@ -212,8 +212,8 @@ To conclude, we will now present our works on these domains (strategy, tactics, 
 \begin{center}
 \includegraphics[width=13cm]{images/starcraft_bbq_concept.pdf}
 \end{center}
+\caption{Information-centric view of the architecture of the major components of the bot. Arrows are labeled with the information or orders they convey: dotted arrows are conveying constraints, double lined arrows convey distributions, plain and simple arrows convey direct information or orders. The gray parts perform game actions (as the physical actions of the player on the keyboard and mouse).}
 \label{fig:conceptbbq}
-\caption{Information-centric view of the architecture of the major components of the bot. Arrows are labeled with the information or orders they convey: dotted arrows are convey constraints, double lined arrows convey distributions, plain and simple arrows convey direct information or orders. The gray parts perform game actions (as the physical actions of the player on the keyboard and mouse).}
 \end{figure}
 
 
