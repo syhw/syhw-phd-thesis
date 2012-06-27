@@ -181,6 +181,49 @@ The complete question that we ask our model is $\PP(A,H|FullyObserved)$. The max
 & \propto & \sum_{Estimated}\PP(A_{1:n},H_{1:n},Estimated,FullyObserved)
 \end{eqnarray}
 
+The full Bayesian program of the model is as follows (\ref{bp:BayesianTactician}):
+\begin{eqnarray*}
+\begin{sideways}\parbox{35mm}{\hspace{-1.3cm}Bayesian program}\end{sideways}
+\begin{cases}
+\begin{sideways}\parbox{15mm}{\hspace{-0.8cm}Description}\end{sideways}
+    \begin{cases}
+    
+\begin{sideways}\parbox{35mm}{\hspace{-1.1cm}Specification ($\pi$)}\end{sideways}
+        \begin{cases}
+        Variables\\
+A_{1:n}, E_{1:n}, T_{1:n}, TA_{1:n}, B_{1:n}, B'_{1:n}, \lambda_{B,1:n},\\
+H_{1:n}, GD_{1:n}, AD_{1:n}, ID_{1:n}, HP, TT\\
+        Decomposition\\
+\PP(A_{1:n}, E_{1:n}, T_{1:n}, TA_{1:n}, B_{1:n}, B'_{1:n}, \lambda_{B,1:n}, \\
+H_{1:n}, GD_{1:n}, AD_{1:n}, ID_{1:n}, HP, TT) \\
+= \prod_{i=1}^n \left[\PP(A_i)\PP(E_i,T_i,TA_i,B_i|A_i)\right.\\
+\PP(\lambda_{B,i} | B_{1:n},B'_{1:n})\PP(B'_{1:n}) \\
+\left. \PP(AD_i,GD_i,ID_i|H_i)\PP(H_i|HP)\right]\PP(HP|TT)\PP(TT)\\
+        Forms\\
+\PP(A_r)\ \mathrm{prior\ on\ attack\ in\ region}\ i\\
+\PP(E,T,TA,B|A)\ \mathrm{covariance/probability\ table}\\ 
+\PP(\lambda_{B}|B,B') = 1.0\ iff\ B=B',\ else\ \PP(\lambda_{B}|B,B') = 0.0\ (functional\ Dirac)\\ 
+\PP(AD,GD,ID|H)\ \mathrm{covariance/probability\ table}\\
+\PP(H|HP) = Categorical(4,HP)\\
+\PP(HP=hp|TT) = 1.0\ iff\ TT\rightarrow hp,\ else\ \PP(HP|TT)=0.0\\
+\PP(TT)\ \mathrm{comes\ from\ a\ strategic\ model}\\
+        \end{cases}\\
+    Identification\ (using\ \delta)\\
+\PP(A_r=true)= \frac{n_{battles}}{n_{battles}+n_{not\ battles}} = \frac{\mu_{battles/game}}{\mu_{regions/map}}\ \mathrm{(probability\ to\ attack\ a\ region)}\\
+\mathrm{it\ could\ be\ learned\ online\ (preference\ of\ the\ opponent):}\\
+\PP(A_r=true) = \frac{1 + n_{battles}(r)}{2 + \sum_{i \in regions}n_{battles}(i)}\ \mathrm{(online\ for\ each\ game)}\\
+\PP(E=e,T=t,TA=ta,B=b|A=True) = \frac{1+n_{battles}(e,t,ta,b)}{\abs{E} \times \abs{T} \times \abs{TA} \times \abs{B} + \sum_{E,T,TA,B} n_{battles}(E,T,TA,B)} \\
+\PP(AD=ad,GD=gd,ID=id|H=h) = \frac{1+n_{battles}(ad,gd,id,h)}{\abs{AD} \times \abs{GD} \times \abs{ID} + \sum_{AD,GD,ID} n_{battles}(AD,GD,ID,h)} \\
+\PP(H=h|HP=hp) = \frac{1 + n_{battles}(h,hp)}{\abs{H} + \sum_{H} n_{battles}(H,hp)}\\
+    \end{cases}\\
+Questions\\
+\forall i \in regions \PP(A_i|e_i,t_i,ta_i,\lambda_{B,i}=1)\\
+\forall i \in regions \PP(H_i|ad_i,gd_i,id_i) \\
+\PP(A,H|FullyObserved)\\
+\end{cases}
+\label{bp:BayesianTactician}
+\end{eqnarray*}
+
 
 \section{Results on StarCraft}
 
@@ -298,6 +341,6 @@ There are three main research directions for possible improvements:
     \item improving the model itself: finally, one of the strongest assumptions (which is a drawback particularly for prediction) of our model is that the attacking player is always considered to attack in this most probable regions. While this would be true if the model was complete (with finer army positions inputs and a model of what the player thinks), we believe such an assumption of completeness is far fetched. Instead we should express that incompleteness in the model itself and have a ``player decision'' variable $D \sim Multinomial(\PP(A_{1:n},H_{1:n}),player)$.
 \end{itemize} 
 
-% TODO improvements, links
+% TODO discuss, improvements, links
 
 We have presented a Bayesian tactical model for RTS AI, which allows both for opposing tactics prediction and autonomous tactical decision-making. Being a probabilistic model, it deals with uncertainty easily, and its design allows easy integration into multi-granularity (multi-scale) AI systems as needed in RTS AI. Without any temporal dynamics, the position prediction is above a baseline heuristic ([32.8-40.9\%] vs [20.5-25.2\%]). Moreover, its exact prediction rate of the joint position and tactical type is in [23-32.8]\% (depending on the match-up), and considering the 4 most probable regions it goes up to $\approx$ 70\%. More importantly, it allows for tactical decision-making under (technological) constraints and (state) uncertainty. It can be used in production thanks to its low CPU and memory footprint. The dataset, its documentation\footnote{\url{http://snippyhollow.github.com/bwrepdump/}}, as well as our model implementation\footnote{\url{https://github.com/SnippyHolloW/AnalyzeBWData}} (and other data-exploration tools) are free software and can be found online. We plan to use this model in our StarCraft AI competition entry bot as it gives our bot tactical autonomy and a way to adapt to our opponent.

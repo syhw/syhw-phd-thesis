@@ -169,7 +169,7 @@ When flocking, the unit asks:
 \begin{small}
 $$\PP(Dir_{1:n} \mathbf{|} Obj_{1:n}, Dmg_{1:n}, A_{1:n}, E_{1:n}, Occ_{1:n}, Att_{1:n,1:m}) $$
 \end{small}
-From there, the unit can either go in the most probable $Dir_i$ or sample through them. We describe the effect of this choice in the next section (and in Fig.~\ref{fig:BayesianUnitChoice}). A simple Bayesian fusion from 3 sensory inputs is shown in Figure~\ref{fig:BayesianUnitExample}, in which the final distribution on $Dir$ peaks at places avoiding damages and collisions while being towards the goal. Here follows the full Bayesian program of the model: (\ref{bp:BayesianUnit})
+From there, the unit can either go in the most probable $Dir_i$ or sample through them. We describe the effect of this choice in the next section (and in Fig.~\ref{fig:BayesianUnitChoice}). A simple Bayesian fusion from 3 sensory inputs is shown in Figure~\ref{fig:BayesianUnitExample}, in which the final distribution on $Dir$ peaks at places avoiding damages and collisions while being towards the goal. Here follows the full Bayesian program of the model (\ref{bp:BayesianUnit}):
 
 \begin{figure}[!ht]
 \begin{center}
@@ -180,11 +180,11 @@ From there, the unit can either go in the most probable $Dir_i$ or sample throug
 \end{figure}
 
 \begin{eqnarray*}
-BP
+\begin{sideways}\parbox{35mm}{\hspace{-1.3cm}Bayesian program}\end{sideways}
 \begin{cases}
-Desc.
+\begin{sideways}\parbox{15mm}{\hspace{-0.8cm}Description}\end{sideways}
     \begin{cases}
-    Spec. (\pi)
+\begin{sideways}\parbox{35mm}{\hspace{-1.1cm}Specification ($\pi$)}\end{sideways}
         \begin{cases}
         Variables\\
 Dir_{1:n}, Obj_{1:n}, Dmg_{1:n}, A_{1:n}, E_{1:n}, Occ_{1:n} \\
