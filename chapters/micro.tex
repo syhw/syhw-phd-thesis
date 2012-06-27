@@ -15,7 +15,7 @@ Life is the sum of all your choices.}
 \begin{itemize}
 \item \underline{Problem:} optimal control of units in a (real-time) huge adversarial actions space (collisions, accelerations, terrain, damages, areas of effects, foes, goals...).
 \item \underline{Problem that we solve:} efficient coordinated control of units incorporating all low level actions and inputs, plus higher level orders and representations.
-\item \underline{Type:} it is a problem of \textit{multi-agent control in an adversarial environment}. Strictly, it can be modeled as a \glos{pomdp} for each unit independently with $S$ the states of all the other units (enemies and allied altogether) which are known through observations $O$ by conditional observations probabilities $\Omega$, with $A$ the set of actions for the given unit, $T$ transition probabilities between states and depending on actions, and the reward function $R$ based on goal execution, unit survivability and so on... It can also be viewed as a (gigantic) \glos{pomdp} solving the problem for all (controlled units) at once, the advantage is that all states $S$ for allied units is known, the disadvantage is that the combinatorics of $T$ and $A$ make it intractable for other things than toy problems.
+\item \underline{Type:} it is a problem of \textit{multi-agent control in an adversarial environment}\footnote{Strictly, it can be modeled as a \glos{pomdp} for each unit independently with $S$ the states of all the other units (enemies and allied altogether) which are known through observations $O$ by conditional observations probabilities $\Omega$, with $A$ the set of actions for the given unit, $T$ transition probabilities between states and depending on actions, and the reward function $R$ based on goal execution, unit survivability and so on... It can also be viewed as a (gigantic) \glos{pomdp} solving the problem for all (controlled units) at once, the advantage is that all states $S$ for allied units is known, the disadvantage is that the combinatorics of $T$ and $A$ make it intractable for useful problems.}.
 \item \underline{Complexity:} PSPACE-complete \citep{Papadimitriou87,GamingComplexity}. Our solutions are real-time on a laptop.
 \end{itemize}
 
@@ -31,10 +31,18 @@ Life is the sum of all your choices.}
 \end{figure}
 
 \section{Units Management}
-In this part, we focus on \glos{micro}, which is the lower-level in our hierarchy of decision-making levels (see Fig.~\ref{starcraft_abstraction_time}) and directly affect units control/inputs. Micro-management consists in maximizing the effectiveness of the units \textit{i.e.} the damages given/damages received ratio. These has to be performed simultaneously for units of different types, in complex battles, and possibly on heterogeneous terrain. 
+In this part, we focus on \glos{micro}, which is the lower-level in our hierarchy of decision-making levels (see Fig.~\ref{fig:starcraft_abstraction_time}) and directly affect units control/inputs. Micro-management consists in maximizing the effectiveness of the units \textit{i.e.} the damages given/damages received ratio. These has to be performed simultaneously for units of different types, in complex battles, and possibly on heterogeneous terrain. 
 For instance: retreat and save a wounded unit so that the enemy units would have to chase it either boosts your firepower (if you save the unit) or weakens the opponent's (if they chase). 
 In the field of units control, the dimension of the set of possible actions each micro-turn (for instance: 1/24th of a second in StarCraft) constrains reasoning about the state of the game to be hierarchical, with different levels of granularity. In most RTS games, a unit can go (at least) in its 24 surrounding tiles (see Figure~\ref{fig:sc_fight}, combination of N, S, E, W up to the 2nd order), 
 stay where it is, attack, and sometimes cast different spells: which yields more than 26 possible actions each turn. Even if we consider only 8 possible directions, stay, and attack, with $N$ units, there are $10^N$ possible combinations each turn (all units make a move each turn). As large battles in StarCraft account for \textit{at least} 20 units on each side, optimal units control hides in too big a search space to be fully explored in real-time (sub-second reaction at least) on normal hardware, even if we take only one decision per unit per second.
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=8cm]{images/SC_fight_3b.png}
+\end{center}
+\caption{Screen capture of a fight in which our bot controls the bottom-left units in StarCraft. The 24 possible directions are represented for a unit with white and grey arrows.}
+\label{fig:sc_fight}
+\end{figure}
 
 Our distributed sensory-motor model for \glos{micro} is able to handle both the complexity of unit control and the need of hierarchy (see Figure~\ref{fig:conceptMICRO}, this chapter focuses on the part inside the dotted line). We treat the units independently, thus reducing the complexity (no communication between our ``Bayesian units''), and allows to take higher-level orders into account along with local situation handling. For instance: the tactical planner may decide to retreat, or go through a choke under enemy fire, each Bayesian unit will have the higher-level order as a sensory input, along with topography, foes and allies positions. From its perception, our Bayesian robot \cite{Lebeltel04} can compute the distribution over its motor control. The sensory inputs given to a ``Bayesian unit'' controls its objective(s) or goal(s) and the parametrization of his probabilistic model controls its behavior and degree of freedom. As an illustration (only), two of the extreme cases are $\PP(Direction=x|Objective=x)=1$: no freedom, $\PP(Direction=x|Objective=y)=\PP(Direction=x)$: no influence of the objective. The performances of our models are evaluated against the original StarCraft AI and a reference AI: they have proved excellent in this benchmark setup.
 
@@ -87,12 +95,12 @@ Indeed, our Bayesian model uses this target selection heuristic (see \ref{alg:ta
 
 We use Bayesian programming as an alternative to logic, transforming incompleteness of knowledge about the world into uncertainty. In the case of units management, we have mainly \textit{intensional} uncertainty. Instead of asking questions like: where are other units going to be next frame? 10 frames later? Our model is based on rough estimations that are not taken as ground facts. Knowing the answer to these questions would require for our own (allied) units to communicate a lot and to stick to their plan (which does not allow for quick reaction nor adaptation). For enemy units, it would require exploring the tree of possible plans (intractable) whose we can only draw samples from \citep{UCT}. Even so, taking enemy minimax (to which depth?) moves for facts would assume that the enemy is also playing minimax (to the same depth) following exactly the same valuation rules as ours. Clearly, RTS \glos{micro} is more inclined to reactive planning than board games reasoning. That does not exclude having higher level (strategic and tactic) goals. In our model, they are fed to the unit as sensory inputs, that will have an influence on its behavior depending on the situation/state the unit is in.
 
-\begin{figure}[!ht]
+\begin{figure}[!h]
 \begin{center}
 \includegraphics[width=7cm]{images/unit_HFSM.pdf}
 \end{center}
-\label{fig:unit_HFSM}
 \caption{Bayesian unit modal FSM, detail on the fight mode. Stripped modes are Bayesian.}
+\label{fig:unit_HFSM}
 \end{figure}
 
 We propose to model units as sensory-motor robots described within the Bayesian robot programming framework \citep{Lebeltel04}. A Bayesian model uses and reasons on distributions instead of predicates, which deals directly with uncertainty. %Basically, a Bayesian unit will be attracted or repulsed by its sensory inputs. 
@@ -169,9 +177,9 @@ When flocking, the unit asks:
 \begin{small}
 $$\PP(Dir_{1:n} \mathbf{|} Obj_{1:n}, Dmg_{1:n}, A_{1:n}, E_{1:n}, Occ_{1:n}, Att_{1:n,1:m}) $$
 \end{small}
-From there, the unit can either go in the most probable $Dir_i$ or sample through them. We describe the effect of this choice in the next section (and in Fig.~\ref{fig:BayesianUnitChoice}). A simple Bayesian fusion from 3 sensory inputs is shown in Figure~\ref{fig:BayesianUnitExample}, in which the final distribution on $Dir$ peaks at places avoiding damages and collisions while being towards the goal. Here follows the full Bayesian program of the model (\ref{bp:BayesianUnit}):
+From there, the unit can either go in the most probable $Dir_i$ or sample through them. We describe the effect of this choice in the next section (and in Fig.~\ref{fig:BayesianUnitChoice}). A simple Bayesian fusion from 3 sensory inputs is shown in Figure~\ref{fig:BayesianUnitExample}, in which the final distribution on $Dir$ peaks at places avoiding damages and collisions while being towards the goal. Here follows the full Bayesian program of the model (\ref{bp:BayesianUnit_move}):
 
-\begin{figure}[!ht]
+\begin{figure}[!h]
 \begin{center}
 \includegraphics[width=13cm]{images/example_BayesianUnit.pdf}
 \end{center}
@@ -179,12 +187,13 @@ From there, the unit can either go in the most probable $Dir_i$ or sample throug
 \label{fig:BayesianUnitExample}
 \end{figure}
 
+\begin{figure}[!h]
 \begin{eqnarray*}
 \begin{sideways}\parbox{35mm}{\hspace{-1.3cm}Bayesian program}\end{sideways}
 \begin{cases}
 \begin{sideways}\parbox{15mm}{\hspace{-0.8cm}Description}\end{sideways}
     \begin{cases}
-\begin{sideways}\parbox{35mm}{\hspace{-1.1cm}Specification ($\pi$)}\end{sideways}
+\begin{sideways}\parbox{18mm}{\hspace{-1.1cm}Specification ($\pi$)}\end{sideways}
         \begin{cases}
         Variables\\
 Dir_{1:n}, Obj_{1:n}, Dmg_{1:n}, A_{1:n}, E_{1:n}, Occ_{1:n} \\
@@ -203,20 +212,14 @@ Question\\
  \mathrm{fleeing:}\ \  \PP(Dir_{1:n} \mathbf{|} Obj_{1:n}, Dmg_{1:n}, A_{1:n}, E_{1:n}, Occ_{1:n})\\
  \mathrm{flocking:}\ \  \PP(Dir_{1:n} \mathbf{|} Obj_{1:n}, Dmg_{1:n}, A_{1:n}, E_{1:n}, Occ_{1:n}, Att_{1:n,1:m})\\
 \end{cases}
-\label{bp:BayesianUnit}
 \end{eqnarray*}
+\label{bp:BayesianUnit_move}
+\end{figure}
 
 
 
 \section{Results on StarCraft}
 StarCraft micro-management involves ground, flying, ranged, contact, static, moving (at different speeds), small and big units (see Figure~\ref{fig:sc_fight}). Units may also have splash damage, spells, and different types of damages whose amount will depend on the target size. It yields a rich states space and needs control to be very fast: human progamers can perform up to 400 ``actions per minute'' in intense fights. The problem for them is to know which actions are effective and the most rewarding to spend their actions efficiently. A robot does not have such physical limitations, but yet, badly chosen actions have negative influence on the issue of fights. %The problem is to identify what has to be done and what can be done, in real-time.
-\begin{figure}
-\begin{center}
-\includegraphics[width=8cm]{images/SC_fight_3b.png}
-\end{center}
-\label{fig:sc_fight}
-\caption{Screen capture of a fight in which our bot controls the bottom-left units in StarCraft. The 24 possible directions are represented for a unit with white and grey arrows.}
-\end{figure}
 
 \subsection{Our Robot Architecture}
 
@@ -235,10 +238,10 @@ We produced three different AI to run experiments with, along with the original 
 The experiments consisted in having the AIs fight against each others on a micro-management scenario with mirror matches of 12 and 36 ranged ground units (Dragoons). In the 12 units setup, the unit movements during the battle is easier (less collision probability) than in the 36 units setup. We instantiate only the army manager (no economy in this special maps), one units group manager and as many Bayesian units as there are units provided to us in the scenario. The results are presented in Table~\ref{tab:win_ratios}.
 
 \definecolor{grey}{rgb}{0.7,0.7,0.7}
-\begin{figure}[!ht]
+\begin{table}[!h]
 \begin{center}
 \begin{tabular}{l|c|c|c|c}
-\includegraphics[width=1.5cm]{images/array_top2.png} \vspace{-0.05cm} & OAI & HOAI & BAIPB & BAIS \\
+\includegraphics[width=1.5cm]{images/array_top2.png} & OAI & HOAI & BAIPB & BAIS \\
 \hline
 OAI & (50\%) & \colorbox{grey}{64\%} & \colorbox{grey}{9\%} & \colorbox{grey}{3\%} \\
 HOAI & 59\% & (50\%) & \colorbox{grey}{11\%} & \colorbox{grey}{6\%} \\
@@ -250,11 +253,10 @@ BAIS & 93\% & 95\% & 76\% & (50\%)
 % BAIPB+Heuristics flee/fightmove 36 goons vs OAI 95/100
 % pure BAIPB (fightMove only on ``potential fields'') 12 goons vs OAI 51/33
 % pure BAIPB (fightMove only on ``potential fields'') 36 goons vs OAI 10/16
-\label{tab:win_ratios}
 %%%\caption{Win ratios over at least 200 battles of the Original AI (OAI), Heuristic Only AI (HOAI), Bayesian AI Pick Best (BAIPB) and Bayesian AI Sample (BAIS) in two mirror setups: 12 and 36 ranged units. Read line vs column: for instance HOAI won 59\% of its matches against OAI in the 12 units setup. Note: The average amount of units left at the end of battles is proportional to the percentage of wins.}
-\vspace{-0.2cm}
 \caption{Win ratios over at least 200 battles of OAI, HOAI, BAIPB and BAIS in two mirror setups: 12 and 36 ranged units. Read line vs column: for instance HOAI won 59\% of its matches against OAI in the 12 units setup. Note: The average amount of units left at the end of battles is grossly proportional to the percentage of wins.}
-\end{figure}
+\label{tab:win_ratios}
+\end{table}
 
 These results show that our heuristic (HAOI) is comparable to the original AI (OAI), perhaps a little better, but induces more collisions. For Bayesian units however, the ``pick best'' (BAIPB) direction policy is very effective when battling with few units (and few movements because of static enemy units) as proved against OAI and HOAI, but its effectiveness decreases when the number of units increases: all units are competing for the best directions (to $flee()$ or $fightMove()$ in) and they collide. The sampling policy (BAIS) has way better results in large armies, and significantly better results in the 12 units vs BAIPB, supposedly because BAIPB moves a lot (to chase wounded units) and collide with BAIS units. Sampling entails that the competition for the best directions is distributed among all the ``bests to good'' wells of well-being, from the units point of view. We also ran tests in setups with flying units in which BAIPB fared as good as BAIS (no collision for flying units) and way better than OAI.
 
@@ -283,7 +285,7 @@ Future work could consist in using reinforcement learning \citep{Sutton} or evol
 \item use $\PP(Dir)$ as an input to another Bayesian model at the units group level of reasoning.
 \end{itemize}
 
-\begin{figure}[ht]
+\begin{figure}[h]
 \includegraphics[width=12cm]{images/distDir.png}
 \hspace{0.8cm}
 \includegraphics[width=2.6cm]{images/flee_sample.png}

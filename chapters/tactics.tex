@@ -88,7 +88,7 @@ Our approach (and bot architecture, depicted in Fig.~\ref{fig:conceptTACTICS}) c
 % PvP 1336, PvT 7225, PvZ 6082, TvT 1384, TvZ 6322, ZvZ 598
 We downloaded more than 8000 replays to keep 7649 uncorrupted, 1v1 replays of very high level StarCraft games (pro-gamers leagues and international tournaments) from specialized websites\footnote{\url{http://www.teamliquid.net}}\footnote{\url{http://www.gosugamers.net}}\footnote{\url{http://www.iccup.com}}, we then ran them using BWAPI\footnote{\url{http://code.google.com/p/bwapi/}} and dumped units positions, pathfinding and regions, resources, orders, vision events, for attacks (we trigger an attack tracking heuristic when one unit dies and there are at least two military units around): types, positions, outcomes. Basically, every BWAPI event was recorded, the dataset and its source code are freely available\footnote{\url{http://snippyhollow.github.com/bwrepdump/}}. 
 
-\begin{figure}[ht]
+\begin{figure}[!h]
 \includegraphics[width=16cm]{images/terrain_analysis.png}
 \caption{A very simple map on the left, which is transformed into regions (between chokes in dotted red lines) by Voronoi tesselation and clustering. These plain regions (numbers in red) are then augmented with choke-dependent regions (letters in blue)}%: $CDR = (regions \setminus chokes)) \cup chokes$.}
 \label{fig:terrainanalysis}
@@ -232,7 +232,7 @@ To measure fairly the prediction performance of such a model, we applied ``leave
 
 An exhaustive presentation of the learned tables is out of the scope of this chapter, but we displayed interesting cases in which the learned probability tables meet concur with human expertise in Figures~\ref{fig:P_H_AD},\ref{fig:PossibleP},\ref{fig:Where3D}. In Fig.~\ref{fig:P_H_AD}, we see that air raids/attacks are quite risk averse and it is two times more likely to attack a region with less than 1/10th of the flying force in anti-aircraft warfare than to attack a region with up to one half of our force. We can also notice than drops are to be preferred either when it is safe to land (no anti-aircraft defense) or when there is a large defense (harassment tactics). In Fig.~\ref{fig:PossibleP} we can see that, in general, there are as many ground attacks at the sum of other types. The two top graphs show cases in which the tech of the attacker was very specialized, and, in such cases, the specificity seems to be used. In particular, the top right graphic may be corresponding to a ``fast Dark Templars rush''. Finally, Fig.~\ref{fig:Where3D} shows the transition between two types of encounters: tactics aimed at engaging the enemy army (a higher $T$ value entails a higher $\PP(A)$) and tactics aimed at damaging the enemy economy (at high $E$, we look for opportunities to attack with a small army where $T$ is lower).
 
-\begin{figure}[htp]
+\begin{figure}[!h]
 \centerline{\includegraphics[width=11cm]{images/Terran_Prob_H_crop.png}}
 %\caption{$\PP(H=air)$ and $\PP(H=drop)$ for varying values of $AD$ (summed on other variables), for Terran in TvP.}
 \caption{(top) $\PP(H=invis)$ and $\PP(H=drop)$ for varying values of $GD$ (summed on other variables); (bottom) $\PP(H=air)$ and $\PP(H=drop)$ for varying values of $AD$ (summed on other variables), for Terran in TvP. We can see that it is far more likely that invisible (``sneaky'') attacks happen where there is low ground presence (top left plot). For drops, we understand that the high value for $\PP(H=drop|GD=1.0)$ is caused by the fact that drop armies are small and this value corresponds to drops which are being expected by the defender. Drops at lower values of $GD$ correspond to unexpected (surprise) drops. As ground units are more cost efficient than flying units in a static battle, we see that both $\PP(H=invis|AD=0.0)$ and $\PP(H=drop|AD=0.0)$ are much more probable than situations with air defenses.}
@@ -240,14 +240,14 @@ An exhaustive presentation of the learned tables is out of the scope of this cha
 %\vspace{-0.5cm}
 \end{figure}
 
-\begin{figure}[htp]
+\begin{figure}[!h]
 \centerline{\includegraphics[width=11cm]{images/PossibleP.png}}
 %\caption{$\PP(H|HP)$ for varying values $H$ and for different values of $P$ (derived from inferred $TT$), for Protoss in PvT.}
 \caption{$\PP(H|HP)$ for varying values of $H$ and for different values of $P$ (derived from inferred $TT$), for Protoss in PvT. Conditioning on what is possible given the \textit{tech tree} gives a lot of information about what attack types are possible or not. More interestingly, it clusters the game phases in different tech levels and allows for learning the relative distributions of attack types with regard to each phase. For instance, the last (bottom right) plot shows the distribution on attack types at the end of a technologically complete game.}
 \label{fig:PossibleP}
 \end{figure}
 
-\begin{figure}[htp]
+\begin{figure}[!h]
 \centerline{\includegraphics[width=9cm]{images/where3D_EI_TI_RegT.png}}
 %\caption{$\PP(A)$ for varying values of $E$ and $T$, summed on the other variables, for Terran in TvT.}
 \caption{$\PP(A)$ for varying values of $E$ and $T$, summed on the other variables, for Terran in TvT. Higher economical values is strongly correlated with surprise attacks with small tactical squads and no defenses, which almost never happens in open fields (``no eco'') as this would lead to very unbalanced battles (in terms of army sizes): it would not benefit the smaller party, which can flee and avoid confrontation, as opposed to when defending their base.}
@@ -261,7 +261,7 @@ We learned and tested one model for each race and each match-up. As we want to p
 The model code\footnote{\url{https://github.com/SnippyHolloW/AnalyzeBWData}} (for learning and testing) as well as the datasets (see above) are freely avaible. Raw results of predictions of positions and types of attacks 30 seconds before they happen are presented in Table.~\ref{tab:all_results}: for instance the bold number (38.0) corresponds to the percentage of good positions (regions) predictions (30 sec before event) which were ranked 1st in the probabilities on $A_{1:n}$ for Protoss attacks against Terran (PvT). The measures on \textit{where} corresponds to the percentage of good prediction and the mean probability for given ranks in $\PP(A_{1:n})$ (to give a sense of the shape of the distribution). As the most probable The measures on \textit{how} corresponds to the percentage of good predictions for the most probable $\PP(H_{battle})$ and the number of such battles seen in the test set for given attack types. We particularly predict well ground attacks (trivial in the early game, less in the end game) and, interestingly, Terran and Zerg drop attacks. The \textit{where \& how} row corresponds to the percentage of good predictions for the maximal probability in the joint $\PP(A_{1:n},H_{1:n})$: considering only the most probable attack (more information is in the rest of the distribution, as shown for \textit{where}!) according to our model, we can predict \textit{where} \textbf{and} \textit{how} an attack will occur in the next 30 seconds $\approx$ 1/4th of the time. Finally, note that scores are not ridiculous 60 seconds before the attack neither (obviously, $TT$, and thus $P$, are not so different, nor are $B$ and $E$): PvT \textit{where} top 4 ranks are 35.6, 8.5, 7.7, 7.0\% good versus 38.0, 16.3, 8.9, 6.7\% 30 seconds before; \textit{how} total precision 60 seconds before is 70.0\% vs. 72.4\%, \textit{where \& how} maximum probability precision is 19.9\% vs. 23\%.
 
 \setlength{\tabcolsep}{4.69pt}
-\begin{sidewaystable}[ht]
+\begin{sidewaystable}[!h]
 \caption{Results summary for multiple metrics at 30 seconds before attack. The number in bold (38.0) is read as ``38\% of the time, the region $i$ with probability of rank 1 in $\PP(A_i)$ is the one in which the attack happened 30 seconds later''.}
 \begin{center}
 %\begin{small}
@@ -319,7 +319,7 @@ In a StarCraft game, our bot has to make decisions about where and how to attack
 
 The destinations of goals are from $\PP(A)$, while the type of the goal comes from $\PP(H)$. In input, we fully know tactical scores of the regions according to our military units placement $TA$ (we are the attacker), what is possible for us to do $P$ (according to units available) and we estimate $E$, $T$, $B$, $ID$, $GD$, $AD$ from past (partial) observations. Estimating $T$ is the most tricky of all because it may be changing fast, for that we use a units filter which just decays probability mass of seen units. An improvement would be to use a particle filter \cite{weber2011aiide}, with a learned motion model. From the joint \ref{eqn:tacticsquestion} $\PP(A_{1:n},H_{1:n}|ta,p,tt)$ may arise a couple $i,H_i$ more probable than the most probables $\PP(A_i)$ and $\PP(H_j)$ taken separately (the case of an heavily defended main base and a small unprotected expand for instance). Fig.~\ref{fig:WhereHow} displays the mean $\PP(A,H)$ for Terran (in TvZ) attacks decision-making for the most 32 probable type/region tactical couples. It is in this kind of landscape (though more steep because Fig.~\ref{fig:WhereHow} is a mean) that we sample (or pick the most probable couple) to take a decision. Also, we may spawn defensive goals countering the attacks that we predict from the opponent.
 
-\begin{figure}[htp]
+\begin{figure}[!h]
 \centerline{\includegraphics[width=9cm]{images/WhereHow_T_TvZ_light.png}}
 %\vspace{-0.3cm}
 % \caption{Mean $\PP(A,H)$ for all $H$ values and the top 8 $\PP(A_i,H_i)$ values, for Terran in TvZ. The larger the white square area, the higher $\PP(A_i,H_i)$.}
