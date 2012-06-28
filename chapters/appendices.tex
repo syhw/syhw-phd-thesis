@@ -226,7 +226,7 @@ RTS & 1.941 & 1.692 & 86 & 1.912 & 1.808 & 86 & 1.706 & 1.673 & 83 & 1.882 & 1.7
 \section{Algorithms}
 
 \begin{algorithm}
-\caption{(Simplified) Target selection heuristic, efficiently implemented with a enemy units $\leftrightarrow$ damages bidirectional map.}
+\caption{(Simplified) Target selection heuristic, efficiently implemented with a enemy units $\leftrightarrow$ damages bidirectional map: $bimap : u, d \rightarrow (left : u \rightarrow d,\ right : d \rightarrow u)$}
 \label{alg:targetselection}
 \begin{algorithmic}
 \Function{on\_death}{$unit$}
