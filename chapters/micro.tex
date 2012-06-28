@@ -292,26 +292,13 @@ static & 0.000001 & 0.333 \\
 
 %%% TODO height: 0.2, 0.3, 0.45, 0.05 for normal/high/very high/unknown P(H_i|Dir_i)
 
-\subsubsection{Additional variables}
-There are additional variables for specific modes/behaviors:
-\begin{itemize}
-\item $Prio_{i \in \llbracket 0 \dots n\rrbracket } \in \{True, False\}$: combined effect of the priority targets that attract the unit while in fight ($fightMove()$). The $JD$ is modified as $JD \times \Pi_{i=1}^{n} \PP(Prio_i | Dir_i)$, where $\PP(Prio_i | Dir_i)$ is a probability table, that corresponds to the attraction of a priority (maybe out of range) target in this direction. This is efficient to be able to target casters or long range units for instance.
-
-\item $Att_{i \in \llbracket 0 \dots n\rrbracket, j \in \llbracket 0 \dots m \rrbracket}$: allied units attractions and repulsions to produce a \textit{flocking} behavior while moving. Different than $A_i$, the $JD$ would become $JD \times \Pi_{i=1}^{n} \Pi_{j=1}^{m} \PP(Att_{i,j} | Dir_i)$, where $\PP(Att_{i,j} | Dir_i)$ is a probability table for flocking: a too close unit $j$ will repel the Bayesian unit ($\PP(Att_{i,j} | Dir_i) < mean$) whereas another unit $j$ will attract depending on its distance (and possibly, leadership).
-
-\item $Dir_{i \in \llbracket 0 \dots n\rrbracket }^{t-1} \in \{True, False\}$: the previous selected direction, $Dir_i^{t-1} = T$ iff the unit went to the direction $i$, else $False$ for a steering (smooth) behavior. The $JD$ would then be $JD \times \Pi_{i=1}^{n} \PP(Dir_i^{t-1} | Dir_i)$, with $\PP(Dir_i^{t-1} | Dir_i)$ the influence of the last direction, either a table or a parametrized Bell shape over all the $i$.
-
-\item One can have a distribution over a $n$ valued variable $Dir \in \{D\}$. (Each set of boolean random variable can be seen as a $|D|$ valued variable.) The $JD$ would then be $JD \times \PP(Dir).\Pi_{i=1}^{n} \PP(Dir_i | Dir)$.
-\end{itemize}
-
-
 %%% TODO learn exponential P(Dmg_i | Dir_i)
 %%% TODO flock = Beta(\alpha, \beta), \beta > \alpha > 1 
 
 
 \subsubsection{Identification}
 
-Parameters and probability tables can be learned through reinforcement learning \citep{Sutton,Asmuth09} by setting up different and pertinent scenarii and search for the set of parameters that maximizes a reward function. In our current implementation, the parameters and probability table values are mainly hand specified.
+Parameters and probability tables can be learned through reinforcement learning \citep{Sutton,Asmuth09} by setting up different and pertinent scenarii and search for the set of parameters that maximizes a reward function (more about that in the discussion). In our current implementation, the parameters and probability table values are hand specified.
 
 \subsubsection{Question}
 
@@ -363,6 +350,23 @@ Question\\
 \end{eqnarray*}
 \label{bp:BayesianUnit_move}
 \end{figure}
+
+\subsubsection{Move}
+\textbf{Without flocking}\\
+\textbf{With flocking}\\
+\subsubsection{Scout}
+\subsubsection{In position}
+
+There are additional variables for specific modes/behaviors:
+\begin{itemize}
+\item $Prio_{i \in \llbracket 0 \dots n\rrbracket } \in \{True, False\}$: combined effect of the priority targets that attract the unit while in fight ($fightMove()$). The $JD$ is modified as $JD \times \Pi_{i=1}^{n} \PP(Prio_i | Dir_i)$, where $\PP(Prio_i | Dir_i)$ is a probability table, that corresponds to the attraction of a priority (maybe out of range) target in this direction. This is efficient to be able to target casters or long range units for instance.
+
+\item $Att_{i \in \llbracket 0 \dots n\rrbracket, j \in \llbracket 0 \dots m \rrbracket}$: allied units attractions and repulsions to produce a \textit{flocking} behavior while moving. Different than $A_i$, the $JD$ would become $JD \times \Pi_{i=1}^{n} \Pi_{j=1}^{m} \PP(Att_{i,j} | Dir_i)$, where $\PP(Att_{i,j} | Dir_i)$ is a probability table for flocking: a too close unit $j$ will repel the Bayesian unit ($\PP(Att_{i,j} | Dir_i) < mean$) whereas another unit $j$ will attract depending on its distance (and possibly, leadership).
+
+\item $Dir_{i \in \llbracket 0 \dots n\rrbracket }^{t-1} \in \{True, False\}$: the previous selected direction, $Dir_i^{t-1} = T$ iff the unit went to the direction $i$, else $False$ for a steering (smooth) behavior. The $JD$ would then be $JD \times \Pi_{i=1}^{n} \PP(Dir_i^{t-1} | Dir_i)$, with $\PP(Dir_i^{t-1} | Dir_i)$ the influence of the last direction, either a table or a parametrized Bell shape over all the $i$.
+
+\item One can have a distribution over a $n$ valued variable $Dir \in \{D\}$. (Each set of boolean random variable can be seen as a $|D|$ valued variable.) The $JD$ would then be $JD \times \PP(Dir).\Pi_{i=1}^{n} \PP(Dir_i | Dir)$.
+\end{itemize}
 
 
 
