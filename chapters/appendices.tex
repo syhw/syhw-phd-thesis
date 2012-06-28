@@ -208,6 +208,15 @@ RTS & 1.941 & 1.692 & 86 & 1.912 & 1.808 & 86 & 1.706 & 1.673 & 83 & 1.882 & 1.7
 %\end{tabular}
 %
 %\subsection{Ben Weber's dataset}
+%     542 scmPvP_Protoss
+%    1139 scmPvT_Protoss
+%    1139 scmPvT_Terran
+%    1024 scmPvZ_Protoss
+%    1024 scmPvZ_Zerg
+%     628 scmTvT_Terran
+%    1150 scmTvZ_Terran
+%    1150 scmTvZ_Zerg
+%    1010 scmZvZ_Zerg
 %
 %
 %\subsection{Our dataset}
@@ -220,14 +229,6 @@ RTS & 1.941 & 1.692 & 86 & 1.912 & 1.808 & 86 & 1.706 & 1.673 & 83 & 1.882 & 1.7
 \caption{(Simplified) Target selection heuristic, efficiently implemented with a enemy units $\leftrightarrow$ damages bidirectional map.}
 \label{alg:targetselection}
 \begin{algorithmic}
-%%% \Function{get\_incoming\_damages}{eunit}
-%%% \EndFunction
-%%% \Function{add\_incoming\_damages}{eunit}
-%%% \EndFunction
-%%% \Function{remove\_incoming\_damages}{eunit}
-%%% \EndFunction
-%%% \Function{get\_priority\_targets}{unit}
-%%% \EndFunction
 \Function{on\_death}{$unit$}
 \State $remove\_incoming\_damages(unit.target, damages(unit,unit.target))$
 \EndFunction
