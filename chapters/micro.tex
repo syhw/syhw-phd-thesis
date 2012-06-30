@@ -8,7 +8,7 @@ Life is the sum of all your choices.}
 \begin{flushright}Albert Camus\end{flushright}
 \end{quotation}
 
-\lettrine{W}{e} present a Bayesian sensory-motor model for multi-agent (decentralized) units control in an adversarial setting. Orders, coming from higher up in the decision hierarchy, are integrated as another sensory input. We evaluated our model on classic StarCraft \glos{micro} tasks. This work was published in \citep{SYNNAEVE:Micro}.
+\lettrine{W}{e} present a Bayesian sensory-motor model for multi-agent (decentralized) units control in an adversarial setting. Orders, coming from higher up in the decision hierarchy, are integrated as another sensory input. We evaluated our model on classic StarCraft \glos{micro} tasks. This work was published at Computational Intelligence in Games (CIG) 2011 in Seoul \citep{SYNNAEVE:Micro}.
 
 \chaptertoc
 \newacronym{RL}{RL}{reinforcement learning}
@@ -32,8 +32,12 @@ Life is the sum of all your choices.}
 \end{figure}
 
 \section{Units Management}
+\subsection{Micro-management complexity}
 In this part, we focus on \glos{micro}, which is the lower-level in our hierarchy of decision-making levels (see Fig.~\ref{fig:starcraft_abstraction_time}) and directly affect units control/inputs. Micro-management consists in maximizing the effectiveness of the units \textit{i.e.} the damages given/damages received ratio. These has to be performed simultaneously for units of different types, in complex battles, and possibly on heterogeneous terrain. 
 For instance: retreat and save a wounded unit so that the enemy units would have to chase it either boosts your firepower (if you save the unit) or weakens the opponent's (if they chase). 
+
+StarCraft micro-management involves ground, flying, ranged, contact, static, moving (at different speeds), small and big units (see Figure~\ref{fig:sc_fight}). Units may also have splash damage, spells, and different types of damages whose amount will depend on the target size. It yields a rich states space and needs control to be very fast: human progamers can perform up to 400 ``actions per minute'' in intense fights. The problem for them is to know which actions are effective and the most rewarding to spend their actions efficiently. A robot does not have such physical limitations, but yet, badly chosen actions have negative influence on the issue of fights. %The problem is to identify what has to be done and what can be done, in real-time.
+
 Let $\mathbf{U}$ be the set of the $m$ units to control, $\mathbf{A} = \{\cup_i\ \vec{d_i}\} \cup \mathbf{S}$ be the set of possible actions (all $n$ possible $\vec{d}$ directions, standing ground included, and $\mathbf{S}$kills, firing included), and $\mathbf{E}$ the set of enemies. As $|\mathbf{U}| = m$, we have $|\mathbf{A}|^{m}$ possible combinations each turn, and the enemy has $|\mathbf{A}|^{|\mathbf{E}|}$. 
 The dimension of the set of possible actions each micro-turn (for instance: 1/24th of a second in StarCraft) constrains reasoning about the state of the game to be hierarchical, with different levels of granularity. In most RTS games, a unit can go (at least) in its 24 surrounding tiles (see Figure~\ref{fig:sc_fight}, each arrow correspond to a $\vec{d_i}$)
 ) %, combination of N, S, E, W up to the 2nd order), 
@@ -47,10 +51,11 @@ stay where it is, attack, and sometimes cast different spells: which yields more
 \label{fig:sc_fight}
 \end{figure}
 
-Our distributed sensory-motor model for \glos{micro} is able to handle both the complexity of unit control and the need of hierarchy (see Figure~\ref{fig:conceptMICRO}, this chapter focuses on the part inside the dotted line). We treat the units independently, thus reducing the complexity (no communication between our ``Bayesian units''), and allows to take higher-level orders into account along with local situation handling. For instance: the tactical planner may decide to retreat, or go through a choke under enemy fire, each Bayesian unit will have the higher-level order as a sensory input, along with topography, foes and allies positions. From its perception, our Bayesian robot \citep{Lebeltel04} can compute the distribution over its motor control. The performances of our models are evaluated against the original StarCraft AI and a reference AI (based on our targeting heuristic): they have proved excellent in this benchmark setup.
+\subsection{Our Approach}
+Our full robot has separate agents types for separate tasks (strategy, tactics, economy, army, as well as enemy estimations and predictions): the part that interests us here, the unit control, is managed by Bayesian units directly. Their objectives are set by military goal-wise atomic units group, themselves spawned to achieve tactical goals (see Fig.~\ref{fig:conceptMICRO}). Units groups tune their Bayesian units modes (scout, fight, move) and give them objectives as sensory inputs. The Bayesian unit is the smallest entity and controls individual units as sensory-motor robots according to the model described above. The only inter Bayesian units communication about attack targets is handled by a structure shared at the units group level. This distributed sensory-motor model for \glos{micro} is able to handle both the complexity of unit control and the need of hierarchy (see Figure~\ref{fig:conceptMICRO}). We treat the units independently, thus reducing the complexity (no communication between our ``Bayesian units''), and allows to take higher-level orders into account along with local situation handling. For instance: the tactical planner may decide to retreat, or go through a choke under enemy fire, each Bayesian unit will have the higher-level order as a sensory input, along with topography, foes and allies positions. From its perception, our Bayesian robot \citep{Lebeltel04} can compute the distribution over its motor control. The performances of our models are evaluated against the original StarCraft AI and a reference AI (based on our targeting heuristic): they have proved excellent in this benchmark setup.
 
 
-\section{Related Works}
+\section{Related Work}
 Technical solutions include finite states machines (FSM) \citep{FSM}, genetic algorithms (GA) \citep{GA,Bakkes04,teamCompositionRTS}, reinforcement learning (RL) \citep{Marthi05concurrenthierarchical,Madeira06}, case-based reasoning (CBR) \citep{LTW,CBR-RL}, continuous action models \citep{Molineaux08}, reactive planning \citep{WeberCIG10}, upper confidence bounds tree (UCT) \citep{UCT}, potential fields \citep{Hagelback2009}, influence maps\citep{teamCompositionRTS}, and cognitive human-inspired models \citep{SORTS}.
 
 FSM are well-known and widely used for control tasks due to their efficiency and implementation simplicity. However, they don't allow for state sharing, which increases the number of transitions to manage, and state storing, which makes collaborative behavior hard to code \citep{Cutumisu09}. Hierarchical FSM (HFSM) solve some of this problems (state sharing) and evolved into behavior trees (BT, hybrids HFSM) \citep{Isla} and behavior multi-queues (resumable, better for animation) \citep{Cutumisu09} that conserved high performances. %%%All these architectures does not include mechanisms to receive orders from separate entities. For instance, our strategic leader and tactical planners should be part of the (hierarchical) state machine, down to the control of units, which is not very flexible. 
@@ -105,7 +110,7 @@ For repulsion/attraction between units (allied or enemies), we could consider th
 We consider where the unit will be $\frac{\mathrm{dist}(unit, \vec{d_i})}{unit.speed}$ time later, but also its size (some units produce collisions in a smaller scale than our discretization).
 
 \subsubsection{Objective}
-The goals coming from the tactician model (see Fig.~\ref{fig:conceptMICRO}) are broken down into steps which gives objectives to each units. The way to incorporate the objective in the reactive behavior of our units is to add an attractive sensory input. This objective is a fixed direction $\vec{o}$ and we consider the probabilities of moving our unit in $n$ possible directions $\vec{d_1} \dots \vec{d_n}$ (in our StarCraft implementation: $n=25$ atomic directions). To decide the attractiveness of a given direction $\vec{d_i}$ with regard to the objective $\vec{o}$, we consider a weight which is proportional to the dot product $<\vec{o},\vec{d_i}>$, with a threshold minimum probability, as shown in Figure~\ref{fig:BayesianUnit_perceptions}.
+The goals coming from the tactician model (see Fig.~\ref{fig:conceptMICRO}) are broken down into steps which gives objectives to each units. The way to incorporate the objective in the reactive behavior of our units is to add an attractive sensory input. This objective is a fixed direction $\vec{o}$ and we consider the probabilities of moving our unit in $n$ possible directions $\vec{d_1} \dots \vec{d_n}$ (in our StarCraft implementation: $n=25$ atomic directions). To decide the attractiveness of a given direction $\vec{d_i}$ with regard to the objective $\vec{o}$, we consider a weight which is proportional to the dot product $\vec{o} \cdot \vec{d_i}$, with a threshold minimum probability, as shown in Figure~\ref{fig:BayesianUnit_perceptions}.
 
 \begin{figure}[h]
 \begin{center}
@@ -130,6 +135,7 @@ The idea behind the heuristic used for target selection is that units need to fo
 We also need a set of priority targets for each of our unit types that can be drawn from expert knowledge or learned (reinforcement learning) battling all unit types. A unit select its target among the most focus fired units with positive future hit point (current hit points minus registered damages), while prioritizing units from the priority set of its type. The units group can also impose its own priorities on enemy units (for instance to achieve a goal). The target selection heuristics is fully depicted in \ref{alg:targetselection} in the appendices.
 
 \subsubsection{Fight behavior}
+\label{sec:HOAI}
 Based on this targeting heuristic, we design a very simple FSM based unit as shown in Figure~\ref{fig:fight_FSM} and Algorithm~\ref{alg:fight_FSM}: when the unit is not firing, it will either flee damages if it has taken too much damages and/or if the differential of damages is too strong, or move to be better positioned in the fight (which may include staying where it is). In this simple unit, the \textit{flee()} function just tries to move the unit in the direction of the biggest damages gradient (towards lower potential damages zones). The \textit{fightMove()} function tries to position the units better: in range of its priority target, so that if the priority target is out of reach, the behavior will look like: ``try to fire on target in range, if it cannot (reloading or no target in range), move towards priority target''. As everything is driven by the firing heuristic (that we will also use for our Bayesian unit), we call this AI the Heuristic Only AI (HOAI).
 
 \begin{figure}[h]
@@ -173,11 +179,12 @@ Based on this targeting heuristic, we design a very simple FSM based unit as sho
 \subsection{Units Group}
 
 \label{section:unitsgroup}
-The units group (\texttt{UnitsGroup}, see Fig.~\ref{fig:conceptMICRO}) makes the shared \textit{future damage} data structure available to all units taking part in a fight. Units control is not limited to fight. As it is adversarial, it is perhaps the hardest task, but units control problems comprehends efficient team manoeuvering and other behaviors such as scouting of staying in position (formation). The units group structure helps for all that: it decides of the modes in which the unit has to be. We implemented 4 modes in our Bayesian unit (see Fig.~\ref{fig:unit_HFSM}): \textit{fight, move, scout, inposition}. When given a task, also named goal, by the tactician model (see Fig.~\ref{conceptMICRO}), the units group has to transform the task objective into sensory inputs for the units. 
+The units group (\texttt{UnitsGroup}, see Fig.~\ref{fig:conceptMICRO}) makes the shared \textit{future damage} data structure available to all units taking part in a fight. Units control is not limited to fight. As it is adversarial, it is perhaps the hardest task, but units control problems comprehends efficient team manoeuvering and other behaviors such as scouting or staying in position (formation). The units group structure helps for all that: it decides of the modes in which the unit has to be. We implemented 4 modes in our Bayesian unit (see Fig.~\ref{fig:unit_HFSM}): \textit{fight, move, scout, inposition}. When given a task, also named goal, by the tactician model (see Fig.~\ref{conceptMICRO}), the units group has to transform the task objective into sensory inputs for the units. 
 \begin{itemize}
-    \item In \textit{scout} and \textit{move} modes, the objective is extracted for the pathfinder output: it consists in key waypoints near the units. 
-    \item In the \textit{inposition} mode, the objective is the final unit formation position. 
-    \item In \textit{fight} mode, the objective depends of the confidence of the units group in the outcome of the battle. 
+    \item In \textit{scout} mode, the (often quick and low hit points) unit avoids danger by modifying locally its pathfinding-based, objectives oriented route to avoid damages.
+    \item In \textit{move} mode, the objective is extracted for the pathfinder output: it consists in key waypoints near the units. When moving by flocking, our unit moves are influenced by other near allied units that repulse or attract it depending on its distance to the interpolation of the allied unit. It allows our units to move more efficiently by not splitting around obstacles and colliding less. As it causes other problems, we do not use the flocking behavior in full competitive games.
+    \item In the \textit{inposition} mode, the objective is the final unit formation position. The unit can be ``pushed'' by other units wanting to pass through. This is useful at a tactical level to do a wall of units that our units can traverse but the opponent's cannot. Basically, there is an attraction to the position of the unit and a stronger repulsion of the interpolation of movements of allied units.
+    \item In \textit{fight} mode, our unit will follow the damages gradient to smart positions, for instance close to tanks (they cannot fire too close to their position) or far from too much contact units if our unit can attack with range (something called ``kiting''). Our unit moves are also influenced by its priority targets, its goal/objective (go through a choke, flee, etc.) and other units. The objective depends of the confidence of the units group in the outcome of the battle:
 \begin{itemize}
     \item If the units group is outnumbered (in adjusted strength) and the task is not a suicidal one, the units group will ``fall back'' and give objectives towards retreat. 
     \item If the fight is even or manageable, the units group will not give any objective to units, which will set their own objectives either to their priority targets in \textit{fightMove()} or towards fleeing damages (towards highest potential damages gradient) in \textit{flee()}.
@@ -187,6 +194,7 @@ The units group (\texttt{UnitsGroup}, see Fig.~\ref{fig:conceptMICRO}) makes the
 
 \section{A Bayesian Model for Units Control}
 
+\label{sec:bayesianunit}
 \subsection{Bayesian Unit}
 
 We use Bayesian programming as an alternative to logic, transforming incompleteness of knowledge about the world into uncertainty. In the case of units management, we have mainly \textit{intensional} uncertainty. Instead of asking questions like: where are other units going to be 10 frames later? Our model is based on rough estimations that are not taken as ground facts. Knowing the answer to these questions would require for our own (allied) units to communicate a lot and to stick to their plan (which does not allow for quick reaction nor adaptation). 
@@ -201,25 +209,26 @@ Our Bayesian units are simple hierarchical finite states machines (states can be
 \label{fig:unit_HFSM}
 \end{figure}
 
-The unit needs to determine where to go when fleeing and moving during a fight, with regard to its target and the attacking enemies, while avoiding collisions (which results in blocked units and time lost) as much as possible. \textbf{We now present the Bayesian program used for \textit{flee()} and \textit{fightMove()}}, which differ only by what is inputed as objective:
+The unit needs to determine where to go when fleeing and moving during a fight, with regard to its target and the attacking enemies, while avoiding collisions (which results in blocked units and time lost) as much as possible. \textbf{We now present the Bayesian program used for \textit{flee()}, \textit{fightMove()}, and while scouting}, which differ only by what is inputed as objective:
 \subsubsection{Variables}
 \begin{itemize}
-\item $Dir_{i \in \llbracket 0 \dots n\rrbracket } \in \{True, False\}$: at least one variable for each atomic direction the unit can go to. $\PP(Dir_i = True) = 1$ means that the unit will certainly go in direction $i$ ($\Leftrightarrow \vec{d_i}$). For example, in StarCraft we use the 24 atomic directions (48 for the smallest and fast units as we use a proportional scale) plus the current unit position (stay where it is) as shown in Figure~\ref{fig:sc_fight}. %We could use one variable with 24 directions, the approach would be the same. %%% Note that $i \in \llbracket 0 \dots n\rrbracket \Leftrightarrow \mathbf{D}[i] \in \mathbf{D}$.
+\item $Dir_{i \in \llbracket 1 \dots n\rrbracket } \in \{True, False\}$: at least one variable for each atomic direction the unit can go to. $\PP(Dir_i = True) = 1$ means that the unit will certainly go in direction $i$ ($\Leftrightarrow \vec{d_i}$). For example, in StarCraft we use the 24 atomic directions (48 for the smallest and fast units as we use a proportional scale) plus the current unit position (stay where it is) as shown in Figure~\ref{fig:sc_fight}. %We could use one variable with 24 directions, the approach would be the same. %%% Note that $i \in \llbracket 1 \dots n\rrbracket \Leftrightarrow \mathbf{D}[i] \in \mathbf{D}$.
 
-\item $Obj_{i \in \llbracket 0 \dots n\rrbracket } \in \{True, False\}$: adequacy of direction $i$ with the objective (given by a higher rank model). In our StarCraft AI, we use the scalar product between the direction $i$ and the objective vector (output of the pathfinding) with a minimum value ($0.3$ in \textit{move} mode for instance) so that the probability to go in a given direction is proportional to its alignment with the objective.
+\item $Obj_{i \in \llbracket 1 \dots n\rrbracket } \in \{True, False\}$: adequacy of direction $i$ with the objective (given by a higher rank model). In our StarCraft AI, we use the scalar product between the direction $i$ and the objective vector (output of the pathfinding) with a minimum value ($0.3$ in \textit{move} mode for instance) so that the probability to go in a given direction is proportional to its alignment with the objective.
 \begin{itemize}
     \item For \textit{flee()}, the objective is set in the direction which flees the potential damage gradient (corresponding to the unit type: ground or air).
     \item For \textit{fightMove()}, the objective is set (by the units group) either to retreat, to fight freely or to march aggressively towards the goal (see \ref{section:unitsgroup}).
+    \item For the \textit{scout} behavior, the objective ($\vec{o}$) is set to the next pathfinder waypoint.
 \end{itemize}
 
-\item $Dmg_{i \in \llbracket 0 \dots n\rrbracket } \in \{no, low, medium, high\}$: potential damage value in direction $i$, relative to the unit base health points, in direction $i$. In our StarCraft AI, this is directly drawn from two constantly updated potential damage maps (air, ground). %For instance, it allows our scouting units to avoid potential attacks as much as possible.
+\item $Dmg_{i \in \llbracket 1 \dots n\rrbracket } \in \{no, low, medium, high\}$: potential damage value in direction $i$, relative to the unit base health points, in direction $i$. In our StarCraft AI, this is directly drawn from two constantly updated potential damage maps (air, ground). %For instance, it allows our scouting units to avoid potential attacks as much as possible.
 
-\item $A_{i \in \llbracket 0 \dots n\rrbracket } \in \{free, small, big\}$: occupation of the direction $i$ by an allied unit. The model can effectively use many values (other than ``occupied/free'') because directions may be multi-scale (for instance we indexed the scale on the size of the unit) and, in the end, small and/or fast units have a much smaller footprint, collision wise, than big and/or slow. In our AI, instead of direct positions of allied units, we used their (linear) interpolation $\frac{\mathrm{dist}(unit, \vec{d_i})}{unit.speed}$ (time it takes the unit to go to $\vec{d_i}$) 
+\item $A_{i \in \llbracket 1 \dots n\rrbracket } \in \{free, small, big\}$: occupation of the direction $i$ by an allied unit. The model can effectively use many values (other than ``occupied/free'') because directions may be multi-scale (for instance we indexed the scale on the size of the unit) and, in the end, small and/or fast units have a much smaller footprint, collision wise, than big and/or slow. In our AI, instead of direct positions of allied units, we used their (linear) interpolation $\frac{\mathrm{dist}(unit, \vec{d_i})}{unit.speed}$ (time it takes the unit to go to $\vec{d_i}$) 
 frames later (to avoid squeezing/expansion).
 
-\item $E_{i \in \llbracket 0 \dots n\rrbracket } \in \{free, small, big\}$: occupation of the direction $i$ by an enemy unit. As above.
+\item $E_{i \in \llbracket 1 \dots n\rrbracket } \in \{free, small, big\}$: occupation of the direction $i$ by an enemy unit. As above.
 
-\item $Occ_{i \in \llbracket 0 \dots n\rrbracket } \in \{free, building, staticterrain\}$%(this could have been 2 variables or we could omit static terrain but we stay as general as possible): 
+\item $Occ_{i \in \llbracket 1 \dots n\rrbracket } \in \{free, building, staticterrain\}$%(this could have been 2 variables or we could omit static terrain but we stay as general as possible): 
 : Occupied, repulsive effect of buildings and terrain (cliffs, water, walls).
 \end{itemize}
 
@@ -241,7 +250,7 @@ We assume that the $i$ directions are independent depending on the action becaus
 \begin{itemize}
 \item $\PP(Dir_i)$ prior on directions, unknown, so unspecified/uniform over all $i$. $\PP(dir_i) = 0.5$.
 
-\item $\PP(Obj_i | Dir_i)$ for instance, ``probability that this direction is the objective knowing that we go there'' $\PP(obj_i | dir_i) = threshold + (1.0-threshold)\times <\vec{o},\vec{d_i}>$. %$\PP(Obj_i = T | Dir_i = T)$ is very high (close to one) when rushing towards an objective, whereas it is far less important when fleeing. 
+\item $\PP(Obj_i | Dir_i)$ for instance, ``probability that this direction is the objective knowing that we go there'' $\PP(obj_i | dir_i) = threshold + (1.0-threshold)\times \mathrm{max}(0, vec{o} \cdot \vec{d_i})$. %$\PP(Obj_i = T | Dir_i = T)$ is very high (close to one) when rushing towards an objective, whereas it is far less important when fleeing. 
 We could have different $thresholds$ depending on the mode, this was not the case in our hand-specified tables: $threshold = 0.3$. The right diagram on Figure~\ref{fig:BayesianUnit_perceptions} shows $\PP(Obj_i|Dir_i)$ for each for the possible directions (inside the thick big square boundaries of atomic directions) with red being higher probabilities.
 
 \item $\PP(Dmg_i | Dir_i)$ probability of damages values in direction $i$ knowing this is the direction that we are headed to. $\PP(Dmg_i = high | Dir_i = T)$ has to be small in many cases for the unit to avoid going to positions it could be killed instantly. Probability table:\\
@@ -290,10 +299,6 @@ static & 0.000001 & 0.333 \\
 
 \end{itemize}
 
-%%% TODO height: 0.2, 0.3, 0.45, 0.05 for normal/high/very high/unknown P(H_i|Dir_i)
-
-%%% TODO learn exponential P(Dmg_i | Dir_i)
-%%% TODO flock = Beta(\alpha, \beta), \beta > \alpha > 1 
 
 
 \subsubsection{Identification}
@@ -302,17 +307,12 @@ Parameters and probability tables can be learned through reinforcement learning 
 
 \subsubsection{Question}
 
-When in $fightMove()$, the unit asks:
-\begin{small}
-$$\PP(Dir_{1:n} | Obj_{1:n}, Dmg_{1:n}, A_{1:n}, E_{1:n}, Occ_{1:n}, Prio_{1:n})$$
-\end{small}
-When in $flee()$ or while moving or scouting (different balance/parameters), the unit asks:
-$$\PP(Dir_{1:n} | Obj_{1:n}, Dmg_{1:n}, A_{1:n}, E_{1:n}, Occ_{1:n})$$
-When flocking, the unit asks:
-\begin{small}
-$$\PP(Dir_{1:n} | Obj_{1:n}, Dmg_{1:n}, A_{1:n}, E_{1:n}, Occ_{1:n}, Att_{1:n,1:m}) $$
-\end{small}
-From there, the unit can either go in the most probable $Dir_i$ or sample through them. We describe the effect of this choice in the next section (and in Fig.~\ref{fig:BayesianUnitChoice}). A simple Bayesian fusion from 3 sensory inputs is shown in Figure~\ref{fig:BayesianUnitExample}, in which the final distribution on $Dir$ peaks at places avoiding damages and collisions while being towards the goal. Here follows the full Bayesian program of the model (\ref{bp:BayesianUnit_move}):
+When in \textit{fightMove()} and \textit{flee()}, the unit asks:
+\begin{equation}
+\PP(Dir_{1:n} | Obj_{1:n}, Dmg_{1:n}, A_{1:n}, E_{1:n}, Occ_{1:n}, Prio_{1:n})
+\end{equation}
+
+From there, the unit can either go in the most probable $Dir_i$ or sample through them. We describe the effect of this choice in the next section (and in Fig.~\ref{fig:BayesianUnitChoice}). A simple Bayesian fusion from 3 sensory inputs is shown in Figure~\ref{fig:BayesianUnitExample}, in which the final distribution on $Dir$ peaks at places avoiding damages and collisions while pointing towards the goal. Here follows the full Bayesian program of the model (\ref{bp:BayesianUnit_fightmove}):
 
 \begin{figure}[h]
 \begin{center}
@@ -343,62 +343,144 @@ Dir_{1:n}, Obj_{1:n}, Dmg_{1:n}, A_{1:n}, E_{1:n}, Occ_{1:n} \\
 \mathrm{reinforcement\ learning\ or\ hand\ specified\ (or\ distribs.\ parameters\ optimization)}
     \end{cases}\\
 Question\\
- \mathrm{fight moving:}\ \ \PP(Dir_{1:n} | Obj_{1:n}, Dmg_{1:n}, A_{1:n}, E_{1:n}, Occ_{1:n}, Prio_{1:n})\\
- \mathrm{fleeing:}\ \  \PP(Dir_{1:n} | Obj_{1:n}, Dmg_{1:n}, A_{1:n}, E_{1:n}, Occ_{1:n})\\
- \mathrm{flocking:}\ \  \PP(Dir_{1:n} | Obj_{1:n}, Dmg_{1:n}, A_{1:n}, E_{1:n}, Occ_{1:n}, Att_{1:n,1:m})\\
+ \mathrm{fight moving/fleeing/scouting:}\ \ \PP(Dir_{1:n} | Obj_{1:n}, Dmg_{1:n}, A_{1:n}, E_{1:n}, Occ_{1:n}, Prio_{1:n})\\
+%%%  \mathrm{fleeing:}\ \  \PP(Dir_{1:n} | Obj_{1:n}, Dmg_{1:n}, A_{1:n}, E_{1:n}, Occ_{1:n})\\
+%%%  \mathrm{flocking:}\ \  \PP(Dir_{1:n} | Obj_{1:n}, Dmg_{1:n}, A_{1:n}, E_{1:n}, Occ_{1:n}, Att_{1:n,1:m})\\
+\end{cases}
+\end{eqnarray*}
+\label{bp:BayesianUnit_fightmove}
+\end{figure}
+
+There are additional variables for specific modes/behaviors, also probability tables may be different.
+
+\subsubsection{Move}
+
+\noindent\textit{Without flocking}\\
+When moving without flocking (trying to maintain some form of group cohesion), the model is even simpler. The objective ($\vec{o}$) is set to a path waypoint. The potential damage map is dropped from the $JD$, the question is:
+\begin{equation}
+\PP(Dir_{1:n} | Obj_{1:n}, A_{1:n}, E_{1:n}, Occ_{1:n})
+\end{equation}
+
+\noindent\textit{With flocking}\\
+%To produce a \textit{flocking} behavior while moving, with $m$ units, we introduce another set of variables: $Att_{i \in \llbracket 0 \dots n\rrbracket, j \in \llbracket 0 \dots m \rrbracket} \in \{too\_close, near, far, too\_far\}$\footnote{the discrete levels could be replaced by the distance and $\PP(Att_{i,j}|Dir_i)$ could use a $Beta(\alpha, \beta)$ distribution with $\beta > \alpha > 1$.}, allied units attractions and repulsions. 
+%Different than $A_i$, the $JD$ would become $JD \times \Pi_{i=1}^{n} \Pi_{j=1}^{m} \PP(Att_{i,j} | Dir_i)$, where $\PP(Att_{i,j} | Dir_i)$\footnote{Changing for $\PP(Att_i|Dir_i)P(Dir_i)$ for $\PP(Dir_i|Att_i)$ may be easier to reason about.} is a probability table for flocking: a too close unit $j$ will repel the Bayesian unit ($\PP(Att_{i,j} | Dir_i) < mean$) whereas another unit $j$ will attract depending on its distance (and possibly, leadership).
+To produce a \textit{flocking} behavior while moving, we introduce another set of variables: $Att_{i \in \llbracket 1 \dots n\rrbracket} \in \{True,False\}$, allied units attractions (or not) in direction $i$.
+
+A flocking behavior \citep{Reynolds_1999} requires:
+\begin{itemize}
+    \item Separation: avoid collisions, short range repulsion,
+    \item Alignment: align direction with neighbours,
+    \item Cohesion: steer towards average position of neighbours.
+\end{itemize}
+Separation is dealt with by $\PP(A_i|Dir_i)$ already. As we use interpolations of units at the time at which our unit will be arrived at the $Dir_i$ under consideration, being attracted by $Att_i$ gives cohesion as well as some form of alignment. It is not strictly the same as having the same direction and seems to fare better is complex terrain. We remind the reader that flocking was derived from birds flocks and fish schools behaviors: in both cases there is a lot of free/empty space.
+
+A $\vec{a}$ vector is constructed as the weighted sum of neighbour\footnote{The devil is in the details, if one considers a too small neighbourhood, there is very rarely emergence of the flocking behavior, whereas if one considers a too large neighbourhood, units can get in directions which are stucking them with terrain. A pragmatic solution is to use a large neighbourhood with a decreasing weight (for increasing distance) for each unit of the neighbourhood.} allied units. Then $\PP(Att_i|Dir_i)$%\footnote{Changing for $\PP(Att_i|Dir_i)P(Dir_i)$ for $\PP(Dir_i|Att_i)$, with $Att_i$ being the distance, may be easier to reason about.}
+ for all $i$ directions is constructed as for the objective influence ($\PP(Obj_i|Dir_i)$) by taking the dot product $\vec{a} \cdot \vec{d_i}$ with a minimum threshold (we used 0.3, so that the flocking effect is as strong as objective attraction):
+$$\PP(att_i|dir_i) = threshold + (1.0-threshold)\times \mathrm{max}(0, \vec{a} \cdot \vec{d_i})$$
+
+The $JD$ becomes $JD \times \Pi_{i=1}^{n} \PP(Att_{i} | Dir_i)$.
+%%% \begin{center}
+%%% \begin{tabular}{|l|c|c|}
+%%% \hline
+%%% $Att_{i,j}$ & $dir_i$ & $\bar{dir_i}$ \\
+%%% \hline
+%%% close & 0.4 & 0.5 \\
+%%% far & 0.5 & 0.05 \\
+%%% too\_far & 0.1 & 0.9 \\
+%%% \hline
+%%% \end{tabular}
+%%% \end{center}
+
+\begin{figure}[h]
+\begin{eqnarray*}
+\begin{sideways}\parbox{35mm}{\hspace{-1.3cm}Bayesian program}\end{sideways}
+\begin{cases}
+\begin{sideways}\parbox{15mm}{\hspace{-0.8cm}Description}\end{sideways}
+    \begin{cases}
+\begin{sideways}\parbox{18mm}{\hspace{-1.1cm}Specification ($\pi$)}\end{sideways}
+        \begin{cases}
+        Variables\\
+Dir_{1:n}, Obj_{1:n}, Att_{1:n}, A_{1:n}, E_{1:n}, Occ_{1:n} \\
+%Dir_{1:n}, Obj_{1:n}, Att_{1:n,1:m}, A_{1:n}, E_{1:n}, Occ_{1:n} \\
+        Decomposition\\
+ \PP(Dir_{1:n}, Obj_{1:n}, Att_{1:n}, A_{1:n}, E_{1:n}, Occ_{1:n}) =  \prod_{i=1}^{n} \big[ \PP(Dir_i) \\
+% \PP(Dir_{1:n}, Obj_{1:n}, Att_{1:n,1:m}, A_{1:n}, E_{1:n}, Occ_{1:n}) =  \prod_{i=1}^{n} \big[ \PP(Dir_i) \\
+ \PP(Obj_i | Dir_i) \PP(A_i | Dir_i) \PP(E_i | Dir_i) \PP(Occ_i | Dir_i)
+\PP(Att_{i} | Dir_i)
+%\prod_{j=1}^{m} \PP(Att_{i,j} | Dir_i)
+\big]\\
+        Forms\\
+\PP(Dir_i): \mathrm{prior\ on\ directions\ (crossing\ policy)} \\
+\PP(XYZ_i | Dir_i):\ \mathrm{probability\ tables}\\
+        \end{cases}\\
+    Identification\ (using\ \delta)\\
+\mathrm{learning\ or\ hand\ specified}\\
+    \end{cases}\\
+Question\\
+ \mathrm{flocking:}\ \  \PP(Dir_{1:n} | Obj_{1:n}, A_{1:n}, E_{1:n}, Occ_{1:n}, Att_{1:n})\\
+% \mathrm{flocking:}\ \  \PP(Dir_{1:n} | Obj_{1:n}, A_{1:n}, E_{1:n}, Occ_{1:n}, Att_{1:n,1:m})\\
 \end{cases}
 \end{eqnarray*}
 \label{bp:BayesianUnit_move}
 \end{figure}
 
-\subsubsection{Move}
-\textbf{Without flocking}\\
-\textbf{With flocking}\\
-\subsubsection{Scout}
+
 \subsubsection{In position}
 
-There are additional variables for specific modes/behaviors:
-\begin{itemize}
-\item $Prio_{i \in \llbracket 0 \dots n\rrbracket } \in \{True, False\}$: combined effect of the priority targets that attract the unit while in fight ($fightMove()$). The $JD$ is modified as $JD \times \Pi_{i=1}^{n} \PP(Prio_i | Dir_i)$, where $\PP(Prio_i | Dir_i)$ is a probability table, that corresponds to the attraction of a priority (maybe out of range) target in this direction. This is efficient to be able to target casters or long range units for instance.
+%\item $Prio_{i \in \llbracket 1 \dots n\rrbracket } \in \{True, False\}$: combined effect of the priority targets that attract the unit while in fight ($fightMove()$). The $JD$ is modified as $JD \times \Pi_{i=1}^{n} \PP(Prio_i | Dir_i)$, where $\PP(Prio_i | Dir_i)$ is a probability table, that corresponds to the attraction of a priority (maybe out of range) target in this direction. This is efficient to be able to target casters or long range units for instance.
+The \textit{inposition} mode corresponds to when some units are at the place they should be (no new objective to reach) and not fighting. This happens when some units arrived at their formation end positions and they are waiting for other (allied) units of their group, or when units are sitting (in defense) at some tactical point, like in front of a base for instance. The particularity of this mode is that the objective is set to the current unit position and it will be updated to always point to this ``final formation position'' as long as the unit is in this mode. This is useful so that units which are arriving to the formation can go through each others and not get stuck. Figure~\ref{fig:squaretraversal} shows the effect of using this mode: the big unit (Archon) goes through a square formation of the other units (Dragoons) which are in \textit{inposition} mode. What happens is an emerging phenomenon: the first (leftmost) units of the square get repulsed by the interpolated position of the dragoon, so they move themselves out of its trajectory. By moving, they repulse the second and then third line of the formation, the chain repulsion reaction makes a path for the big unit to pass through the formation. Once this unit path is no longer colliding, the attraction of units for their objective (their formation position) takes them back to their initial positions.
 
-\item $Att_{i \in \llbracket 0 \dots n\rrbracket, j \in \llbracket 0 \dots m \rrbracket}$: allied units attractions and repulsions to produce a \textit{flocking} behavior while moving. Different than $A_i$, the $JD$ would become $JD \times \Pi_{i=1}^{n} \Pi_{j=1}^{m} \PP(Att_{i,j} | Dir_i)$, where $\PP(Att_{i,j} | Dir_i)$ is a probability table for flocking: a too close unit $j$ will repel the Bayesian unit ($\PP(Att_{i,j} | Dir_i) < mean$) whereas another unit $j$ will attract depending on its distance (and possibly, leadership).
-
-\item $Dir_{i \in \llbracket 0 \dots n\rrbracket }^{t-1} \in \{True, False\}$: the previous selected direction, $Dir_i^{t-1} = T$ iff the unit went to the direction $i$, else $False$ for a steering (smooth) behavior. The $JD$ would then be $JD \times \Pi_{i=1}^{n} \PP(Dir_i^{t-1} | Dir_i)$, with $\PP(Dir_i^{t-1} | Dir_i)$ the influence of the last direction, either a table or a parametrized Bell shape over all the $i$.
-
-\item One can have a distribution over a $n$ valued variable $Dir \in \{D\}$. (Each set of boolean random variable can be seen as a $|D|$ valued variable.) The $JD$ would then be $JD \times \PP(Dir).\Pi_{i=1}^{n} \PP(Dir_i | Dir)$.
-\end{itemize}
-
+\begin{figure}[h]
+\begin{center}
+\begin{tabular}{cc}
+\includegraphics[width=7.5cm]{images/square_traversal_1.png} & 
+\includegraphics[width=7.5cm]{images/square_traversal_2.png} \\
+\includegraphics[width=7.5cm]{images/square_traversal_3.png} & 
+\includegraphics[width=7.5cm]{images/square_traversal_4.png} \\
+\end{tabular}
+\caption{Sequence of traversal of an Archon (big blue unit which is circled in green) through a square formation of Dragoons (four legged red units) in \textit{inposition} mode.}
+\label{fig:squaretraversal}
+\end{center}
+\end{figure}
 
 
 \section{Results on StarCraft}
-StarCraft micro-management involves ground, flying, ranged, contact, static, moving (at different speeds), small and big units (see Figure~\ref{fig:sc_fight}). Units may also have splash damage, spells, and different types of damages whose amount will depend on the target size. It yields a rich states space and needs control to be very fast: human progamers can perform up to 400 ``actions per minute'' in intense fights. The problem for them is to know which actions are effective and the most rewarding to spend their actions efficiently. A robot does not have such physical limitations, but yet, badly chosen actions have negative influence on the issue of fights. %The problem is to identify what has to be done and what can be done, in real-time.
 
-\subsection{Our Robot Architecture}
-
-Our full robot has separate agents types for separate tasks (strategy, tactics, economy, army, as well as enemy estimations and predictions): the part that interests us here, the unit control, is managed by Bayesian units directly. Their objectives are set by military goal-wise atomic units group, themselves spawned to achieve tactical goals (see Fig.~\ref{fig:conceptMICRO}). Units groups tune their Bayesian units modes (scout, fight, move) and give them $Obj_i$ as sensory inputs. The Bayesian unit is the smallest entity and controls individual units as sensory-motor robots according to the model described above. The only inter Bayesian units communication about attack targets is handled by a structure shared at the units group level.
+Our implementation\footnote{\textsc{BroodwarBotQ}, code and releases: \url{http://github.com/SnippyHolloW/BroodwarBotQ}} (BSD licensed) uses BWAPI\footnote{BWAPI: \url{http://code.google.com/p/bwapi/}} to get information from and to control StarCraft. 
 
 \subsection{Experiments}
 
-Our implementation\footnote{\textsc{BroodwarBotQ}, code and releases: \url{http://github.com/SnippyHolloW/BroodwarBotQ}} (BSD licensed) uses BWAPI\footnote{BWAPI: \url{http://code.google.com/p/bwapi/}} to get information from and to control StarCraft. 
 We produced three different AI to run experiments with, along with the original AI (OAI) from StarCraft:
 \begin{itemize}
-\item Heuristic only AI (HOAI), section~4.1: this AI shares the target selection heuristic with our other AI and will be used as a dummy reference (in addition to StarCraft original AI) to avoid bias due to the target selection heuristic.
-\item Bayesian AI picking best (BAIPB): this AI follows the model of section~4.2 and selects the most probable $Dir_i$ as movement. 
-\item Bayesian AI sampling (BAIS): this AI follows the model of section~4.2 and samples through $Dir_i$ according to their probability ($\Leftrightarrow$ according to $Dir$ distribution).
+\item Heuristic only AI (HOAI), as described above (\ref{sec:HOAI}): this AI shares the target selection heuristic with our Bayesian AI models and will be used as a baseline reference to avoid the bias due to the target selection heuristic.
+\item Bayesian AI picking best (BAIPB): this AI follows the model of section~\ref{sec:bayesianunit} and selects the most probable $Dir_i$ as movement. 
+\item Bayesian AI sampling (BAIS): this AI follows the model of section~\ref{sec:bayesianunit} and samples through $Dir_i$ according to their probability (i.e. it samples a direction in the $Dir$ distribution).
 \end{itemize}
 
-The experiments consisted in having the AIs fight against each others on a micro-management scenario with mirror matches of 12 and 36 ranged ground units (Dragoons). In the 12 units setup, the unit movements during the battle is easier (less collision probability) than in the 36 units setup. We instantiate only the army manager (no economy in this special maps), one units group manager and as many Bayesian units as there are units provided to us in the scenario. The results are presented in Table~\ref{tab:win_ratios}.
+The experiments consisted in having the AIs fight against each others on a micro-management scenario with mirror matches of 12 and 36 ranged ground units (Dragoons). In the 12 units setup, the unit movements during the battle is easier (less collision probability) than in the 36 units setup. We instantiate only the army manager (no economy in this special scenarii/maps), one units group manager and as many Bayesian units as there are units provided to us in the scenario. The results are presented in Table~\ref{tab:win_ratios}.
 
 \definecolor{grey}{rgb}{0.7,0.7,0.7}
 \begin{table}[h]
 \begin{center}
-\begin{tabular}{l|c|c|c|c}
-\includegraphics[width=1.5cm]{images/array_top2.png} & OAI & HOAI & BAIPB & BAIS \\
+\begin{tabular}{|l|c|c|c|c|}
 \hline
-OAI & (50\%) & \colorbox{grey}{64\%} & \colorbox{grey}{9\%} & \colorbox{grey}{3\%} \\
-HOAI & 59\% & (50\%) & \colorbox{grey}{11\%} & \colorbox{grey}{6\%} \\
-BAIPB & 93\% & 97\% & (50\%) & \colorbox{grey}{3\%} \\
-BAIS & 93\% & 95\% & 76\% & (50\%)
+12 units & OAI & HOAI & BAIPB & BAIS \\
+\hline
+OAI & (50\%) & & & \\
+HOAI & 59\% & (50\%) & & \\
+BAIPB & 93\% & 97\% & (50\%) & \\
+BAIS & 93\% & 95\% & 76\% & (50\%)\\
+\hline
+\end{tabular}
+\begin{tabular}{|l|c|c|c|c|}
+\hline
+36 units & OAI & HOAI & BAIPB & BAIS \\
+\hline
+OAI & (50\%) & & & \\
+HOAI & 46\% & (50\%) & & \\
+BAIPB & 91\% & 89\% & (50\%) & \\
+BAIS & 97\% & 94\% & 97\% & (50\%)\\
+\hline
 \end{tabular}
 \end{center}
 % BAIPB+Heuristics flee/fightmove 12 goons vs OAI 94/100
@@ -406,60 +488,103 @@ BAIS & 93\% & 95\% & 76\% & (50\%)
 % pure BAIPB (fightMove only on ``potential fields'') 12 goons vs OAI 51/33
 % pure BAIPB (fightMove only on ``potential fields'') 36 goons vs OAI 10/16
 %%%\caption{Win ratios over at least 200 battles of the Original AI (OAI), Heuristic Only AI (HOAI), Bayesian AI Pick Best (BAIPB) and Bayesian AI Sample (BAIS) in two mirror setups: 12 and 36 ranged units. Read line vs column: for instance HOAI won 59\% of its matches against OAI in the 12 units setup. Note: The average amount of units left at the end of battles is proportional to the percentage of wins.}
-\caption{Win ratios over at least 200 battles of OAI, HOAI, BAIPB and BAIS in two mirror setups: 12 and 36 ranged units. Read line vs column: for instance HOAI won 59\% of its matches against OAI in the 12 units setup. Note: The average amount of units left at the end of battles is grossly proportional to the percentage of wins.}
+\caption{Win ratios over at least 200 battles of OAI, HOAI, BAIPB and BAIS in two mirror setups: 12 and 36 ranged units. Left: 12 units (12 vs 12) setup. Right: 36 units (36 vs 36) setup. Read line vs column: for instance HOAI won 59\% of its matches against OAI in the 12 units setup.} %Note: The average amount of units left at the end of battles is grossly proportional to the percentage of wins.}
 \label{tab:win_ratios}
 \end{table}
 
-These results show that our heuristic (HAOI) is comparable to the original AI (OAI), perhaps a little better, but induces more collisions. For Bayesian units however, the ``pick best'' (BAIPB) direction policy is very effective when battling with few units (and few movements because of static enemy units) as proved against OAI and HOAI, but its effectiveness decreases when the number of units increases: all units are competing for the best directions (to $flee()$ or $fightMove()$ in) and they collide. The sampling policy (BAIS) has way better results in large armies, and significantly better results in the 12 units vs BAIPB, supposedly because BAIPB moves a lot (to chase wounded units) and collide with BAIS units. Sampling entails that the competition for the best directions is distributed among all the ``bests to good'' wells of well-being, from the units point of view. We also ran tests in setups with flying units in which BAIPB fared as good as BAIS (no collision for flying units) and way better than OAI.
-
-We had a tie with the winner of AIIDE 2010 StarCraft micro-management competition, winning with ranged units and losing with contact units. %%% TODO
-
-\subsection{Uses and extensions}
-This model is currently at the core of the micro-management of our StarCraft bot. We use it mainly with four modes corresponding to four behaviors (four sets of parameters):
-\begin{itemize}
-\item Scout: in this mode, the (often quick and low hit points) unit avoids danger by modifying locally its pathfinding-based, objectives oriented route to avoid damages according to $\PP(Dmg_i|Dir_i)$.
-\item In position: in this mode, the unit try to keep its ground but can be ``pushed'' by other units wanting to pass through with $\PP(A_i | Dir_i)$. This is useful at a tactical level to do a wall of units that our units can traverse but the opponent's cannot. Basically, there is an attraction to the position of the unit and a stronger repulsion of the interpolation of movements of allied units.
-\item Flock: in this mode, our unit moves influenced by other allied units through $\PP(Att_{i \in \llbracket 0 \dots n\rrbracket, j \in \llbracket 0 \dots m \rrbracket})$ that repulse or attract it depending on its distance to the interpolation of the allied unit $j$. It allows our units to move more efficiently by not splitting around obstacles and colliding less.
-\item Fight: in this mode, our unit will follow the damages gradient to smart positions, for instance close to tanks (they cannot fire too close to their position) or far from too much contact units if our unit can attack with range. Our unit moves are also influenced by its priority targets, its goal (go through a choke, flee, etc.) and other units.
-\end{itemize}
-
-This model can be used to specify the behavior of units in RTS games. Instead of relying on a ``units push each other'' physics model for handling dynamic collision of units, this model makes the units react themselves to collision in a more realistic fashion (a marine cannot push a tank, the tank will move). The realism of units movements can also be augmented with a simple-to-set $\PP(Dir^{t-1}|Dir^t)$ steering parameter, although we do not use it in the competitive setup.
-
-
-
-\section{Discussion}
-
-\subsection{Perspectives}
-%%% Conclusion and perspectives: opens the game to parameters learning, RL and/or EA (Bayesian fusion FTW!)
-If we learn the parameters of such a model to mimic existing data (data mining) or to maximize a reward function (reinforcement learning), we can interpret the parameters that will be obtained more easily than parameters of an artificial neural network for instance. Parameters learned in one setup can be reused in another if they are understood. We claim that specifying or changing the behavior of this model is much easier than changing the behavior generated by a FSM, and game developers can have a fine control over it. Dynamic switches of behavior (as we do between the scout/flock/inposition/fight modes) are just one probability tables switch away. In fact, probability tables for each sensory input (or group of sensory inputs) can be linked to sliders in a ``behavior editor'' and game makers can specify the behavior of their units by specifying the degree of effect of each perception (sensory input) on the behavior of the unit and see the effect in real time. This is not restricted to RTS and could be applied to \glos{RPG} and even \glos{FPS} \gloss{gameplay}.
-
-
-Future work could consist in using reinforcement learning \citep{Sutton} or evolutionary algorithms \citep{SmithCIG10} to learn the probability tables. It should enhance the performance of our Bayesian units in specific setups. It implies making up challenging scenarii and dealing with huge sampling spaces \citep{Asmuth09}. Also, we could use multi-modality \citep{Colas10} and inverse programming \citep{LeHy04} to get rid of the remaining (small: fire-retreat-move) FSM. Also, there are yet many collision cases that remain unsolved (particularly visible with contact units like Zealots and Zerglings), so we could also try: 
-\begin{itemize}
-\item adding local priority rules to solve collisions (for instance through an asymmetrical $\PP(Dir_i^{t-1}|Dir_i)$) that would entails units crossing lines with a preferred side (some kind of ``social rule''),
-\item use a units group level supervision using Bayesian units' distributions over $Dir$ as preferences or constraints (for a solver),
-\item use $\PP(Dir)$ as an input to another Bayesian model at the units group level of reasoning.
-\end{itemize}
-
+These results show that our heuristic (HAOI) is comparable to the original AI (OAI), perhaps a little better, but induces more collisions as we can see its performance diminish a lot in the 36 units setup vs OAI. For Bayesian units, the ``pick best'' (BAIPB) direction policy is very effective when battling with few units (and few movements because of static enemy units) as proved against OAI and HOAI, but its effectiveness decreases when the number of units increases: all units are competing for the best directions (to $flee()$ or $fightMove()$ in) and they collide. The sampling policy (BAIS) has way better results in large armies, and significantly better results in the 12 units vs BAIPB. BAIPB may lead our units to move inside the ``enemy zone'' a lot more to chase priority targets (in \textit{fightMove()}) and collide with enemy units or get kill. Sampling entails that the competition for the best directions is distributed among all the ``bests to good'' positions, from the units point of view. We illustrate this effect in Figure~\ref{fig:BayesianUnitChoice}: the units (on the right of the figure) have good reasons (combinations of sensory inputs, for instance of the damage map) to flee on the left, and there may be a peak of ``best position to be at''. AS they have not moved yet, they do not have interpolation of positions which will collide, so they are not repulsing each other at this position, all go together and collide. Sampling would, on average, provide a collision free solution here.
 \begin{figure}[h]
 \includegraphics[width=12cm]{images/distDir.png}
 \hspace{0.8cm}
 \includegraphics[width=2.6cm]{images/flee_sample.png}
-\caption{Example of $\PP(Dir)$ when fleeing, showing why sampling (BAIS, bottom graphic on the right) may be a better instead of picking the most best direction (BAIPB, here $Dir=17$ in the plot, top graphic on the right) and triggering units collisions.}
+\caption{Example of $\PP(Dir)$ when fleeing, showing why sampling (BAIS, bottom graphic on the right) may be a better instead of picking the best direction (BAIPB, here $Dir=17$ in the plot, top graphic on the right) and triggering units collisions.}
 \label{fig:BayesianUnitChoice}
 \end{figure}
-\label{BayesianUnitCCL}
-Finally, there are still two points on which our reactive \textit{decentralized} model can be challenged with ``optimality'':
-\begin{itemize}
-    \item local optimum which could stuck units: concave (strong) repulsors (static terrain, very high damage field) could trap our reactive, small look-ahead unit. A pragmatic solution to that is to remember that the $Obj$ sensory inputs come from the pathfinder and have its influence to grow when in difficult situations (not moved for a long time, concave shape detected...). Another solution is inspired by ants: simply release a repulsive field (a repulsive ``pheromone'') behind the unit and it will be repulsed by places it already visited instead of oscillating around the local optima (see Fig.~\ref{fig:BayesianTrailingPheromone}).
-    \item collision due to concurrency for ``best'' positions: as seen in Figure.~\ref{fig:BayesianUnitChoice}, units may compete for a well of potential. The solution that we use is to sample in the $Dir$ distribution, which gives better results than picking the most probable direction as soon as there are many units. Another solution, inspired by \citep{Marthi05concurrenthierarchical}, would be for the Bayesian units to communicate their $Dir$ distribution to the units group which would give orders that optimize either the sum of probabilities, or the minimal discrepancy in dissatisfaction, or the survival of costly units (as shown in Fig.~\ref{fig:BayesianUnitsGroup})...
-\end{itemize}
 
+We also ran tests in setups with flying units (Zerg Mutalisks) in which BAIPB fared as good as BAIS (no collision for flying units) and way better than OAI.
 
+\subsection{Our bot}
 
-The sensory inputs given to a ``Bayesian unit'' controls its objective(s) or goal(s) and the parametrization of his probabilistic model controls its behavior and degree of freedom. As an illustration (only), two of the extreme cases are $\PP(Direction=x|Objective=x)=1$: no freedom, $\PP(Direction=x|Objective=y)=\PP(Direction=x)$: no influence of the objective. %%% TODO
+This model is currently at the core of the micro-management of our StarCraft bot. In a competitive micro-management setup, we had a tie with the winner of AIIDE 2010 StarCraft micro-management competition, winning with ranged units (Protoss Dragoons), losing with contact units (Protoss Zealots) and having a perfect tie (the host wins thanks to a few less frames of lag) in the flying units setting (Zerg Mutalisks and Scourges).
 
-In general, if one decides to cover a lot of space with directions (\textit{i.e.} have more than just atomic directions, \textit{i.e.} use this model for planning), one needs to consider directions whose paths collide with each others. For instance, a $\vec{d_i}$ far from the unit can force the unit to go through a wall of allied units ($A_j = Big$) or potential damages. %%% TODO
+This model can be used to specify the behavior of units in RTS games. Instead of relying on a ``units push each other'' physics model for handling dynamic collision of units, this model makes the units react themselves to collision in a more realistic fashion (a marine cannot push a tank, the tank will move). More than adding realism to the game, this is a necessary condition for efficient micro-management in StarCraft: Brood War, as we do not have control over the game physics engine and it does not have this ``flow-like'' physics for units positioning.
+
+\section{Discussion}
+
+\subsection{Perspectives}
+
+\subsubsection{Adding a Sensory Input: Height Attraction}
+We make an example of adding a sensory input (that we sometimes use in our bot): height attraction. From a tactical point of view, it is interesting for units to always try to have the higher ground as lower ranged units have a high miss rate (almost 50\%) on higher positioned units. For each of the direction tiles $Dir_i$, we just have to introduce a new set of sensory variables: $H_{i \in \llbracket 0 \dots n \rrbracket} \in \{normal, high, very\_high, unknown\}$ ($unknown$ can be given by the game engine). $\PP(H_i|Dir_i)$ is just an additional factor in the decomposition: $JD \leftarrow JD \times \Pi_{i=1}^{n}\PP(H_i|Dir_i)$. The probability table looks like:
+\begin{center}
+\begin{tabular}{|l|c|}
+\hline
+$H_i$ & $dir_i$ \\
+\hline
+normal & 0.2 \\
+high & 0.3 \\
+very\_high & 0.45 \\
+unknown & 0.05 \\
+\hline
+\end{tabular}
+\end{center}
+%%% \begin{center}
+%%% \begin{tabular}{|l|c|c|}
+%%% \hline
+%%% $H_i$ & $dir_i$ & $\bar{dir_i}$ \\
+%%% \hline
+%%% normal & 0.2 & 0.25 \\
+%%% high & 0.3 & 0.25 \\
+%%% very\_high & 0.45 & 0.25 \\
+%%% unknown & 0.05 & 0.25 \\
+%%% \hline
+%%% \end{tabular}
+%%% \end{center}
+
+\subsubsection{Even More Realist Behaviors}
+The realism of units movements can also be augmented with a simple-to-set $\PP(Dir^{t-1}|Dir^t)$ steering parameter, although we do not use it in the competitive setup. We introduce $Dir_{i \in \llbracket 1 \dots n\rrbracket }^{t-1} \in \{True, False\}$: the previous selected direction, $Dir_i^{t-1} = T$ \textit{iff} the unit went to the direction $i$, else $False$ for a steering (smooth) behavior. The $JD$ would then be $JD \times \Pi_{i=1}^{n} \PP(Dir_i^{t-1} | Dir_i)$, with $\PP(Dir_i^{t-1} | Dir_i)$ the influence of the last direction, either a dot product (with minimal threshold) as before for the objective and flocking, or a parametrized Bell shape over all the $i$.
+
+\subsubsection{Reinforcement Learning}
+Future work could consist in using reinforcement learning \citep{Sutton} or evolutionary algorithms \citep{SmithCIG10} to learn the probability tables. It should enhance the performance of our Bayesian units in specific setups. It implies making up challenging scenarii and dealing with huge sampling spaces \citep{Asmuth09}. We learned the distribution of $\PP(Dmg_i | Dir_i)$ through simulated annealing on a specific fight task (by running thousands of games). Instead of having 4 parameters of the probability table to learn, we further restrained $\PP(Dmg_i|Dir_i)$ to be a discrete exponential distribution and we optimized the $\lambda$ parameter. When discretized back to the probability table (for four values of $Dmg$), the parameters that we learned, by optimizing the efficiency of the army in a fixed fight micro-management scenario, were even more risk adverse than the table presented with this model. The major problem with this approach is that parameters which are learned in a given scenario (map, setup) are not trivially re-usable in other setups, so that boundaries have to be found to avoid over-learning/optimization, and/or discovering in which typical scenario our units are at a given time.
+
+\subsubsection{Reducing Collisions}
+Also, there are yet many collision cases that remain unsolved (particularly visible with contact units like Zealots and Zerglings), so we could also try adding local priority rules to solve collisions (for instance through an asymmetrical $\PP(Dir_i^{t-1}|Dir_i)$) that would entails units crossing lines with a preferred side (some kind of ``social rule''),
+%\item use a units group level supervision using Bayesian units' distributions over $Dir$ as preferences or constraints (for a solver),
+%\item use $\PP(Dir)$ as an input to another Bayesian model at the units group level of reasoning.
+
+In collision due to concurrency for ``best'' positions: as seen in Figure.~\ref{fig:BayesianUnitChoice}, units may compete for a well of potential. The solution that we use is to sample in the $Dir$ distribution, which gives better results than picking the most probable direction as soon as there are many units. Another solution, inspired by \citep{Marthi05concurrenthierarchical}, would be for the Bayesian units to communicate their $Dir$ distribution to the units group which would give orders that optimize either the sum of probabilities, or the minimal discrepancy in dissatisfaction, or the survival of costly units (as shown in Fig.~\ref{fig:BayesianUnitsGroup}). Ideally, we could have a full Bayesian model at the \texttt{UnitsGroup} level, which takes the $\PP(Dir)$ distributions as sensory inputs and computes orders to units. This would be a centralized model but in which the complexity of micro-management would have been broken by the lower-level model presented in this chapter.
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=8cm]{images/UnitsGroup_BayesianUnits.pdf}
+\caption{Example of the decision taken at the units group level from ``compressed'' information in the form of the distribution on $Dir$ for each Bayesian unit. This can be viewed as a simple optimization problem (maximize sum of probabilities of decisions taken), or as a constraint satisfaction problem (CSP) like ``no unit should be left behind/die/dissatisfied'', or even as another sensory-motor problem with higher-level inputs ($Dir$ distributions). Related to \ref{BayesianUnitCCL}}
+\label{fig:BayesianUnitsGroup}
+\end{center}
+\end{figure}
+
+\subsubsection{Tuning Parameters}
+If we learn the parameters of such a model to mimic existing data (data mining) or to maximize a reward function (reinforcement learning), we can interpret the parameters that will be obtained more easily than parameters of an artificial neural network for instance. Parameters learned in one setup can be reused in another if they are understood. We claim that specifying or changing the behavior of this model is much easier than changing the behavior generated by a FSM, and game developers can have a fine control over it. Dynamic switches of behavior (as we do between the scout/flock/inposition/fight modes) are just one probability tables switch away. In fact, probability tables for each sensory input (or group of sensory inputs) can be linked to \textit{sliders} in a \textit{behavior editor} and game makers can specify the behavior of their units by specifying the degree of effect for each perception (sensory input) on the behavior of the unit and see the effect in real time. This is not restricted to RTS and could be applied to \glos{RPG} and even \glos{FPS} \gloss{gameplay}.
+
+\subsubsection{Avoiding Local Optima}
+Local optimum could trap and struck our reactive, small look-ahead, units: concave (strong) repulsors (static terrain, very high damage field). A pragmatic solution to that is to remember that the $Obj$ sensory inputs come from the pathfinder and have its influence to grow when in difficult situations (not moved for a long time, concave shape detected...). Another solution is inspired by ants: simply release a repulsive field (a repulsive ``pheromone'') behind the unit and it will be repulsed by places it already visited instead of oscillating around the local optima (see Fig.~\ref{fig:BayesianTrailingPheromone}).
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=7.4cm]{images/trailing_pheromones.pdf}
+\caption{Example of trailing repulsive charges (repulsive ``pheromones'') at already visited positions for Bayesian units to avoid being blocked by local optimums. The trajectory is indicated by the increasing numbers (most recent unit position in 19) and the (decaying) strength of the trailing repulsion is weaker in green and stronger in red. Related to \ref{BayesianUnitCCL}.}
+\label{fig:BayesianTrailingPheromone}
+\end{center}
+\end{figure}
+
+Another solution would be to consider more than just the atomic directions. Indeed, if one decides to cover a lot of space with directions (\textit{i.e.} use this model for with path-planning), one needs to consider directions whose paths collide with each others: if a direction is no longer atomic, this means that there are at least two paths leading to it, from the current unit position. The added complexity of dealing with these paths (and their possible collision routes with allier units or going through potential damages) may not be very aligned with the very reactive behavior that we envisioned here, but an in-between our proposed solution and full path-planning, for which it is costly to consider several dynamic different influences leading to frequent re-computation.
+
+\subsubsection{Probabilistic Modality}
+Finally, we could use multi-modality \citep{Colas10} to get rid of the remaining (small: fire-retreat-move) FSM. Instead of being in ``hard'' modes, the unit could be in a weighted sum of modes (summing to one) and we would have:
+$$\PP(Dir) = w_{fightMove()}\PP(Dir|sensory\_inputs)_{fightMove()} + w_{flee()}\PP(Dir|sensory\_inputs)_{flee()} \dots$$
+This could particularly help dealing with the fact that parameters learned from fixed scenarii would be too specialized. This way we could interpolate a continuous family of distributions for $\PP(Dir)$ from a fixed and finite number of parameters learned from a finite number of experiments setups.
+
+%The sensory inputs given to a ``Bayesian unit'' controls its objective(s) or goal(s) and the parametrization of his probabilistic model controls its behavior and degree of freedom. As an illustration, two of the extreme cases are $\PP(Direction=x|Objective=x)=1$: no freedom, $\PP(Direction=x|Objective=y)=\PP(Direction=x)$: no influence of the objective. %%% TODO
 
 \subsection{Conclusion}
-We have implemented this model in StarCraft, and it outperforms the original AI as well as other bots. Our approach does not require vertical integration of higher level goals, as opposed to CBR and reactive planning \citep{Ontanon2007,WeberCIG10}, it can have a completely different model above feeding sensory inputs like $Obj_i$. It scales well with the number of units to control thanks to the absence of communication at the unit level, and is more robust and maintainable than a FSM.
+\label{BayesianUnitCCL}
+We have implemented this model in StarCraft, and it outperforms the original AI as well as other bots. Our approach does not require a specific vertical integration for each different type of objectives (higher level goals), as opposed to CBR and reactive planning \citep{Ontanon2007,WeberCIG10}: it can have a completely different model above feeding sensory inputs like $Obj_i$. It scales well with the number of units to control thanks to the absence of communication at the unit level, and is more robust and maintainable than a FSM. Particularly, the cost to add a new sensory input (a new effect on the units behavior) is low.
+
