@@ -1,5 +1,6 @@
-\documentclass[a4paper,11pt,twoside]{memoir}
-%\documentclass[ebook,oneside,openany]{memoir}
+\documentclass[ebook,oneside,openany]{book}
+%\documentclass[a4paper,11pt,twoside]{memoir}
+\def \myebookformat {true} % true or false
 
 %%% PACKAGES:
 
@@ -27,10 +28,14 @@
 
 %%% VARIABLE CONF:
 
+\usepackage{ifthen}
+\ifthenelse{\equal{\myebookformat}{true}}{
+\input{htmlspecific.tex}  % hyperref for HTML
+%\usepackage{tex4ht}
+}{
 \input{pdfspecific.tex}    % hyperref, backrefs, pdfinfo 
-\usepackage{fullpage}      % for electronic viewing (no headers)
-%\input{htmlspecific.tex}  % hyperref for HTML
-
+\usepackage{fullpage}      % for electronic viewing (no headers) %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+}
 
 %%% FONT:
 
@@ -53,6 +58,7 @@
 %\usepackage[toc,page]{appendix} 
 \usepackage[toc]{glossaries}
 \makeglossaries
+\ifthenelse{\equal{\myebookformat}{false}}{
 \usepackage{minitoc}
 \setlength{\mtcindent}{24pt}
 \renewcommand{\mtcoffset}{0pt}
@@ -63,6 +69,7 @@
 \renewcommand{\mtcSfont}{\small\rmfamily\upshape\bfseries}
 \renewcommand{\mtctitle}{}
 \def\chaptertoc{\minitoc \vskip 16pt}
+}{}
 
 
 %%% Mes commandes
@@ -90,8 +97,9 @@
 }
 
 
+\ifthenelse{\equal{\myebookformat}{false}}{
 \include{titre/template}
-
+}{}
 
 \linespread{1.12}
 %\date{}
@@ -99,7 +107,11 @@
 \begin{document}
 
 %\maketitle
+\ifthenelse{\equal{\myebookformat}{false}}{
 \MakeUGthesePDG
+}{
+TODO TITRE HTML/EPUB
+}
 
 %%%\byncsa
 \chapter*{Remerciements}
@@ -109,8 +121,10 @@
 \input{abstract/abstractEN.tex}
 
 
+\ifthenelse{\equal{\myebookformat}{false}}{
 \dominitoc
 \setcounter{tocdepth}{1}
+}{}
 \tableofcontents
 %\listoffigures
 %\listoftables

@@ -1,4 +1,5 @@
 \chapter{RTS AI: \textit{StarCraft: Broodwar}}
+\label{chapter:rtsai}
 \newglossaryentry{micro}{name=micro-management,description={gameplay actions that are manually addressed by the player; the way of maximizing one's army efficiency by using the units to the maximum of their potential.}}
 
 \begin{quotation}\textit{
@@ -8,7 +9,9 @@ We think of life as a journey with a destination (success, heaven). But we misse
 
 \lettrine{T}{his} chapter explains the basics of RTS gameplay, particularly StarCraft. We then list the (computational) challenges brought by RTS gameplay. We present a transversal decomposition of the RTS AI domain in levels of abstractions (strategy, tactics, \glos{micro}), which we will use for the rest of the dissertation.
 
+\ifthenelse{\equal{\myebookformat}{false}}{
 \chaptertoc
+}{}
 
 \section{How does the game work}
 
@@ -156,6 +159,9 @@ While acknowledging these challenges for RTS AI, we now propose a different task
 \begin{figure}[!ht]
 \begin{center}
 \begin{small}
+\ifthenelse{\equal{\myebookformat}{true}}{
+\includegraphics[width=12cm]{images/tikz7.png}
+}{
 \begin{tikzpicture}
   \path[mindmap,concept color=black!80!white,text=white]
     node[concept] {RTS AI: predict, decide, perform}
@@ -179,6 +185,7 @@ While acknowledging these challenges for RTS AI, we now propose a different task
       child[concept color=blue!30!cyan] { node[concept] {Technology}} %{Spendings balance} }
     };  
 \end{tikzpicture}
+}
 \end{small}
 \end{center}
 \caption{A mind-map of RTS AI. This is the tasks decomposition that we will use for the rest of the thesis.}

@@ -2,7 +2,12 @@ simple:
 	pdflatex phdthesis
 
 html:
-	mk4ht htlatex youfile.tex 'xhtml,charset=utf-8,pmathml' ' -cunihtf -utf8 -cvalidate'
+	#mk4ht htlatex phdthesis 'xhtml,charset=utf-8,pmathml' ' -cunihtf -utf8 -cvalidate'
+	htlatex phdthesis myxhtml
+
+bib:
+	bibtex phdthesis
+	makeglossaries phdthesis
 
 all:
 	pdflatex phdthesis

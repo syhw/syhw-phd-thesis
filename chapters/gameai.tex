@@ -27,7 +27,9 @@
 \lettrine{I}{s} the primary goal of game AI to win the game? ``Game AI'' is simultaneously a research topic and an industry standard practice, for which the main metric is the fun the players are having. Its uses range from character animation, to behavior modeling, strategic play, and a true gameplay component. In this chapter, we will give our educated guess about the goals of game AI, and review what exists for a broad category of games: abstract strategy games, partial information and/or stochastic games, different genres of computer games. Let us then focus on gameplay (from a player point of view) characteristics of theses games so that we can enumerate game AI needs. %%% XXX
 %\lettrine[image=true, lines=3, findent=3pt, nindent=0pt]{lettrines/W.png}{hat} is game AI? What are the goals of AI in games? What are its characteristics? Why is game AI an interesting subject for research? 
 
+\ifthenelse{\equal{\myebookformat}{false}}{
 \chaptertoc
+}{}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
@@ -147,6 +149,9 @@ Applying this theorem to Tic-tac-toe, we can say that winning is +1 point for th
 
 \begin{figure}
 \begin{center}
+\ifthenelse{\equal{\myebookformat}{true}}{                   %%%%%%%%%%%%%%%%%%%%%%%%%%%
+\includegraphics[width=8cm]{images/tikz1.png}  %%%%%%%%%%%%%%%%%%%%%%%%%%%
+}{
 \begin{tikzpicture}
 [thick]
   \foreach \x in {1,2,3}
@@ -177,6 +182,7 @@ Applying this theorem to Tic-tac-toe, we can say that winning is +1 point for th
 
   \draw (3,3) node{\tikz \draw (0,0) circle (10pt);};
 \end{tikzpicture}
+}
 \caption{A Tic-tac-toe board position, in which it is the ``circles'' player's turn to play. The labeling explains the indexing (left to right, bottom to top, starting at 1) of the grid.}
 \label{fig:TTT}
 \end{center}
@@ -185,6 +191,9 @@ Applying this theorem to Tic-tac-toe, we can say that winning is +1 point for th
 \begin{figure}
 %%%\hspace{-0.8cm}
 \begin{center}
+\ifthenelse{\equal{\myebookformat}{true}}{                   %%%%%%%%%%%%%%%%%%%%%%%%%%%
+\includegraphics[width=8cm]{images/tikz2.png}  %%%%%%%%%%%%%%%%%%%%%%%%%%%
+}{
 \begin{tikzpicture}
     [thick,
 level 1/.style={sibling distance=42mm},
@@ -329,6 +338,7 @@ level 3/.style={sibling distance=7mm}
     };
 \end{footnotesize}
 \end{tikzpicture}
+}
 \end{center}
 \caption{Minimax tree with initial position at Fig.~\ref{fig:TTT} state, \textbf{nodes} are states and \textbf{edges} are transitions, labeled with the move. Leafs are end-game states: 1 point for the win and -1 for the loss. Player is ``circles'' and plays first (first edges are player's moves).}
 \label{fig:minimaxTTT}
@@ -378,6 +388,9 @@ betacut/.style={postaction={decorate},
 \begin{figure}
 %%%\hspace{-0.8cm}
 \begin{center}
+\ifthenelse{\equal{\myebookformat}{true}}{                   %%%%%%%%%%%%%%%%%%%%%%%%%%%
+\includegraphics[width=8cm]{images/tikz3.png}  %%%%%%%%%%%%%%%%%%%%%%%%%%%
+}{
 \begin{tikzpicture}
     [thick,
 level 1/.style={sibling distance=32mm},
@@ -430,6 +443,7 @@ level 3/.style={sibling distance=7mm}
     \node [left] at (d4.west) {\textsc{Min}\ \ \ };
 \end{small}
 \end{tikzpicture}
+}
 \end{center}
 \caption{Alpha-beta cuts on a Minimax tree, \textbf{nodes} are states and \textbf{edges} are transitions, labeled with the values of positions at the bottom (max depth). Here is the trace of the algorithm: \textbf{1.} descend leftmost first and evaluated 2 and 3, \textbf{2.} percolate max(2,3) higher up to set $\beta = 3$, \textbf{3.} $\beta$-cut in $A$ because its value is at least 5 (which is superior to $\beta=3$), \textbf{4.} Update of $\alpha=3$ at the top node, \textbf{5.} $\alpha$-cut in $B$ because it is at most 0 (which is inferior to $\alpha=3$), \textbf{6.} $\alpha$-cut in $C$ because it is at most 2, \textbf{7.} conclude the best value for the top node is 3.}
 \label{fig:alphabeta}
@@ -486,6 +500,9 @@ The MoGo team \citep{GellyUCT, Gelly2006} introduced Upper Confidence Bounds for
 %/.style={postaction={decorate},
 %        decoration={markings,mark=at position .50 with {\draw (0.05,-.28)--(0.05,.28);\draw (-.05,-.28)--(-.05,.28);\node[right]{$\ \ \beta \ cut$};}}},
 }
+\ifthenelse{\equal{\myebookformat}{true}}{                   %%%%%%%%%%%%%%%%%%%%%%%%%%%
+\includegraphics[width=5cm]{images/tikz4.png}  %%%%%%%%%%%%%%%%%%%%%%%%%%%
+}{
 \begin{tikzpicture}
 [
 thick,
@@ -510,7 +527,11 @@ level 2/.style={sibling distance=8mm}
     };
 \end{footnotesize}
 \end{tikzpicture}
+}
 \hspace{1cm}
+\ifthenelse{\equal{\myebookformat}{true}}{                   %%%%%%%%%%%%%%%%%%%%%%%%%%%
+\includegraphics[width=5cm]{images/tikz5.png}  %%%%%%%%%%%%%%%%%%%%%%%%%%%
+}{
 \begin{tikzpicture}
 [
 thick,
@@ -536,7 +557,12 @@ level 2/.style={sibling distance=8mm}
     };
 \end{footnotesize}
 \end{tikzpicture}
+}
 \hspace{1cm}
+
+\ifthenelse{\equal{\myebookformat}{true}}{                   %%%%%%%%%%%%%%%%%%%%%%%%%%%
+\includegraphics[width=5cm]{images/tikz6.png}  %%%%%%%%%%%%%%%%%%%%%%%%%%%
+}{
 \begin{tikzpicture}
 [
 thick,
@@ -562,6 +588,7 @@ level 2/.style={sibling distance=8mm}
     };
 \end{scriptsize}
 \end{tikzpicture}
+}
 \caption{An iteration of the \textbf{while} loop in MCTS, from left to right:
 \textsc{ExpandFrom} select, \textsc{ExpandFrom} grow, \textsc{Evaluate} \& \textsc{Merge}.}
 \label{fig:MCTS}
@@ -686,7 +713,7 @@ As RTS are the central focus on this thesis, we will discuss specific problems a
 RTS gameplay consist in gathering resources, building up an economic and military power through growth and technology, to defeat your opponent by destroying his base, army and economy. It requires dealing with strategy, tactics, and units management (often called micro-management) in real-time. Strategy consist in what will be done in the long term as well as predicting what the enemy is doing. It particularly deals with the economy/army trade-off estimation, army composition, long-term planning. The three aggregate indicators for strategy are aggression, production, and technology. The tactical aspect of the gameplay is dominated by military moves: when, where (with regard to topography and weak points), how to attack or defend. This implies dealing with \textit{extensional} (what the invisible units under ``\glos{fogofwar}'' are doing) and \textit{intentional} (what will the visible enemy units do) uncertainty. Finally, at the actions/motor level, micro-management is the art of maximizing the effectiveness of the units \textit{i.e.} the damages given/damages received ratio. For instance: retreat and save a wounded unit so that the enemy units would have to chase it either boosts your firepower or weakens the opponent's. Both \citep{Human-LevelAIKillerApplication} and \cite{gunn} propose that RTS AI is one of the most challenging genres, because all levels in the hierarchy of decisions are of importance.
 %%% incompleteness of information yielding uncertainty
 
-More will be said about RTS in the dedicated chapter~\ref{chapter:rts}.
+More will be said about RTS in the dedicated chapter~\ref{chapter:rtsai}.
 
 \subsubsection{State of the art \& Challenges}
 \citet{Buro04callfor} called for AI research in RTS games and identified the technical challenges as:% adversarial planning under uncertainty, learning and opponent modeling, and spatial and temporal reasoning.  
@@ -848,7 +875,7 @@ Time Racing & $b\approx 50-1,000$\footnote{$\{\ddot{x} \times \theta \times \phi
 Team FPS & $b\approx 100-2,000$\footnote{\label{samplingFPS}$\{X \times Y \times Z\}$ sampling$\times$50Hz + firing} $;d/min \approx 100$\footnote{\label{apmFPS}60 ``continuous move actions''+ 40 (mean) fire actions per sec} & some & some & some & moderate \\
 (Counter-Strike) & & & & & \\
 (Team Fortress 2) & & & & & \\
-FFPS duel & $b\approx 200-5,000$\footref{samplingFPS} $;d/min \approx 100$\footref{apmFPS} & some & negligible & some & much \\
+FFPS duel & $b\approx 200-5,000$\ifthenelse{\equal{\myebookformat}{true}}{\footnote{$\{X \times Y \times Z\}$ sampling$\times$50Hz + firing}}{\footref{samplingFPS}} $;d/min \approx 100$\ifthenelse{\equal{\myebookformat}{true}}{\footnote{60 ``continuous move actions''+ 40 (mean) fire actions per sec}}{\footref{apmFPS}} & some & negligible & some & much \\
 (Quake III) & & & & & \\
 MMORPG & $b\approx 50-100$\footnote{in RPGs, there are usually more abilities than in FPS games, but the player does not have to aim to hit a target, and thus positioning plays a lesser role than in FPS.} $;d/min \approx 60$\footnote{move and use abilities/cast spells} & few & moderate & moderate & much \\
 (WoW, DAoC) & & & & & \\
