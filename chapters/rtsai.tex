@@ -13,6 +13,7 @@ We think of life as a journey with a destination (success, heaven). But we misse
 \section{How does the game work}
 
 \subsection{RTS Gameplay}
+\label{sec:rtsgameplay}
 We first introduce the basic components of a real-time strategy (RTS) game. The player is usually referred as the ``commander'' and perceives the world in an allocentric ``God's view'', performing mouse and keyboard actions to give orders to units (or squads of units) within a circumvented area (the ``map''). In a RTS, players need to gather resources to build military units and defeat their opponents. To that end, they often have \textit{worker units} (or extraction structures) than can gather resources needed to build \textit{workers}, \textit{buildings}, \textit{military units} and \textit{research upgrades}. Workers are often also builders (as in StarCraft) and are weak in fights compared to military units. Resources may have different uses, for instance in StarCraft: minerals are used for everything, whereas gas is only required for advanced buildings or military units, and technology upgrades. Buildings and research upgrades define technology trees (directed acyclic graphs) and each state of a 
 \newglossaryentry{techtree}{name={tech tree},description={abbreviation for ``technological tree'', state of the technology (buildings, researches, upgrades) which are unlocked/available to a given player.}}
 %\newglossaryentry{techtree}{name={tech tree},description={abbr. for ``technological tree'', the state of buildings and technologies evolution (technologies which are unlocked) of a given player}}
@@ -39,13 +40,13 @@ In StarCraft, there are three factions with very different units and technology 
     \item \textit{Zerg}: insectoid alien race with cheap, quick to produce but weak units.
 \end{itemize}
 
-All factions use workers to gather resources, and all other characteristics are different: from military units to ``\gloss{techtree}'', gameplay styles. Races are so different that highly skilled players focus on playing with a single race (but against all three others). There are two types of resources, often located close together, minerals and gas. From minerals, one can build basic buildings and units, which opens the path to more advanced buildings, technologies and units, which will in turn all require gas to be produced. While minerals can be gathered at an increasing rate (bounded asymptotically) the more workers are put at work, the gas gathering rate is quickly limited to 3 workers per gas geyser (i.e. per base). There is another third type of ``special'' resource (called \newglossaryentry{supply}{name=supply,description={maximum number of units that a player can control at a given time, can be increased up to a hard limit (200 in StarCraft).}}\textit{\glos{supply}}), which is the current limit of population a player can control. It can be upgraded by building special buildings (Protoss Pylon, Terran Supply Depot) or units (Zerg Overlord), giving 9 to 10 additional supply, up to a hard limit of 200. Some units cost more supply than others (from 0.5 for a Zergling to 8 for a Protoss Carrier or Terran Battlecruiser). In Figure~\ref{fig:SC_eco}, we show the very basics of Protoss economy and buildings. %In Figure~\ref{fig:SC_battle}, we show
+All factions use workers to gather resources, and all other characteristics are different: from military units to ``\gloss{techtree}'', gameplay styles. Races are so different that highly skilled players focus on playing with a single race (but against all three others). There are two types of resources, often located close together, minerals and gas. From minerals, one can build basic buildings and units, which opens the path to more advanced buildings, technologies and units, which will in turn all require gas to be produced. While minerals can be gathered at an increasing rate (bounded asymptotically) the more workers are put at work, the gas gathering rate is quickly limited to 3 workers per gas geyser (i.e. per base). There is another third type of ``special'' resource, called \newglossaryentry{supply}{name=supply,description={cost in population (or supply) of a given unit, or current population count of a player.}}\textit{\glos{supply}}, which is the current population of a given player (or the cost in population of a given unit), and \newglossaryentry{maxsupply}{name={max supply},description={maximum number of units that a player can control at a given time, can be increased up to a hard limit (200 in StarCraft).}}\textit{\glos{maxsupply}}, which is the current limit of population a player can control. \Glos{maxsupply} can be upgraded by building special buildings (Protoss Pylon, Terran Supply Depot) or units (Zerg Overlord), giving 9 to 10 additional \glos{maxsupply}, up to a hard limit of 200. Some units cost more supply than others (from 0.5 for a Zergling to 8 for a Protoss Carrier or Terran Battlecruiser). In Figure~\ref{fig:SC_eco}, we show the very basics of Protoss economy and buildings. Supply will sometimes be written supply/max supply (supply on max supply). For instance 4/9 is that we currently have a population of 4 (either 4 units of 1, or 2 of 2 or ...) on a current maximum of 9. %In Figure~\ref{fig:SC_battle}, we show
 
 \newglossaryentry{mini-map}{name=mini-map,description={radar view of the full game area, shown in the bottom corner of the interface in StarCraft.}}
 \begin{figure}[!ht]
 \begin{center}
-\includegraphics[width=13cm]{images/SC_eco.png}
-\caption{A StarCraft screenshot of a Protoss base, with annotations. The interface (heads up display at the bottom) shows the \textit{\glos{mini-map}}. The center of the interface (bottom) shows the selected unit (or group of units), here the Protoss Nexus (main economical building, producing workers and to which resources are brought) which is in the center of the screen and circled in green. The bottom right part shows the possible actions (here build a Protoss Probe or set a rally point). The top right of the screen shows the minerals (442), gas (208) and \glos{supply} (25 total on 33 current maximum). The dotted lines demarcate economical parts with active workers: red for minerals mining and green for gas gathering. The plain cut outs of buildings show: a Pylon (white), a Forge (orange, for upgrades and access to static defense), a Cybernetics Core (yellow, for technological upgrades and expanding the tech tree), a Gateway (pink, producing ground units), a Photon Cannon (blue, static defense).}
+\includegraphics[width=14cm]{images/SC_eco.png}
+\caption{A StarCraft screenshot of a Protoss base, with annotations. The interface (heads up display at the bottom) shows the \textit{\glos{mini-map}}. The center of the interface (bottom) shows the selected unit (or group of units), here the Protoss Nexus (main economical building, producing workers and to which resources are brought) which is in the center of the screen and circled in green. The bottom right part shows the possible actions (here build a Protoss Probe or set a rally point). The top right of the screen shows the minerals (442), gas (208) and \glos{supply} (25 total) on \glos{maxsupply} (33). The dotted lines demarcate economical parts with active workers: red for minerals mining and green for gas gathering. The plain cut outs of buildings show: a Pylon (white), a Forge (orange, for upgrades and access to static defense), a Cybernetics Core (yellow, for technological upgrades and expanding the tech tree), a Gateway (pink, producing ground units), a Photon Cannon (blue, static defense).}
 \label{fig:SC_eco}
 \end{center}
 \end{figure}
@@ -78,15 +79,16 @@ At the highest levels of play, StarCraft games usually last between 6 (shortest 
 \begin{center}
 \begin{tabular}{|l|l|l|}
 \hline
-Supply & Build & Note \\
+Supply/Max supply & Build & Note \\
+(population/max) & or Product & \\
 \hline
-8 & Pylon & ``supply/psi/control/population'' building \\
-10 & Gateway & units producing structure \\
-12 & Assimilator & constructed on a gas geyser, to gather gas \\
-14 & Cybernetics Core & technological building \\
-16 & Pylon & ``supply/psi/control/population'' building \\
-16 & Range & it is a research/tech \\
-16 & Dragoon & first military unit \\
+8/9 & Pylon & ``supply/psi/control/population'' building \\
+10/17 & Gateway & units producing structure \\
+12/17 & Assimilator & constructed on a gas geyser, to gather gas \\
+14/17 & Cybernetics Core & technological building \\
+16/17 & Pylon & ``supply/psi/control/population'' building \\
+16/17 & Range & it is a research/tech \\
+17/25 & Dragoon & first military unit \\
 \hline
 \end{tabular}
 \end{center}
@@ -98,12 +100,12 @@ Supply & Build & Note \\
 \begin{figure}[!ht]
 \begin{center}
 \begin{tabular}{cc}
-\includegraphics[width=7.8cm]{images/SC_game/SC_start_game.png} &
-\includegraphics[width=7.8cm]{images/SC_game/SC_first_gate.png} \\
-\includegraphics[width=7.8cm]{images/SC_game/SC_scout_opponent.png} & 
-\includegraphics[width=7.8cm]{images/SC_game/SC_expand.png} \\ 
-\includegraphics[width=7.8cm]{images/SC_game/SC_upgrade_attack.png} & 
-\includegraphics[width=7.8cm]{images/SC_game/SC_queue_production.png}
+\includegraphics[width=8cm]{images/SC_game/SC_start_game.png} &
+\includegraphics[width=8cm]{images/SC_game/SC_first_gate.png} \\
+\includegraphics[width=8cm]{images/SC_game/SC_scout_opponent.png} & 
+\includegraphics[width=8cm]{images/SC_game/SC_expand.png} \\ 
+\includegraphics[width=8cm]{images/SC_game/SC_upgrade_attack.png} & 
+\includegraphics[width=8cm]{images/SC_game/SC_queue_production.png}
 \end{tabular}
 %SC_first_pylon.png
 \caption{Start and economical parts of a StarCraft game. The order of the screenshots goes from left to right and from top to bottom.}
@@ -114,10 +116,10 @@ Supply & Build & Note \\
 \begin{figure}[!ht]
 \begin{center}
 \begin{tabular}{cc}
-\includegraphics[width=7.8cm]{images/SC_game/SC_drop2a.png} &
-\includegraphics[width=7.8cm]{images/SC_game/SC_drop2b.png} \\
-\includegraphics[width=7.8cm]{images/SC_game/SC_dt_army.png} & 
-\includegraphics[width=7.8cm]{images/SC_game/SC_final_attack.png}
+\includegraphics[width=8cm]{images/SC_game/SC_drop2a.png} &
+\includegraphics[width=8cm]{images/SC_game/SC_drop2b.png} \\
+\includegraphics[width=8cm]{images/SC_game/SC_dt_army.png} & 
+\includegraphics[width=8cm]{images/SC_game/SC_final_attack.png}
 \end{tabular}
 \caption{Military moves from a StarCraft (PvT) game. The order of the screenshots goes from left to right and from top to bottom.}
 \label{fig:SC_game2}
@@ -207,11 +209,18 @@ This is shown in Figure~\ref{fig:sc_abstraction_times}. We will discuss the stat
 \end{figure}
 
 
-To conclude, we will now present our works on these domains (strategy, tactics, micro-management) in separate chapters. In Figure~\ref{fig:conceptbbq}, we present the flow of informations between the different inference and decision-making parts of the bot architecture. One can also view this problem as having a good model of one's strategy, one's opponent strategy, and taking decisions. The software architecture that we propose is to have services building and maintaining the model of the enemy as well as our state, and decision-making modules using all this information to give orders to actuators (filled in gray in Fig.~\ref{fig:conceptbbq}).
+To conclude, we will now present our works on these domains in separate chapters:
+\begin{itemize}
+    \item Micro-management: chapter~\ref{chapter:micro},
+    \item Tactics: chapter~\ref{chapter:tactics},
+    \item Strategy: chapter~\ref{chapter:strategy},
+    \item Robotic player (bot): chapter~\ref{chapter:bot}.
+\end{itemize}
+In Figure~\ref{fig:conceptbbq}, we present the flow of informations between the different inference and decision-making parts of the bot architecture. One can also view this problem as having a good model of one's strategy, one's opponent strategy, and taking decisions. The software architecture that we propose is to have services building and maintaining the model of the enemy as well as our state, and decision-making modules using all this information to give orders to actuators (filled in gray in Fig.~\ref{fig:conceptbbq}).
 
 \begin{figure}[!ht]
 \begin{center}
-\includegraphics[width=13cm]{images/starcraft_bbq_concept.pdf}
+\includegraphics[width=16cm]{images/starcraft_bbq_concept.pdf}
 \end{center}
 \caption{Information-centric view of the architecture of the major components of the bot. Arrows are labeled with the information or orders they convey: dotted arrows are conveying constraints, double lined arrows convey distributions, plain and simple arrows convey direct information or orders. The gray parts perform game actions (as the physical actions of the player on the keyboard and mouse).}
 \label{fig:conceptbbq}

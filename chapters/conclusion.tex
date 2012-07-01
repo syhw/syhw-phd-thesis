@@ -26,6 +26,7 @@ Two important research directions for tactics would be:
 \end{itemize}
 
 \subsubsection{Enemy Units Filtering}
+\label{sec:enemyunitsfilter}
 We consider a simple model, without speed nor steering nor $See$ variable for each position/unit. The fact that we see positions where the enemy units are is taken into account during the update.
 The idea is to have (learn) a multiple influences transition matrix on a Markov chain on top the regions discretization (see chapter~\ref{chapter:tactics}), which can be seen as one Markov chain for each combination of motion-influencing factors.
 
@@ -33,7 +34,6 @@ The \textbf{perception} of such a model would be for each unit if it is in a giv
 
 \vspace{0.3cm}
 \textit{Variables}\\
-\vspace{0.5cm}
 %There are $p$ regions, the full filter works on $m$ units, each of the units is represented by $n$ particles.
 The full filter works on $n$ units, each of the units having a mass in the each of the $m$ regions.
 
@@ -54,7 +54,6 @@ The full filter works on $n$ units, each of the units having a mass in the each 
 
 \vspace{0.3cm}
 \textit{Joint Distribution}\\
-\vspace{0.5cm}
 We consider all units conditionally independent give learned parameters. (This may be too strong an assumption.) %(false, we could cluster armies: but we can hope the parameters will account for units traditionally moving together).\\
 
 %%% \begin{eqnarray}
@@ -69,7 +68,6 @@ We consider all units conditionally independent give learned parameters. (This m
 
 \vspace{0.3cm}
 \textit{Forms}\\
-\vspace{0.5cm}
 
 \begin{itemize}
     \item $\PP(Agg)$ is a binomial distribution.
@@ -81,7 +79,6 @@ We consider all units conditionally independent give learned parameters. (This m
 
 \vspace{0.3cm}
 \textit{Identification (learning)}\\
-\vspace{0.5cm}
 
 $\PP(X^t_i|X^{t-1}_i, UT_i, Agg)$ is learned with a Laplace rule of succession from previous games. Against a given player and/or on a given map, one can use $\PP(X^t_i|X^{t-1}_i, UT_i, Agg, Player, Map)$ and use the learned transitions matrices as priors. When a player attacks in the dataset, we can infer she was aggressive at the beginning of the movements of the army which attacked. When a player gets attacked, we can infer she was defensive at the beginning of the movements of the army which defended. At other times, $\PP(Agg=true) = \PP(Agg=false) = 0.5$.
 \begin{eqnarray*}
@@ -91,7 +88,6 @@ $\PP(X^t_i|X^{t-1}_i, UT_i, Agg)$ is learned with a Laplace rule of succession f
 
 \vspace{0.3cm}
 \textit{Update (filtering)}\\
-\vspace{0.5cm}
 
 \begin{itemize}
     \item When a unit $i$ becomes hidden, which was seen in region $r$ just before, we have:
@@ -128,7 +124,6 @@ $$\PP(X^t_{i} = r) = \sum_{j=1}{m} \PP(X^{t-1}_i = r')\PP(X^t_i = r | X^{t-1}_i 
 
 \vspace{0.3cm}
 \textit{Questions}\\
-\vspace{0.5cm}
 
 \begin{itemize}
     \item When we want to infer where the $n$ enemy units are, we ask:
@@ -153,7 +148,7 @@ Offline learning of matrices (as shown in Fig.~\ref{fig:examplefilter}) of aggre
 \begin{figure}
 \begin{center}
 \includegraphics[width=15cm]{images/units_filter_markov.pdf}
-\caption{Example of the units filter transition matrices on a simple map (same as in Fig.~\ref{fig:terrainanalysis}) for aggressive and defensive sets of parameters for a given unit type. The thickness of the arrows is proportional to the transition probability between regions.
+\caption{Example of the units filter transition matrices on a simple map (same as in Fig.~\ref{fig:terrainanalysis}) for aggressive and defensive sets of parameters for a given unit type. The thickness of the arrows is proportional to the transition probability between regions.}
 \label{fig:examplefilter}
 \end{center}
 \end{figure}

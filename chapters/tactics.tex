@@ -1,4 +1,5 @@
 \chapter{Tactics}
+\label{chapter:tactics}
 \begin{quotation}
 \textit{Probability theory can tell us how our hypothesis fares relative to the alternatives that we have specified; it does not have the creative imagination to invent new hypotheses for us.}
 \begin{flushright}E.T. \cite{Jaynes}\end{flushright}
@@ -84,27 +85,48 @@ For that, we propose a model which can either predict enemy attacks or give us a
 On spatial reasoning, \cite{Pottinger00} described the \textit{BANG} engine implemented for the game Age of Empires II (Ensemble Studios), which provides terrain analysis functionalities to the game using influence maps and areas with connectivity information. 
 \cite{Forbus2002} presented a tactical qualitative description of terrain for wargames through geometric and pathfinding analysis. \cite{Hale08} presented a 2D geometric navigation mesh generation method from expanding convex regions from seeds. \cite{Perkins2010} automatically extracted choke points and regions of StarCraft maps from a pruned Voronoi diagram, which we used for our regions representations. 
 
-\cite{Hladky_anevaluation} benchmarked hidden semi-Markov models (HSMM) and particle filters in first person shooter games (FPS) units tracking. They showed that the accuracy of occupancy maps was improved using movement models (learned from the player behavior) in HSMM. \cite{Kabanza2010} improve the probabilistic hostile agent task tracker (PHATT \citep{PHATT}, a simulated HMM for plan recognition) by encoding strategies as HTN, used for plan and intent recognition to find tactical opportunities. \cite{weber2011aiide} used a particle model for hidden units' positions estimation in StaCraft.
+\cite{Hladky_anevaluation} benchmarked hidden semi-Markov models (HSMM) and particle filters in first person shooter games (FPS) units tracking. They showed that the accuracy of occupancy maps was improved using movement models (learned from the player behavior) in HSMM. \cite{particlefiltergameAI} used a particle filter for player position prediction in a FPS. \cite{Kabanza2010} improve the probabilistic hostile agent task tracker (PHATT \citep{PHATT}, a simulated HMM for plan recognition) by encoding strategies as HTN, used for plan and intent recognition to find tactical opportunities. \cite{weber2011aiide} used a particle model for hidden units' positions estimation in StaCraft.
 
 \cite{LTW} used case-based reasoning (CBR) to perform dynamic tactical plan retrieval (matching) extracted from domain knowledge in Wargus. \cite{Ontanon2007} based their real-time case-based planning (CBP) system on a plan dependency graph which is learned from human demonstration in Wargus. A case based behavior generator spawn goals which are missing from the current state and plan according to the recognized state. In \citep{Mishra2008,metalevelbehavioradaptrts}, they used a knowledge-based approach to perform situation assessment to use the right plan, performing runtime adaptation by monitoring its performance. \cite{CBR-RL} combined CBR and reinforcement learning to enable reuse of tactical plan components. 
 \cite{Bakkes09} used richly parametrized CBR for strategic and tactical AI in Spring (Total Annihilation open source clone). 
-\cite{CadenaG11} used fuzzy CBR (fuzzy case matching) for strategic and tactical planning (including expert knowledge) in StarCraft. \cite{Chung05} applied Monte-Carlo planning for strategic and tactical planning to a capture-the-flag mod of Open RTS. \cite{Balla_uctfor} applied upper confidence bounds on trees (UCT: a MCTS algorithm) to tactical assault planning in Wargus. 
+\cite{CadenaG11} used fuzzy CBR (fuzzy case matching) for strategic and tactical planning (including expert knowledge) in StarCraft. \cite{Chung05} applied Monte-Carlo planning for strategic and tactical planning to a capture-the-flag mod of Open RTS. \cite{UCT} applied upper confidence bounds on trees (UCT: a MCTS algorithm) to tactical assault planning in Wargus. 
 
 In Starcraft, \cite{Weber2010cr,WeberCIG10} produced tactical goals through reactive planning and goal-driven autonomy, finding the more relevant goal(s) to follow in unforeseen situations. 
 \cite{SORTS} used a cognitive approach mimicking human attention for tactics and units control in ORTS. \cite{PonsenMSA06} developed an evolutionary state-based tactics generator for Wargus. %On influence maps, \cite{teamCompositionRTS} studied team composition and maneuvering by learning a self-organizing map, while \cite{HagelbackJ08} presented a multi-agent potential field based bot .....
 Finally, Avery et al. \cite{Avery09} and Smith et al. \cite{SmithCIG10} co-evolved influence map trees for spatial (tactical) reasoning in RTS games. 
 
-
 \section{Perception and Tactical Goals}
 \subsection{Space Representation}
+The \textit{maps} on which we play restrain movement and vision of ground units (flying units are not affected). As ground units are much more prevalent and more cost-efficient than flying units, being able to reason about terrain particularities is key for tactical reasoning. For that, we clustered the map in regions. 
+\newacronym{BWTA}{BWTA}{BroodWar Terrain Analyser}
+We used two kinds of regions: 
+\begin{itemize}
+    \item \glos{BWTA}\footnote{http://code.google.com/p/bwta/} regions and choke-dependent (choke-centered) regions (CDR). BWTA regions are obtained from a pruned Voronoi diagram on walkable terrain \citep{Perkins2010} and give regions for which chokes are the boundaries. We will note this regions ``Reg'' or regions.
+    \item As battles often happens at chokes, choke-dependent regions are created by doing an additional (distance limited) Voronoi tesselation spawned at chokes, its regions set is $(regions \setminus chokes) \cup chokes$. We will note this regions ``CDR'' or choke-dependent regions.
+\end{itemize}
+Figure~\ref{fig:terrainanalysis} illustrate regions and choke-dependant regions (CDR). Results for choke-dependent regions are not fully detailed. Figure~\ref{:BWTA} shows a real StarCraft map and its decomposition into regions with BWTA.
+
 \begin{figure}[!h]
+\begin{center}
 \includegraphics[width=16cm]{images/terrain_analysis.png}
 \caption{A very simple map on the left, which is transformed into regions (between chokes in dotted red lines) by Voronoi tessellation and clustering. These plain regions (numbers in red) are then augmented with choke-dependent regions (letters in blue)}%: $CDR = (regions \setminus chokes)) \cup chokes$.}
 \label{fig:terrainanalysis}
+\end{center}
 \end{figure}
-We used two kinds of regions: BroodWar Terrain Analyser (BWTA) regions and choke-dependent (choke-centered) regions. BWTA regions are obtained from a pruned Voronoi diagram on walkable terrain \citep{Perkins2010} and give regions for which chokes are the boundaries. As battles often happens at chokes, choke-dependent regions are created by doing an additional (distance limited) Voronoi tesselation spawned at chokes, its regions set is $(regions \setminus chokes) \cup chokes$. Figure~\ref{fig:terrainanalysis} illustrate regions and choke-dependant regions (CDR). Results for choke-dependent regions are not fully detailed.
 
-\subsection{Valuing Locations}
+\subsection{Evaluating Regions}
+\subsubsection{Partial Observations}
+From partial observations, one has to derive meaningful information about what may be the state of the game. For tactics, as we are between micro-management and strategy, we are interested in knowing:
+\begin{itemize}
+    \item enemy units positions. In this chapter, we consider that units we have seen and that are now under the \glos{fogofwar} are at the last seen position for some time ($\approx few\ minutes$), and then we have no clue where they are (uniform distribution on regions which are not visible) but we know that they exist. We could diffuse their position (respecting the terrain constraints for ground units) proportionally to their speed, or use a more advanced particle filter as \cite{weber2011aiide} did for StarCraft, or as explained in section~\ref{sec:enemyunitsfilter}.
+    \item enemy buildings positions. For that, we will simply consider that buildings do not move at all (that is not completely true as some Terran buildings can move, but a good assumption nevertheless). Once we have seen a building, if we have not destroyed it, it is there, even under the \glos{fogofwar}. 
+    \item enemy strategy (aggressiveness and \glos{techtree} for instance). Here, we will only use the estimation of the enemy's tech tree as it is the output of a part of our strategy estimation in chapter~\ref{chapter:strategy}.
+\end{itemize}
+The units and buildings perceptions are too low-level to be exploited directly in a tactical model. We will now present importance and defense scoring heuristics.
+
+\subsubsection{Scoring Heuristics}
+To decide \textit{where} and \textit{how} to attack (or defend), we need information about the particularity of above-mentioned regions. For that, we built heuristics taking low-level information about enemy units and buildings positions, and giving higher level estimator. They are mostly encoding common sense. We do not put too much care into building these heuristics because they will also be used during learning and the learned parameters of the model will have adapted it to their bias. 
+
 We note $s^{a\ or\ d}_{unit\ type}(r)$ for the balanced score of units from attacker or defender ($^{a}$ or $^{b}$) of a given type in region $r$. The balanced score of units is just the sum on all units of each unit score ($= minerals\_value + \frac{4}{3}gas\_value + 50supply\_value$). The heuristics we used in our benchmarks (which we could change) are: 
 %\begin{itemize}
 $$economical\_score^d(r) = \frac{s^d_{workers}(r)}{\sum_{i \in regions} s^d_{workers}(i)}$$
