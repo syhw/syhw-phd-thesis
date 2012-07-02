@@ -288,24 +288,102 @@ RTS & 1.941 & 1.692 & 86 & 1.912 & 1.808 & 86 & 1.706 & 1.673 & 83 & 1.882 & 1.7
 \EndFunction
 
 \Function{build}{$i,j$}
-\ForAll{$(x,y) \in neighbours(i,j)$}
+\State $refill \leftarrow list()$
+\ForAll{$(x,y) \in neighbours(i,j)$} \Comment{cut the flow arround}
     \State $dir_{x,y}.remove((x-i, y-j))$
     \If{$dir_{x,y}.empty()$}
-        \State $build(x,y)$
+        \State $refill.append((x,y))$
+        \State $build(x,y)$ \Comment{Recursively cut the flow}
     \EndIf
 \EndFor
+\While{$\neg fixed\_point$} \Comment{refill as in the initialization...}
+    \State $current \leftarrow dir$
+    \ForAll{$(x,y) \in refill$}
+        %\Comment{neighbour with a non empty flow}
+        \If{$\exists (i,j) \in neighbours(x,y)$ such that $current_{i,j} \neq list() $}             
+        \Comment{non empty flow}
+            \State $dir_{x,y}.append((x-i, y-j))$
+        \EndIf
+    \EndFor
+\EndWhile
+\EndFunction
+
+
+\Function{is\_isolated?}{$i,j$}
+    \If{$dir_{i,j}.empty()$}
+        \State \Return True
+    \Else
+        \State \Return False
+    \EndIf
 \EndFunction
 \end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}
-\caption{Production/Construction Planning}
-\label{alg:planning}
-\begin{algorithmic}
-\Function{init}{}
-\EndFunction
-\end{algorithmic}
-\end{algorithm}
+%%% \begin{algorithm}
+%%% \caption{Production/Construction Planning}
+%%% \label{alg:planning}
+%%% \begin{algorithmic}
+%%% \Function{init}{}
+%%% \EndFunction
+%%% \end{algorithmic}
+%%% \end{algorithm}
+
+\begin{figure}[h]
+\begin{verbatim}
+[Replay Start]
+RepPath: $(PATH/TO/REP)
+MapName: $MAPNAME
+NumStartPositions: $N
+The following players are in this replay:
+<list of 
+$PLAYER_ID, $PLAYER_NAME, $START_LOC
+separated by newlines>
+Begin replay data:
+<list of
+$FRAME_NUMBER,$PLAYER_ID,$ACTION,[$ACTION_DEP_ARGS]
+separated by newlines>
+[EndGame]
+\end{verbatim}
+\caption{Template of an RGD (replay general data) file from the dataset (see section~\ref{sec:dataset})}
+\label{fig:rgdfile}
+\end{figure}
+
+\begin{figure}[h]
+\begin{verbatim}
+<list of
+$FRAME,$UNIT_ID,$ORDER,TargetOrPosition,$POS_X,$POS_Y
+separated by newlines>
+\end{verbatim}
+\caption{Template of an ROD (replay order data) file from the dataset (see section~\ref{sec:dataset})}
+\label{fig:rodfile}
+\end{figure}
+
+\begin{figure}[h]
+\begin{verbatim}
+Regions,$REGIONS_IDS_COMMA_SEPARATED
+$REGION_ID, $DIST, $DIST, ...
+$REGION_ID, $DIST, $DIST, ...
+.
+.
+.
+ChokeDepReg,$REGIONS_IDS_COMMA_SEPARATED
+$REGION_ID, $DIST, $DIST, ...
+$REGION_ID, $DIST, $DIST, ...
+.
+.
+.
+[Replay Start]
+<list of
+$FRAME,$UNIT_ID,$POS_X,$POS_Y
+$FRAME,$UNIT_ID,Reg,$REGION_ID
+$FRAME,$UNIT_ID,CDR,$CDR_ID
+separated by newlines>
+\end{verbatim}
+\caption{Template of an RLD (replay location data) file from the dataset (see section~\ref{sec:dataset})}
+\label{fig:rldfile}
+\end{figure}
+
+
 
 \section{Figures}
 \begin{figure}[h]
@@ -336,3 +414,11 @@ RTS & 1.941 & 1.692 & 86 & 1.912 & 1.808 & 86 & 1.706 & 1.673 & 83 & 1.882 & 1.7
 \end{center}
 \end{figure}
 
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=13cm]{images/flow_buildings_placer.pdf}
+\caption{Example of the algorithm~\ref{alg:flood} in a case in which there are buildings A, B, C, D and building in the new cross spots would close the paths to the interior and trap units. Left: flood filling of the region with the source at the choke (bottom right). The arrows show the $dir$ vectors for each tile. Right: recursive calls to \texttt{build} which drain the interior zone. Refilling will not be able to refill the middle.}
+\label{fig:buildingsplacer}
+\end{center}
+\end{figure}

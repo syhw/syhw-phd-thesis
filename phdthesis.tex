@@ -1,6 +1,7 @@
-\documentclass[ebook,oneside,openany]{book}
-%\documentclass[a4paper,11pt,twoside]{memoir}
-\def \myebookformat {true} % true or false
+\documentclass[a4paper,11pt,twoside]{memoir}
+\def \myebookformat {false} % true or false
+%\documentclass[ebook,oneside,openany]{book}%article, report
+%\def \myebookformat {true} % true or false
 
 %%% PACKAGES:
 
@@ -19,7 +20,7 @@
 \usepackage{textcomp}
 \usepackage{multirow}
 \usepackage{ulem}
-\usepackage{cclicenses}
+\usepackage{ccicons}
 \usepackage{tikz}
 \usetikzlibrary{shapes,arrows,mindmap,trees}
 \usetikzlibrary{decorations.pathmorphing}
@@ -110,7 +111,24 @@
 \ifthenelse{\equal{\myebookformat}{false}}{
 \MakeUGthesePDG
 }{
-TODO TITRE HTML/EPUB
+\begin{center}
+\begin{LARGE}Bayesian Programming and Learning for Multi-Player Video Games\end{LARGE}\\
+\vspace{0.5cm}
+
+\begin{Large}Application to RTS AI\end{Large}\\
+
+\vspace{3cm}
+
+\begin{large}Ph.D thesis\end{large}\\
+
+\vspace{1cm}
+
+\begin{Large}Gabriel Synnaeve\end{Large}\\
+
+%\date{\today}\\
+
+$\ccbynceu$
+\end{center}
 }
 
 %%%\byncsa

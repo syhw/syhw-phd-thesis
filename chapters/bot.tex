@@ -1,7 +1,11 @@
-\chapter{BroodwarBotQ: putting it all together}
+\chapter{BroodwarBotQ}%: putting it all together}
 %%% There's no difference between a pessimist who says, "Oh it's hopeless, so don’t bother doing anything." and an optimist who says, "Don't bother doing anything, it's going to turn out fine anyways. Either way, nothing happens.
 %%% --Yvon Chouinard
 \label{chapter:bot}
+
+
+%%% BBQ LOC
+%%% cpp:          23234
 
 \begin{quotation}
 \textit{Dealing with failure is easy: Work hard to improve. Success is also easy to handled: You've solved the wrong problem. Work hard to improve.}\\
@@ -21,7 +25,17 @@
 
 
 \section{Code Architecture}
+
+\label{sec:codearchitecture}
 mapping schéma code <-> schéma info-flow.
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=16cm]{images/BBQEarly2012.pdf}
+\caption{Simple view of the code architecture of \textsc{BroodwarBotQ}, the most important interactions are shown: every piece which has responsibility for the control of units refer to the \texttt{Arbitrator}, all macro components compete for resources, all other arrows represent orders or important transfers of information.}
+\label{fig:codearchitecture}
+\end{center}
+\end{figure}
 
 
 \section{A Game Walkthrough}

@@ -32,7 +32,7 @@
 
 %%% “SUCCESS: to laugh often and much; to win the respect of intelligent people and the affection of children; to earn the appreciation of honest critics and endure the betrayal of false friends; to appreciate beauty, to find the best in others; to leave the world a bit better, whether by a healthy child, a garden patch or a redeemed social condition ; to know even one life has breathed easier because you have lived. This is to have succeeded.” Emerson
 
-\lettrine{W}{e} present a Bayesian model for tactical decision-making in real-time strategy games. The main idea is to adapt the model to inputs from (possibly) biased heuristics. We evaluated the model in prediction of the enemy tactics on professional gamers data. This work was accepted for publication at Computational Intelligence in Games (CIG) 2012 in Grenada \citep{SYNNAEVE:Tactics}.
+\lettrine{W}{e} present a Bayesian model for tactical decision-making in real-time strategy games. The main idea is to adapt the model to inputs from (possibly) biased heuristics. We evaluated the model in prediction of the enemy tactics on professional gamers data. This work was accepted for publication at Computational Intelligence in Games (CIG) 2012 in Grenada \citep{SYNNAEVE:Tactics} and will be presented at the Computer Games Workshop of the European Conference of Artificial Intelligence (ECAI) 2012 \citep{SYNNAEVE:TacticsECAI}.
 
 \ifthenelse{\equal{\myebookformat}{false}}{
 \chaptertoc
@@ -106,7 +106,7 @@ We used two kinds of regions:
     \item \glos{BWTA}\footnote{http://code.google.com/p/bwta/} regions and choke-dependent (choke-centered) regions (CDR). BWTA regions are obtained from a pruned Voronoi diagram on walkable terrain \citep{Perkins2010} and give regions for which chokes are the boundaries. We will note this regions ``Reg'' or regions.
     \item As battles often happens at chokes, choke-dependent regions are created by doing an additional (distance limited) Voronoi tesselation spawned at chokes, its regions set is $(regions \setminus chokes) \cup chokes$. We will note this regions ``CDR'' or choke-dependent regions.
 \end{itemize}
-Figure~\ref{fig:terrainanalysis} illustrate regions and choke-dependant regions (CDR). Results for choke-dependent regions are not fully detailed. Figure~\ref{:BWTA} shows a real StarCraft map and its decomposition into regions with BWTA.
+Figure~\ref{fig:terrainanalysis} illustrate regions and choke-dependent regions (CDR). Results for choke-dependent regions are not fully detailed. Figure~\ref{:BWTA} shows a real StarCraft map and its decomposition into regions with BWTA.
 
 \begin{figure}[!h]
 \begin{center}
@@ -129,28 +129,188 @@ The units and buildings perceptions are too low-level to be exploited directly i
 \subsubsection{Scoring Heuristics}
 To decide \textit{where} and \textit{how} to attack (or defend), we need information about the particularity of above-mentioned regions. For that, we built heuristics taking low-level information about enemy units and buildings positions, and giving higher level estimator. They are mostly encoding common sense. We do not put too much care into building these heuristics because they will also be used during learning and the learned parameters of the model will have adapted it to their bias. 
 
-We note $s^{a\ or\ d}_{unit\ type}(r)$ for the balanced score of units from attacker or defender ($^{a}$ or $^{b}$) of a given type in region $r$. The balanced score of units is just the sum on all units of each unit score ($= minerals\_value + \frac{4}{3}gas\_value + 50supply\_value$). The heuristics we used in our benchmarks (which we could change) are: 
-%\begin{itemize}
+We note $s^{a\ or\ d}_{unit\ type}(r)$ for the balanced score of units from attacker or defender ($^{a}$ or $^{b}$) of a given type in region $r$. The balanced score of units is just the sum on all units of each unit score ($= minerals\_value + \frac{4}{3}gas\_value + 50supply\_value$). For instance the score of an army with 2 dragoons and 1 zealot is: $s_{army} = 2(125+\frac{4}{3}50+50\times2)+(100+50\times2)$. The heuristics we used in our benchmarks are: 
+\begin{itemize}
+    \item economical score: number of workers of the defender on her total number of workers in the game.
 $$economical\_score^d(r) = \frac{s^d_{workers}(r)}{\sum_{i \in regions} s^d_{workers}(i)}$$
-$$tactical\_score^d(r) = \sum_{i \in regions} s^d_{army}(i) \times dist(i,r)^{-1.5}$$
-We used $^{-1.5}$ such that the tactical value of a region in between two halves of an army, each at distance 2, would be higher than the tactical value of a region at distance 4 of the full (same) army. For flying units, \textit{dist} is the Euclidean distance, while for ground units it takes pathfinding into account.
+
+    \item tactical score: weighted sum of the defender's armies strengths in each regions, divided by the distance between the region in which each army is and the region at hand (to a power > 1). 
+$$tactical\_score^d(r) =\frac{\sum_{i \in regions} s^d_{army}(i)}{dist(i,r)^{1.5}}$$% \sum_{i \in regions} s^d_{army}(i) \times dist(i,r)^{-1.5} = $$
+We used a power of $1.5$ such that the tactical value of a region in between two halves of an army, each at distance 2, would be higher than the tactical value of a region at distance 4 of the full (same) army. For flying units, \textit{dist} is the Euclidean distance, while for ground units it takes pathfinding into account.
+
+    \item ground defense score: the score of the defender's units which can attack ground units in region $r$, divided by the score of ground units of the attacker in region $r$.
 $$ground\_defense^d(r) = \frac{s^d_{can\_attack\_ground}(r)}{s^a_{ground\_units}(r)}$$
+
+    \item air defense score: the score of the defender's units which can attack flying units in region $r$, divided by the score of flying units of the attacker in region $r$.
 $$air\_defense^d(r) = \frac{s^d_{can\_attack\_air}(r)}{s^a_{air\_units}(r)}$$
-$$invis\_defense^d(r) = number^d_{detectors}$$
-%\end{itemize}
+
+    \item invisible defense score: the number of the defender's detectors (units which can view otherwise invisible units) in region $r$.
+$$invis\_defense^d(r) = number^d_{detectors}(r)$$
+\end{itemize}
 
 \subsection{Tech Tree}
-\glos{techtree}
-\ref{sec:rtsgameplay}
+\label{sec:techtree}
+Our model also uses the estimation of the opponent's \glos{techtree} to know what types of attacks are possible from them. An introduction to the tech tree is given in section~\ref{sec:rtsgameplay}. The tech tree is the backbone of the strategy: it defines what can and what cannot be built by the player. The left diagram of Figure~\ref{fig:techtreetwogatesgoonrange} shows the tech tree of the player after completion of the build order \ref{bo:two_gates_goon_range} in section~\ref{sec:rtsgameplay}. The strategic aspect of the tech tree is that it takes time (between 30 seconds to 2 minutes) to make a building, so tech trees and their evolutions through time result from a plan and reveal the intention of the player. 
+
+From partial observations, a more complete tech tree can be reconstructed: if an enemy unit which requires a specific building is seen, one can infer that the whole tech tree up to this unit's requirements is available to the opponent's. Further in section~\ref{sec:strategyprediction}, we will show how we took advantage of probabilistic modeling and learning to infer more about the enemy build tree from partial observation. In this chapter, we will limit our use of tech trees to be an indicator of what types of attacks can and cannot be committed.
+
+\begin{figure}[h]
+\begin{center}
+\tikzset{
+building/.style={nodes={fill=red!55}},
+techno/.style={nodes={fill=blue!45}}}
+
+\ifthenelse{\equal{\myebookformat}{true}}{                   %%%%%%%%%%%%%%%%%%%%%%%%%%%
+\includegraphics[width=5cm]{images/tikz8.png}  %%%%%%%%%%%%%%%%%%%%%%%%%%%
+}{
+\begin{tikzpicture}
+  [level distance=15mm,
+   every node/.style={fill=red!55,circle,inner sep=1pt},
+   level 1/.style={sibling distance=40mm},
+   level 2/.style={sibling distance=20mm},
+   level 3/.style={sibling distance=12mm}]
+   \node {\begin{footnotesize}Pylon\end{footnotesize}}
+   child {node {\begin{footnotesize}Gate\end{footnotesize}}
+       child {node {\begin{footnotesize}Core\end{footnotesize}}
+           %child {node {S}}
+           %child [missing]
+           %child {node {A}}
+           child[techno] {node {\begin{footnotesize}Range\end{footnotesize}}}
+       }
+%    }
+%child {node {F}
+%    child {node {C}}
+   };
+\end{tikzpicture}
+}
+\hspace{2cm}
+\ifthenelse{\equal{\myebookformat}{true}}{                   %%%%%%%%%%%%%%%%%%%%%%%%%%%
+\includegraphics[width=5cm]{images/tikz9.png}  %%%%%%%%%%%%%%%%%%%%%%%%%%%
+}{
+\begin{tikzpicture}
+  [level distance=15mm,
+   every node/.style={fill=red!60,circle,inner sep=1pt},
+   level 1/.style={sibling distance=36mm},
+   level 2/.style={sibling distance=20mm},
+   level 3/.style={sibling distance=14mm}]
+   \node {\begin{footnotesize}Pylon\end{footnotesize}}
+   child {node {\begin{footnotesize}Gate\end{footnotesize}}
+       child {node {\begin{footnotesize}Core\end{footnotesize}}
+           child[techno] {node {\begin{footnotesize}Range\end{footnotesize}}}
+           child {node {\begin{tiny}Stargate\end{tiny}}}
+           child {node {\begin{tiny}RoboFac.\end{tiny}}}
+       }
+   }
+child {node {\begin{footnotesize}Forge\end{footnotesize}}
+    child {node {\begin{footnotesize}Cannon\end{footnotesize}}}
+       };
+\end{tikzpicture}
+}
+\end{center}
+\caption{Two tech trees, the build trees subsets are the parts in red. Left: \glos{techtree} obtained at the end of the build order described in \ref{bo:two_gates_goon_range}. Right: a more advanced tech tree.}
+\label{fig:buildtreetwogatesgoon}
+\label{fig:techtreetwogatesgoonrange}
+\end{figure}
 
 \subsection{Tactical Goals}
+The decision that we want our AI system to make at this level is \textit{where} and \textit{how} to attack. This is reflected in the StarCraft bot as a \texttt{Goal} creation \ref{sec:codearchitecture}. \texttt{Goals} are interfacing high level tactical thinking with the steps necessary to their realization. A \texttt{Goal} recruits units and binds them under a \texttt{UnitsGroup} (see section~\ref{sec:unitsgroup}). A \texttt{Goal} is an \glos{FSM} in which two states are simple planners (an FSM with some form of procedural autonomy), it has:
+\begin{itemize}
+    \item preconditions, for instance a \textit{drop} attack needs to specify at least a transport unit (Shuttle/Dropship/Overlord) and ground attack units.
+    \item hard states: \textit{waiting precondition, in progress, in cancel, achieved, canceled}, which corresponds to the \texttt{Goal} advancement..
+    \item \textit{and} and/or \textit{or} logic subgoals with:
+        \begin{itemize}
+            \item a realization test
+            \item a proposition of action to try to realize it
+            \item an estimation of the ``distance'' to realization
+        \end{itemize}
+\end{itemize}
+In the \textit{in progress} and \textit{in cancel} modes, the ``plan'' is a simple search in the achievable subgoals and their ``distance'' to realization.
+
+The tactical model can specify \textit{where} to attack by setting a localized subgoal (Formation/See/Regroup/KillSubgoal...) to the right place. It can specify \textit{how} by setting the adequate precondition(s).
+
 
 \section{Dataset}
+\label{sec:dataset}
 \subsection{Source}
+\newglossaryentry{metagame}{name={meta-game},description={preparation and maneuvering before (and between) games to exploit: current trends, opponent's style and weaknesses, map's specificities (safe zones, back doors, timings), and psychological ``mind games''.}}
 % PvP 1336, PvT 7225, PvZ 6082, TvT 1384, TvZ 6322, ZvZ 598
-We downloaded more than 8000 replays to keep 7649 uncorrupted, 1v1 replays of very high level StarCraft games (pro-gamers leagues and international tournaments) from specialized websites\footnote{\url{http://www.teamliquid.net}}\footnote{\url{http://www.gosugamers.net}}\footnote{\url{http://www.iccup.com}}, we then ran them using BWAPI\footnote{\url{http://code.google.com/p/bwapi/}} and dumped units' positions, pathfinding and regions, resources, orders, vision events, for attacks (we trigger an attack tracking heuristic when one unit dies and there are at least two military units around): types, positions, outcomes. Basically, every BWAPI event was recorded, the dataset and its source code are freely available\footnote{\url{http://snippyhollow.github.com/bwrepdump/}}. 
+We downloaded more than 8000 replays to keep 7649 uncorrupted, 1v1 replays from professional gamers leagues and international tournaments of StarCraft, from specialized websites\footnote{\url{http://www.teamliquid.net}}\footnote{\url{http://www.gosugamers.net}}\footnote{\url{http://www.iccup.com}}. We then ran them using BWAPI\footnote{\url{http://code.google.com/p/bwapi/}} and dumped units' positions, pathfinding and regions, resources, orders, vision events, for attacks: types, positions, outcomes. Basically, every BWAPI event plus attacks was recorded, the dataset and its source code are freely available\footnote{\url{http://snippyhollow.github.com/bwrepdump/}}. 
+The implication of considering only replays of very good player allows us to use this dataset to learn the behaviors of our bot. Otherwise, particularly regarding the economy, a simple bot (AI) coupled with a planner can beat the average player, who does not have a tightly timed build order and/or not the sufficient \glos{APM} to execute. %carry it through. 
+%The only downside of using human-played games of StarCraft to train our bot is that the \glos{metagame}, the strategic and psychological game in-between rounds that is, is very different for bots (inexistant) than for humans.
+
+
 \subsection{Information}
+Table~\ref{tab:dataset} shows some metrics about the dataset. In this chapter, we are particularly interested in the number of attacks. Note that there the numbers of attacks for a given race have to be divided by two in a given \textit{non-mirror} match-up. So, there are 7072 Protoss attacks in PvP but there are no 70,089 attacks by Protoss in PvT but about half that.
+\begin{table}[h]
+\begin{tabular}{|l|c|c|c|c|c|c|}
+\hline
+match-up & PvP & PvT & PvZ & TvT & TvZ & ZvZ \\
+\hline
+%%%number of games & 448 & 2412 & 2034 & 463 & 2108 & 200 \\ % with corrupted, numbers or .rep
+number of games & 445 & 2408 & 2027 & 461 & 2107 & 199 \\
+number of attacks & 7072 & 70089 & 40121 & 16446 & 42175 & 2162 \\
+mean attacks/game & 15.89 & 29.11 & 19.79 & 35.67 & 20.02 & 10.86 \\
+mean time (frames) / game & 32342 & 37772 & 39137 & 37717 & 35740 & 23898 \\
+mean time (minutes) / game & 22.46 & 26.23 & 27.18 & 26.19 & 24.82 & 16.60 \\
+mean regions / game & 19.59 & 19.88 & 19.69 & 19.83 & 20.21 & 19.31 \\
+mean CDR / game & 41.58 & 41.61 & 41.57 & 41.44 & 42.10 & 40.70 \\
+%actions issued (game engine) & 10939983 & 79968161 & 63535130 & 12446386 & 62935651 & 4351740 \\
+actions issued (game engine) / game & 24584 & 33209 & 31344 & 26998 & 29869 & 21868 \\
+mean ``BWAPI \glos{APM}''\footnote{the difference with the, real world, gamers' APM is that when the player issues an order to a group of $n$ units, it counts $n$ orders and thus $n$ actions (while it took one selection and one order, so 2 actions). Professional gamers' APM averages are about 300 with spikes above 500, and sustained rates of 400 during fights.} (per player) & 547 & 633 & 577 & 515 & 602 & 659 \\
+mean ground distance\footnote{for regions connected by ground, pathfinding aware, in pixels} region $\leftrightarrow$ region & 2569 & 2608 & 2607 & 2629 & 2604 & 2596 \\ % divise by 32 for build tiles
+mean ground distance\footnote{for choke-dependent regions connected by ground, pathfinding aware, in pixels} CDR $\leftrightarrow$ CDR & 2397 & 2405 & 2411 & 2443 & 2396 & 2401 \\ % divise by 32 for build tiles
+\hline
+\end{tabular}
+\caption{Detailed numbers about our dataset. XvY means race X vs race Y matchs and is an abbreviation of the match-up: PvP stands for Protoss versus Protoss.}
+\label{tab:dataset}
+\end{table}
+
+By running the recorded games (\gloss{replay}) through StarCraft, we were able to recreate the full state of the game. Time is always expressed in games frames (24 frames per second). We recorded three types of files:
+\begin{itemize}
+    \item general data (see appendix~\ref{fig:rgdfile}): records the players' names, the map's name, and all information about events like \textit{creation} (along with \textit{morph}), \textit{destruction}, \textit{discovery} (for one player), \textit{change of ownership} (special spell/ability), for each units. It also shows attack events (detected by a heuristic, see below) and dumps the current economical situation every 25 frames: \gloss{mineral}, \glos{gas}, \glos{supply} (count and total: \glos{maxsupply}).
+    \item order data (see appendix~\ref{fig:rodfile}): records all the orders which are given to the units (individually) like \textit{move}, \textit{harvest}, \textit{attack unit}, their positions and their time.
+    \item location data (see appendix~\ref{fig:rldfile}): records positions of mobile units every 100 frames, and their position in regions and choke-dependent regions if they changed since last measurement. It also stores ground distances (pathfinding-wise) matrices between regions and choke-dependent regions in the header.
+\end{itemize}
+
 \subsection{Attacks}
+We trigger an attack tracking heuristic when one unit dies and there are at least two military units around. We then update this attack until it ends, recording every unit which took part in the fight. We log the position, participating units and fallen units for each player, the attack type and of course the attacker and the defender. Algorithm~\ref{alg:attackheuristic}\footnote{adapted from \url{http://github.com/SnippyHolloW/bwrepdump/blob/master/BWRepDump.cpp\#L1773} and \url{http://github.com/SnippyHolloW/bwrepdump/blob/master/BWRepDump.cpp\#L1147}} shows how we detect attacks.
+\begin{algorithm}
+\caption{Simplified attack tracking heuristic for extraction from games. The heuristics to determine the attack type and the attack radius and position are not described here. They look at the proportions of units types, which units are firing and the last actions of the players.}
+%, adapted from \url{http://github.com/SnippyHolloW/bwrepdump/}} 
+\label{alg:attackheuristic}
+\begin{algorithmic}
+\State $list tracked\_attacks$
+\Function{unit\_death\_event}{$unit$}
+    \State $tmp \leftarrow tracked\_attacks.which\_contains(unit)$
+    \If{$tmp \neq \emptyset$}
+        \State $tmp.update(unit)$ \Comment{$\Leftrightarrow update(tmp, unit)$}
+    \Else
+        \State $tracked\_attacks.push(attack(unit))$
+    \EndIf
+\EndFunction
+
+\Function{attack}{$unit$} \Comment{new attack constructor}
+    \State $self.convex\_enveloppe = propagate\_default\_enveloppe(unit)$ \Comment{$self \Leftrightarrow this$}
+    \State $self.type \leftarrow determine\_attack\_type(update(self, unit))$
+    \State \Return $self$
+\EndFunction
+
+\Function{update}{$attack, unit$}
+    \State $attack.update\_enveloppe(unit)$ \Comment{takes units ranges into account}
+    \State $c \leftarrow get\_context(attack.convex\_enveloppe)$
+    \State $self.units\_involved.update(c)$ 
+    \State $self.tick = default\_timeout()$
+    \State \Return $c$
+\EndFunction
+
+\Function{tick\_update}{}
+    \State $self.tick \leftarrow self.tick - 1$
+    \If{$self.tick < 0$}
+        \State $self.destruct()$
+    \EndIf
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
 
 
 \section{A Bayesian Tactical Model}
