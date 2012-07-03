@@ -129,20 +129,20 @@ The units and buildings perceptions are too low-level to be exploited directly i
 \subsubsection{Scoring Heuristics}
 To decide \textit{where} and \textit{how} to attack (or defend), we need information about the particularity of above-mentioned regions. For that, we built heuristics taking low-level information about enemy units and buildings positions, and giving higher level estimator. They are mostly encoding common sense. We do not put too much care into building these heuristics because they will also be used during learning and the learned parameters of the model will have adapted it to their bias. 
 
-We note $s^{a\ or\ d}_{unit\ type}(r)$ for the balanced score of units from attacker or defender ($^{a}$ or $^{b}$) of a given type in region $r$. The balanced score of units is just the sum on all units of each unit score ($= minerals\_value + \frac{4}{3}gas\_value + 50supply\_value$). For instance the score of an army with 2 dragoons and 1 zealot is: $s_{army} = 2(125+\frac{4}{3}50+50\times2)+(100+50\times2)$. The heuristics we used in our benchmarks are: 
+The value of a unit is just $minerals\_value + \frac{4}{3}gas\_value + 50supply\_value$. For instance the value of an army with 2 dragoons and 1 zealot is: $v_{army} = 2(125+\frac{4}{3}50+50\times2)+(100+50\times2)$. Now, we note $v^{a}_{type}(r)$ the value of all units of a given $type$ from the attacker ($^{a}$) in region $r$. We can also use $v^d$ for the defender. For instance $v_{dragoon}^d(r)$ is the sum of the values of all $dragoons$ in region $r$ from the defender ($^d$). The heuristics we used in our benchmarks are: 
 \begin{itemize}
     \item economical score: number of workers of the defender on her total number of workers in the game.
-$$economical\_score^d(r) = \frac{s^d_{workers}(r)}{\sum_{i \in regions} s^d_{workers}(i)}$$
+$$economical\_score^d(r) = \frac{number^d_{workers}(r)}{\sum_{i \in regions} number^d_{workers}(i)}$$
 
-    \item tactical score: weighted sum of the defender's armies strengths in each regions, divided by the distance between the region in which each army is and the region at hand (to a power > 1). 
-$$tactical\_score^d(r) =\frac{\sum_{i \in regions} s^d_{army}(i)}{dist(i,r)^{1.5}}$$% \sum_{i \in regions} s^d_{army}(i) \times dist(i,r)^{-1.5} = $$
+    \item tactical score: sum of the values of the defender's armies forces in each regions, divided by the distance between the region in which each army is and the region at hand (to a power > 1). 
+$$tactical\_score^d(r) =\frac{\sum_{i \in regions} v^d_{army}(i)}{dist(i,r)^{1.5}}$$% \sum_{i \in regions} v^d_{army}(i) \times dist(i,r)^{-1.5} = $$
 We used a power of $1.5$ such that the tactical value of a region in between two halves of an army, each at distance 2, would be higher than the tactical value of a region at distance 4 of the full (same) army. For flying units, \textit{dist} is the Euclidean distance, while for ground units it takes pathfinding into account.
 
-    \item ground defense score: the score of the defender's units which can attack ground units in region $r$, divided by the score of ground units of the attacker in region $r$.
-$$ground\_defense^d(r) = \frac{s^d_{can\_attack\_ground}(r)}{s^a_{ground\_units}(r)}$$
+    \item ground defense score: the value of the defender's units which can attack ground units in region $r$, divided by the score of ground units of the attacker in region $r$.
+$$ground\_defense^d(r) = \frac{v^d_{can\_attack\_ground}(r)}{v^a_{ground\_units}(r)}$$
 
-    \item air defense score: the score of the defender's units which can attack flying units in region $r$, divided by the score of flying units of the attacker in region $r$.
-$$air\_defense^d(r) = \frac{s^d_{can\_attack\_air}(r)}{s^a_{air\_units}(r)}$$
+    \item air defense score: the value of the defender's units which can attack flying units in region $r$, divided by the score of flying units of the attacker in region $r$.
+$$air\_defense^d(r) = \frac{v^d_{can\_attack\_air}(r)}{v^a_{air\_units}(r)}$$
 
     \item invisible defense score: the number of the defender's detectors (units which can view otherwise invisible units) in region $r$.
 $$invis\_defense^d(r) = number^d_{detectors}(r)$$
@@ -213,6 +213,7 @@ child {node {\begin{footnotesize}Forge\end{footnotesize}}
 \end{figure}
 
 \subsection{Attack Types}
+\label{sec:attacktypes}
 With the discretization of the map into regions and choke-dependent regions, one can reason about \textit{where} attacks will happen. The types of the attacks depends on the units types involved and their use. There may be numerous variations but we decided to keep the four main types of attacks in the vocabulary of gamers:
 \begin{itemize}
     \item \textit{ground} attacks, which may use all types of units (and so form the large majority of attacks). They are constrained by the map topography and by units collisions so chokes are very important: they are an advantage for the army with less contact units but enough ranged units or simply more ranged units, and/or the higher ground. 
@@ -234,7 +235,7 @@ The implication of considering only replays of very good player allows us to use
 
 
 \subsection{Information}
-Table~\ref{tab:dataset} shows some metrics about the dataset. In this chapter, we are particularly interested in the number of attacks. Note that there the numbers of attacks for a given race have to be divided by two in a given \textit{non-mirror} match-up. So, there are 7072 Protoss attacks in PvP but there are no 70,089 attacks by Protoss in PvT but about half that.
+Table~\ref{tab:dataset} shows some metrics about the dataset. In this chapter, we are particularly interested in the number of attacks. Note that there the numbers of attacks for a given race have to be divided by two in a given \textit{non-mirror} match-up. So, there are 7072 Protoss attacks in PvP but there are not 70,089 attacks by Protoss in PvT but about half that.
 \begin{table}[h]
 \begin{tabular}{|l|c|c|c|c|c|c|}
 \hline
@@ -322,7 +323,7 @@ With $n$ regions, we have:
     \item $E_{1:n} \in \{no, low, high\}$, $E_i$ is the discretized economical value of the region $i$ for the defender. We choose 3 values: \textit{no} workers in the regions, \textit{low}: a small amount of workers (less than half the total) and \textit{high}: more than half the total of workers in this region $i$.
     \item $T_{1:n} \in discrete\ levels$, $T_i$ is the tactical value of the region $i$ for the defender, see above for an explanation of the heuristic. Basically, $T$ is proportional to the proximity to the defender's army. In benchmarks, discretization steps are $0,0.05,0.1,0.2,0.4,0.8$ ($log_2$ scale).
     \item $TA_{1:n} \in discrete\ levels$, $TA_i$ is the tactical value of the region $i$ for the attacker (as above but for the attacker instead of the defender).
-    \item $B_{1:n} \in \{true, false\}$, $B_i$ tells if the region belongs (or not) to the defender. $\PP(B_i=true)=1$ if the defender has a base in region $i$ and $\PP(B_i=false)=1$ if the attacker has one. Influence zones of the defender can be measured (with uncertainty) by $\PP(B_i=true) \geq 0.5$ and vice versa.
+    \item $B_{1:n} \in \{true, false\}$, $B_i$ tells if the region belongs (or not) to the defender. $\PP(B_i=true)=1$ if the defender has a base in region $i$ and $\PP(B_i=false)=1$ if the attacker has one. Influence zones of the defender can be measured (with uncertainty) by $\PP(B_i=true) \geq 0.5$ and vice versa. In fact, when uncertain, $\PP(B_i=true)$ is proportional to the distance from $i$ to the closest defender's base (and vice versa). 
     \item $H_{1:n} \in \{ground, air, invisible, drop\}$, $H_i$: in predictive mode: how we will be attacked, in decision-making: how to attack, in region $i$.
     \item $GD_{1:n} \in \{no, low, med, high\}$: ground defense (relative to the attacker power) in region $i$, result from a heuristic. \textit{no} defense if the defender's army is $\geq 1/10th$ of the attacker's, \textit{low} defense above that and under half the attacker's army, \textit{medium} defense above that and under comparable sizes, \textit{high} if the defender's army is bigger than the attacker.
     \item $AD_{1:n} \in \{no, low, med, high\}$: same for air defense.
@@ -430,7 +431,7 @@ H_{1:n}, GD_{1:n}, AD_{1:n}, ID_{1:n}, HP, TT) \\
 \PP(\lambda_{B,i} | B_{1:n},B'_{1:n})\PP(B'_{1:n}) \\
 \left. \PP(AD_i,GD_i,ID_i|H_i)\PP(H_i|HP)\right]\PP(HP|TT)\PP(TT)\\
         Forms\\
-\PP(A)\ \mathrm{prior\ on\ attack\ in\ region}\ i\\
+\PP(A_i)\ \mathrm{prior\ on\ attack\ in\ region}\ i\\
 \PP(E,T,TA,B|A)\ \mathrm{covariance/probability\ table}\\ 
 \PP(\lambda_{B}|B,B') = 1.0\ iff\ B=B',\ else\ \PP(\lambda_{B}|B,B') = 0.0\ (functional\ Dirac)\\ 
 \PP(AD,GD,ID|H)\ \mathrm{covariance/probability\ table}\\
@@ -441,7 +442,7 @@ H_{1:n}, GD_{1:n}, AD_{1:n}, ID_{1:n}, HP, TT) \\
     Identification\ (using\ \delta)\\
 \PP(A=true)= \frac{n_{battles}}{n_{battles}+n_{not\ battles}} = \frac{\mu_{battles/game}}{\mu_{regions/map}}\ \mathrm{(probability\ to\ attack\ a\ region)}\\
 \mathrm{it\ could\ be\ learned\ online\ (preference\ of\ the\ opponent):}\\
-\PP(A_r=true) = \frac{1 + n_{battles}(r)}{2 + \sum_{i \in regions}n_{battles}(i)}\ \mathrm{(online\ for\ each\ game\ }\forall r\mathrm{)}\\
+\PP(A_i=true) = \frac{1 + n_{battles}(i)}{2 + \sum_{j \in regions}n_{battles}(i)}\ \mathrm{(online\ for\ each\ game\ }\forall r\mathrm{)}\\
 \PP(E=e,T=t,TA=ta,B=b|A=True) = \frac{1+n_{battles}(e,t,ta,b)}{\abs{E} \times \abs{T} \times \abs{TA} \times \abs{B} + \sum_{E,T,TA,B} n_{battles}(E,T,TA,B)} \\
 \PP(AD=ad,GD=gd,ID=id|H=h) = \frac{1+n_{battles}(ad,gd,id,h)}{\abs{AD} \times \abs{GD} \times \abs{ID} + \sum_{AD,GD,ID} n_{battles}(AD,GD,ID,h)} \\
 \PP(H=h|HP=hp) = \frac{1 + n_{battles}(h,hp)}{\abs{H} + \sum_{H} n_{battles}(H,hp)}\\
@@ -458,15 +459,28 @@ Questions\\
 \section{Results on StarCraft}
 \label{sec:tacticalresults}
 
-\subsection{Learning}
-To measure fairly the prediction performance of such a model, we applied ``leave-100-out'' cross-validation from our dataset: as we had many games (see Table.~\ref{tab:all_results}), we set aside 100 games of each match-up for testing (with more than 1 battle per match: rather $\approx 15$ battles/match) and train our model on the rest. We write match-ups XvY with X and Y the first letters of the factions involved (Protoss, Terran, Zerg). Note that mirror match-ups (PvP, TvT, ZvZ) have fewer games but twice as many attacks from a given faction. Learning was performed as explained in III.B.3: for each battle in $r$ we had one observation for: $\PP(e_r,t_r,ta_r,b_r|A=true)$, and $\#regions-1$ observations for the $i$ regions which were not attacked: $\PP(e_{i \neq r},t_{i \neq r}, ta_{i \neq r}, b_{i \neq r}|A=false)$. For each battle of type $t$ we had one observation for $P(ad,gd,id|H=t)$ and $P(H=t|p)$. By learning with a Laplace's law of succession \cite{Jaynes}, we allow for unseen event to have a non-zero probability.
+\subsection{Learning and Posterior Analysis}
+To measure fairly the prediction performance of such a model, we applied ``leave-100-out'' cross-validation from our dataset: as we had many games (see Table.~\ref{tab:all_results}), we set aside 100 games of each match-up for testing (with more than 1 battle per match: rather $\approx 15$ battles/match) and train our model on the rest. We write match-ups XvY with X and Y the first letters of the factions involved (Protoss, Terran, Zerg). Note that mirror match-ups (PvP, TvT, ZvZ) have fewer games but twice as many attacks from a given faction (it is two times the same faction). Learning was performed as explained in section~\ref{sec:tacticalidentification}: for each battle in $r$ we had one observation for: $\PP(e_r,t_r,ta_r,b_r|A=true)$, and $\#regions-1$ observations for the $i$ regions which were not attacked: $\PP(e_{i \neq r},t_{i \neq r}, ta_{i \neq r}, b_{i \neq r}|A=false)$. For each battle of type $t$ we had one observation for $P(ad,gd,id|H=t)$ and $P(H=t|p)$. By learning with a Laplace's law of succession \cite{Jaynes}, we allow for unseen event to have a non-zero probability.
 
-An exhaustive presentation of the learned tables is out of the scope of this chapter, but we displayed interesting cases in which the learned probability tables meet concur with human expertise in Figures~\ref{fig:P_H_AD},~\ref{fig:PossibleP} and \ref{fig:Where3D}. In Fig.~\ref{fig:P_H_AD}, we see that air raids/attacks are quite risk averse and it is two times more likely to attack a region with less than 1/10th of the flying force in anti-aircraft warfare than to attack a region with up to one half of our force. We can also notice than drops are to be preferred either when it is safe to land (no anti-aircraft defense) or when there is a large defense (harassment tactics). In Fig.~\ref{fig:PossibleP} we can see that, in general, there are as many ground attacks at the sum of other types. The two top graphs show cases in which the tech of the attacker was very specialized, and, in such cases, the specificity seems to be used. In particular, the top right graphic may be corresponding to a ``fast Dark Templars rush''. Finally, Fig.~\ref{fig:Where3D} shows the transition between two types of encounters: tactics aimed at engaging the enemy army (a higher $T$ value entails a higher $\PP(A)$) and tactics aimed at damaging the enemy economy (at high $E$, we look for opportunities to attack with a small army where $T$ is lower).
+An exhaustive presentation of the learned tables is out of the scope of this chapter, but we analyzed the posteriors and the learned model concur with human expertise (e.g. Figures~\ref{fig:P_H_AD},~\ref{fig:PossibleP} and~\ref{fig:Where3D}). We looked at the posteriors of:
+\begin{itemize}
+    \item $\PP(H)$ for varying values of $GD,AD,ID$, by summing on other variables of the model. Figure~\ref{fig:P_H_AD} shows some of the distributions of $H$ in these conditions: we can see that it is far more likely that invisible (``sneaky'') attacks happen where there is low ground presence (top left plot). 
+Drops at lower values of $GD$ correspond to unexpected (surprise) drops (top right plot). It is twice more likely to attack a region (by \textit{air}) with less than 1/10th of the flying force in anti-aircraft warfare than to attack a region with up to one half of our force. We can also notice than drops are to be preferred either when it is safe to land (no anti-aircraft defense) or when there is a large defense (harassment tactics and/or drops which are expected by the defender). 
+Finally, as ground units are more cost efficient than flying units in a static battle, we see that both $\PP(H=air|AD=0.0)$ and $\PP(H=drop|AD=0.0)$ (bottom plots) are much more probable than situations with air defenses: air raids/attacks are quite risk averse. 
+
+
+    \item $\PP(H)$ for varying values of $HP$, by summing on other variables of the model, depicted in Figure~\ref{fig:PossibleP}. 
+We can see that, in general, there are as many ground attacks at the sum of other types. The two top graphs show cases in which the tech of the attacker was very specialized, and, in such cases, the specificity seems to be used. In particular, the top right graphic may be corresponding to a ``fast Dark Templars rush''. 
+
+    \item $\PP(A)$ for varying values of $T$ and $E$, by summing on other variables of the model, depicted in Figure~\ref{fig:Where3D}. 
+It shows the transition between two types of encounters: tactics aimed at engaging the enemy army (a higher $T$ value entails a higher $\PP(A)$) and tactics aimed at damaging the enemy economy (at high $E$, we look for opportunities to attack with a small army where $T$ is lower). Higher economical values are strongly correlated with surprise attacks against low tactical value regions for the defender (regions which are far from the defender's army). These skirmishes almost never happens in open fields (``no eco'': where the defender has no base) as this would lead to very unbalanced battles (in terms of army sizes): it would not benefit the smaller party, which can flee and avoid confrontation, as opposed to when defending their base.
+\end{itemize}
 
 \begin{figure}[!h]
 \centerline{\includegraphics[width=11cm]{images/Terran_Prob_H_crop.png}}
 %\caption{$\PP(H=air)$ and $\PP(H=drop)$ for varying values of $AD$ (summed on other variables), for Terran in TvP.}
-\caption{(top) $\PP(H=invis)$ and $\PP(H=drop)$ for varying values of $GD$ (summed on other variables); (bottom) $\PP(H=air)$ and $\PP(H=drop)$ for varying values of $AD$ (summed on other variables), for Terran in TvP. We can see that it is far more likely that invisible (``sneaky'') attacks happen where there is low ground presence (top left plot). For drops, we understand that the high value for $\PP(H=drop|GD=1.0)$ is caused by the fact that drop armies are small and this value corresponds to drops which are being expected by the defender. Drops at lower values of $GD$ correspond to unexpected (surprise) drops. As ground units are more cost efficient than flying units in a static battle, we see that both $\PP(H=invis|AD=0.0)$ and $\PP(H=drop|AD=0.0)$ are much more probable than situations with air defenses.}
+\caption{(top) $\PP(H=invis)$ and $\PP(H=drop)$ for varying values of $GD$ (summed on other variables); (bottom) $\PP(H=air)$ and $\PP(H=drop)$ for varying values of $AD$ (summed on other variables), for Terran in TvP. %For drops, we understand that the high value for $\PP(H=drop|GD=1.0)$ is caused by the fact that drop armies are small and this value corresponds to drops which are being expected by the defender.
+}
 \label{fig:P_H_AD}
 %\vspace{-0.5cm}
 \end{figure}
@@ -481,74 +495,160 @@ An exhaustive presentation of the learned tables is out of the scope of this cha
 \begin{figure}[!h]
 \centerline{\includegraphics[width=9cm]{images/where3D_EI_TI_RegT.png}}
 %\caption{$\PP(A)$ for varying values of $E$ and $T$, summed on the other variables, for Terran in TvT.}
-\caption{$\PP(A)$ for varying values of $E$ and $T$, summed on the other variables, for Terran in TvT. Higher economical values is strongly correlated with surprise attacks with small tactical squads and no defenses, which almost never happens in open fields (``no eco'') as this would lead to very unbalanced battles (in terms of army sizes): it would not benefit the smaller party, which can flee and avoid confrontation, as opposed to when defending their base.}
+\caption{$\PP(A)$ for varying values of $E$ and $T$, summed on the other variables, for Terran in TvT. Zones with no economy are in red bars, with a low economy in green and the principal economy in blue. The main difference along this economical axis comes at the lowest tactical values of regions (for the defenser) at $T<0.05$ (noted $T=0.0$) and showcases sneaky attacks to unprotected economical regions.}
 \label{fig:Where3D}
 %\vspace{-0.5cm}
 \end{figure}
 
 \subsection{Prediction Performance}
-We learned and tested one model for each race and each match-up. As we want to predict \textit{where} ($\PP(A_{1:n})$) and \textit{how} ($\PP(H_{battle})$) the next attack will happen to us, we used inferred enemy $TT$ (to produce $P$) and $TA$, our scores being fully known: $E$, $T$, $B$, $ID$. We consider $GD$, $AD$ to be fully known even though they depend on the attacker force, we should have some uncertainty on them, but we tested that they accounted (being known instead of fully unknown) for 1 to 2\% of $\PP(H)$ accuracy (in prediction) once $P$ was known. We should point that pro-gamers scout very well and so it allows for a highly accurate $TT$ estimation with \cite{SYNNAEVE:StratPred}. Training requires to recreate battle states (all units' positions) and count parameters for 5,000 to 30,000 battles. Once that is done, inference is very quick: a look-up in a probability table for known values and $\#F$ look-ups for free variables $F$ on which we sum. We chose to try and predict the next battle 30 seconds before it happens, 30 seconds being an approximation of the time needed to go from the middle of a map (where the entropy on ``next battle position'' is maximum as the army's average distance to all other regions is minimal) to any region by ground, so that the prediction is useful for the defender (they can position their army).
+\subsubsection{Setup}
+We learned and tested one model for each race and for each match-up. As we want to predict \textit{where} ($\PP(A_{1:n})$) and \textit{how} ($\PP(H_{battle})$) the next attack will happen to us, we used inferred enemy $TT$ (to produce $P$) and $TA$, our scores being fully known: $E$, $T$, $B$, $ID$. We consider $GD$, $AD$ to be fully known even though they depend on the attacker force, we should have some uncertainty on them, but we tested that they accounted (being known instead of fully unknown) for 1 to 2\% of $\PP(H)$ accuracy (in prediction) once $HP$ was known. We should point that pro-gamers scout very well and so it allows for a highly accurate $TT$ estimation with \citep{SYNNAEVE:StratPred}. The learning phase requires to recreate battle states (all units' positions) and count parameters for up to 70,000 battles. Once that is done, inference is very quick: a look-up in a probability table for known values and $\#F$ look-ups for free variables $F$ on which we sum. We chose to try and predict the next battle 30 seconds before it happens, 30 seconds being an approximation of the time needed to go from the middle of a map %(where the entropy on ``next battle position'' is maximum as the army's average distance 
+to all other regions is minimal) to any region by ground, so that the prediction is useful for the defender (they can position their army). The model code\footnote{\url{https://github.com/SnippyHolloW/AnalyzeBWData}} (for learning and testing) as well as the datasets (see above) are freely available. 
 
-The model code\footnote{\url{https://github.com/SnippyHolloW/AnalyzeBWData}} (for learning and testing) as well as the datasets (see above) are freely available. Raw results of predictions of positions and types of attacks 30 seconds before they happen are presented in Table.~\ref{tab:all_results}: for instance the bold number (38.0) corresponds to the percentage of good positions (regions) predictions (30 sec before event) which were ranked 1st in the probabilities on $A_{1:n}$ for Protoss attacks against Terran (PvT). The measures on \textit{where} corresponds to the percentage of good prediction and the mean probability for given ranks in $\PP(A_{1:n})$ (to give a sense of the shape of the distribution). As the most probable The measures on \textit{how} corresponds to the percentage of good predictions for the most probable $\PP(H_{battle})$ and the number of such battles seen in the test set for given attack types. We particularly predict well ground attacks (trivial in the early game, less in the end game) and, interestingly, Terran and Zerg drop attacks. The \textit{where \& how} row corresponds to the percentage of good predictions for the maximal probability in the joint $\PP(A_{1:n},H_{1:n})$: considering only the most probable attack (more information is in the rest of the distribution, as shown for \textit{where}!) according to our model, we can predict \textit{where} \textbf{and} \textit{how} an attack will occur in the next 30 seconds $\approx$ 1/4th of the time. 
+\subsection{Predictions}
+Raw results of predictions of positions and types of attacks 30 seconds before they happen are presented in Table.~\ref{tab:all_results}: for instance the bold number (38.0) corresponds to the percentage of good positions (regions) predictions (30 sec before event) which were ranked 1st in the probabilities on $A_{1:n}$ for Protoss attacks against Terran (PvT). 
+\begin{itemize}
+\item The measures on \textit{where} corresponds to the percentage of good prediction and the mean probability for given ranks in $\PP(A_{1:n})$ (to give a sense of the shape of the distribution). 
+\item The measures on \textit{how} corresponds to the percentage of good predictions for the most probable $\PP(H_{attack})$ and the ratio of such attack types in the test set for given attack types. We particularly predict well ground attacks (trivial in the early game, less in the end game) and, interestingly, Terran and Zerg drop attacks. 
+\item The \textit{where \& how} row corresponds to the percentage of good predictions for the maximal probability in the joint $\PP(A_{1:n},H_{1:n})$: considering \textit{only the most probable attack}\footnote{more information is in the rest of the distribution, as shown for \textit{where}!}, according to our model, we can predict \textit{where} \textbf{and} \textit{how} an attack will occur in the next 30 seconds $\approx$ 1/4th of the time. 
+\end{itemize}
 
-Finally, note that scores are still good 60 seconds before the attack (obviously, $TT$, and thus $P$, are not so different, nor are $B$ and $E$): PvT \textit{where} top 4 ranks are 35.6, 8.5, 7.7, 7.0\% good versus 38.0, 16.3, 8.9, 6.7\% 30 seconds before; \textit{how} total precision 60 seconds before is 70.0\% vs. 72.4\%, \textit{where \& how} maximum probability precision is 19.9\% vs. 23\%. This gives even more time for the player to adapt their tactics.
+Mistakes on the type of the attack are high for invisible attacks: while these tactics can definitely win a game, the counter is strategic (it is to have detectors technology deployed) more than positional. Also, if the maximum of $\PP(H_{battle})$ is wrong, it does not mean than $\PP(H_{battle}=good)=0.0$ at all! The result needing improvements the most is for air tactics, because countering them really is positional, see our discussion in the conclusion.
+
+We also tried the same experiment \textbf{60 seconds before the attack}. This gives even more time for the player to adapt their tactics. Obviously, the tech tree or the attacker ($TT$), and thus the possible attack types ($HP$), are not so different, nor are the bases possession (belongs, $B$) and the economy ($E$). For PvT, the \textit{where} top 4 ranks are 35.6, 8.5, 7.7, 7.0\% good versus 38.0, 16.3, 8.9, 6.7\% 30 seconds before. For the \textit{how} total precision 60 seconds before is 70.0\% vs. 72.4\%. \textit{where \& how} maximum probability precision is 19.9\% vs. 23\%. 
+
 
 \setlength{\tabcolsep}{4.69pt}
-\begin{sidewaystable}[!h]
-\caption{Results summary for multiple metrics at 30 seconds before attack. The number in bold (38.0) is read as ``38\% of the time, the region $i$ with probability of rank 1 in $\PP(A_i)$ is the one in which the attack happened 30 seconds later''.}
+\begin{sidewaystable}[h]
+\caption{Results summary for multiple metrics at 30 seconds before attack, including the percentage of the time that it is rightly what happened (\% column). For the \textit{where} question, we show the four most probable predictions, the ``Pr'' column indicates the mean probability of the each bin of the distribution. For the \textit{how} question, we show the four types of attacks, their percentages of correctness in predictions (\%) and the ratio of a given attack type against the total numbers of attacks ($\frac{type}{total}$). The number in bold (38.0) is read as ``38\% of the time, the region $i$ with probability of rank 1 in $\PP(A_i)$ is the one in which the attack happened 30 seconds later, in the PvT match-up (predicting Protoss attacks on Terran)''. The associated mean probability for the first rank of the \textit{where} measurement is 0.329. The percentage of good predictions of \textit{ground} type attacks type in PvT is 98.1\%, while ground type attacks, in this match-up, constitute 54\% (ratio of 0.54) of all the attacks. The \textit{where \& how} line corresponds to the correct predictions of both \textit{where} and \textit{how} simultaneously (as most probables). NA (not available) is in cases for which we do not have enough observations to conclude sufficient statistics. Remember that attacks only include fights with at least 3 units involved.}
 \begin{center}
 %\begin{small}
-\begin{footnotesize}
+\begin{small}
 \begin{tabular}{|cc|cc|cc|cc|cc|cc|cc|cc|cc|cc|}
 \hline
 \multicolumn{2}{|c|}{\%: good predictions} & \multicolumn{6}{||c|}{Protoss} & \multicolumn{6}{|c|}{Terran} & \multicolumn{6}{|c|}{Zerg} \\
-\multicolumn{2}{|c|}{Pr: mean probability} & \multicolumn{2}{||c|}{P} & \multicolumn{2}{|c|}{T} & \multicolumn{2}{|c|}{Z} & \multicolumn{2}{|c|}{P} & \multicolumn{2}{|c|}{T} & \multicolumn{2}{|c|}{Z} & \multicolumn{2}{|c|}{P} & \multicolumn{2}{|c|}{T} & \multicolumn{2}{|c|}{Z} \\
+\multicolumn{2}{|c|}{Pr=mean probability} & \multicolumn{2}{||c|}{P} & \multicolumn{2}{|c|}{T} & \multicolumn{2}{|c|}{Z} & \multicolumn{2}{|c|}{P} & \multicolumn{2}{|c|}{T} & \multicolumn{2}{|c|}{Z} & \multicolumn{2}{|c|}{P} & \multicolumn{2}{|c|}{T} & \multicolumn{2}{|c|}{Z} \\
 \hline
-% PvP 1336, PvT 7225, PvZ 6082, TvT 1384, TvZ 6322, ZvZ 598
-\multicolumn{2}{|c|}{total \# games} & \multicolumn{2}{|c|}{1336} & \multicolumn{2}{|c|}{7225}& \multicolumn{2}{|c|}{6082}& \multicolumn{2}{|c|}{7225}& \multicolumn{2}{|c|}{1384}& \multicolumn{2}{|c|}{6322}& \multicolumn{2}{|c|}{6082}& \multicolumn{2}{|c|}{6322}& \multicolumn{2}{|c|}{598}\\
+% PvP 445, PvT 7225, PvZ 6082, TvT 1384, TvZ 6322, ZvZ 598
+\multicolumn{2}{|c|}{total \# games} & \multicolumn{2}{|c|}{445} & \multicolumn{2}{|c|}{2408}& \multicolumn{2}{|c|}{2027}& \multicolumn{2}{|c|}{2408}& \multicolumn{2}{|c|}{461}& \multicolumn{2}{|c|}{2107}& \multicolumn{2}{|c|}{2027}& \multicolumn{2}{|c|}{2107}& \multicolumn{2}{|c|}{199}\\
+
 \hline
 measure & rank & \% & Pr & \% & Pr & \% & Pr & \% & Pr & \% & Pr& \% & Pr& \% & Pr& \% & Pr& \% & Pr  \\
 \hline
  & 1 & 40.9 & .334 & \textbf{38.0} & .329 & 34.5 & .304 & 35.3 & .299 & 34.4 & .295 & 39.0 & 0.358 & 32.8 & .31 & 39.8 & .331 & 37.2 & .324 \\
 \multirow{3}{3mm}{\begin{sideways}\parbox{3mm}{\begin{small}where\end{small}}\end{sideways}}
- & 2 & 14.6 & .157 & 16.3 & .149 & 13.0 & .152 & 14.3 & .148 & 14.7 & .0147 & 17.8 & .174 & 15.4 & .166 & 16.6 & .148 & 16.9 & .157 \\
+ & 2 & 14.6 & .157 & 16.3 & .149 & 13.0 & .152 & 14.3 & .148 & 14.7 & .147 & 17.8 & .174 & 15.4 & .166 & 16.6 & .148 & 16.9 & .157 \\
  & 3 & 7.8 & .089 & 8.9 & .085 & 6.9 & .092 & 9.8 & .09 & 8.4 & .087 & 10.0 & .096 & 11.3 & .099 & 7.6 & .084 & 10.7 & .100 \\
  & 4 & 7.6 & .062 & 6.7 & .059 & 7.9 & .064 & 8.6 & .071 & 6.9 & .063 & 7.0 & .062 & 8.9 & .07 & 7.7 & .064 & 8.6 & .07 \\
 %\multicolumn{2}{|c|}{distance best} & \multicolumn{2}{|c|}{32} &\\
 \hline
-measure & type & \% & N & \% & N & \% & N & \% & N & \% & N & \% & N & \% & N & \% & N & \% & N \\
+measure & type & \% & \begin{scriptsize}$\frac{type}{total}$\end{scriptsize} & \% & \begin{scriptsize}$\frac{type}{total}$\end{scriptsize} & \% & \begin{scriptsize}$\frac{type}{total}$\end{scriptsize} & \% & \begin{scriptsize}$\frac{type}{total}$\end{scriptsize} & \% & \begin{scriptsize}$\frac{type}{total}$\end{scriptsize} & \% & \begin{scriptsize}$\frac{type}{total}$\end{scriptsize} & \% & \begin{scriptsize}$\frac{type}{total}$\end{scriptsize} & \% & \begin{scriptsize}$\frac{type}{total}$\end{scriptsize} & \% & \begin{scriptsize}$\frac{type}{total}$\end{scriptsize} \\
 \hline
- & G & 97.5 & 1016 & 98.1 & 1458 & 98.4 & 568 & 100 & 691 & 99.9 & 3218 & 76.7 & 695 & 86.6 & 612 & 99.8 & 567 & 67.2 & 607 \\
+ & G & 97.5 & 0.61 & 98.1 & 0.54 & 98.4 & 0.58 & 100 & 0.85 & 99.9 & 0.66 & 76.7 & 0.32 & 86.6 & 0.40 & 99.8 & 0.84 & 67.2 & 0.34 \\
 \multirow{3}{3mm}{\begin{sideways}\parbox{3mm}{\begin{small}how\end{small}}\end{sideways}}
- & A & 44.4 & 81 & 34.5 & 415 & 46.8 & 190 & 40 & 5 & 13.3 & 444 & 47.1 & 402 & 14.2 & 155 & 15.8 & 19 & 74.2 & 586 \\
- & I & 22.7 & 225 & 49.6 & 337 & 12.9 & 132 & NA & NA & NA & NA & 36.8 & 326 & 32.6 & 227 & NA & NA & NA & NA \\
- & D & 55.9 & 340 & 42.2 & 464 & 45.2 & 93 & 93.5 & 107 & 86 & 1183 & 62.8 & 739 & 67.7 & 535 & 81.4 & 86 & 63.6 & 588 \\
-\multicolumn{2}{|c|}{total} & 76.3 & 1662 & 72.4 & 2674 & 71.9 & 983 & 98.4 & 806 & 88.5 & 4850 & 60.4 & 2162 & 64.6 & 1529 & 94.7 & 674 & 67.6 & 1802 \\
+ & A & 44.4 & 0.05 & 34.5 & 0.16 & 46.8 & 0.19 & 40 & 0.008 & 13.3 & 0.09 & 47.1 & 0.19 & 14.2 & 0.10 & 15.8 & 0.03 & 74.2 & 0.33 \\
+ & I & 22.7 & 0.14 & 49.6 & 0.13 & 12.9 & 0.13 & NA & NA & NA & NA & 36.8 & 0.15 & 32.6 & 0.15 & NA & NA & NA & NA \\
+ & D & 55.9 & 0.20 & 42.2 & 0.17 & 45.2 & 0.10 & 93.5 & 0.13 & 86 & 0.24 & 62.8 & 0.34 & 67.7 & 0.35 & 81.4 & 0.13 & 63.6 & 0.32 \\
+\multicolumn{2}{|c|}{total} & 76.3 & 1.0 & 72.4 & 1.0 & 71.9 & 1.0 & 98.4 & 1.0 & 88.5 & 1.0 & 60.4 & 1.0 & 64.6 & 1.0 & 94.7 & 1.0 & 67.6 & 1.0 \\
 \hline
 \multicolumn{2}{|c|}{where \& how (\%)} & \multicolumn{2}{|c|}{32.8} & \multicolumn{2}{|c|}{23}& \multicolumn{2}{|c|}{23.8}& \multicolumn{2}{|c|}{27.1}& \multicolumn{2}{|c|}{23.6}& \multicolumn{2}{|c|}{30.2}& \multicolumn{2}{|c|}{23.3}& \multicolumn{2}{|c|}{30.9}& \multicolumn{2}{|c|}{26.4}\\
 \hline
 \end{tabular}
+%%% \begin{tabular}{|cc|cc|cc|cc|cc|cc|cc|cc|cc|cc|}
+%%% \hline
+%%% \multicolumn{2}{|c|}{\%: good predictions} & \multicolumn{6}{||c|}{Protoss} & \multicolumn{6}{|c|}{Terran} & \multicolumn{6}{|c|}{Zerg} \\
+%%% \multicolumn{2}{|c|}{Pr: mean probability} & \multicolumn{2}{||c|}{P} & \multicolumn{2}{|c|}{T} & \multicolumn{2}{|c|}{Z} & \multicolumn{2}{|c|}{P} & \multicolumn{2}{|c|}{T} & \multicolumn{2}{|c|}{Z} & \multicolumn{2}{|c|}{P} & \multicolumn{2}{|c|}{T} & \multicolumn{2}{|c|}{Z} \\
+%%% \hline
+%%% % PvP 1336, PvT 7225, PvZ 6082, TvT 1384, TvZ 6322, ZvZ 598
+%%% \multicolumn{2}{|c|}{total \# games} & \multicolumn{2}{|c|}{1336} & \multicolumn{2}{|c|}{7225}& \multicolumn{2}{|c|}{6082}& \multicolumn{2}{|c|}{7225}& \multicolumn{2}{|c|}{1384}& \multicolumn{2}{|c|}{6322}& \multicolumn{2}{|c|}{6082}& \multicolumn{2}{|c|}{6322}& \multicolumn{2}{|c|}{598}\\
+%%% \hline
+%%% measure & rank & \% & Pr & \% & Pr & \% & Pr & \% & Pr & \% & Pr& \% & Pr& \% & Pr& \% & Pr& \% & Pr  \\
+%%% \hline
+%%%  & 1 & 40.9 & .334 & \textbf{38.0} & .329 & 34.5 & .304 & 35.3 & .299 & 34.4 & .295 & 39.0 & 0.358 & 32.8 & .31 & 39.8 & .331 & 37.2 & .324 \\
+%%% \multirow{3}{3mm}{\begin{sideways}\parbox{3mm}{\begin{small}where\end{small}}\end{sideways}}
+%%%  & 2 & 14.6 & .157 & 16.3 & .149 & 13.0 & .152 & 14.3 & .148 & 14.7 & .0147 & 17.8 & .174 & 15.4 & .166 & 16.6 & .148 & 16.9 & .157 \\
+%%%  & 3 & 7.8 & .089 & 8.9 & .085 & 6.9 & .092 & 9.8 & .09 & 8.4 & .087 & 10.0 & .096 & 11.3 & .099 & 7.6 & .084 & 10.7 & .100 \\
+%%%  & 4 & 7.6 & .062 & 6.7 & .059 & 7.9 & .064 & 8.6 & .071 & 6.9 & .063 & 7.0 & .062 & 8.9 & .07 & 7.7 & .064 & 8.6 & .07 \\
+%%% %\multicolumn{2}{|c|}{distance best} & \multicolumn{2}{|c|}{32} &\\
+%%% \hline
+%%% measure & type & \% & N & \% & N & \% & N & \% & N & \% & N & \% & N & \% & N & \% & N & \% & N \\
+%%% \hline
+%%%  & G & 97.5 & 1016 & 98.1 & 1458 & 98.4 & 568 & 100 & 691 & 99.9 & 3218 & 76.7 & 695 & 86.6 & 612 & 99.8 & 567 & 67.2 & 607 \\
+%%% \multirow{3}{3mm}{\begin{sideways}\parbox{3mm}{\begin{small}how\end{small}}\end{sideways}}
+%%%  & A & 44.4 & 81 & 34.5 & 415 & 46.8 & 190 & 40 & 5 & 13.3 & 444 & 47.1 & 402 & 14.2 & 155 & 15.8 & 19 & 74.2 & 586 \\
+%%%  & I & 22.7 & 225 & 49.6 & 337 & 12.9 & 132 & NA & NA & NA & NA & 36.8 & 326 & 32.6 & 227 & NA & NA & NA & NA \\
+%%%  & D & 55.9 & 340 & 42.2 & 464 & 45.2 & 93 & 93.5 & 107 & 86 & 1183 & 62.8 & 739 & 67.7 & 535 & 81.4 & 86 & 63.6 & 588 \\
+%%% \multicolumn{2}{|c|}{total} & 76.3 & 1662 & 72.4 & 2674 & 71.9 & 983 & 98.4 & 806 & 88.5 & 4850 & 60.4 & 2162 & 64.6 & 1529 & 94.7 & 674 & 67.6 & 1802 \\
+%%% \hline
+%%% \multicolumn{2}{|c|}{where \& how (\%)} & \multicolumn{2}{|c|}{32.8} & \multicolumn{2}{|c|}{23}& \multicolumn{2}{|c|}{23.8}& \multicolumn{2}{|c|}{27.1}& \multicolumn{2}{|c|}{23.6}& \multicolumn{2}{|c|}{30.2}& \multicolumn{2}{|c|}{23.3}& \multicolumn{2}{|c|}{30.9}& \multicolumn{2}{|c|}{26.4}\\
+%%% \hline
+%%% \end{tabular}
 \label{tab:all_results}
-\end{footnotesize}
+\end{small}
 %\end{small}
 \end{center}
 \end{sidewaystable}
 
-When we are mistaken, the mean ground distance (pathfinding wise) of the most probable predicted region to the good one (where the attack happens) is 1223 pixels (38 build tiles, or 2 screens in StarCraft's resolution), while the mean max distance on the map is 5506 (172 build tiles). Also, the mean number of regions by map is 19, so a random \textit{where} (attack destination) picking policy would have a correctness of 1/19 (5.23\%). For choke-centered regions, the numbers of good \textit{where} predictions are lower (between 24\% and 32\% correct for the most probable) but the mean number of regions by map is 42. For \textit{where \& how}, a random policy would have a precision of 1/(19*4), and even a random policy taking the high frequency of ground attacks into account would at most be $\approx$ 1/(19*2) correct. 
+\subsection{Error Analysis}
+
+\subsubsection{Distance}
+
+When we are mistaken, the mean ground distance (pathfinding wise) of the most probable predicted region to the good one (where the attack happens) is 1223 pixels (38 build tiles, or 2 screens in StarCraft's resolution). 
+To put things in perspective, %the mean of the maximum ground distance between two regions on a map is 5506 pixels (172 build tiles) and 
+the tournament maps are mostly between $128\times128$ and $192\times192$ build tiles, and the biggest maps are of $256\times 256$ build tiles.
+
+More interesting is to look at the mean ground distance (see tables~\ref{tab:dataset} and \ref{tab:shorttacticaldistances}) between two regions: 
+\begin{figure}[h]
+\begin{tabular}{|l|ccc|ccc|ccc|}
+\hline
+ & \multicolumn{3}{|c|}{Protoss} & \multicolumn{3}{|c|}{Terran} & \multicolumn{3}{|c|}{Zerg} \\
+metrics & P & T & Z & P & T & Z & P & T & Z \\
+\hline
+$\mu_{ground\ dist}\footnote{for regions connected by ground, pathfinding aware, in pixels}$ & & & & & & & & & \\
+\#1 prediction $\leftrightarrow$ attack region & 1047 & 1134 & 1266 & 1257 & 1306 & 1252 & 1228 & 1067 & 1480 \\
+\hline
+$\mu_{ground\ dist}$ & & & & & & & & &\\
+ region $\leftrightarrow$ region & 2569 & 2608 & 2607 & 2608 & 2629 & 2604 & 2607 & 2604 & 2596 \\ % divise by 32 for build tiles
+\hline
+\end{tabular}
+\caption{Table of the mean ground distance between the most probable prediction and the region in which the attack actually happened \textit{when we are mistaken on the first prediction}, and mean ground distance between regions}
+\label{tab:shorttacticaldistances}
+\end{figure}
+We can see that the most probable predicted region for the attack is not as far of as if it were random.
+
+\subsubsection{Towards a baseline heuristic}
+
+ The mean number of regions by map is 19, so a random \textit{where} (attack destination) picking policy would have a correctness of 1/19 (5.23\%). For choke-centered regions, the numbers of good \textit{where} predictions are lower (between 24\% and 32\% correct for the most probable) but the mean number of regions by map is 42. For \textit{where \& how}, a random policy would have a precision of 1/(19*4), and even a random policy taking the high frequency of ground attacks into account would at most be $\approx$ 1/(19*2) correct. 
 %For the location only (\textit{where} question), we also considered a \textit{baseline} heuristic (learned from data) whic knows the most probable regions to be attacked (given the map and the start locations of both players, which makes the dataset quite sparse). This heuristic would give (depending on the match-up) prediction rates between 20.5 and 25.2\% for regions, and between 16.1\% and 19.5\% for choke-dependent regions. 
-For the location only (\textit{where} question), we also counted the mean number of different regions which were attacked in a given game (between 3.97 and 4.86 for regions, depending on the match-up, and between 5.13 and 6.23 for choke-dependent regions). The ratio over these means would give the best prediction rate we could expect from a \textit{baseline heuristic} based solely on the location data. These are attacks that actually happened, so the number of regions a player have to be worried about is at least this one (or more, for regions which were not attacked during a game but were potential targets). This \textit{baseline heuristic} would yield (depending on the match-up) prediction rates between 20.5 and 25.2\% for regions, versus our 32.8 to 40.9\%, and between 16.1\% and 19.5\% for choke-dependent regions, versus our 24\% to 32\%.
+
+
+For the location only (\textit{where} question), we also counted the mean number of different regions which were attacked in a given game (between 3.97 and 4.86 for regions, depending on the match-up, and between 5.13 and 6.23 for choke-dependent regions). The ratio over these means would give the prediction rate we could expect from a \textit{baseline heuristic} based solely on the location data: a heuristic which knows totally in which regions we can get attacked and then randomly select in them. These are attacks that actually happened, so the number of regions a player have to be worried about is at least this one (or more, for regions which were not attacked during a game but were potential targets). This \textit{baseline heuristic} would yield (depending on the match-up) prediction rates between 20.5 and 25.2\% for regions, versus our 32.8 to 40.9\%, and between 16.1\% and 19.5\% for choke-dependent regions, versus our 24\% to 32\%.
 %{'Reg': 3.9731182795698925, 'CDR': 5.123655913978495}
 %{'Reg': 4.8563829787234045, 'CDR': 6.223404255319149}
-Note that our current model consider a uniform prior on regions (no bias towards past battlefields) and that we do not incorporate any derivative of the armies' movements. There is no player modeling at all: learning and fitting the mean player's tactics is not optimal, so we should specialize the probability tables for each player. Also, we use all types of battles in our training and testing. Short experiments showed that if we used only attacks on bases, the probability of good \textit{where} predictions for the maximum of $\PP(A_{1:n})$ goes above 50\% (which is not a surprise, there are far less bases than regions in which attacks happen). To conclude on tactics positions prediction: if we sum the 2 most probable regions for the attack, we are right at least half the time; if we sum the 4 most probable (for our robotic player, it means it prepares against attacks in 4 regions as opposed to 19), we are right $\approx$ 70\% of the time.
 
-Mistakes on the type of the attack are high for invisible attacks: while these tactics can definitely win a game, the counter is strategic (it is to have detectors technology deployed) more than positional. Also, if the maximum of $\PP(H_{battle})$ is wrong, it doesn't mean than $\PP(H_{battle}=good)=0.0$ at all! The result needing improvements the most is for air tactics, because countering them really is positional, see our discussion in the conclusion.
 % distances
 % mean: 1047 + 1134 + 1266 + 1257 + 1306 + XXX + 1228 + 1067 + 1480
 % max: 5494 + 5605 + 5433 + 5558 + 5475 + 5443
 % best CDR: 32%, 29%, 24%, 24%, 26%, XXX, 25%, 28%, 29%
 
-\subsection{In Game Decision-Making}
-In a StarCraft game, our bot has to make decisions about where and how to attack or defend, it does so by reasoning about opponent's tactics, bases, its priors, and under strategic constraints (Fig.~\ref{conceptTACTICS}). Once a decision is taken, the output of the tactical model is an offensive or defensive goal. There are different military goal types (base defense, ground attacks, air attacks, drops...), and each type of goal has pre-requisites (for instance: a drop goal needs to have the control of a dropship and military units to become active). The spawned goal then autonomously sets objectives for Bayesian units \cite{SYNNAEVE:Micro}, sometimes procedurally creating intermediate objectives or canceling itself in the worst cases. 
+Note that our current model consider a uniform prior on regions (no bias towards past battlefields) and that we do not incorporate any derivative of the armies' movements. There is no player modeling at all: learning and fitting the mean player's tactics is not optimal, so we should specialize the probability tables for each player. Also, we use all types of battles in our training and testing. Short experiments showed that if we used only attacks on bases, the probability of good \textit{where} predictions for the maximum of $\PP(A_{1:n})$ goes above 50\% (which is not a surprise, there are far less bases than regions in which attacks happen). To conclude on tactics positions prediction: if we sum the 2 most probable regions for the attack, we are right at least half the time; if we sum the 4 most probable (for our robotic player, it means it prepares against attacks in 4 regions as opposed to 19), we are right $\approx$ 70\% of the time.
+
+
+
+\section{Discussion}
+%\subsection{Possible Improvements}
+
+\subsection{In-game decision-making}
+
+In a StarCraft game, our bot has to make decisions about where and how to attack or defend, it does so by reasoning about opponent's tactics, bases, its priors, and under strategic constraints (Fig.~\ref{conceptTACTICS}). Once a decision is taken, the output of the tactical model is an offensive or defensive (typed) goal (see sections~\ref{sec:attacktypes} and~\ref{sec:goals}). %There are different military goal types (base defense, ground attacks, air attacks, drops...), and each type of goal has pre-requisites (for instance: a drop goal needs to have the control of a dropship and military units to become active). 
+The spawned goal then autonomously sets objectives for Bayesian units \cite{SYNNAEVE:Micro}, sometimes procedurally creating intermediate objectives or canceling itself in the worst cases. 
+
+%%% TODO 
+
+\subsection{In-game learning}
+
+\subsection{Possible improvements}
+\subsection{Conclusion}
 
 The destinations of goals are from $\PP(A)$, while the type of the goal comes from $\PP(H)$. In input, we fully know tactical scores of the regions according to our military units placement $TA$ (we are the attacker), what is possible for us to do $P$ (according to units available) and we estimate $E$, $T$, $B$, $ID$, $GD$, $AD$ from past (partial) observations. Estimating $T$ is the most tricky of all because it may be changing fast, for that we use a units filter which just decays probability mass of seen units. An improvement would be to use a particle filter \cite{weber2011aiide}, with a learned motion model. From the joint \ref{eqn:tacticsquestion} $\PP(A_{1:n},H_{1:n}|ta,p,tt)$ may arise a couple $i,H_i$ more probable than the most probables $\PP(A_i)$ and $\PP(H_j)$ taken separately (the case of an heavily defended main base and a small unprotected expand for instance). Fig.~\ref{fig:WhereHow} displays the mean $\PP(A,H)$ for Terran (in TvZ) attacks decision-making for the most 32 probable type/region tactical couples. It is in this kind of landscape (though more steep because Fig.~\ref{fig:WhereHow} is a mean) that we sample (or pick the most probable couple) to take a decision. Also, we may spawn defensive goals countering the attacks that we predict from the opponent.
 
@@ -565,8 +665,10 @@ Finally, we can steer our technological growth towards the opponent's weaknesses
 $$\PP(TT|h_i) \propto \sum_{P} \PP(h_i|HP)\PP(HP|TT)\PP(TT)$$
 so that it gives us a distribution on the tech trees ($TT$) needed to be able to perform the wanted attack type. To take a decision on our technology direction, we can consider the distances between our current $tt^t$ and all the probable values of $TT^{t+1}$.
 
-\section{Discussion}
-%\subsection{Possible Improvements}
+
+
+Clearly for \textit{air} attacks, our heuristics are missing information. %%% TODO
+
 There are three main research directions for possible improvements:
 \begin{itemize}
     \item improving the underlying heuristics: the heuristics presented here are quite simple but they may be changed, and even removed or added, for another RTS or FPS, or for more performance. In particular, our ``defense against invisible'' heuristic could take detector positioning/coverage into account. Our heuristic on tactical values can also be reworked to take terrain tactical values into account (chokes and elevation in StarCraft). For the estimated position of enemy units, we could use a particle filter \cite{weber2011aiide} with a motion model (at least one for ground units and one for flying units). 
