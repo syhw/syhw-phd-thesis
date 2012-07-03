@@ -37,6 +37,23 @@ mapping schéma code <-> schéma info-flow.
 \end{center}
 \end{figure}
 
+\subsection{Tactical Goals}
+\label{sec:goals}
+The decision that we want our AI system to make at this level is \textit{where} and \textit{how} to attack. This is reflected in the StarCraft bot as a \texttt{Goal} creation. \texttt{Goals} are interfacing high level tactical thinking with the steps necessary to their realization. A \texttt{Goal} recruits units and binds them under a \texttt{UnitsGroup} (see section~\ref{sec:unitsgroup}). A \texttt{Goal} is an \glos{FSM} in which two states are simple planners (an FSM with some form of procedural autonomy), it has:
+\begin{itemize}
+    \item preconditions, for instance a \textit{drop} attack needs to specify at least a transport unit (Shuttle/Dropship/Overlord) and ground attack units.
+    \item hard states: \textit{waiting precondition, in progress, in cancel, achieved, canceled}, which corresponds to the \texttt{Goal} advancement..
+    \item \textit{and} and/or \textit{or} logic subgoals with:
+        \begin{itemize}
+            \item a realization test
+            \item a proposition of action to try to realize it
+            \item an estimation of the ``distance'' to realization
+        \end{itemize}
+\end{itemize}
+In the \textit{in progress} and \textit{in cancel} modes, the ``plan'' is a simple search in the achievable subgoals and their ``distance'' to realization.
+
+The tactical model can specify \textit{where} to attack by setting a localized subgoal (Formation/See/Regroup/KillSubgoal...) to the right place. It can specify \textit{how} by setting the adequate precondition(s).
+
 
 \section{A Game Walkthrough}
 The tree of decisions.

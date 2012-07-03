@@ -106,7 +106,7 @@ We used two kinds of regions:
     \item \glos{BWTA}\footnote{http://code.google.com/p/bwta/} regions and choke-dependent (choke-centered) regions (CDR). BWTA regions are obtained from a pruned Voronoi diagram on walkable terrain \citep{Perkins2010} and give regions for which chokes are the boundaries. We will note this regions ``Reg'' or regions.
     \item As battles often happens at chokes, choke-dependent regions are created by doing an additional (distance limited) Voronoi tesselation spawned at chokes, its regions set is $(regions \setminus chokes) \cup chokes$. We will note this regions ``CDR'' or choke-dependent regions.
 \end{itemize}
-Figure~\ref{fig:terrainanalysis} illustrate regions and choke-dependent regions (CDR). Results for choke-dependent regions are not fully detailed. Figure~\ref{:BWTA} shows a real StarCraft map and its decomposition into regions with BWTA.
+Figure~\ref{fig:terrainanalysis} illustrate regions and choke-dependent regions (CDR). Results for choke-dependent regions are not fully detailed. Figure~\ref{fig:BWTA} shows a real StarCraft map and its decomposition into regions with BWTA.
 
 \begin{figure}[!h]
 \begin{center}
@@ -212,21 +212,15 @@ child {node {\begin{footnotesize}Forge\end{footnotesize}}
 \label{fig:techtreetwogatesgoonrange}
 \end{figure}
 
-\subsection{Tactical Goals}
-The decision that we want our AI system to make at this level is \textit{where} and \textit{how} to attack. This is reflected in the StarCraft bot as a \texttt{Goal} creation \ref{sec:codearchitecture}. \texttt{Goals} are interfacing high level tactical thinking with the steps necessary to their realization. A \texttt{Goal} recruits units and binds them under a \texttt{UnitsGroup} (see section~\ref{sec:unitsgroup}). A \texttt{Goal} is an \glos{FSM} in which two states are simple planners (an FSM with some form of procedural autonomy), it has:
+\subsection{Attack Types}
+With the discretization of the map into regions and choke-dependent regions, one can reason about \textit{where} attacks will happen. The types of the attacks depends on the units types involved and their use. There may be numerous variations but we decided to keep the four main types of attacks in the vocabulary of gamers:
 \begin{itemize}
-    \item preconditions, for instance a \textit{drop} attack needs to specify at least a transport unit (Shuttle/Dropship/Overlord) and ground attack units.
-    \item hard states: \textit{waiting precondition, in progress, in cancel, achieved, canceled}, which corresponds to the \texttt{Goal} advancement..
-    \item \textit{and} and/or \textit{or} logic subgoals with:
-        \begin{itemize}
-            \item a realization test
-            \item a proposition of action to try to realize it
-            \item an estimation of the ``distance'' to realization
-        \end{itemize}
+    \item \textit{ground} attacks, which may use all types of units (and so form the large majority of attacks). They are constrained by the map topography and by units collisions so chokes are very important: they are an advantage for the army with less contact units but enough ranged units or simply more ranged units, and/or the higher ground. 
+    \item \textit{air} raids, air attacks, which can use only flying units. They are not constrained by the map, and the mobility of most flying units (except the largest) allows the player to attack quickly anywhere. Flying units are most often not cost-effective against ranged ground units, so their first role is to harass the economy (workers, tech buildings) and fight when in large numerical superiority (interception, small groups) or against units which cannot attack air units, all thanks to their mobility and ease of repositioning.
+    \item \textit{invisible} (ground) attacks, which can use only a few specific units in each race (Protoss Dark Templars, Terran Ghosts, Zerg Lurkers). When detected, this units are not cost-effective. There are two ways to use invisible attacks: as an \textit{all-in} as soon as possible (because reaching the technology required to produce such units is costly and long), before that the enemy has detection technology. This is a risky strategy but with a huge payoff (sometimes simply the quick win of the game). The second way is to try and sneak invisible units behind enemy lines to sap the opponent's economy.
+    \item \textit{drop} attacks, which need a transport unit (Protoss Shuttle, Terran Dropship, Zerg Overlord with upgrade). Transports give the mobility of flying units to ground units, with the downsides that units cannot fire when inside the transport. The usefulness of such attacks comes from the fact that they are immediately available as soon as the first transport unit is produced (because the ground units can be produced before it) and that they do not sacrifice cost-efficiency of most of the army. The downside is that transports are unarmed and are at the mercy of interceptions. The goals of such attacks are either to sap the opponent's economy (predominantly) or to quickly reinforce an army while maximizing micro-management of units.
 \end{itemize}
-In the \textit{in progress} and \textit{in cancel} modes, the ``plan'' is a simple search in the achievable subgoals and their ``distance'' to realization.
-
-The tactical model can specify \textit{where} to attack by setting a localized subgoal (Formation/See/Regroup/KillSubgoal...) to the right place. It can specify \textit{how} by setting the adequate precondition(s).
+The corresponding goal (orders) are described in section~\ref{sec:goals}.
 
 
 \section{Dataset}
@@ -268,9 +262,10 @@ mean ground distance\footnote{for choke-dependent regions connected by ground, p
 By running the recorded games (\gloss{replay}) through StarCraft, we were able to recreate the full state of the game. Time is always expressed in games frames (24 frames per second). We recorded three types of files:
 \begin{itemize}
     \item general data (see appendix~\ref{fig:rgdfile}): records the players' names, the map's name, and all information about events like \textit{creation} (along with \textit{morph}), \textit{destruction}, \textit{discovery} (for one player), \textit{change of ownership} (special spell/ability), for each units. It also shows attack events (detected by a heuristic, see below) and dumps the current economical situation every 25 frames: \gloss{mineral}, \glos{gas}, \glos{supply} (count and total: \glos{maxsupply}).
-    \item order data (see appendix~\ref{fig:rodfile}): records all the orders which are given to the units (individually) like \textit{move}, \textit{harvest}, \textit{attack unit}, their positions and their time.
+    \item order data (see appendix~\ref{fig:rodfile}): records all the orders which are given to the units (individually) like \textit{move}, \textit{harvest}, \textit{attack unit}, the orders positions and their issue time.
     \item location data (see appendix~\ref{fig:rldfile}): records positions of mobile units every 100 frames, and their position in regions and choke-dependent regions if they changed since last measurement. It also stores ground distances (pathfinding-wise) matrices between regions and choke-dependent regions in the header.
 \end{itemize}
+From this data, one can recreate most of the state of the game: the map key characteristics (or load the map separately), the economy of all players, their \textit{tech} (all researches and upgrades), all the buildings and units, along with their orders and their positions.
 
 \subsection{Attacks}
 We trigger an attack tracking heuristic when one unit dies and there are at least two military units around. We then update this attack until it ends, recording every unit which took part in the fight. We log the position, participating units and fallen units for each player, the attack type and of course the attacker and the defender. Algorithm~\ref{alg:attackheuristic}\footnote{adapted from \url{http://github.com/SnippyHolloW/bwrepdump/blob/master/BWRepDump.cpp\#L1773} and \url{http://github.com/SnippyHolloW/bwrepdump/blob/master/BWRepDump.cpp\#L1147}} shows how we detect attacks.
@@ -314,83 +309,109 @@ We trigger an attack tracking heuristic when one unit dies and there are at leas
 
 
 \section{A Bayesian Tactical Model}
+\label{sec:tacticalmodel}
 
 \subsection{Tactical Model}
 
+We preferred to map the continuous values from heuristics to a few discrete values to enable quick complete computations. Another strategy would keep more values and use Monte-Carlo sampling for computation. We think that discretization is not a concern because 1) heuristics are simple and biased already 2) we often reason about imperfect information and this uncertainty tops discretization fittings.
 
-We preferred to discretize continuous values to enable quick complete computations. Another strategy would keep more values and use Monte Carlo sampling for computation. We think that discretization is not a concern because 1) heuristics are simple and biased already 2) we often reason about imperfect information and this uncertainty tops discretization fittings.
 \subsubsection{Variables}
 With $n$ regions, we have: 
 \begin{itemize}
     \item $A_{1:n} \in \{true,false\}$, $A_i$: attack in region $i$ or not?
     \item $E_{1:n} \in \{no, low, high\}$, $E_i$ is the discretized economical value of the region $i$ for the defender. We choose 3 values: \textit{no} workers in the regions, \textit{low}: a small amount of workers (less than half the total) and \textit{high}: more than half the total of workers in this region $i$.
     \item $T_{1:n} \in discrete\ levels$, $T_i$ is the tactical value of the region $i$ for the defender, see above for an explanation of the heuristic. Basically, $T$ is proportional to the proximity to the defender's army. In benchmarks, discretization steps are $0,0.05,0.1,0.2,0.4,0.8$ ($log_2$ scale).
-    \item $TA_{1:n} \in discrete\ levels$, $TA_i$ is the tactical value of the region $i$ for the attacker (see above).
+    \item $TA_{1:n} \in discrete\ levels$, $TA_i$ is the tactical value of the region $i$ for the attacker (as above but for the attacker instead of the defender).
     \item $B_{1:n} \in \{true, false\}$, $B_i$ tells if the region belongs (or not) to the defender. $\PP(B_i=true)=1$ if the defender has a base in region $i$ and $\PP(B_i=false)=1$ if the attacker has one. Influence zones of the defender can be measured (with uncertainty) by $\PP(B_i=true) \geq 0.5$ and vice versa.
     \item $H_{1:n} \in \{ground, air, invisible, drop\}$, $H_i$: in predictive mode: how we will be attacked, in decision-making: how to attack, in region $i$.
     \item $GD_{1:n} \in \{no, low, med, high\}$: ground defense (relative to the attacker power) in region $i$, result from a heuristic. \textit{no} defense if the defender's army is $\geq 1/10th$ of the attacker's, \textit{low} defense above that and under half the attacker's army, \textit{medium} defense above that and under comparable sizes, \textit{high} if the defender's army is bigger than the attacker.
     \item $AD_{1:n} \in \{no, low, med, high\}$: same for air defense.
     \item $ID_{1:n} \in \{no\ detector, one\ detector, several\}$: invisible defense, equating to numbers of detectors.
-    \item $TT \in [\emptyset, building_1, building_2, building_1\wedge building_2, techtrees, \dots]$: all the possible technological trees for the given race. For instance $\{pylon, gate\}$ and $\{pylon, gate, core\}$ are two different $T$ech $T$rees, see chapter~\ref{chapter:strategy)}.
-    \item $HP \in \begin{small}\{ground, ground\wedge air, ground\wedge invis, ground\wedge air\wedge invis, ground\wedge drop, ground\wedge air\wedge drop, ground\wedge invis\wedge drop, ground\wedge air\wedge invis\wedge drop\}\end{small}$: \textbf{h}ow \textbf{p}ossible types of attacks, directly mapped from $TT$ information. In prediction, with this variable, we make use of what we can infer on the opponent's strategy \cite{SYNNAEVE:OpeningPred,SYNNAEVE:StratPred}, in decision-making, we know our own possibilities (we know our tech tree as well as the units we own).
+    \item $TT \in [\emptyset, building_1, building_2, building_1\wedge building_2, techtrees, \dots]$: all the possible technological trees for the given race. For instance $\{pylon, gate\}$ and $\{pylon, gate, core\}$ are two different $T$ech $T$rees, see chapter~\ref{chapter:strategy}.
+    \item $HP \in \begin{small}\{ground, ground\wedge air, ground\wedge invis, ground\wedge air\wedge invis, ground\wedge drop, ground\wedge air\wedge drop, ground\wedge invis\wedge drop, ground\wedge air\wedge invis\wedge drop\}\end{small}$: \textbf{h}ow \textbf{p}ossible types of attacks, directly mapped from $TT$ information. This variable serves the purpose of extracting all that we need to know from $TT$ and thus reducing the complexity of a part of the model from $n$ mappings from $TT$ to $H_i$ to one mapping from $TT$ to $HP$ and $n$ mapping from $HP$ to $H_i$. Without this variable, learning the co-occurrences of $TT$ and $H_i$ is sparse in the dataset. In prediction, with this variable, we make use of what we can infer on the opponent's strategy \cite{SYNNAEVE:OpeningPred,SYNNAEVE:StratPred}, in decision-making, we know our own possibilities (we know our tech tree as well as the units we own).
     %\item
 \end{itemize}
-Finally, for some variables, we take uncertainty into account with ``soft evidences'': for instance for a region in which no player has a base, we have a soft evidence that it belongs more probably to the player established closer. In this case, for a given region, we introduce the soft evidence variable(s) $B'$ and the coherence variable $\lambda_B$ and impose $\PP(\lambda_B=1|B,B')=1.0\ iff\ B=B'$, else $\PP(\lambda_B=1|B,B')=0.0$; while $\PP(\lambda_B|B,B')\PP(B')$ is a new factor in the joint distribution. This allows to sum over $\PP(B')$ distribution (soft evidence).
+We can consider a more complex version of this tactical model taking soft evidences into account (variables on which we have a probability distribution), which is presented in appendix~\ref{appdx:softevidences}.
 
 \subsubsection{Decomposition}
-The joint distribution of our model contains soft evidence variables for all input family variables ($E,T,TA,B,GD,AD,ID,HP$) to be as general as possible, \textit{i.e.} to be able to cope with all possible uncertainty (from incomplete information) that may come up in a game. To avoid being too verbose, we explain the decomposition only with the soft evidence for the family of variables $B$, the principle holds for all other soft evidences. For the $n$ considered regions, we have:
+\label{sec:tacticaldecomposition}
 \begin{eqnarray}
-    & & \PP(A_{1:n}, E_{1:n}, T_{1:n}, TA_{1:n}, B_{1:n}, B'_{1:n}, \lambda_{B,1:n}, \\
+    & & \PP(A_{1:n}, E_{1:n}, T_{1:n}, TA_{1:n}, B_{1:n}, \\
 & & H_{1:n}, GD_{1:n}, AD_{1:n}, ID_{1:n}, HP, TT) \\
     & = & \prod_{i=1}^n \left[\PP(A_i)\PP(E_i,T_i,TA_i,B_i|A_i) \label{eqn:tacticsdecomposition}\right.\\
-& & \PP(\lambda_{B,i} | B_{1:n},B'_{1:n})\PP(B'_{1:n}) \\
 & & \left. \PP(AD_i,GD_i,ID_i|H_i)\PP(H_i|HP)\right]\PP(HP|TT)\PP(TT)
 \end{eqnarray}
+This decomposition is also shown in Figure~\ref{fig:SpecialTacticsSimple_plate}. We can see that we have in fact two models: one for $A_{1:n}$ and one for $H_{1:n}$.
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=9cm]{images/SpecialTacticsSimple_plate.pdf}
+\caption{Plate diagram (factor graph notation) of the Bayesian tactical model.}
+\label{fig:SpecialTacticsSimple_plate}
+\end{center}
+\end{figure}
 
 \subsubsection{Forms and Learning}
+\label{sec:tacticalidentification}
 We will explain the forms for a given/fixed $i$ region number:
 \begin{itemize}
-\item $\PP(A)$ is the prior on the fact that the player attacks in this region, in our evaluation we set it to $n_{battles}/(n_{battles}+n_{not\ battles})$. In a given match it should be initialized to uniform and progressively learn the preferred attack regions of the opponent for predictions, learn the regions in which our attacks fail or succeed for decision-making.
-\item $\PP(E,T,TA,B|A)$ is a covariance table of the economical, tactical (both for the defender and the attacker), belonging scores where an attacks happen. We just use Laplace succession law (``add one'' smoothing) \cite{Jaynes} and count the co-occurrences, thus almost performing maximum likelihood learning of the table.
-\item $\PP(\lambda_{B}|B,B') = 1.0\ iff\ B=B'$ is just a coherence constraint.
-\item $\PP(AD,GD,ID|H)$ is a covariance table of the air, ground, invisible defense values depending on how the attack happens. As for $\PP(E,T,TA,B|A)$, we use a Laplace's law of succession to learn it.
-\item $\PP(H|HP)$ is the distribution on how the attack happens depending on what is possible. Trivially $\PP(H=ground|HP=ground)=1.0$, for more complex possibilities we have different maximum likelihood multinomial distributions on $H$ values depending on $HP$.
-\item $\PP(HP|TT)$ is the direct mapping of what the tech tree allows as possible attack types: $\PP(HP=hp|TT)=1$ is a function of $TT$ (all $\PP(HP\neq hp|TT)=0$).
+\item $\PP(A)$ is the prior on the fact that the player attacks in this region, in our evaluation we set it to $n_{battles}/(n_{battles}+n_{not\ battles})$. 
+\item $\PP(E,T,TA,B|A)$ is a co-occurrences table of the economical, tactical (both for the defender and the attacker), belonging scores where an attacks happen. We just use Laplace's law of succession (``add one'' smoothing) \cite{Jaynes} and count the co-occurrences in the games of the dataset (see~\ref{sec:dataset}), thus almost performing maximum likelihood learning of the table. 
+\begin{small}
+$$\PP(E=e,T=t,TA=ta,B=b|A=True) = \frac{1+n_{battles}(e,t,ta,b)}{\abs{E} \abs{T} \abs{TA} \abs{B} + \sum_{E,T,TA,B} n_{battles}(E,T,TA,B)}$$
+\end{small}
+
+%%% \item $\PP(\lambda_{B}|B,B') = 1.0\ iff\ B=B'$ is just a coherence constraint.
+
+\item $\PP(AD,GD,ID|H)$ is a co-occurrences table of the air, ground, invisible defense values depending on how the attack happens. As for $\PP(E,T,TA,B|A)$, we use a Laplace's rule of succession learned from the dataset.
+\begin{small}
+$$\PP(AD=ad,GD=gd,ID=id|H=h) = \frac{1+n_{battles}(ad,gd,id,h)}{\abs{AD} \abs{GD} \abs{ID} + \sum_{AD,GD,ID} n_{battles}(AD,GD,ID,h)}$$
+\end{small}
+
+\item $\PP(H|HP)$ is the categorical distribution (histogram) on how the attack happens depending on what is possible. Trivially $\PP(H=ground|HP=ground)=1.0$, for more complex possibilities we have different smoothed maximum likelihood multinomial distributions on $H$ values depending on $HP$.
+$$\PP(H=h|HP=hp) = \frac{1 + n_{battles}(h,hp)}{\abs{H} + \sum_{H} n_{battles}(H,hp)}$$
+
+\item $\PP(HP|TT=tt)$ is a Dirac distribution on the $HP=hp$ which is compatible with $TT=tt$. It is the direct mapping of what the tech tree allows as possible attack types: $\PP(HP=hp|TT)=1$ is a function of $TT$ (all $\PP(HP\neq hp|TT)=0$).
+
 \item $\PP(TT)$: if we are sure of the tech tree (prediction without fog of war, or in decision-making mode), $\PP(TT=k)=1$ and $\PP(TT\neq k)=0$; otherwise, it allows us to take uncertainty about the opponent's tech tree and balance $\PP(HP|TT)$. We obtain a distribution on what is possible ($\PP(HP)$) for the opponent's attack types.
 \end{itemize}
-There are two approaches to fill up these probability tables, either by observing games (supervised learning), as we did in the evaluation section, or by acting (reinforcement learning). %We first learned all the parameters from observations on the dataset. 
-In match situation against a given opponent, for inputs that we can unequivocally attribute to their intention (style and general strategy), we also refine these probability tables (with Laplace's rule of succession). To keep things simple, we just refine $\sum_{E,T,TA}\PP(E,T,TA,B|A)$ corresponding to their aggressiveness (aggro) or our successes and failures, and equivalently for $\PP(H|HP)$. Indeed, if we sum over $E$, $T$ and $TA$, we consider the inclination of our opponent to venture into enemy territory or the interest that we have to do so by counting our successes with aggressive or defensive parameters. In $\PP(H|HP)$, we are learning the opponent's inclination for particular types of tactics according to what is available to their, or for us the effectiveness of our attack types choices.
 
-The model is highly modular, and some parts are more important than others. We can separate three main parts: $\PP(E,T,TA,B|A)$, $\PP(AD,GD,ID|H)$ and $\PP(H|HP)$. In prediction, $\PP(E,T,TA,B|A)$ uses the inferred (uncertain) economic ($E$), tactical ($T$) and belonging ($B$) scores of the opponent while knowing our own tactical position fully ($TA$). In decision-making, we know $E,T,B$ (for us) and estimate $TA$. In our prediction benchmarks, $\PP(AD,GD,ID|H)$ has the lesser impact on the results of the three main parts, either because the uncertainty from the attacker on $AD,GD,ID$ is too high or because our heuristics are too simple, though it still contributes positively to the score. In decision-making, it allows for reinforcement learning to have pivoting tuple values for $AD,GD,ID$ at which to switch attack types. In prediction, $\PP(H|HP)$ is used to take $\PP(TT)$ (coming from strategy prediction \cite{SYNNAEVE:StratPred}, chapter~\ref{chapter:strategy}) into account and constraints $H$ to what is possible. For the use of $\PP(H|HP)\PP(HP|TT)\PP(TT)$ in decision-making, see the Results sections.
+There are two approaches to fill up these probability tables, either by observing games (supervised learning), as we did in the evaluation section, or by acting (reinforcement learning). %We first learned all the parameters from observations on the dataset. 
+
+The model is highly modular, and some parts are more important than others. We can separate three main parts: $\PP(E,T,TA,B|A)$, $\PP(AD,GD,ID|H)$ and $\PP(H|HP)$. In prediction, $\PP(E,T,TA,B|A)$ uses the inferred (uncertain) economic ($E$), tactical ($T$) and belonging ($B$) scores of the opponent while knowing our own tactical position fully ($TA$). In decision-making, we know $E,T,B$ (for us) and estimate $TA$. In our prediction benchmarks, $\PP(AD,GD,ID|H)$ has the lesser impact on the results of the three main parts, either because the uncertainty from the attacker on $AD,GD,ID$ is too high or because our heuristics are too simple, though it still contributes positively to the score. In decision-making, it allows for reinforcement learning to have pivoting tuple values for $AD,GD,ID$ at which to switch attack types. In prediction, $\PP(H|HP)$ is used to take $\PP(TT)$ (coming from strategy prediction \citep{SYNNAEVE:StratPred}, chapter~\ref{chapter:strategy}) into account and constraints $H$ to what is possible. For the use of $\PP(H|HP)\PP(HP|TT)\PP(TT)$ in decision-making, see the \textit{results} section (\ref{sec:tacticalresults}) or the appendix~\ref{appdx:softevidences}.
 
 \subsubsection{Questions}
 For a given region $i$, we can ask the probability to attack here,
-\begin{equation}
-\PP(A_i=a_i|e_i,t_i,ta_i,\lambda_{B,i}=1)
-\end{equation}
-\vspace{-0.2cm}
-\begin{small}
-\begin{equation}
-= \frac{\sum_{B_i,B_i'}\PP(e_i,t_i,ta_i,B_i|a_i)\PP(a_i)\PP(B_i').P(\lambda_{B,i}|B_i,B_i')}{\sum_{A_i,B_i,B_i'}\PP(e_i,t_i,ta_i,B_i|A_i)\PP(A_i)\PP(B_i')\PP(\lambda_{B,i}|B_i,B_i')}
-\end{equation}
-\end{small}
-\vspace{-0.2cm}
-\begin{equation}
-\propto \sum_{B_i,B_i'}\PP(e_i,t_i,ta_i,B_i|a_i)\PP(a_i)\PP(B_i')\PP(\lambda_{B,i}|B_i,B_i')
-\end{equation}
+%%% \begin{equation}
+%%% \PP(A_i=a_i|e_i,t_i,ta_i,\lambda_{B,i}=1)
+%%% \end{equation}
+%%% \begin{small}
+%%% \begin{equation}
+%%% = \frac{\sum_{B_i,B_i'}\PP(e_i,t_i,ta_i,B_i|a_i)\PP(a_i)\PP(B_i').P(\lambda_{B,i}|B_i,B_i')}{\sum_{A_i,B_i,B_i'}\PP(e_i,t_i,ta_i,B_i|A_i)\PP(A_i)\PP(B_i')\PP(\lambda_{B,i}|B_i,B_i')}
+%%% \end{equation}
+%%% \end{small}
+%%% \begin{equation}
+%%% \propto \sum_{B_i,B_i'}\PP(e_i,t_i,ta_i,B_i|a_i)\PP(a_i)\PP(B_i')\PP(\lambda_{B,i}|B_i,B_i')
+%%% \end{equation}
+\begin{eqnarray}
+& & \PP(A_i=a_i|e_i,t_i,ta_i,b_i)\\
+& = &\frac{\PP(e_i,t_i,ta_i,b_i|a_i)\PP(a_i)}{\sum_{A_i}\PP(e_i,t_i,ta_i,b_i|A_i)\PP(A_i)}\\
+& \propto & \PP(e_i,t_i,ta_i,B_i|a_i)\PP(a_i)
+\end{eqnarray}
 and the mean by which we should attack,
 \begin{eqnarray}
 & & \PP(H_i=h_i|ad_i,gd_i,id_i) \\
-& \propto & \sum_{TT,P}[\PP(ad_i,gd_i,id_i|h_i)\PP(h_i|HP)\PP(HP|TT)\PP(TT)]
+& \propto & \sum_{TT,HP}[\PP(ad_i,gd_i,id_i|h_i)\PP(h_i|HP)\PP(HP|TT)\PP(TT)]
 \end{eqnarray}
-For clarity, we omitted some variables couples on which we have to sum (to take uncertainty into account) as for $B$ (and $B'$) above. We always sum over estimated, inferred variables, while we know the one we observe fully. In prediction mode, we sum over $TA,B,TT,P$; in decision-making, we sum over $E,T,B,AD,GD,ID$. 
-The complete question that we ask our model is $\PP(A,H|FullyObserved)$. The maximum of $\PP(A,H)$ may not be the same as the maximum of $\PP(A)$ or $\PP(H)$, for instance think of a very important economic zone that is very well defended, it may be the maximum of $\PP(A)$, but not once we take $\PP(H)$ into account. Inversely, some regions are not defended against anything at all but present little or no interest. Our joint distribution \ref{eqn:tacticsdecomposition} can be rewritten: $\PP(Searched,FullyObserved,Estimated)$, so we ask:
+%For clarity, we omitted some variables couples on which we have to sum (to take uncertainty into account) as for $B$ (and $B'$) above. 
+We always sum over estimated, inferred variables, while we know the one we observe fully. In prediction mode, we sum over $TA,B,TT,HP$; in decision-making, we sum over $E,T,B,AD,GD,ID$ (see appendix~\ref{appdx:softevidences}). 
+The complete question that we ask our model is $\PP(A,H|FullyObserved)$. The maximum of $\PP(A,H)=\PP(A)\times \PP(H)$ may not be the same as the maximum of $\PP(A)$ or $\PP(H)$ take separately. For instance think of a very important economic zone that is very well defended, it may be the maximum of $\PP(A)$, but not once we take $\PP(H)$ into account. Inversely, some regions are not defended against anything at all but present little or no interest. Our joint distribution \ref{eqn:tacticsdecomposition} can be rewritten: $\PP(Searched,FullyObserved,Estimated)$, so we ask:
 \begin{eqnarray}
 & & \PP(A_{1:n},H_{1:n}|FullyObserved) \label{eqn:tacticsquestion}\\
 & \propto & \sum_{Estimated}\PP(A_{1:n},H_{1:n},Estimated,FullyObserved)
 \end{eqnarray}
 
-The full Bayesian program of the model is as follows (\ref{bp:BayesianTactician}):
+The Bayesian program of the model is as follows:% (\ref{bp:BayesianTactician}):
 \begin{eqnarray*}
 \begin{sideways}\parbox{35mm}{\hspace{-1.3cm}Bayesian program}\end{sideways}
 \begin{cases}
@@ -409,7 +430,7 @@ H_{1:n}, GD_{1:n}, AD_{1:n}, ID_{1:n}, HP, TT) \\
 \PP(\lambda_{B,i} | B_{1:n},B'_{1:n})\PP(B'_{1:n}) \\
 \left. \PP(AD_i,GD_i,ID_i|H_i)\PP(H_i|HP)\right]\PP(HP|TT)\PP(TT)\\
         Forms\\
-\PP(A_r)\ \mathrm{prior\ on\ attack\ in\ region}\ i\\
+\PP(A)\ \mathrm{prior\ on\ attack\ in\ region}\ i\\
 \PP(E,T,TA,B|A)\ \mathrm{covariance/probability\ table}\\ 
 \PP(\lambda_{B}|B,B') = 1.0\ iff\ B=B',\ else\ \PP(\lambda_{B}|B,B') = 0.0\ (functional\ Dirac)\\ 
 \PP(AD,GD,ID|H)\ \mathrm{covariance/probability\ table}\\
@@ -418,9 +439,9 @@ H_{1:n}, GD_{1:n}, AD_{1:n}, ID_{1:n}, HP, TT) \\
 \PP(TT)\ \mathrm{comes\ from\ a\ strategic\ model}\\
         \end{cases}\\
     Identification\ (using\ \delta)\\
-\PP(A_r=true)= \frac{n_{battles}}{n_{battles}+n_{not\ battles}} = \frac{\mu_{battles/game}}{\mu_{regions/map}}\ \mathrm{(probability\ to\ attack\ a\ region)}\\
+\PP(A=true)= \frac{n_{battles}}{n_{battles}+n_{not\ battles}} = \frac{\mu_{battles/game}}{\mu_{regions/map}}\ \mathrm{(probability\ to\ attack\ a\ region)}\\
 \mathrm{it\ could\ be\ learned\ online\ (preference\ of\ the\ opponent):}\\
-\PP(A_r=true) = \frac{1 + n_{battles}(r)}{2 + \sum_{i \in regions}n_{battles}(i)}\ \mathrm{(online\ for\ each\ game)}\\
+\PP(A_r=true) = \frac{1 + n_{battles}(r)}{2 + \sum_{i \in regions}n_{battles}(i)}\ \mathrm{(online\ for\ each\ game\ }\forall r\mathrm{)}\\
 \PP(E=e,T=t,TA=ta,B=b|A=True) = \frac{1+n_{battles}(e,t,ta,b)}{\abs{E} \times \abs{T} \times \abs{TA} \times \abs{B} + \sum_{E,T,TA,B} n_{battles}(E,T,TA,B)} \\
 \PP(AD=ad,GD=gd,ID=id|H=h) = \frac{1+n_{battles}(ad,gd,id,h)}{\abs{AD} \times \abs{GD} \times \abs{ID} + \sum_{AD,GD,ID} n_{battles}(AD,GD,ID,h)} \\
 \PP(H=h|HP=hp) = \frac{1 + n_{battles}(h,hp)}{\abs{H} + \sum_{H} n_{battles}(H,hp)}\\
@@ -435,6 +456,7 @@ Questions\\
 
 
 \section{Results on StarCraft}
+\label{sec:tacticalresults}
 
 \subsection{Learning}
 To measure fairly the prediction performance of such a model, we applied ``leave-100-out'' cross-validation from our dataset: as we had many games (see Table.~\ref{tab:all_results}), we set aside 100 games of each match-up for testing (with more than 1 battle per match: rather $\approx 15$ battles/match) and train our model on the rest. We write match-ups XvY with X and Y the first letters of the factions involved (Protoss, Terran, Zerg). Note that mirror match-ups (PvP, TvT, ZvZ) have fewer games but twice as many attacks from a given faction. Learning was performed as explained in III.B.3: for each battle in $r$ we had one observation for: $\PP(e_r,t_r,ta_r,b_r|A=true)$, and $\#regions-1$ observations for the $i$ regions which were not attacked: $\PP(e_{i \neq r},t_{i \neq r}, ta_{i \neq r}, b_{i \neq r}|A=false)$. For each battle of type $t$ we had one observation for $P(ad,gd,id|H=t)$ and $P(H=t|p)$. By learning with a Laplace's law of succession \cite{Jaynes}, we allow for unseen event to have a non-zero probability.
@@ -556,6 +578,10 @@ There are three main research directions for possible improvements:
 % TODO OR NOT Real-time A* (RTA) \citep{Korf88} can help in generating subgoals earning the heuristic by which // for automatic selection of subgoals in pathfinding, \citep{BulitkoBL10} case-based subgoaling
 
 We have presented a Bayesian tactical model for RTS AI, which allows both for opposing tactics prediction and autonomous tactical decision-making. Being a probabilistic model, it deals with uncertainty easily, and its design allows easy integration into multi-granularity (multi-scale) AI systems as needed in RTS AI. Without any temporal dynamics, the position prediction is above a baseline heuristic ([32.8-40.9\%] vs [20.5-25.2\%]). Moreover, its exact prediction rate of the joint position and tactical type is in [23-32.8]\% (depending on the match-up), and considering the 4 most probable regions it goes up to $\approx$ 70\%. More importantly, it allows for tactical decision-making under (technological) constraints and (state) uncertainty. It can be used in production thanks to its low CPU and memory footprint. The dataset, its documentation\footnote{\url{http://snippyhollow.github.com/bwrepdump/}}, as well as our model implementation\footnote{\url{https://github.com/SnippyHolloW/AnalyzeBWData}} (and other data-exploration tools) are free software and can be found online. We plan to use this model in our StarCraft AI competition entry bot as it gives our bot tactical autonomy and a way to adapt to our opponent.
+
+In a given match it should be initialized to uniform and progressively learn the preferred attack regions of the opponent for predictions, learn the regions in which our attacks fail or succeed for decision-making. % TODO
+In match situation against a given opponent, for inputs that we can unequivocally attribute to their intention (style and general strategy), we also refine these probability tables (with Laplace's rule of succession). To keep things simple, we just refine $\sum_{E,T,TA}\PP(E,T,TA,B|A)$ corresponding to their aggressiveness (aggro) or our successes and failures, and equivalently for $\PP(H|HP)$. Indeed, if we sum over $E$, $T$ and $TA$, we consider the inclination of our opponent to venture into enemy territory or the interest that we have to do so by counting our successes with aggressive or defensive parameters. In $\PP(H|HP)$, we are learning the opponent's inclination for particular types of tactics according to what is available to their, or for us the effectiveness of our attack types choices. %TODO
+
 
 The advantages are that 1) learning will adapt the model output to its biased heuristic inputs 2) the model is agnostic to where input variables' values come from 3) the updating process is the same for offline and online (in-game) learning. % TODO
 

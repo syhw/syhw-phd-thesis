@@ -201,29 +201,7 @@ RTS & 1.941 & 1.692 & 86 & 1.912 & 1.808 & 86 & 1.706 & 1.673 & 83 & 1.882 & 1.7
 
 \chapter{StarCraft AI}
 
-\section{Datasets}
-\label{appdx:datasets}
-
-%\begin{tabular}{|l|c|c|c|c|c|c|}
-%\end{tabular}
-%
-%\subsection{Ben Weber's dataset}
-%     542 scmPvP_Protoss
-%    1139 scmPvT_Protoss
-%    1139 scmPvT_Terran
-%    1024 scmPvZ_Protoss
-%    1024 scmPvZ_Zerg
-%     628 scmTvT_Terran
-%    1150 scmTvZ_Terran
-%    1150 scmTvZ_Zerg
-%    1010 scmZvZ_Zerg
-%
-%
-%\subsection{Our dataset}
-
-
-
-\section{Algorithms}
+\section{Micro-management}
 
 \begin{algorithm}
 \caption{(Simplified) Target selection heuristic, efficiently implemented with a enemy units $\leftrightarrow$ damages bidirectional map: $bimap : u, d \rightarrow (left : u \rightarrow d,\ right : d \rightarrow u)$}
@@ -262,6 +240,245 @@ RTS & 1.941 & 1.692 & 86 & 1.912 & 1.808 & 86 & 1.706 & 1.673 & 83 & 1.882 & 1.7
 \end{algorithmic}
 \end{algorithm}
 
+\begin{figure}[!h]
+\begin{center}
+\includegraphics[width=8cm]{images/BayesianUnit_plate.pdf}
+\caption{Plate diagram of a Bayesian unit with $N$ possible directions.}
+\label{fig:BayesianUnit_plate}
+\end{center}
+\end{figure}
+
+\clearpage
+\section{Tactics}
+
+\begin{figure}[!h]
+\begin{center}
+\includegraphics[width=11cm]{images/ICCup_lost_temple_24.jpg}
+\includegraphics[width=11cm]{images/iccup_lost_temple_24scx-analyzed.png}
+\caption{Top: StarCraft's Lost Temple map (one of the most famous maps with Python). We can see features like cliffs, ramps, walls, waters and resources (minerals and gas). Bottom: output of \glos{BWTA} with the \textit{regions} slicing. We can see regions with one or several chokes, but also isolated regions as gray is non walkable terrain (crossable by flying units only).}
+\thispagestyle{empty}
+\label{fig:BWTA}
+\end{center}
+\end{figure}
+
+\begin{figure}[!h]
+\begin{verbatim}
+[Replay Start]
+RepPath: $(PATH/TO/REP)
+MapName: $MAPNAME
+NumStartPositions: $N
+The following players are in this replay:
+<list of 
+$PLAYER_ID, $PLAYER_NAME, $START_LOC
+separated by newlines>
+Begin replay data:
+<list of
+$FRAME_NUMBER,$PLAYER_ID,$ACTION,[$ACTION_DEP_ARGS]
+separated by newlines>
+[EndGame]
+\end{verbatim}
+\caption{Template of an RGD (replay general data) file from the dataset (see section~\ref{sec:dataset})}
+\label{fig:rgdfile}
+\end{figure}
+
+\begin{figure}[!h]
+\begin{verbatim}
+<list of
+$FRAME,$UNIT_ID,$ORDER,TargetOrPosition,$POS_X,$POS_Y
+separated by newlines>
+\end{verbatim}
+\caption{Template of an ROD (replay order data) file from the dataset (see section~\ref{sec:dataset})}
+\label{fig:rodfile}
+\end{figure}
+
+\begin{figure}[!h]
+\begin{verbatim}
+Regions,$REGIONS_IDS_COMMA_SEPARATED
+$REGION_ID, $DIST, $DIST, ...
+$REGION_ID, $DIST, $DIST, ...
+.
+.
+.
+ChokeDepReg,$REGIONS_IDS_COMMA_SEPARATED
+$REGION_ID, $DIST, $DIST, ...
+$REGION_ID, $DIST, $DIST, ...
+.
+.
+.
+[Replay Start]
+<list of
+$FRAME,$UNIT_ID,$POS_X,$POS_Y
+$FRAME,$UNIT_ID,Reg,$REGION_ID
+$FRAME,$UNIT_ID,CDR,$CDR_ID
+separated by newlines>
+\end{verbatim}
+\caption{Template of an RLD (replay location data) file from the dataset (see section~\ref{sec:dataset})}
+\label{fig:rldfile}
+\end{figure}
+
+\subsection{Decision-making: soft evidences and coherence variables}
+\label{appdx:softevidences}
+
+Here we will present the full tactical model for decision making, with soft evidences of variables we know only partially (variables we have only the distribution).
+
+\subsubsection{Variables}
+In the tactical model (section~\ref{sec:tacticalmodel}), for some variables, we take uncertainty into account with ``soft evidences'': for instance for a region in which no player has a base, we have a soft evidence that it belongs more probably to the player established closer. In this case, for a given region, we introduce the soft evidence variable(s) $B'$ and the \textit{coherence variable} $\lambda_B$ and impose $\PP(\lambda_B=1|B,B')=1.0\ iff\ B=B'$, else $\PP(\lambda_B=1|B,B')=0.0$; while $\PP(\lambda_B|B,B')\PP(B')$ is a new factor in the joint distribution. This allows to sum over $\PP(B')$ distribution (soft evidence). We do that for all the variables which will not be directly observed in decision-making.
+
+\subsubsection{Decomposition}
+%The joint distribution of our model contains soft evidence variables for all input family variables ($E,T,TA,B,GD,AD,ID,HP$) to be as general as possible, \textit{i.e.} to be able to cope with all possible uncertainty (from incomplete information) that may come up in a game. \textbf{To avoid being too verbose}, we explain the decomposition only with the soft evidence for the family of variables $B$, the principle holds for all other soft evidences. \textbf{We will enunciate the full model in the Bayesian program.} 
+The joint distribution of our model contains soft evidence variables for all input family variables ($E,T,B,GD,AD,ID$) as we cannot know for sure the economical values of the opponent's regions under the \glos{fogofwar} ($E$), nor can we know exactly the tactical value ($T$) for them, nor the possession of the regions ($B$), nor the exact defensive scores ($GD,AD,ID$). Under this form, it deals with all possible uncertainty (from incomplete information) that may come up in a game. 
+For the $n$ considered regions, we have:
+%%% \begin{eqnarray}
+%%%     & & \PP(A_{1:n}, E_{1:n}, T_{1:n}, TA_{1:n}, B_{1:n}, B'_{1:n}, \lambda_{B,1:n}, \\
+%%% & & H_{1:n}, GD_{1:n}, AD_{1:n}, ID_{1:n}, HP, TT) \\
+%%%     & = & \prod_{i=1}^n \left[\PP(A_i)\PP(E_i,T_i,TA_i,B_i|A_i) \label{eqn:tacticsdecomposition}\right.\\
+%%% & & \PP(\lambda_{B,i} | B_{1:n},B'_{1:n})\PP(B'_{1:n}) \\
+%%% & & \left. \PP(AD_i,GD_i,ID_i|H_i)\PP(H_i|HP)\right]\PP(HP|TT)\PP(TT)
+%%% \end{eqnarray}
+\begin{eqnarray}
+    & & \PP(A_{1:n}, E_{1:n}, T_{1:n}, TA_{1:n}, B_{1:n}, 
+B'_{1:n}, \lambda_{B,1:n}, T'_{1:n}, \lambda_{T,1:n}, \\
+& & E'_{1:n}, \lambda_{E,1:n},
+ID'_{1:n}, \lambda_{ID,1:n},
+GD'_{1:n}, \lambda_{GD,1:n},
+AD'_{1:n}, \lambda_{AD,1:n},\\
+& & H_{1:n}, GD_{1:n}, AD_{1:n}, ID_{1:n}, HP, TT) \\
+    & = & \prod_{i=1}^n \left[\PP(A_i)\PP(E_i,T_i,TA_i,B_i|A_i) \right.\\
+& & \PP(\lambda_{B,i} | B_{1:n},B'_{1:n})\PP(B'_{1:n}) 
+\PP(\lambda_{T,i} | T_{1:n},T'_{1:n})\PP(T'_{1:n}) \\
+& & \PP(\lambda_{E,i} | E_{1:n},E'_{1:n})\PP(E'_{1:n}) 
+\PP(\lambda_{ID,i} | ID_{1:n},ID'_{1:n})\PP(ID'_{1:n}) \\
+& & \PP(\lambda_{GD,i} | GD_{1:n},GD'_{1:n})\PP(GD'_{1:n})
+\PP(\lambda_{AD,i} | AD_{1:n},AD'_{1:n})\PP(AD'_{1:n}) \\
+& & \left. \PP(AD_i,GD_i,ID_i|H_i)\PP(H_i|HP)\right]\PP(HP|TT)\PP(TT)
+\end{eqnarray}
+
+The full plate diagram of this model is shown in Figure~\ref{fig:SpecialTacticsFull_plate}.
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=15cm]{images/SpecialTacticsFull_plate.pdf}
+\caption{Plate diagram (factor graph notation) of the Bayesian tactical model in decision-making mode. Hatched nodes are nodes on which we only have a distribution. We know $TA$ (our tactical scores as we are the attacker) and $TT$ (our \glos{techtree}).}
+\label{fig:SpecialTacticsFull_plate}
+\end{center}
+\end{figure}
+
+\subsubsection{Forms}
+
+To the previous forms (section~\ref{sec:tacticaldecomposition}), we add for all variables which were doubles ($X$ with $X'$):
+\begin{eqnarray*}
+\begin{cases}
+\PP(\lambda_{X}|X,X') = 1.0\ \mathrm{iff}\ X=X'\\
+\PP(\lambda_{X}|X,X') = 0.0\ \mathrm{else}
+\end{cases}
+\end{eqnarray*}
+%%% \begin{itemize}
+%%% \item $\PP(\lambda_{B}|B,B') = 1.0\ iff\ B=B'$ is just a coherence constraint.
+%%% \end{itemize}
+\subsubsection{Identification}
+The identification and learning does not change, c.f. section~\ref{sec:tacticalidentification}.
+
+\subsubsection{Questions}
+\begin{footnotesize}
+\begin{eqnarray*}
+&  & \forall i \in regions\ \PP(A_i|ta_i,\lambda_{B,i}=1,\lambda_{T,i}=1,\lambda_{E,i}=1)\\
+& \propto & \int_{B_i,B_i'} \int_{T_i,T_i'} \int_{E_i,E_i'} \PP(E_i,T_i,ta_i,B_i|A_i)\PP(A_i)\PP(B_i')\PP(T_i')\PP(E_i')\\
+& & \forall i \in regions\ \PP(H_i|tt,\lambda_{ID,i}=1,\lambda_{GD,i}=1,\lambda_{AD,i}=1)\\
+& \propto & \int_{ID_i,ID_i'}\int_{GD_i,GD_i'}\int_{AD_i,AD_i'}\sum_{HP}\PP(AD_i,GD_i,ID_i|H_i)\PP(H_i|HP)\PP(HP|tt)\PP(ID_i')\PP(AD_i')\PP(GD_i')
+\end{eqnarray*}
+\end{footnotesize}
+
+\subsubsection{Bayesian program}
+The Bayesian program of the model is as follows: %(\ref{bp:BayesianTacticianFull}):
+%\begin{figure}[!h]
+\begin{footnotesize}
+\begin{eqnarray*}
+\begin{sideways}\parbox{35mm}{\hspace{-1.3cm}Bayesian program}\end{sideways}
+\begin{cases}
+\begin{sideways}\parbox{15mm}{\hspace{-0.8cm}Description}\end{sideways}
+    \begin{cases}
+    
+\begin{sideways}\parbox{35mm}{\hspace{-1.1cm}Specification ($\pi$)}\end{sideways}
+        \begin{cases}
+
+        Variables\\
+
+A_{1:n}, E_{1:n}, T_{1:n}, TA_{1:n}, B_{1:n}, 
+B'_{1:n}, \lambda_{B,1:n}, T'_{1:n}, \lambda_{T,1:n},
+E'_{1:n}, \lambda_{E,1:n},\\
+ID'_{1:n}, \lambda_{ID,1:n},
+GD'_{1:n}, \lambda_{GD,1:n},
+AD'_{1:n}, \lambda_{AD,1:n},
+H_{1:n}, GD_{1:n}, AD_{1:n}, ID_{1:n}, HP, TT\\
+
+        Decomposition\\
+
+\PP(A_{1:n}, E_{1:n}, T_{1:n}, TA_{1:n}, B_{1:n}, 
+B'_{1:n}, \lambda_{B,1:n}, T'_{1:n}, \lambda_{T,1:n},
+ E'_{1:n}, \lambda_{E,1:n},\\
+ID'_{1:n}, \lambda_{ID,1:n},
+GD'_{1:n}, \lambda_{GD,1:n},
+AD'_{1:n}, \lambda_{AD,1:n},
+H_{1:n}, GD_{1:n}, AD_{1:n}, ID_{1:n}, HP, TT) \\
+     = \prod_{i=1}^n \left[\PP(A_i)\PP(E_i,T_i,TA_i,B_i|A_i) \right.
+\PP(\lambda_{B,i} | B_{1:n},B'_{1:n})\PP(B'_{1:n}) 
+\PP(\lambda_{T,i} | T_{1:n},T'_{1:n})\PP(T'_{1:n}) \\
+\PP(\lambda_{E,i} | E_{1:n},E'_{1:n})\PP(E'_{1:n})
+\PP(\lambda_{ID,i} | ID_{1:n},ID'_{1:n})\PP(ID'_{1:n}) 
+\PP(\lambda_{GD,i} | GD_{1:n},GD'_{1:n})\PP(GD'_{1:n})\\
+\PP(\lambda_{AD,i} | AD_{1:n},AD'_{1:n})\PP(AD'_{1:n})
+\left. \PP(AD_i,GD_i,ID_i|H_i)\PP(H_i|HP)\right]\PP(HP|TT)\PP(TT)\\
+
+        Forms\\
+
+\PP(A_r)\ \mathrm{prior\ on\ attack\ in\ region}\ i\\
+\PP(E,T,TA,B|A)\ \mathrm{covariance/probability\ table}\\ 
+\PP(\lambda_{X}|X,X') = 1.0\ \mathrm{iff}\ X=X',\ \mathrm{else}\ \PP(\lambda_{X}|X,X') = 0.0\ (Dirac)\\ 
+\PP(AD,GD,ID|H)\ \mathrm{covariance/probability\ table}\\
+\PP(H|HP) = Categorical(4,HP)\\
+\PP(HP=hp|TT) = 1.0\ iff\ TT\rightarrow hp,\ else\ \PP(HP|TT)=0.0\\
+\PP(TT)\ \mathrm{comes\ from\ a\ strategic\ model}\\
+        \end{cases}\\
+
+    Identification\ (using\ \delta)\\
+\PP(A_r=true)= \frac{n_{battles}}{n_{battles}+n_{not\ battles}} = \frac{\mu_{battles/game}}{\mu_{regions/map}}\ \mathrm{(probability\ to\ attack\ a\ region)}\\
+\mathrm{it\ could\ be\ learned\ online\ (preference\ of\ the\ opponent):}\\
+\PP(A_r=true) = \frac{1 + n_{battles}(r)}{2 + \sum_{i \in regions}n_{battles}(i)}\ \mathrm{(online\ for\ each\ game)}\\
+\PP(E=e,T=t,TA=ta,B=b|A=True) = \frac{1+n_{battles}(e,t,ta,b)}{\abs{E} \times \abs{T} \times \abs{TA} \times \abs{B} + \sum_{E,T,TA,B} n_{battles}(E,T,TA,B)} \\
+\PP(AD=ad,GD=gd,ID=id|H=h) = \frac{1+n_{battles}(ad,gd,id,h)}{\abs{AD} \times \abs{GD} \times \abs{ID} + \sum_{AD,GD,ID} n_{battles}(AD,GD,ID,h)} \\
+\PP(H=h|HP=hp) = \frac{1 + n_{battles}(h,hp)}{\abs{H} + \sum_{H} n_{battles}(H,hp)}\\
+    \end{cases}\\
+Questions\\
+\mathrm{decision-making}\\
+\forall i \in regions \PP(A_i|ta_i,\lambda_{B,i}=1,\lambda_{T,i}=1,\lambda_{E,i}=1)\\
+\forall i \in regions \PP(H_i|tt,\lambda_{ID,i}=1,\lambda_{GD,i}=1,\lambda_{AD,i}=1) \\
+\end{cases}
+\label{bp:BayesianTacticianFull}
+\end{eqnarray*}
+\end{footnotesize}
+%\end{figure}
+
+
+
+
+\clearpage
+\section{Strategy}
+\subsection{Openings and tech tree prediction dataset}
+\label{appdx:datasets}
+
+%\begin{tabular}{|l|c|c|c|c|c|c|}
+%\end{tabular}
+%
+%     542 scmPvP_Protoss
+%    1139 scmPvT_Protoss
+%    1139 scmPvT_Terran
+%    1024 scmPvZ_Protoss
+%    1024 scmPvZ_Zerg
+%     628 scmTvT_Terran
+%    1150 scmTvZ_Terran
+%    1150 scmTvZ_Zerg
+%    1010 scmZvZ_Zerg
+
+\section{\textsc{BroodwarBotQ}}
 \begin{algorithm}
 \caption{Flow algorithm making sure there are no convex closures}
 \label{alg:flood}
@@ -319,6 +536,14 @@ RTS & 1.941 & 1.692 & 86 & 1.912 & 1.808 & 86 & 1.706 & 1.673 & 83 & 1.882 & 1.7
 \end{algorithmic}
 \end{algorithm}
 
+\begin{figure}[!h]
+\begin{center}
+\includegraphics[width=13cm]{images/flow_buildings_placer.pdf}
+\caption{Example of the algorithm~\ref{alg:flood} in a case in which there are buildings A, B, C, D and building in the new cross spots would close the paths to the interior and trap units. Left: flood filling of the region with the source at the choke (bottom right). The arrows show the $dir$ vectors for each tile. Right: recursive calls to \texttt{build} which drain the interior zone. Refilling will not be able to refill the middle.}
+\label{fig:buildingsplacer}
+\end{center}
+\end{figure}
+
 %%% \begin{algorithm}
 %%% \caption{Production/Construction Planning}
 %%% \label{alg:planning}
@@ -328,97 +553,4 @@ RTS & 1.941 & 1.692 & 86 & 1.912 & 1.808 & 86 & 1.706 & 1.673 & 83 & 1.882 & 1.7
 %%% \end{algorithmic}
 %%% \end{algorithm}
 
-\begin{figure}[h]
-\begin{verbatim}
-[Replay Start]
-RepPath: $(PATH/TO/REP)
-MapName: $MAPNAME
-NumStartPositions: $N
-The following players are in this replay:
-<list of 
-$PLAYER_ID, $PLAYER_NAME, $START_LOC
-separated by newlines>
-Begin replay data:
-<list of
-$FRAME_NUMBER,$PLAYER_ID,$ACTION,[$ACTION_DEP_ARGS]
-separated by newlines>
-[EndGame]
-\end{verbatim}
-\caption{Template of an RGD (replay general data) file from the dataset (see section~\ref{sec:dataset})}
-\label{fig:rgdfile}
-\end{figure}
 
-\begin{figure}[h]
-\begin{verbatim}
-<list of
-$FRAME,$UNIT_ID,$ORDER,TargetOrPosition,$POS_X,$POS_Y
-separated by newlines>
-\end{verbatim}
-\caption{Template of an ROD (replay order data) file from the dataset (see section~\ref{sec:dataset})}
-\label{fig:rodfile}
-\end{figure}
-
-\begin{figure}[h]
-\begin{verbatim}
-Regions,$REGIONS_IDS_COMMA_SEPARATED
-$REGION_ID, $DIST, $DIST, ...
-$REGION_ID, $DIST, $DIST, ...
-.
-.
-.
-ChokeDepReg,$REGIONS_IDS_COMMA_SEPARATED
-$REGION_ID, $DIST, $DIST, ...
-$REGION_ID, $DIST, $DIST, ...
-.
-.
-.
-[Replay Start]
-<list of
-$FRAME,$UNIT_ID,$POS_X,$POS_Y
-$FRAME,$UNIT_ID,Reg,$REGION_ID
-$FRAME,$UNIT_ID,CDR,$CDR_ID
-separated by newlines>
-\end{verbatim}
-\caption{Template of an RLD (replay location data) file from the dataset (see section~\ref{sec:dataset})}
-\label{fig:rldfile}
-\end{figure}
-
-
-
-\section{Figures}
-\begin{figure}[h]
-\begin{center}
-\includegraphics[width=8cm]{images/BayesianUnit_plate.pdf}
-\caption{Plate diagram of a Bayesian unit with $N$ possible directions.}
-\label{fig:BayesianUnit_plate}
-\end{center}
-\end{figure}
-
-\begin{figure}[h]
-\begin{center}
-\includegraphics[width=11cm]{images/ICCup_lost_temple_24.jpg}
-\includegraphics[width=11cm]{images/iccup_lost_temple_24scx-analyzed.png}
-\caption{Top: StarCraft's Lost Temple map (one of the most famous maps with Python). We can see features like cliffs, ramps, walls, waters and resources (minerals and gas). Bottom: output of \glos{BWTA} with the \textit{regions} slicing. We can see regions with one or several chokes, but also isolated regions as gray is non walkable terrain (crossable by flying units only).}
-\thispagestyle{empty}
-\label{fig:BWTA}
-\end{center}
-\end{figure}
-
-
-
-\begin{figure}[h]
-\begin{center}
-\includegraphics[width=8cm]{images/SpecialTactics_plate.pdf}
-\caption{Plate diagram of the Bayesian tactical model in prediction (we know $ID, AD, GD$)}
-\label{fig:SpecialTactics_plate}
-\end{center}
-\end{figure}
-
-
-\begin{figure}[h]
-\begin{center}
-\includegraphics[width=13cm]{images/flow_buildings_placer.pdf}
-\caption{Example of the algorithm~\ref{alg:flood} in a case in which there are buildings A, B, C, D and building in the new cross spots would close the paths to the interior and trap units. Left: flood filling of the region with the source at the choke (bottom right). The arrows show the $dir$ vectors for each tile. Right: recursive calls to \texttt{build} which drain the interior zone. Refilling will not be able to refill the middle.}
-\label{fig:buildingsplacer}
-\end{center}
-\end{figure}
