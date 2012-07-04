@@ -53,7 +53,8 @@ All factions use workers to gather resources, and all other characteristics are 
 \newglossaryentry{mini-map}{name=mini-map,description={radar view of the full game area, shown in the bottom corner of the interface in StarCraft.}}
 \begin{figure}[!ht]
 \begin{center}
-\includegraphics[width=14cm]{images/SC_eco.png}
+%\ifthenelse{\equal{\myprintformat}{true}}{
+\includegraphics[width=0.9\columnwidth]{images/SC_eco.png}
 \caption{A StarCraft screenshot of a Protoss base, with annotations. The interface (heads up display at the bottom) shows the \textit{\glos{mini-map}}. The center of the interface (bottom) shows the selected unit (or group of units), here the Protoss Nexus (main economical building, producing workers and to which resources are brought) which is in the center of the screen and circled in green. The bottom right part shows the possible actions (here build a Protoss Probe or set a rally point). The top right of the screen shows the \gloss{mineral} (442), \glos{gas} (208) and \glos{supply} (25 total) on \glos{maxsupply} (33). The dotted lines demarcate economical parts with active workers: red for minerals mining and green for gas gathering. The plain cut outs of buildings show: a Pylon (white), a Forge (orange, for upgrades and access to static defense), a Cybernetics Core (yellow, for technological upgrades and expanding the tech tree), a Gateway (pink, producing ground units), a Photon Cannon (blue, static defense).}
 \label{fig:SC_eco}
 \end{center}
@@ -108,12 +109,12 @@ Supply/Max supply & Build & Note \\
 \begin{figure}[!ht]
 \begin{center}
 \begin{tabular}{cc}
-\includegraphics[width=8cm]{images/SC_game/SC_start_game.png} &
-\includegraphics[width=8cm]{images/SC_game/SC_first_gate.png} \\
-\includegraphics[width=8cm]{images/SC_game/SC_scout_opponent.png} & 
-\includegraphics[width=8cm]{images/SC_game/SC_expand.png} \\ 
-\includegraphics[width=8cm]{images/SC_game/SC_upgrade_attack.png} & 
-\includegraphics[width=8cm]{images/SC_game/SC_queue_production.png}
+\includegraphics[width=0.48\columnwidth]{images/SC_game/SC_start_game.png} &
+\includegraphics[width=0.48\columnwidth]{images/SC_game/SC_first_gate.png} \\
+\includegraphics[width=0.48\columnwidth]{images/SC_game/SC_scout_opponent.png} & 
+\includegraphics[width=0.48\columnwidth]{images/SC_game/SC_expand.png} \\ 
+\includegraphics[width=0.48\columnwidth]{images/SC_game/SC_upgrade_attack.png} & 
+\includegraphics[width=0.48\columnwidth]{images/SC_game/SC_queue_production.png}
 \end{tabular}
 %SC_first_pylon.png
 \caption{Start and economical parts of a StarCraft game. The order of the screenshots goes from left to right and from top to bottom.}
@@ -124,10 +125,10 @@ Supply/Max supply & Build & Note \\
 \begin{figure}[!ht]
 \begin{center}
 \begin{tabular}{cc}
-\includegraphics[width=8cm]{images/SC_game/SC_drop2a.png} &
-\includegraphics[width=8cm]{images/SC_game/SC_drop2b.png} \\
-\includegraphics[width=8cm]{images/SC_game/SC_dt_army.png} & 
-\includegraphics[width=8cm]{images/SC_game/SC_final_attack.png}
+\includegraphics[width=0.48\columnwidth]{images/SC_game/SC_drop2a.png} &
+\includegraphics[width=0.48\columnwidth]{images/SC_game/SC_drop2b.png} \\
+\includegraphics[width=0.48\columnwidth]{images/SC_game/SC_dt_army.png} & 
+\includegraphics[width=0.48\columnwidth]{images/SC_game/SC_final_attack.png}
 \end{tabular}
 \caption{Military moves from a StarCraft (PvT) game. The order of the screenshots goes from left to right and from top to bottom.}
 \label{fig:SC_game2}
@@ -167,6 +168,9 @@ While acknowledging these challenges for RTS AI, we now propose a different task
 \ifthenelse{\equal{\myebookformat}{true}}{
 \includegraphics[width=12cm]{images/tikz7.png}
 }{
+\ifthenelse{\equal{\myprintformat}{true}}{
+\includegraphics[width=0.95\columnwidth]{images/tikz7.png}
+}{
 \begin{tikzpicture}
   \path[mindmap,concept color=black!80!white,text=white]
     node[concept] {RTS AI: predict, decide, perform}
@@ -190,7 +194,7 @@ While acknowledging these challenges for RTS AI, we now propose a different task
       child[concept color=blue!30!cyan] { node[concept] {Technology}} %{Spendings balance} }
     };  
 \end{tikzpicture}
-}
+}}
 \end{small}
 \end{center}
 \caption{A mind-map of RTS AI. This is the tasks decomposition that we will use for the rest of the thesis.}
@@ -232,7 +236,7 @@ In Figure~\ref{fig:conceptbbq}, we present the flow of informations between the 
 
 \begin{figure}[!ht]
 \begin{center}
-\includegraphics[width=16cm]{images/starcraft_bbq_concept.pdf}
+\includegraphics[width=0.96\columnwidth]{images/starcraft_bbq_concept.pdf}
 \end{center}
 \caption{Information-centric view of the architecture of the major components of the bot. Arrows are labeled with the information or orders they convey: dotted arrows are conveying constraints, double lined arrows convey distributions, plain and simple arrows convey direct information or orders. The gray parts perform game actions (as the physical actions of the player on the keyboard and mouse).}
 \label{fig:conceptbbq}

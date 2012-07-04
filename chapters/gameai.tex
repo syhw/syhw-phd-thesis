@@ -197,6 +197,9 @@ Applying this theorem to Tic-tac-toe, we can say that winning is +1 point for th
 \ifthenelse{\equal{\myebookformat}{true}}{                   %%%%%%%%%%%%%%%%%%%%%%%%%%%
 \includegraphics[width=8cm]{images/tikz2.png}  %%%%%%%%%%%%%%%%%%%%%%%%%%%
 }{
+\ifthenelse{\equal{\myprintformat}{true}}{                   %%%%%%%%%%%%%%%%%%%%%%%%%%%
+\includegraphics[width=1.0\columnwidth]{images/tikz2.png}  %%%%%%%%%%%%%%%%%%%%%%%%%%%
+}{
 \begin{tikzpicture}
     [thick,
 level 1/.style={sibling distance=42mm},
@@ -341,7 +344,7 @@ level 3/.style={sibling distance=7mm}
     };
 \end{footnotesize}
 \end{tikzpicture}
-}
+}}
 \end{center}
 \caption{Minimax tree with initial position at Fig.~\ref{fig:TTT} state, \textbf{nodes} are states and \textbf{edges} are transitions, labeled with the move. Leafs are end-game states: 1 point for the win and -1 for the loss. Player is ``circles'' and plays first (first edges are player's moves).}
 \label{fig:minimaxTTT}
@@ -487,12 +490,12 @@ The MoGo team \citep{GellyUCT, Gelly2006} introduced Upper Confidence Bounds for
 \begin{algorithmic}
 \Function{ExpandFrom}{$node$}
     \If{$node$ is terminal}
-        \State \Return $node$ \ \ \ \ \texttt{// terminal}
+        \State \Return $node$ \Comment{terminal}
     \EndIf
     \If{$\exists c \in node.children\ s.t.\ N(c)=0 $}
-        \State \Return $c$ \ \ \ \ \texttt{// grow}
+        \State \Return $c$ \Comment{grow}
     \EndIf
-    \State \Return \textsc{ExpandFrom}$(\argmax_{c \in node.children)} \frac{Q(c)}{N(c)}+k\sqrt{\frac{\ln N(node)}{N(c)}})$ \ \ \ \ \texttt{// select}
+    \State \Return \textsc{ExpandFrom}$(\argmax_{c \in node.children)} \frac{Q(c)}{N(c)}+k\sqrt{\frac{\ln N(node)}{N(c)}})$ \Comment{select}
 \EndFunction 
 \end{algorithmic}
 \end{algorithm}
@@ -620,7 +623,7 @@ Battleship is a game with few intensional uncertainty (no randomness), particula
 
 \begin{figure}[h!]
 \begin{center}
-\includegraphics[width=7.8cm]{images/battleship_board_3_init_annotated.png} \includegraphics[width=7.8cm]{images/battleship_board_3_1miss.png}
+\includegraphics[width=0.47\columnwidth]{images/battleship_board_3_init_annotated.png} \includegraphics[width=0.47\columnwidth]{images/battleship_board_3_1miss.png}
 \caption{Left: visualization of probabilities for squares to contain a ship of size 3 ($\PP(O_{i,j})=true$) initially, assuming uniform distribution of this type of ship. Annotations correspond to the \textit{number of combinations} (on six, the maximum number of conformations), Right: same probability after a miss in (5, 5). The larger the white area, the higher the probability.}
 \label{fig:battleship}
 \end{center}
@@ -860,6 +863,9 @@ We present the main qualitative results for big classes of gameplays (with examp
 %\begin{small}
 %\setlength{\tabcolsep}{5pt}
 \begin{sidewaystable}
+\ifthenelse{\equal{\myprintformat}{true}}{
+\begin{small}
+}{}
 \begin{tabular}{|l|ccccc|}
 \multicolumn{6}{c}{quantization in increasing order: no, negligible, few, some, moderate, much} \\
 \hline 
@@ -886,6 +892,9 @@ RTS & $b\approx 200$\footnote{atomic dir/unit $\times$ \# units + constructions 
 (StarCraft) & & & & & \\
 \hline
 \end{tabular}
+\ifthenelse{\equal{\myprintformat}{true}}{
+\end{small}
+}{}
 \label{recapgames}
 \end{sidewaystable}
 %\end{small}
@@ -942,6 +951,9 @@ Finally, we made a quick survey among gamers and regrouped the 108 answers in ta
 
 \begin{sidewaystable}
 
+\ifthenelse{\equal{\myprintformat}{true}}{
+\begin{small}
+}{}
 \begin{tabular}{|l|cccccc|}                                                     
 \hline                                                                          
 Game & Virtuosity\footnote{``skill'', dexterity of the player related to the game, as for a musician with their instrument.} & Deduction \footnote{capacity for deductive reasoning; from general principle to a specific conclusion.} & Induction \footnote{capacity for inductive reasoning, abstraction, generalization; from specific examples to a general conclusion.} & Decision-Making\footnote{capacity to select a course of actions in the presence of several alternatives, possibly under uncertainty and stress.} & Opponent prediction\footnote{what is the biggest indicator to predict the opponent's moves: their psychology (subjective) or the rules and logic of the game (objective)?} & Advantageous knowledge\footnote{Is knowledge of the game in general, or of the map specifically, preferable in order to play well?} \\
@@ -958,6 +970,9 @@ MMORPG (n: 29) & 1.069 & 1.069 & 1.103 & 1.241 & 0.379 & 0.759 \\
 RTS (n: 86) & 1.791 & 1.849 & 1.687 & 1.814 & 0.221 & 0.453 \\           
 \hline
 \end{tabular}
+\ifthenelse{\equal{\myprintformat}{true}}{
+\end{small}
+}{}
 \label{surveygamers}
 \end{sidewaystable}
 

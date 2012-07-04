@@ -1,7 +1,12 @@
+%%% There are two defines: \myebookformat and \myprintformat
+%%% Both false ==> PDF for online viewing or printing without binding
+%%% \myprintformat == true ==> PDF for printing + binding
+%%% \myebookformat == true ==> HTML for transformation into ePub
+
 \documentclass[a4paper,11pt,twoside]{memoir}
-\def \myebookformat {false} % true or false
 %\documentclass[ebook,oneside,openany]{book}%article, report
-%\def \myebookformat {true} % true or false
+\def \myprintformat {false} % true or false
+\def \myebookformat {false} % true or false
 
 %%% PACKAGES:
 
@@ -35,7 +40,12 @@
 %\usepackage{tex4ht}
 }{
 \input{pdfspecific.tex}    % hyperref, backrefs, pdfinfo 
+\ifthenelse{\equal{\myprintformat}{false}}{
 \usepackage{fullpage}      % for electronic viewing (no headers) %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+}{
+%\setlrmargins{*}{*}{1}
+%\checkandfixthelayout
+}
 }
 
 %%% FONT:

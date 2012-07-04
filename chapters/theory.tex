@@ -93,22 +93,25 @@ Answering a question is computing the distribution $\PP(Searched | Known)$, with
 & = & \frac{1}{Z}\times \sum_{Free} \PP(Searched,\ Free,\ Known)
 \end{eqnarray}
 
-General Bayesian inference is practically intractable, but conditional independence hypotheses and constraints (stated in the description) often simplify the model. There are efficient ways to calculate the joint distribution like message passing and junction tree algorithms \citep{Pearl,AjiM00,Nai04,mekhnacha,Koller}. Also, there are different well-known approximation techniques: either by sampling with Monte-Carlo (and Monte-Carlo Markov Chains) methods \citep{MacKay,Andrieu}, or by solving a simpler model which approximate the full joint as with variational Bayes \citep{Beal}.
+General Bayesian inference is practically intractable, but conditional independence hypotheses and constraints (stated in the description) often simplify the model. There are efficient ways to calculate the joint distribution like message passing and junction tree algorithms \citep{Pearl,AjiM00,Nai04,mekhnacha,Koller}. Also, there are different well-known approximation techniques: either by sampling with Monte-Carlo (and Monte-Carlo Markov Chains) methods \citep{MacKay,Andrieu}, or by calculating on a simpler (tractable) model which approximate the full joint as with variational Bayes \citep{Beal}.
 
 %\begin{small}
 \begin{eqnarray*}
-\begin{sideways}\parbox{35mm}{\hspace{-1.3cm}Bayesian program}\end{sideways}
+%\begin{sideways}\parbox{35mm}{\hspace{-1.3cm}Bayesian program}\end{sideways}
+BP
 \begin{cases}
-\begin{sideways}\parbox{15mm}{\hspace{-0.8cm}Description}\end{sideways}
-    \begin{cases}
-\begin{sideways}\parbox{35mm}{\hspace{-1.1cm}Specification ($\pi$)}\end{sideways}
-        \begin{cases}
-        Variables\\
-        Decomposition\\
-        Forms\ (Parametric\ or\ Program)
-        \end{cases}\\
-    Identification\ (based\ on\ \delta)
-    \end{cases}\\
+%\begin{sideways}\parbox{15mm}{\hspace{-0.8cm}Description}\end{sideways}
+Desc.
+\begin{cases}
+%\begin{sideways}\parbox{35mm}{\hspace{-1.1cm}Specification ($\pi$)}\end{sideways}
+Specif. (\pi)
+\begin{cases}
+Variables\\
+Decomposition\\
+Forms\ (Parametric\ or\ Program)\\
+\end{cases}\\
+Identification\ (based\ on\ \delta)\\
+\end{cases}\\
 Question
 \end{cases}
 \end{eqnarray*}

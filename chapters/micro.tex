@@ -28,7 +28,7 @@ Life is the sum of all your choices.}
 
 \begin{figure}[ht]
 \begin{center}
-\includegraphics[width=13cm]{images/starcraft_bbq_concept_MICRO.pdf}
+\includegraphics[width=0.84\columnwidth]{images/starcraft_bbq_concept_MICRO.pdf}
 \end{center}
 \caption{Information-centric view of the architecture of the bot, the part concerning this chapter (\glos{micro}) is in the dotted rectangle}
 \label{fig:conceptMICRO}
@@ -319,7 +319,7 @@ From there, the unit can either go in the most probable $Dir_i$ or sample throug
 
 \begin{figure}[h]
 \begin{center}
-\includegraphics[width=13cm]{images/example_BayesianUnit.pdf}
+\includegraphics[width=0.89\columnwidth]{images/example_BayesianUnit.pdf}
 \end{center}
 \caption{Simple example of Bayesian fusion from 3 sensory inputs (damages and collisions avoidance, goal attraction). The grid pattern represents statically occupied terrain, the unit we control is in \texttt{U}, an allied unit is in \texttt{A}. The result is displayed on the rightmost image.}
 \label{fig:BayesianUnitExample}
@@ -439,10 +439,10 @@ The \textit{inposition} mode corresponds to when some units are at the place the
 \begin{figure}[h]
 \begin{center}
 \begin{tabular}{cc}
-\includegraphics[width=7.5cm]{images/square_traversal_1.png} & 
-\includegraphics[width=7.5cm]{images/square_traversal_2.png} \\
-\includegraphics[width=7.5cm]{images/square_traversal_3.png} & 
-\includegraphics[width=7.5cm]{images/square_traversal_4.png} \\
+\includegraphics[width=0.47\columnwidth]{images/square_traversal_1.png} & 
+\includegraphics[width=0.47\columnwidth]{images/square_traversal_2.png} \\
+\includegraphics[width=0.47\columnwidth]{images/square_traversal_3.png} & 
+\includegraphics[width=0.47\columnwidth]{images/square_traversal_4.png} \\
 \end{tabular}
 \caption{Sequence of traversal of an Archon (big blue unit which is circled in green) through a square formation of Dragoons (four legged red units) in \textit{inposition} mode.}
 \label{fig:squaretraversal}
@@ -478,6 +478,9 @@ BAIPB & 93\% & 97\% & (50\%) & \\
 BAIS & 93\% & 95\% & 76\% & (50\%)\\
 \hline
 \end{tabular}
+\ifthenelse{\equal{\myprintformat}{true}}{
+\\
+}{}
 \begin{tabular}{|l|c|c|c|c|}
 \hline
 36 units & OAI & HOAI & BAIPB & BAIS \\
@@ -494,15 +497,20 @@ BAIS & 97\% & 94\% & 97\% & (50\%)\\
 % pure BAIPB (fightMove only on ``potential fields'') 12 goons vs OAI 51/33
 % pure BAIPB (fightMove only on ``potential fields'') 36 goons vs OAI 10/16
 %%%\caption{Win ratios over at least 200 battles of the Original AI (OAI), Heuristic Only AI (HOAI), Bayesian AI Pick Best (BAIPB) and Bayesian AI Sample (BAIS) in two mirror setups: 12 and 36 ranged units. Read line vs column: for instance HOAI won 59\% of its matches against OAI in the 12 units setup. Note: The average amount of units left at the end of battles is proportional to the percentage of wins.}
-\caption{Win ratios over at least 200 battles of OAI, HOAI, BAIPB and BAIS in two mirror setups: 12 and 36 ranged units. Left: 12 units (12 vs 12) setup. Right: 36 units (36 vs 36) setup. Read line vs column: for instance HOAI won 59\% of its matches against OAI in the 12 units setup.} %Note: The average amount of units left at the end of battles is grossly proportional to the percentage of wins.}
+\ifthenelse{\equal{\myprintformat}{true}}{
+\caption{Win ratios over at least 200 battles of OAI, HOAI, BAIPB and BAIS in two mirror setups: 12 and 36 ranged units. 
+Top: 12 units (12 vs 12) setup. Bottom: 36 units (36 vs 36) setup. Read line vs column: for instance HOAI won 59\% of its matches against OAI in the 12 units setup.}}{
+\caption{Win ratios over at least 200 battles of OAI, HOAI, BAIPB and BAIS in two mirror setups: 12 and 36 ranged units. 
+Left: 12 units (12 vs 12) setup. Right: 36 units (36 vs 36) setup. Read line vs column: for instance HOAI won 59\% of its matches against OAI in the 12 units setup.} %Note: The average amount of units left at the end of battles is grossly proportional to the percentage of wins.}
+}
 \label{tab:win_ratios}
 \end{table}
 
 These results show that our heuristic (HAOI) is comparable to the original AI (OAI), perhaps a little better, but induces more collisions as we can see its performance diminish a lot in the 36 units setup vs OAI. For Bayesian units, the ``pick best'' (BAIPB) direction policy is very effective when battling with few units (and few movements because of static enemy units) as proved against OAI and HOAI, but its effectiveness decreases when the number of units increases: all units are competing for the best directions (to $flee()$ or $fightMove()$ in) and they collide. The sampling policy (BAIS) has way better results in large armies, and significantly better results in the 12 units vs BAIPB. BAIPB may lead our units to move inside the ``enemy zone'' a lot more to chase priority targets (in \textit{fightMove()}) and collide with enemy units or get kill. Sampling entails that the competition for the best directions is distributed among all the ``bests to good'' positions, from the units point of view. We illustrate this effect in Figure~\ref{fig:BayesianUnitChoice}: the units (on the right of the figure) have good reasons (combinations of sensory inputs, for instance of the damage map) to flee on the left, and there may be a peak of ``best position to be at''. AS they have not moved yet, they do not have interpolation of positions which will collide, so they are not repulsing each other at this position, all go together and collide. Sampling would, on average, provide a collision free solution here.
 \begin{figure}[h]
-\includegraphics[width=12cm]{images/distDir.png}
-\hspace{0.8cm}
-\includegraphics[width=2.6cm]{images/flee_sample.png}
+\includegraphics[width=0.75\columnwidth]{images/distDir.png}
+\hspace{0.05\columnwidth}
+\includegraphics[width=0.16\columnwidth]{images/flee_sample.png}
 \caption{Example of $\PP(Dir)$ when fleeing, showing why sampling (BAIS, bottom graphic on the right) may be a better instead of picking the best direction (BAIPB, here $Dir=17$ in the plot, top graphic on the right) and triggering units collisions.}
 \label{fig:BayesianUnitChoice}
 \end{figure}
@@ -585,7 +593,13 @@ Another solution would be to consider more than just the atomic directions. Inde
 
 \subsubsection{Probabilistic Modality}
 Finally, we could use multi-modality \citep{Colas10} to get rid of the remaining (small: fire-retreat-move) FSM. Instead of being in ``hard'' modes, the unit could be in a weighted sum of modes (summing to one) and we would have:
+\ifthenelse{\equal{\myprintformat}{true}}{
+\begin{footnotesize}
+}{}
 $$\PP(Dir) = w_{fightMove()}\PP(Dir|sensory\_inputs)_{fightMove()} + w_{flee()}\PP(Dir|sensory\_inputs)_{flee()} \dots$$
+\ifthenelse{\equal{\myprintformat}{true}}{
+\end{footnotesize}
+}{}
 This could particularly help dealing with the fact that parameters learned from fixed scenarii would be too specialized. This way we could interpolate a continuous family of distributions for $\PP(Dir)$ from a fixed and finite number of parameters learned from a finite number of experiments setups.
 
 %The sensory inputs given to a ``Bayesian unit'' controls its objective(s) or goal(s) and the parametrization of his probabilistic model controls its behavior and degree of freedom. As an illustration, two of the extreme cases are $\PP(Direction=x|Objective=x)=1$: no freedom, $\PP(Direction=x|Objective=y)=\PP(Direction=x)$: no influence of the objective. %%% TODO
