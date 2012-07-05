@@ -31,23 +31,6 @@
 \usetikzlibrary{decorations.pathmorphing}
 \usetikzlibrary{decorations.markings}
 
-
-%%% VARIABLE CONF:
-
-\usepackage{ifthen}
-\ifthenelse{\equal{\myebookformat}{true}}{
-\input{htmlspecific.tex}  % hyperref for HTML
-%\usepackage{tex4ht}
-}{
-\input{pdfspecific.tex}    % hyperref, backrefs, pdfinfo 
-\ifthenelse{\equal{\myprintformat}{false}}{
-\usepackage{fullpage}      % for electronic viewing (no headers) %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-}{
-%\setlrmargins{*}{*}{1}
-%\checkandfixthelayout
-}
-}
-
 %%% FONT:
 
 %\usepackage{newcent}
@@ -62,7 +45,6 @@
 %\usepackage[sc]{mathpazo}
 %\linespread{1.05}
 \usepackage[T1]{fontenc}
-
 
 %%% TOC:
 
@@ -114,6 +96,23 @@
 
 \linespread{1.12}
 %\date{}
+
+%%% VARIABLE CONF:
+
+\usepackage{ifthen}
+\ifthenelse{\equal{\myebookformat}{true}}{
+\input{htmlspecific.tex}  % hyperref for HTML
+%\usepackage{tex4ht}
+}{
+\input{pdfspecific.tex}    % hyperref, backrefs, pdfinfo 
+\ifthenelse{\equal{\myprintformat}{false}}{
+\usepackage{fullpage}      % for electronic viewing (no headers) %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+}{
+%\setlrmargins{*}{*}{1}
+%\checkandfixthelayout
+}
+}
+
 
 \begin{document}
 
@@ -189,6 +188,11 @@ $\ccbynceu$
 %\begin{appendices}
 \include{chapters/appendices}
 %\end{appendices}
+
+\noindent{Nani gigantum humeris insidentes.\\
+Des nains sur des \'{e}paules de g\'{e}ants.\\
+Standing on the shoulders of giants.\\}
+
 
 \end{document}
 
