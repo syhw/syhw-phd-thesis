@@ -1,15 +1,22 @@
-\chapter*{Notations}
+%\chapter*{Notations}
+\section*{Notations}
 
-\section*{Symbols}
+\subsection*{Symbols}
 \begin{tabular}{ll}
 $\leftarrow$ & assignment of value to the left hand operand \\
 $\sim$ & the right operand is the distribution of the left operand (random variable) \\
 $\propto$ & proportionality \\
 $\approx$ & approximation \\
 $\#$ & cardinal of a space or dimension of a variable \\
+$\cap$ & intersection \\
+$\cup$ & union \\
+$\wedge$ & and \\
+$\vee$ & or \\
+$M^T$ & $M$ transposed \\
+$\llbracket \ \ \rrbracket$ & integers interval \\
 \end{tabular}
 
-\section*{Variables}
+\subsection*{Variables}
 \begin{tabular}{ll}
 $X$ and $Variable$ & random variables (or logical propositions) \\
 $x$ and $value$ & values \\
@@ -19,7 +26,7 @@ $X_{1:n}$ & the set of $n$ random variables $X_1 \dots X_n$ \\
 $\{x \in \Omega | Q(x)\}$ & the set of elements from $\Omega$ which verify $Q$ \\
 \end{tabular}
 
-\section*{Probabilities}
+\subsection*{Probabilities}
 
 \begin{tabular}{ll}
 $\PP(X) = Distribution$ & is equivalent to $X \sim Distribution$\\
@@ -28,6 +35,6 @@ $\PP(X,Y) = \PP(X\wedge Y)$ & Probability (distribution) of the conjunction of $
 $\PP(X|Y)$ & Probability (distribution) of $X$ knowing $Y$ \\
 \end{tabular}
 
-\section*{Conventions}
+\subsection*{Conventions}
 $$\PP \begin{pmatrix}X_1 \\ \vdots \\ X_k\end{pmatrix}=\PP(X) = \mathcal{N}(\mu, \sigma) \leftrightarrow \PP(X=x)= \frac{1}{(2\pi)^{k/2}\abs{\Sigma}^{1/2}}\exp(-\frac{1}{2}(x-\mu)^T\Sigma^{-1}(x-\mu))$$%,\ \mathrm{with}\ \abs{x}=k$$
-$$\PP(X) = Categorical\footnote{also sometimes noted Multinomial or Histogram}(K,p) \leftrightarrow \PP(X=i) = p_i,\ \mathrm{such\ that}\ \sum_{i=1}^K p_i = 1$$
+$$\PP(X) = Categorical\footnote{also sometimes called Multinomial or Histogram}(K,p) \leftrightarrow \PP(X=i) = p_i,\ \mathrm{such\ that}\ \sum_{i=1}^K p_i = 1$$
