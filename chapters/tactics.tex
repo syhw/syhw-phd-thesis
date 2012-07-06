@@ -130,6 +130,7 @@ From partial observations, one has to derive meaningful information about what m
 The units and buildings perceptions are too low-level to be exploited directly in a tactical model. We will now present importance and defense scoring heuristics.
 
 \subsubsection{Scoring Heuristics}
+\label{sec:scoringheuristics}
 To decide \textit{where} and \textit{how} to attack (or defend), we need information about the particularity of above-mentioned regions. For that, we built heuristics taking low-level information about enemy units and buildings positions, and giving higher level estimator. They are mostly encoding common sense. We do not put too much care into building these heuristics because they will also be used during learning and the learned parameters of the model will have adapted it to their bias. 
 
 The value of a unit is just $minerals\_value + \frac{4}{3}gas\_value + 50supply\_value$. For instance the value of an army with 2 dragoons and 1 zealot is: $v_{army} = 2(125+\frac{4}{3}50+50\times2)+(100+50\times2)$. Now, we note $v^{a}_{type}(r)$ the value of all units of a given $type$ from the attacker ($^{a}$) in region $r$. We can also use $v^d$ for the defender. For instance $v_{dragoon}^d(r)$ is the sum of the values of all $dragoons$ in region $r$ from the defender ($^d$). The heuristics we used in our benchmarks are: 

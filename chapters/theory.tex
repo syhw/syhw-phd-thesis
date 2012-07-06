@@ -30,10 +30,10 @@ One sees, from this Essay, that the theory of probabilities is basically just co
 \section{Problems in Game AI}
 
 \subsection{Partial information}
-If the AI has perfect information, behaving realistically is the problem. Cheating bots are not fun, so either AI should just use information available to the players, or it should fake having only partial information. In probabilistic modeling, sensor models allow for the computation of the state $S$ from observations $O$ by asking $\PP(S|O)$. One can easily specify or learn $\PP(O|S)$: either the game designers specify it, or the bot uses perfect information to get $S$ and learns (counts) $\PP(O|S)$. Then infer $\PP(S|O) = \frac{\PP(O|S).\PP(S)}{\PP(O)}$ (Bayes rule). Incompleteness of information is just uncertainty about the full state.
+If the AI has perfect information, behaving realistically is the problem. Cheating bots are not fun, so either AI should just use information available to the players, or it should fake having only partial information. In probabilistic modeling, sensor models allow for the computation of the state $S$ from observations $O$ by asking $\PP(S|O)$. One can easily specify or learn $\PP(O|S)$: either the game designers specify it, or the bot uses perfect information to get $S$ and learns (counts) $\PP(O|S)$, then infer $\PP(S|O) = \frac{\PP(O|S).\PP(S)}{\PP(O)}$ (Bayes rule). Incompleteness of information is just uncertainty about the full state.
 
 \subsection{Randomness}
-Some games have inherent stochasticity (variable random action effects) part of the gameplay. In any case, an AI can't assume optimal play from the opponent due to the complexity of video games. In the context of state estimation and control, dealing with this randomness require ad-hoc methods for scripting of boolean logic, while it is dealt with natively through probabilistic modeling. Where a program would have to test for an effect/value $V$ to be in a given interval to decide on a given course of action $A$, a probabilistic models just computes the distribution on $A$ given $V$: $\PP(A|V) = \frac{\PP(V|A).\PP(A)}{\PP(V)}$.
+Some games have inherent stochasticity (variable random action effects) part of the gameplay. In any case, an AI can't assume optimal play from the opponent due to the complexity of video games. In the context of state estimation and control, dealing with this randomness require ad-hoc methods for scripting of boolean logic, while it is dealt with natively through probabilistic modeling. Where a program would have to test for an effect/value $V$ to be in a given interval to decide on a given course of action $A$, a probabilistic model just computes the distribution on $A$ given $V$: $\PP(A|V) = \frac{\PP(V|A).\PP(A)}{\PP(V)}$.
 
 \subsection{Vertical continuity}
 Abstracting higher level cognitive functions (strategy and tactics for instance) is an efficient way to break the complexity barrier of writing game AI. Exploiting the vertical continuity, i.e. the conditioning of higher level thinking on actions, is totally possible in a hierarchical Bayesian model. With strategies as values of $S$ and tactics as values of $T$, $\PP(T|S)$ gives the conditioning of $T$ on $S$ and thus enables us to evaluate only those $T$ values that are possible with given $S$ values.
@@ -42,9 +42,11 @@ Abstracting higher level cognitive functions (strategy and tactics for instance)
 Real-time games may use discrete time-steps (24Hz for instance for StarCraft), it does not prevent temporal continuity in strategies, tactics and, most strongly, actions. There are several Bayesian models able to deal with sequences, filter models, from which \newglossaryentry{HMM}{name=HMM,description={Hidden Markov Model, a dynamic Bayesian network estimating hidden states following a Markov process from observations}}Hidden Markov Models (\glos{HMM}) \citep{Rabiner}, Kalman filters \citep{Kalman1960} and particle filters \citep{particleFiltering} are specializations of. With states $S$ and observations $O$, filter models under the Markov assumption represent the joint $\PP(S^0).\PP(O^0|S^0).\prod_{t=1}^T[\PP(S^t | S^{t-1}).\PP(O^t|S^t)]$.
 
 \subsection{Autonomy and Programming}
-Autonomy is the ability to deal with new states, the challenge of autonomous characters arises from state spaces too big to be fully specified (in scripts / FSM). Again, probabilistic modeling enables one to recognize unspecified states as soft mixtures of known states. It also allows to deal with unknown state as an incomplete version of a known state which subsumes it. Autonomy can also be reached through learning, being it through online or offline learning. Offline learning is used to learn parameters that does not have to be specified by the programmers and/or game designers. One can use data or experiments with known/wanted situations (supervised learning, reinforcement learning), or explore data (unsupervised learning) or game states (evolutionary algorithms). Online learning can provide adaptivity of the AI to the player and/or its own competency playing the game.
+Autonomy is the ability to deal with new states: the challenge of autonomous characters arises from state spaces too big to be fully specified (in scripts / FSM). Again, probabilistic modeling enables one to recognize unspecified states as soft mixtures of known states. It also allows to deal with unknown state as an incomplete version of a known state which subsumes it. Autonomy can also be reached through learning, being it through online or offline learning. Offline learning is used to learn parameters that does not have to be specified by the programmers and/or game designers. One can use data or experiments with known/wanted situations (supervised learning, reinforcement learning), or explore data (unsupervised learning) or game states (evolutionary algorithms). Online learning can provide adaptability of the AI to the player and/or its own competency playing the game.
 
 \section{The Bayesian Programming Methodology}
+
+\subsection{The Hitchhiker's Guide to Bayesian Probability}
 
 \begin{figure}[!ht]
 \centering
@@ -74,13 +76,14 @@ A system for reasoning which satisfies:
 \begin{itemize}
     \item divisibility and comparability, the plausibility of a statement is a real number,
     \item common sense, in presence of total information, reasoning is isomorphic to Boolean logic,
-    \item consistency, two identical mental states should have the same degress of plausibility,
+    \item consistency, two identical mental states should have the same degrees of plausibility,
 \end{itemize}
 is isomorphic to probability theory.
 \end{mythm}
-So the degrees of belief of any consistent induction mechanism, verify Kolmogorov's axioms. \cite{DeFinetti37} showed that if reasoning is made in a system which is not isomorphic to probability theory, then it is always possible to find a \textit{Dutch book} (a set of bets which guarantees a profit regardless of the outcomes). %%% ``Probability does not exist''
+So the degrees of belief of any consistent induction mechanism, verify Kolmogorov's axioms. \cite{DeFinetti37} showed that if reasoning is made in a system which is not isomorphic to probability theory, then it is always possible to find a \textit{Dutch book} (a set of bets which guarantees a profit regardless of the outcomes). In our quest for a consistent reasoning mechanism which is able to deal with (extensional and intentional) uncertainty, we are thus bound to probability theory. %%% ``Probability does not exist''
 
 
+\subsection{A Formalism for Bayesian Models}
 Inspired by plausible reasoning, we present Bayesian programming, a formalism that can be used to describe entirely any kind of Bayesian model. It subsumes Bayesian networks and Bayesian maps, as it is equivalent to probabilistic factor graphs \cite{Diard03}. There are mainly two parts in a \newacronym{BP}{BP}{Bayesian program}\glos{BP}, the \textbf{description} of how to compute the joint distribution, and the \textbf{question(s)} that it will be asked. 
 
 The description consists in exhibiting the relevant \textit{variables} $\{X^1,\dots,X^n\}$ and explain their dependencies by \textit{decomposing} the joint distribution $\PP(X^1\dots X^n | \delta, \pi)$ with existing preliminary (\textit{prior}) knowledge $\pi$ and data $\delta$. The \textit{forms} of each term of the product specify how to compute their distributions: either parametric forms (laws or probability tables, with free parameters that can be learned from data $\delta$) or recursive questions to other Bayesian programs.
@@ -118,7 +121,7 @@ Question
 %\end{small}
 
 
-For the use of Bayesian programming in sensory-motor systems, see \citep{PRDMSMS}. For its use in cognitive modeling, see \citep{Colas10}. For its first use in video games (first person shooter gameplay, Unreal Tournament), see \citep{LeHy04}.
+For the use of Bayesian programming in sensory-motor systems, see \citep{PRDMSMS}. For its use in cognitive modeling, see \citep{Colas10}. For its first use in video game AI, applied to the first person shooter gameplay (Unreal Tournament), see \citep{LeHy04}.
 
 
 To sum-up, by viewing probabilities as an extension of logic, the method by which to build Bayesian models gets clearer: there is a strong parallel between writing a Bayesian program and logic or declarative programming. In order:
@@ -253,7 +256,7 @@ Question\\
 \begin{figure}[h!]
 \begin{center}
 \includegraphics[width=5cm]{images/wow_fight1.png} \hspace{1.5cm} \includegraphics[width=5cm]{images/wow_fight2.png}
-\caption{Example setup A (left) and B (right). There are 2 foes and 2 players taking damages (``MT'' and ``tank''). Players with stars can heal allies, players with dotted lines will soon die ($ID=true$). Our model controls the blue character, green players are allies, while red characters are foes. The larger the surrounding ellipse is, the more health points the characters have.}
+\caption{Example setup A (left) and B (right). There are 2 foes and 2 allies taking damages (``MT'' and ``tank''). Players with stars can heal allies, players with dotted lines will soon die ($ID=true$). Our model controls the blue character, green players are allies, while red characters are foes. The larger the surrounding ellipse is, the more health points the characters have.}
 \label{fig:wow_fight}
 \end{center}
 \end{figure}
