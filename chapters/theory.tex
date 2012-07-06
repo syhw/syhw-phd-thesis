@@ -33,6 +33,7 @@ One sees, from this Essay, that the theory of probabilities is basically just co
 %\end{itemize}
 
 \section{Problems in Game AI}
+We sum up the problems that we have detailed in the previous chapter to make a good case for a consistent reasoning scheme which can deal with uncertainty.
 
 \subsection{Partial information}
 If the AI has perfect information, behaving realistically is the problem. Cheating bots are not fun, so either AI should just use information available to the players, or it should fake having only partial information. In probabilistic modeling, sensor models allow for the computation of the state $S$ from observations $O$ by asking $\PP(S|O)$. One can easily specify or learn $\PP(O|S)$: either the game designers specify it, or the bot uses perfect information to get $S$ and learns (counts) $\PP(O|S)$, then infer $\PP(S|O) = \frac{\PP(O|S).\PP(S)}{\PP(O)}$ (Bayes rule). Incompleteness of information is just uncertainty about the full state.
@@ -63,15 +64,15 @@ Autonomy is the ability to deal with new states: the challenge of autonomous cha
 The reverend Thomas Bayes is the first credited to have worked on inversing probabilities: by knowing something about the probability of $A$ given $B$, how can one draw conclusions on the probability of $B$ given $A$? Bayes theorem states: $$\PP(A|B) = \frac{\PP(B|A)\PP(A)}{\PP(B)}$$
 \cite{Laplace} rediscovered this theorem and published the work of inductive reasoning by using probabilities. Later, by extending logic to \textit{plausible reasoning}, \cite{Jaynes} arrived at the same properties than \cite{Kolmogorov33} probability theory. Plausible reasoning originates from logic, whose statements have degrees of plausibility represented by real numbers. %We note ``the conditional plausibility that A is true, given that B is true'' $A|B$.
 Adding consistency: a) all the possible ways to reach a conclusion leads to the same result, b) information cannot be ignored, c) two equal states of knowledge have the same plausibilities; Cox %%% Jaynes too
-derived the ``product-rule'' ($\PP(AB)=\PP(A\cap B)=\PP(A|B)\PP(B)$) and the ``sum-rule'' ($\PP(A+B)=\PP(A)+\PP(B)-\PP(AB)$ or $\PP(A\cup B) = \PP(A)+\PP(B)-\PP(A\cap B)$) of probabilities. As for rules of inferences, the links between logic and plausible reasoning are direct, with $C=[A\Rightarrow B]$:
+derived the ``product-rule'' ($\PP(A,B)=\PP(A\cap B)=\PP(A|B)\PP(B)$) and the ``sum-rule'' ($\PP(A+B)=\PP(A)+\PP(B)-\PP(A,B)$ or $\PP(A\cup B) = \PP(A)+\PP(B)-\PP(A\cap B)$) of probabilities. As for rules of inferences, the links between logic and plausible reasoning are direct, with $C=[A\Rightarrow B]$:
 \begin{itemize}
-    \item modus ponens $$\frac{[A\Rightarrow B] \wedge [A=true]}{B=true}$$ translates to $$\PP(B|AC)=\frac{\PP(AB|C)}{\PP(A|C)}$$
+    \item modus ponens $$\frac{[A\Rightarrow B] \wedge [A=true]}{B=true}$$ translates to $$\PP(B|A,C)=\frac{\PP(A,B|C)}{\PP(A|C)}$$
     \item modus tollens $$\frac{[A\Rightarrow B] \wedge [B=false]}{A=false}$$ translates to $$\PP(A|C\neg B)=\frac{\PP(A \neg B|C)}{\PP(\neg B|C)}$$
 \end{itemize}
 Also, additionally to the two strong logic syllogisms above, plausible reasoning gets two weak syllogisms, from:
 \begin{itemize}
-    \item $$\PP(A|BC)=\PP(A|C)\frac{\PP(B|AC)}{\PP(B|C)}$$ we get $$\frac{[A\Rightarrow B] \wedge [B=true]}{A\ \mathrm{becomes\ more\ plausible}}$$
-    \item $$\PP(B| C\neg A)=\PP(B|C)\frac{\PP(\neg A|BC)}{\PP(\neg A|C)}$$ we get $$\frac{[A\Rightarrow B] \wedge [A=false]}{B\ \mathrm{becomes\ less\ plausible}}$$
+    \item $$\PP(A|B,C)=\PP(A|C)\frac{\PP(B|A,C)}{\PP(B|C)}$$ we get $$\frac{[A\Rightarrow B] \wedge [B=true]}{A\ \mathrm{becomes\ more\ plausible}}$$
+    \item $$\PP(B| C\neg A)=\PP(B|C)\frac{\PP(\neg A|B,C)}{\PP(\neg A|C)}$$ we get $$\frac{[A\Rightarrow B] \wedge [A=false]}{B\ \mathrm{becomes\ less\ plausible}}$$
 \end{itemize}
 
 Indeed, this was proved by \cite{Cox46}, producing Cox's theorem (also named Cox-Jayne's theorem):
@@ -84,7 +85,7 @@ A system for reasoning which satisfies:
 \end{itemize}
 is isomorphic to probability theory.
 \end{mythm}
-So the degrees of belief of any consistent induction mechanism, verify Kolmogorov's axioms. \cite{DeFinetti37} showed that if reasoning is made in a system which is not isomorphic to probability theory, then it is always possible to find a \textit{Dutch book} (a set of bets which guarantees a profit regardless of the outcomes). In our quest for a consistent reasoning mechanism which is able to deal with (extensional and intentional) uncertainty, we are thus bound to probability theory. %%% ``Probability does not exist''
+So, the degrees of belief, of any consistent induction mechanism, verify Kolmogorov's axioms. \cite{DeFinetti37} showed that if reasoning is made in a system which is not isomorphic to probability theory, then it is always possible to find a \textit{Dutch book} (a set of bets which guarantees a profit regardless of the outcomes). \textbf{In our quest for a consistent reasoning mechanism which is able to deal with (extensional and intentional) uncertainty, we are thus bound to probability theory.} %%% ``Probability does not exist''
 
 
 \subsection{A Formalism for Bayesian Models}
@@ -127,14 +128,23 @@ Question
 
 For the use of Bayesian programming in sensory-motor systems, see \citep{PRDMSMS}. For its use in cognitive modeling, see \citep{Colas10}. For its first use in video game AI, applied to the first person shooter gameplay (Unreal Tournament), see \citep{LeHy04}.
 
-
 To sum-up, by viewing probabilities as an extension of logic, the method by which to build Bayesian models gets clearer: there is a strong parallel between writing a Bayesian program and logic or declarative programming. In order:
 \begin{enumerate}
     \item Isolate the variables of the problem: it is the first prior that the programmer puts into the system. The variables can be anything, from existing input or output values of the problem to abstract/aggregative values or parameters of the model. Discovering which variable to use for a given problem is one of the most complicated form of machine learning.
     \item Suppose and describe the influences and dependencies between these variables. This is another prior that the programmer can have on the problem, and learning the structure between these variables is the second most complicated form of learning \citep{Fra04b,Ler05a}.
-    \item Fill the priors and conditional probabilities parameters. The programmer needs to be an expert of the problem to put relevant parameters, although this is the easiest to learn from data once variables and structure are specified. Learning the structure can be seen as learning the parameters of a fully connected model (and then removing dependencies where are the less influent parameters) but most of these kinds of model are totally untractable.
+    \item Fill the priors and conditional probabilities parameters. The programmer needs to be an expert of the problem to put relevant parameters, although this is the easiest to learn from data once variables and structure are specified. Learning the structure can be seen as learning the parameters of a fully connected model and then removing dependencies where are the less influent parameters.% but most of these kinds of model are totally intractable.
 \end{enumerate}
-In the following, we will show this method applied to a simulated \glos{MMORPG} fight situation.
+In the following, we present how we applied this method to a simulated \glos{MMORPG} fight situation as an example.
+
+By following these steps, one may have to choose among several models. That is not a problem as there are rational ground to make this choices, ``all models are wrong; some are useful'' (George Box). %We express this choice of modeling in $\pi$. 
+Actually, the full question that we ask is $\PP(Searched|Known, \pi, \delta)$, it depends on the modeling assumptions ($\pi$) as well as the data ($\delta$) that we used for training (if any). A simple way to view model selection is to pick the model which makes the fewest assumptions (Occam's razor). In fact, Bayesian inference carries Occam's razor with it: we shall ask what is the plausibility of our model prior knowledge in the light of the data $\PP(\pi|\delta)$. 
+
+Indeed, when evaluating two models $\pi_1$ and $\pi_2$, doing the ratio of evidences for the two modeling assumption helps us choose:
+\begin{equation}
+\frac{\PP(\pi_1 | \delta)}{\PP(\pi_2 | \delta)} = \frac{\PP(\pi_1) \PP(\delta| \pi_1)}{\PP(\pi_2 | \delta) \PP(\delta | \pi_2)}
+\end{equation}
+
+If our model is complicated, its expressiveness is higher, and so it can model more complicated datasets. However, the probability mass will be spread thiner on the space of possible datasets than for a simpler model. For instance, in the task of regression, if $\pi_1$ can only encode linear regression ($y = Ax + b$) and $\pi_2$ can also encore quadratic regression ($y = Ax + Bx^2 + c$), all the predictions for $\pi_1$ are concentrated on linear (affine) functions, while for $\pi_2$ the probability mass of predictions is spread on more possible functions. If we only have data $\delta$ of linear functions, the evidence for $\pi_1$, $\PP(\pi_1|\delta)$ will be higher. If $\delta$ contains some quadratic functions, the evidence ratio will shift towards $\pi_2$ as the second model has better predictions: the shift to $\pi_2$ happens when the additional model complexity of $\pi_2$ and the prediction errors of $\pi_1$ balance each other.
 
 
 %%% How?
@@ -149,9 +159,9 @@ In the following, we will show this method applied to a simulated \glos{MMORPG} 
 \section{Modeling of a Bayesian MMORPG player}
 \subsection{Task}
 
-We will now present a model of a \glos{MMORPG} player with the Bayesian programming framework \citep{SYNNAEVE:MMORPG}. A role-playing game (RPG) consist in the incarnation by the human player of an avatar with specific skills, items, numbers of health points (HP) and stamina or mana (magic energy) points. See section~\ref{sec:MMORPG} for more details about the gameplay. We want to program a robotic player which we can substitute to a human player in a battle scenario. More specifically here, we modeled the ``druid'' class, which is complex because it can cast spells to deal damages or other negative effects as well as to heal allies or enhance their capacities (``buff'' them). The model described here deals only with a sub-task of a global AI for autonomous NPC. 
+We will now present a model of a \glos{MMORPG} player with the Bayesian programming framework \citep{SYNNAEVE:MMORPG}. A role-playing game (RPG) consist in the incarnation by the human player of an avatar with specific skills, items, numbers of health points (HP) and stamina or mana (magic energy) points (we already presented this gameplay in section~\ref{sec:MMORPG}). We want to program a robotic player which we can substitute to a human player in a battle scenario. More specifically here, we modeled the ``druid'' class, which is complex because it can cast spells to deal damages or other negative effects as well as to heal allies or enhance their capacities (``buff'' them). The model described here deals only with a sub-task of a global AI for autonomous NPC. 
 
-The problem that we try to solve is: how do we choose which skill to use and on which target in a \glos{PvE} battle? The possible targets are all our allies and foes. There are also several skills that we can use. We will elaborate a model taking all our perceptions into account and giving back a distribution over possible target and skills. We can then pick the most probable combination that is yet possible to achieve (enough energy/mana, no cooldown/reload time) or simply sample in this distribution. %For that, we first choose what should be the target given all surrounding variables: is an ally near death that he should be healed, which foe should we focus our attacks on? Once we have the distribution over possible targets, we search the distribution about our skills, pondered by the one on targets. However, some variables can be things that humans subconsciously interpolate from perceptions.
+The problem that we try to solve is: how do we choose which skill to use, and on which target, in a \glos{PvE} battle? The possible targets are all our allies and foes. There are also several skills that we can use. We will elaborate a model taking all our perceptions into account and giving back a distribution over possible target and skills. We can then pick the most probable combination that is yet possible to achieve (enough energy/mana, no cooldown/reload time) or simply sample in this distribution. %For that, we first choose what should be the target given all surrounding variables: is an ally near death that he should be healed, which foe should we focus our attacks on? Once we have the distribution over possible targets, we search the distribution about our skills, pondered by the one on targets. However, some variables can be things that humans subconsciously interpolate from perceptions.
 
 An example of the tasks that we have to solve is depicted in Figure~\ref{fig:wow_fight}): red characters are foes, green ones are allies, we control the blue one. The ``Lich'' is inflicting damages to the ``MT'' (main tank), the ``Add'' is hitting the ``Tank''. In setup A, only the ``Tank'' is near death, while in setup B both the ``Tank'' and the ``Add'' are almost dead. A first approach to reason about these kind of situations would be to use the combination of simple rules and try to give them some priority.
 \begin{itemize}
@@ -191,7 +201,7 @@ Actions available to the players are to move and to use their abilities:
     \item removing maledictions...
 \end{itemize}
 
-Here, we consider that the choice of a target and an ability to use on it strongly condition the movements of the player so we will not deal with moving the character.
+Here, we consider that the choice of a target and an ability to use on it strongly condition the movements of the player, so we will not deal with moving the character.
 
 \subsection{Bayesian model}
 \subsubsection{Variables}
@@ -199,14 +209,21 @@ Here, we consider that the choice of a target and an ability to use on it strong
 A simple set of variables is as follows: 
 \begin{itemize}
     \item Target: $T^{t-1,t} \in \{t_1\dots t_n\}$ at $t$ and $t-1$ (previous action). $T^t$ is also abusively noted $T$ in the rest of the model. We have the $n$ characters as possible targets; each of them has their own properties variables (the subscripting in the following variables). 
-    \item Hit Points: $HP_1 \dots HP_n$ s.t. $HP_i \in [0\dots 9]$. Health/Hit points ($HP$) are discretized in 10 levels, from the lower to the higher. 
-    \item Distance: $D_1 \dots D_n$ s.t. $D_i \in \{Contact, Close, Far, VeryFar\}$. Distance ($D$) is discretized in 4 zones around the robot character: \textit{contact} where it can attack with a contact weapon, \textit{close}, \textit{far} and (\textit{very far}) to the further for which we have to move even for shooting the longest distance weapon/spell. 
-    \item Ally: $A_1 \dots A_n$ s.t. $A_i \in \{true, false\}$. Ally ($A$) is a Boolean variable mentioning if character $i$ is allied with the robot character. 
-    \item Derivative Hit Points: $\Delta HP_1 \dots \Delta HP_n$ s.t. $\Delta HP_i \in \{-, 0, +\}$. Delta hit points ($\Delta HP$) is a 3-valued interpolated value from the previous few seconds of fight that informs about the $i$th character getting wounded or healed (or nothing). 
-    \item Imminent Death: $ID_1 \dots ID_n$ s.t. $ID_i \in \{true, false\}$. Imminent death ($ID$) is also an interpolated value that encodes $HP$, $\Delta HP$ and incoming attacks/attackers. This is a Boolean variable saying if the $i$th character if going to die anytime soon. This is an example of what we consider that an experienced human player will infer automatically from the screen and notifications. 
-    \item Class: $C_1 \dots C_n$ s.t. $C_i \in \{Tank, Contact, Ranged, Healer\}$. Class ($C$), simplified over 4 values, gives the type of the $i$th character: a Tank can take a lot of damages and taunt enemies, a Contact damager can deal huge amounts of damage with contact weapons (rogue, barbarian...), Ranged stands for the class that deals damages from far away (hunters, mages...) and Healers are classes that can heal (in considerable amounts). 
-    \item Resists: $R_1 \dots R_n$ s.t. $R_i \in \{Nothing, Fire, Ice, Nature, FireIce, IceNat, FireNat, All\}$. The Resist variable is the combination of binary variables of resistance to certain types of (magical) damages into one variable. With 3 possible resistances we get ($2^3$) 8 possible values. For instance ``$R_i=FireNat$'' means that the $i$th character resists fire and nature-based damages. Armor (physical damages) could have been included, and the variables could have been separated. 
-    \item Skill: $S \in \{Skill_1 \dots Skill_m\}$. The skill variable takes here all the possible skills for the given character, and not only the available ones to cast at the moment to be able to have reusable probability tables (i.e. learnable tables).
+    %\item Hit Points: $HP_1 \dots HP_n$ s.t. $HP_i \in [0\dots 9]$. Health/Hit points ($HP$) are discretized in 10 levels, from the lower to the higher. 
+    \item Hit Points: $HP_{i \in \llbracket 1\dots n\rrbracket} \in [0\dots 9]$ is the hit points value of the $i$th player. Health/Hit points ($HP$) are discretized in 10 levels, from the lower to the higher. 
+    %\item Distance: $D_1 \dots D_n$ s.t. $D_i \in \{Contact, Close, Far, VeryFar\}$. Distance ($D$) is discretized in 4 zones around the robot character: \textit{contact} where it can attack with a contact weapon, \textit{close}, \textit{far} and (\textit{very far}) to the further for which we have to move even for shooting the longest distance weapon/spell. 
+    \item Distance: $D_{i \in \llbracket 1 \dots n \rrbracket} \in \{Contact, Close, Far, VeryFar\}$ is the distance of the $i$th player to our robotic character. Distance ($D$) is discretized in 4 zones around the robot character: \textit{contact} where it can attack with a contact weapon, \textit{close}, \textit{far} and (\textit{very far}) to the further for which we have to move even for shooting the longest distance weapon/spell. 
+    %\item Ally: $A_1 \dots A_n$ s.t. $A_i \in \{true, false\}$. Ally ($A$) is a Boolean variable mentioning if character $i$ is allied with the robot character. 
+    \item Ally: $A_{i \in \llbracket 1 \dots n \rrbracket} \in \{true, false\}$ is $true$ is the $i$th player is an ally, and false otherwise.
+    %\item Derivative Hit Points: $\Delta HP_1 \dots \Delta HP_n$ s.t. $\Delta HP_i \in \{-, 0, +\}$. Delta hit points ($\Delta HP$) is a 3-valued interpolated value from the previous few seconds of fight that informs about the $i$th character getting wounded or healed (or nothing). 
+    \item Derivative Hit Points: $\Delta HP_{i \in \llbracket 1 \dots n \rrbracket} \in \{-, 0, +\}$ (decreasing, stable, increasing) is the evolution of the hit points of the $i$th player. $\Delta HP$ is a 3-valued interpolated value from the previous few seconds of fight that informs about the $i$th character getting wounded or healed (or nothing). 
+    %\item Imminent Death: $ID_1 \dots ID_n$ s.t. $ID_i \in \{true, false\}$. Imminent death ($ID$) is also an interpolated value that encodes $HP$, $\Delta HP$ and incoming attacks/attackers. This is a Boolean variable saying if the $i$th character if going to die anytime soon. This is an example of what we consider that an experienced human player will infer automatically from the screen and notifications. 
+    \item Imminent Death: $ID_{i \in \llbracket 1 \dots n \rrbracket} \in \{true, false\}$ tells if the $i$th player is in danger of death. Imminent death ($ID$) is an interpolated value that encodes $HP$, $\Delta HP$ and incoming attacks/attackers. %
+This is a Boolean variable saying if the $i$th character if going to die anytime soon. This is an example of what we consider that an experienced human player will infer automatically from the screen and notifications. 
+    \item Class: $C_{i \in \llbracket 1 \dots n} \in \{Tank, Contact, Ranged, Healer\}$ is the class of the $i$th player. Class ($C$) is simplified over 4 values: a Tank can take a lot of damages and taunt enemies, a Contact class which can deal huge amounts of damage with contact weapons (rogue, barbarian...), Ranged stands for the class that deals damages from far away (hunters, mages...) and Healers are classes that can heal in considerable amounts. 
+    %\item Class: $C_{i \in \llbracket 1 \dots n} \in \{Tank, Contact, Ranged, Healer\}$ is the class of the $i$th player. Class ($C$) is simplified over 4 values: a Tank can take a lot of damages and taunt enemies, a Contact class which can deal huge amounts of damage with contact weapons (rogue, barbarian...), Ranged stands for the class that deals damages from far away (hunters, mages...) and Healers are classes that can heal in considerable amounts. 
+    \item Resists: $R_{i \in \llbracket 1 \dots n \rrbracket} \in \{Nothing, Fire, Ice, Nature, FireIce, IceNat, FireNat, All\}$ informs about the resistances of the $i$th player. The Resist variable is the combination of binary variables of resistance to certain types of (magical) damages into one variable. With 3 possible resistances we get ($2^3$) 8 possible values. For instance ``$R_i=FireNat$'' means that the $i$th character resists fire and nature-based damages. Armor (physical damages) could have been included, and the variables could have been separated. 
+    \item Skill: $S \in \{Skill_1 \dots Skill_m\}$. The skill variable takes all the possible skills for the given character, and not only the available ones to cast at the moment to be able to have reusable probability tables (i.e. it is invariant of the dynamics of the game).
 \end{itemize}
 
 \subsubsection{Decomposition}
@@ -268,7 +285,7 @@ $$P(S=skill_1 | \dots) = \sum_T P(S=skill_1 | T, \dots).P(T)$$
 We here choose to sum over all possible values of T. Note that we did not ask:\\
 $P(S|T=most\_probable , \dots)$ but computed instead
 $$\sum_T P(S|T,hp_{1:n},d_{1:n}, a_{1:n}, \Delta hp_{1:n}, id_{1:n}, c_{1:n}, r_{1:n})$$
-In presence of several possible targets and skills, this computation may have a high complexity, so we could choose not to do the sum and use and instantiate ``most probable values'', for instance of Target, but there we would make a choice earlier and so lose information. There are possibly good combinations of $S$ and $T$ for a value of $T$ that is not the most probable one. This downside may be so hard that we may want to reduce the complexity of computation by simplifying our model or its computation to be able to sum. We propose a solution in the discussion.
+%In presence of several possible targets and skills, this computation may have a high complexity, so we could choose not to do the sum and use and instantiate ``most probable values'', for instance of Target, but there we would make a choice earlier and so lose information. There are possibly good combinations of $S$ and $T$ for a value of $T$ that is not the most probable one. This downside may be so hard that we may want to reduce the complexity of computation by simplifying our model or its computation to be able to sum. We propose a solution in the discussion.
 
 
 \subsubsection{Bayesian program}

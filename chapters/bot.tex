@@ -59,6 +59,34 @@ The tree of decisions.
 
 \section{Results}
 
+
+BroodwarBotQ took part in the AIIDE 2011 StarCraft AI competition:
+
+\begin{table}[h]
+    \begin{center}
+    \begin{tabular}{|l|l|l|c|l|}
+        \hline
+        bot & race & refs & win rate & notes \\
+        \hline
+     Skynet\footnote{\url{http://code.google.com/p/skynetbot/} } & Protoss & & 0.889 & robust openings depending on opponent's race \\
+UAlbertaBot & Protoss & \citep{Churchill2011} & 0.794 & always 2-Gates opening \\
+       Aiur\footnote{\url{http://code.google.com/p/aiurproject/}} & Protoss & & 0.703 & robust and stochastic strategies \\
+ItayUndermind & Zerg & & 0.658 & 6-pooling \\
+       EISBot\footnote{\url{http://code.google.com/p/eisbot/}} & Protoss & \citep{WeberCIG10,Weber2010cr} & 0.606 & 2-Gates or Dragoons opening \\
+         SPAR\footnote{\url{http://www.planiart.usherbrooke.ca/projects/spar/}} & Protoss & \citep{Kabanza2010} & 0.539 & uses Dark Templars \\
+    Undermind & Terran & & 0.517 & Barracks units \\
+         Nova\footnote{\url{http://www.planiart.usherbrooke.ca/projects/spar/}} & Terran & \citep{NovaBot2011} &  0.475 \\
+ BroodwarBotQ\footnote{\url{https://github.com/SnippyHolloW/BroodwarBotQ}} & Protoss  & \citep{SYNNAEVE:OpeningPred} \citep{SYNNAEVE:Micro} & 0.328 & adapts to the opening \\
+        BTHAI\footnote{\url{http://code.google.com/p/bthai/}} & Zerg & \citep{Hagelback2009} & 0.319 & Lurkers opening  \\
+    Cromulent & Terran & & 0.300 & Factory units \\
+   bigbrother & Zerg & & 0.278 & Hydralisks and Lurkers \\
+       Quorum & Terran & & 0.094 & expands and produce Factory units \\
+        \hline
+    \end{tabular}
+    \end{center}
+    \caption{67 loses on 360 games not the case in \ref{fig:ladderbots} TODO}
+    \label{tab:botsAIIDE}
+\end{table}
 %%% AIIDE 2011
 %%% Skynet
 %%% UAlbertaBot
@@ -74,6 +102,8 @@ The tree of decisions.
 %%% bigbrother
 %%% Quorum
 
+
+
 %%% CIG
 %%% Crashes Games Bot Wins
 %%% 0 30 Skynet 26
@@ -82,4 +112,5 @@ The tree of decisions.
 %%% 2 30 BroodwarBotQ 1
 %%% 10 entries                    
 
+Finally, there is ladder running in which BroodwarBotQ (last updated January 2012) is ranked between 7 and 9 (without counting duplicates) and is on-par with EISBot \citep{WeberCIG10,Weber2010cr} as can be seen in Figure~\ref{fig:ladderbots}
 
