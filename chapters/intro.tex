@@ -18,6 +18,8 @@ Expert human play > AI. Data. Competitions.
 
 \section{Contributions}
 
+% Des espèces de design patterns / frameworks pour résoudres des problèmes : 1) (micro) si on veut une IA réactive et dont on peut changer très facilement le comportement (potentiellement multi-agents en environnement cooperatif et/ou adversarial), on peut faire de la fusion sensory motrice, 2) (tactique) si on veut résoudre un problème à informations partielles pour lequel il existe une certaine abstraction, une solution pragmatique est de faire des heuristiques (que l'on aurait fait de toutes façon) pour abstraire le bas niveau / observations au niveau de l'abstraction sur laquelle raisonner et résoudre le problème à ce niveau d'abstraction par un modèle bayésien. Le problème majeur de ce genre d'approche est le biais qu'introduisent les heuristiques, ici "il suffit" d'apprendre les paramètres du modèle bayésien avec les résultats des heuristiques (et on apprend/encode/s'adapte à leur biais). 3) (stratégie) pour raisonner sur la stratégie d'un jeu, a) il faut trouver la sous-structure des règles du jeu qui la conditionne le plus fortement (réduit le plus la dimension de) la stratégie (tech trees comme proxy de la strat); b) il faut étudier les données des intéractions entre joueurs et mieux vaut avoir peu de composantes en grandes dimensions que beaucoup de composantes en faibles dimensions (batailles, clusters de compositions d'armées qui rend le truc tractable). 
+
 \begin{itemize}
 \item A new approach to game AI with:
 \begin{itemize}
@@ -37,7 +39,23 @@ Finally, with this thesis, we hope to contribute a guide for industry practition
 %\subsection{Hierarchy}
 
 \section{Reading Map}
+First, even though I tried to keep jargon to a minimum, when there is a precise word for something, I tend to use it. For AI researchers, there is a lot of video games' jargon; for game designers and programmers, there is a lot of AI jargon. I tried to explain everything and to put everything in a comprehensive glossary.
 
-À la MacKay (Industry vs Research)
+Chapter 2 gives a basic culture about (pragmatic) game AI. The first part explains minimax, alpha-beta and Monte-Carlo tree search by glossing over Tic-tac-toe, Chess and Go respectively. The second part is about video games' AI challenges. The reader novice to AI who wants a deep introduction on artificial intelligence can turn to the leading textbook \citep{AIMA}. The reader novice to game AI, or game programming in the large, can read the Quake III (by iD Software) source code: it is very clear and documented modern C, and it stood the test of time in addition to being the canonical fast first person shooter. Finally, I guess there is no substitute for the reader novice to games to play them in order to grasp them.
+
+Starting by noticing that all game AI challenge can be addressed with uncertain reasoning, chapter 3 lays out the basics of our Bayesian modeling formalism. As we present probabilistic modeling as en extension of logic, it may an easy entry to building probabilistic models for readers with only an undergrad comprehension of probabilities. It is not sufficient to give a strong background on Bayesian modeling however, but the are multiple good books on the subject. We advise the reader who want a strong intuition of Bayesian modeling to read the seminal work by \cite{Jaynes}, and we found the chapter IV of the (free) book of \cite{MacKay} to be an excellent and efficient introduction to Bayesian inference.
+
+Chapter 4 explains the challenges of playing a real-time strategy game through the example of StarCraft: Broodwar. It then explains our decomposition of the problem in the hierarchical abstractions that we have studied.
+
+Chapter 5 presents our solution to the real-time multi-agent cooperative and adversarial problem that is micro-management. We had a decentralized reactive behavior approach providing a framework which can be used in other games than StarCraft. We proved that it is easy to change the behaviors by implementing several modes with minimal code changes.
+
+Chapter 6 deals with the tactical abstraction for partially observable games. Our approach was to abstract low-level observations up to the tactical reasoning level with simple heuristics, and have a Bayesian model make all the inferences at this tactical abstracted level. The key to producing valuable tactical predictions and decisions is to train the model on real game data passed through the heuristics.
+
+Chapter 7 shows our decompositions of strategy into specific prediction and adaptation (under uncertainty) tasks. Our approach was to reduce the complexity of strategies by using the structure of the game rules (technology trees) of expert players vocable (openings) decisions (unit types combinations/proportions). From partial observations, the probability distributions on the opponent's strategy are reconstructed, which allows for adaptation and decision-making.
+
+Chapter 8 describes briefly the software architecture of our robotic player. TODO
+
+
+TODO reading map la MacKay ?
 
 
