@@ -38,7 +38,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
-\section{Goals of Game AI}
+\section{Goals of game AI}
 %\lettrine[lines=1, lhang=.3]{W}{hat} are the goals of game AI?
 \subsection{NPC}
 %\newacronym{npc}{NPC}{non-playing characters}
@@ -95,7 +95,7 @@ Our thesis is that we can learn complex behaviors from exploration or observatio
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
-\section{Single Player Games}
+\section{Single-player games}
 
 Single player games are not the main focus of our thesis, but they present a few interesting AI characteristics. They encompass all kinds of human cognitive abilities, from reflexes to higher level thinking.
 
@@ -109,10 +109,10 @@ Point and click (Monkey Island, Kyrandia, Day of the Tentacle), graphic adventur
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
-\section{Abstract Strategy Games}
+\section{Abstract strategy games}
 %%% http://en.wikipedia.org/wiki/Game_complexity
 %%% http://en.wikipedia.org/wiki/Solved_board_games
-\subsection{Tic-tac-toe, Minimax}
+\subsection{Tic-tac-toe, minimax}
 Tic-tac-toe (noughts and crosses) is a \newglossaryentry{solvedgame}{name={solved game},description={a game whose outcome can be correctly predicted from any position when each side plays optimally}}\glos{solvedgame}, meaning that it can be played optimally from each possible position. How did it came to get solved? Each and every possible positions (26,830) have been analyzed by a Minimax (or its variant Negamax) algorithm. Minimax is an algorithm which can be used to determine the optimal score a player can get for a move in a \newglossaryentry{zerosumgame}{name={zero-sum game},description={a game in which the total score of each players, from one player's point-of-view, for every possible strategies, adds up to zero; \textit{i.e.} ``a player benefits only at the expense of others''}}\glos{zerosumgame}. The Minimax theorem states:
 \begin{mythm}
 For every two-person, zero-sum game with finitely many strategies, there exists a value V and a mixed strategy for each player, such that (a) Given player 2's strategy, the best payoff possible for player 1 is V, and (b) Given player 1's strategy, the best payoff possible for player 2 is -V.
@@ -351,7 +351,7 @@ level 3/.style={sibling distance=7mm}
 \caption{Minimax tree with initial position at Fig.~\ref{fig:TTT} state, \textbf{nodes} are states and \textbf{edges} are transitions, labeled with the move. Leafs are end-game states: 1 point for the win and -1 for the loss. Player is ``circles'' and plays first (first edges are player's moves).}
 \label{fig:minimaxTTT}
 \end{figure}
-\subsection{Checkers, Alpha-beta}
+\subsection{Checkers, alpha-beta}
 Checkers, Chess and Go are also zero sum, \newglossaryentry{perfectinformation}{name={perfect-information},description={(game) in which all the players have complete knowledge of the (board) state of the game}}\glos{perfectinformation}, \newglossaryentry{partisan}{name={partisan},description={(game) which is not impartial, in which a player can do actions another can not do (move a faction while the other player(s) cannot)}}\glos{partisan}, deterministic strategy game. Theoretically, they all can be solved by exhaustive Minimax. 
 In practice though, it is often intractable: their bounded versions are at least in \textsc{pspace} and their unbounded versions are \textsc{exptime}-hard \citep{GPC}. We can see the complexity of Minimax as $O(b^d)$ with $b$ the average branching factor of the tree (to search) and $d$ the average length (depth) of the game. 
 For Checkers $b \approx 8$, but taking pieces is mandatory, resulting in a mean adjusted branching factor of $\approx 4$, while the mean game length is 70 resulting in a game tree complexity of $\approx 10^{31}$ \citep{allis1994}. It is already too large to have been solved by Minimax alone (on current hardware). From 1989 to 2007, there were artificial intelligence competitions on Checkers, all using at least alpha-beta pruning: a technique to make efficient cuts in the Minimax search tree while not losing optimality. 
@@ -459,10 +459,10 @@ level 3/.style={sibling distance=7mm}
 %Prior to Checkers being solved (meaning that we have a database of which moves to play for all positions resulting from optimal play), or if playing against a sub-optimal opponent, 
 Alpha-beta is going to be helpful to search much deeper than Minimax in the same allowed time. The best Checkers program (since the 90s), which is also the project which solved Checkers \citep{SchaefferBBKMLLS07}, Chinook, has opening and end-game (for lest than eight pieces of fewer) books, and for the mid-game (when there are more possible moves) relies on a deep search algorithm. So, apart for the beginning and the ending of the game, for which it plays by looking up a database, it used a search algorithm. As Minimax and Alpha-beta are depth first search heuristics, all programs which have to answer in a fixed limit of time use \textit{iterative deepening}. It consists in fixing limited depth which will be considered maximal and evaluating this position. As it does not relies in winning moves at the bottom, because the search space is too big in $branching^{depth}$, we need moves evaluation heuristics. We then iterate on growing the maximal depth for which we consider moves, but we are at least sure to have a move to play in a short time (at least the greedy depth 1 found move).
 
-\subsection{Chess, Heuristics}
+\subsection{Chess, heuristics}
 With a branching factor of $\approx 35$ and an average game length of 80 moves \citep{Shannon_1950}, the average game-tree complexity of chess is $35^{80}\approx 3.10^{123}$. \citet{Shannon_1950} also estimated the number of possible (legal) positions to be of the order of $10^{43}$, which is called the Shannon number. Chess AI needed a little more than just Alpha-beta to win against top human players (not that Checkers could not benefit it), particularly on 1996 hardware (first win of a computer against a reigning world champion, Deep Blue vs. Garry Kasparov). Once an AI has openings and ending books (databases to look-up for classical moves), how can we search deeper during the game, or how can we evaluate better a situation? In iterative deepening Alpha-beta (or other search algorithms like Negascout \citep{reinfeld1983negascout} or MTD-f\citep{Plaat1996}), one needs to know the value of a move at the maximal depth. If it does not correspond to the end of the game, there is a need for an evaluation heuristic. Some may be straight forward, like the resulting value of an exchange in pieces points. But some strategies sacrifice a queen in favor of a more advantageous tactical position or a checkmate, so evaluation heuristics need to take tactical positions into account. In Deep Blue, the evaluation function had 8000 cases, with 4000 positions in the openings book, all learned from 700,000 grandmaster games \citep{DeepBlue}. Nowadays, Chess programs are better than Deep Blue and generally also search less positions. For instance, Pocket Fritz (HIARCS engine) beats current grandmasters \citep{PocketFritz,CopaMercosur} while evaluating 20,000 positions per second (740 MIPS on a smartphone) against Deep Blue's (11.38 GFlops) 200 millions per second.
 
-\subsection{Go, Monte-Carlo Tree Search}
+\subsection{Go, Monte-Carlo tree search}
 With an estimated number of legal 19x19 Go positions of $2.081681994 * 10^{170}$ \citep{tromp2006} (1.196\% of possible positions), and an average branching factor above Chess for \newglossaryentry{goban}{name=goban,description={board used for the game of Go},plural=gobans}\gloss{goban} from 9x9 and above, Go sets another limit for AI. For 19x19 gobans, the game tree complexity is up to $10^{360}$ \citep{allis1994}. The branching factor varies greatly, from $\approx 30$ to $300$ (361 cases at first), while the mean depth (number of plies in a game) is between 150 to 200. Approaches other than systematic exploration of the game tree are required. One of them is Monte Carlo Tree Search \newglossaryentry{MCTS}{name=MCTS,description={Monte-Carlo Tree Search}}(\glos{MCTS}). Its principle is to randomly sample which nodes to expand and which to exploit in the search tree, instead of systematically expanding the build tree as in Minimax. For a given $node$ in the search tree, we note $Q(node)$ the sum of the simulations rewards on all the runs through $node$, and $N(node)$ the visits count of $node$. Algorithm~\ref{alg:mcts} details the MCTS algorithm and Fig.~\ref{fig:MCTS} explains the principle.
 
 \begin{algorithm}
@@ -607,7 +607,7 @@ With Go, we see clearly that humans do not play abstract strategy games using th
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
-\section{Games with Uncertainty}
+\section{Games with uncertainty}
 An exhaustive list of games, or even of games genres, is beyond the scope/range of this thesis. %On the other hand, we will explain games for which randomness or incomplete information plays a key role with not-so-basic examples. 
 All uncertainty boils down to incompleteness of information, being it the physics of the dice being thrown or the inability to measure what is happening in the opponent's brain. However,  we will speak of 2 types (sources) of uncertainty: extensional uncertainty, which is due to incompleteness in direct, measurable information, and intentional uncertainty, which is related to randomness in the game or in (the opponent's) decisions. Here are two extreme illustrations of this: an agent acting without sensing is under full extensional uncertainty, while an agent whose acts are the results of a perfect random generator is under full intentional uncertainty. The uncertainty coming from the opponent's mind/cognition lies in between, depending on the simplicity to model the game as an optimization procedure. The harder the game is to model, the harder it is to model the trains of thoughts our opponents can follow.
 
@@ -688,8 +688,10 @@ Single-player FPS campaigns immersion could benefit from more realistic bots and
 
 \section{(MMO)RPG}
 
+\label{sec:MMORPG}
+
 \subsection{Gameplay and AI}
-Inspired directly by tabletop and live action role-playing games (Dungeon \& Dragons) as new tools for the game masters, it is quite natural for the RPG to have ended up on computers. The firsts digital RPG were text (Wumpus) or ASCII-art (Rogue, NetHack) based. The gameplay evolved considerably with the technique. Nowadays, what we will call a role playing game (RPG) consist in the incarnation by the human player of an avatar (or a team of avatars) with a class: warrior, wizard, rogue, priest, etc., having different skills, spells, items, health points, stamina/energy/mana (magic energy) points. Generally, the story brings the player to solve puzzles and fight. In a fight, the player has to take decisions about what to do but plays a lesser role in performing the action than in a FPS game. In a FPS, she has to move the character (egocentrically) and aim to shoot; in a RPG, she has to position itself (often way less precisely and continually) and just decide which ability to use on which target (or a little more for ``action RPG''). Classic RPG include: Fallout, The Elders Scrolls (from Arena to Skyrim), Secret of Mana, Zelda, Final Fantasy, Diablo, Baldur's Gate. A MMORPG (e.g. World of Warcraft, AION or EVE Online) consist in a role-playing game in a persistent, multi-player world. There usually are players-run factions fighting each others’ (PvP) and players versus environment (PvE) situations. \glos{PvE} may be a cooperative task in which human players fight together against different NPC, and in which the cooperation is at the center of the gameplay. PvP is also a cooperative task, but more policy and reactions-based than a trained and learned choregraphy as for PvE. We can distinguish three types (or modality) of NPC which have different game AI needs:
+Inspired directly by tabletop and live action role-playing games (Dungeon \& Dragons) as new tools for the game masters, it is quite natural for the RPG to have ended up on computers. The firsts digital RPG were text (Wumpus) or ASCII-art (Rogue, NetHack) based. The gameplay evolved considerably with the technique. Nowadays, what we will call a role playing game (RPG) consist in the incarnation by the human player of an avatar (or a team of avatars) with a class: warrior, wizard, rogue, priest, etc., having different skills, spells, items, health points, stamina/energy/mana (magic energy) points. Generally, the story brings the player to solve puzzles and fight. In a fight, the player has to take decisions about what to do but plays a lesser role in performing the action than in a FPS game. In a FPS, she has to move the character (egocentrically) and aim to shoot; in a RPG, she has to position itself (often way less precisely and continually) and just decide which ability to use on which target (or a little more for ``action RPG''). The broad category of RPG include: Fallout, The Elders Scrolls (from Arena to Skyrim), Secret of Mana, Zelda, Final Fantasy, Diablo, Baldur's Gate. A MMORPG (e.g. World of Warcraft, AION or EVE Online) consist in a role-playing game in a persistent, multi-player world. There usually are players-run factions fighting each others’ (PvP) and players versus environment (PvE) situations. \glos{PvE} may be a cooperative task in which human players fight together against different NPC, and in which the cooperation is at the center of the gameplay. PvP is also a cooperative task, but more policy and reactions-based than a trained and learned choregraphy as for PvE. We can distinguish three types (or modality) of NPC which have different game AI needs:
 \begin{itemize}
     \item world/neutral/civilian NPC: gives quests, takes part in the world's or game's story, talks,
     \item ``mob''/hostile NPC that the player will fight, 
@@ -723,7 +725,7 @@ RTS gameplay consist in gathering resources, building up an economic and militar
 
 More will be said about RTS in the dedicated chapter~\ref{chapter:rtsai}.
 
-\subsubsection{State of the art \& Challenges}
+\subsubsection{State of the art \& challenges}
 \citet{Buro04callfor} called for AI research in RTS games and identified the technical challenges as:% adversarial planning under uncertainty, learning and opponent modeling, and spatial and temporal reasoning.  
 
 %On planning under uncertainty, \citet{LTW} used \newacronym{cbr}{CBR}{case-based reasoning}\glos{cbr} to perform dynamic plan retrieval extracted from domain knowledge in Wargus (Warcraft II clone). \citet{Ontanon2007} based their real-time case-based planning (CBP) system on a plan dependency graph which is learned from human demonstration in Wargus. In \citep{Mishra2008,Ontanon2010,metalevelbehavioradaptrts}, they used a knowledge-based approach to perform situation assessment to use the right plan, and revise it (integrating learning, planning, and problem solving in CBR), performing runtime adaptation by monitoring its performance. \citet{Trusty2011} used a genetic-algorithm inspired method to mix and optimize existing expert plan, also in Wargus. \citet{Chung05} adapted Monte-Carlo tree search to planning in RTS games and applied it to a capture-the-flag mod of Open RTS. \citet{UCT} applied UCT (MCTS algorithm) to tactical assault planning in Wargus. Reactive planning and goal-driven autonomy (that is, find the more relevant goal to follow in unknown situations) are studied in \citep{Weber2010cr,WeberCIG10}. \citet{Churchill2011} used abstractions and heuristics to produce a real-time build-order planner. %\citet{CadenaG11} used fuzzy CBR for strategic and tactical planning.
@@ -746,7 +748,7 @@ To these challenges, we would like to add the difficulty of inter-connecting all
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
-\section{Games Characteristics}
+\section{Games characteristics}
 All the types of video games that we saw before require to deal with imperfect information and sometimes with randomness, while elaborating a strategy (possibly from underlying policies). From a game theoretic point of view, these video games are close to what is called a \glos{bayesiangame} \citep{osborne-rubinstein}. %%% Their formal description is:
 %%% \begin{itemize}
 %%% \item $N$, a finite set of players,
@@ -763,7 +765,7 @@ However, solving Bayesian games is non-trivial, there are no generic and efficie
 
 We do not pretend to do a complete taxonomy of video games and AI (e.g. \citep{gunn}), but we wish to provide all the major informations to differentiate game genres (gameplays). To grasp the challenges they pose, we will provide abstract measures of complexity.
 
-\subsection{Combinatory}
+\subsection{Combinatorics}
 ``How does the state of possible actions grow?'' To measure this, we used a measure from perfect information zero-sum games (as Checkers, Chess and Go): the branching factor $b$ and the depth $d$ of a typical game. The complexity of a game (for taking a decision) is proportional to $b^d$. The average branching factor for a board game is easy to compute: it is the average number of possible moves for a given player. For Poker, we set $b=3$ for \textit{fold, check} and \textit{raise}. $d$ should then be defined over some time, the average number of events (decisions) per hour in Poker is between $20$ to $240$. For video-games, we defined $b$ to be the average number of possible moves at each decision, so for ``continuous'' or ``real-time'' games it is some kind of function of the useful discretization of the virtual world at hand. $d$ has to be defined as a frequency at which a player (artificial or not) has to take decisions to be competitive in the game, so we will give it in $d/time\_unit$. For instance, for a car (plane) racing game, $b \approx 50-500$ because $b$ is a combination of throttle ($\ddot{x}$) and direction ($\theta$) sampled values that are relevant for the game world, with $d/min$ at least $60$: a player needs to correct her trajectory \textit{at least} once a second. In RTS games, $b \approx 200$ is a lower bound (in StarCraft we may have between $50$ to $400$ units to control), and very good amateurs and professional players perform more than $300$ actions per minute.
 
 The sheer size of $b$ and $d$ in video games make it seem intractable, but humans are able to play, and to play well. To explain this phenomenon, we introduce ``vertical'' and ``horizontal'' continuities in decision making. Fig.~\ref{fig:abstractdecisionhierarchy} shows how one can view the decision-making process in a video game: at different time scales, the player has to choose between strategies to follow, that can be realized with the help of different tactics. Finally, at the action/output/motor level, these tactics have to be implemented one way or another. So, matching Fig.~\ref{fig:abstractdecisionhierarchy}, we could design a Bayesian model:
@@ -849,7 +851,7 @@ Partial information is another source of randomness, which is found in shi-fu-mi
 In a \gls{pomdp}, one cannot know exactly which state they are in and thus must reason with a probability distribution on $S$. $\Omega$ is used to update the distribution on $S$ (the belief) uppon taking the action $a$ and observing $o$, we have: $\PP([S^{t+1}=s']) \propto \Omega(o|s',a).\sum_{s \in S} T_a(s,s').\PP([S^t=s])$. In game AI, \gls{pomdp} are computationally intractable for most problems, and thus we need to model more carefully (without full $\Omega$ and $T$) the dynamics and the information value.
 % \Omega([O^{t+1}=o]|[S^{t+1}=s'],[A^t=a])
 
-\subsection{Time Constant(s)}
+\subsection{Time constant(s)}
 
 For novice to video games, we give some orders of magnitudes of the time constants involved. Indeed, we present here only real-time video games and time constants are central to comprehension of the challenges at hand. In all games, the player is taking actions continuously sampled at the minimum of the human interface device (mouse, keyboard, pad) refreshment rate and the game engine loop: at \textit{least} 30Hz. In most racing games, there is a quite high continuity in the input which is constrained by the dynamics of movements. In other games, there are big discontinuities, even if fast \glos{FPS} control resembles racing games a lot. \glos{RTS} professional gamers are giving inputs at $\approx 300$ actions per minute (\newglossaryentry{APM}{name=APM,description={action per minute, an input speed frequency in competitive gaming}}\glos{APM}).
 
@@ -858,7 +860,7 @@ There are also different time constants for a strategic switch to take effect. I
 
 %\subsection{Learning Curve}
 
-\subsection{Recap}
+\subsection{Recapitulation}
 
 We present the main qualitative results for big classes of gameplays (with examples) in a table page~\pageref{recapgames}.
 
@@ -903,7 +905,7 @@ RTS & $b\approx 200$\footnote{atomic dir/unit $\times$ \# units + constructions 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
-\section{Player Characteristics}
+\section{Player characteristics}
 
 %%% Timings, reflexes, modeling, goals, utility, backtracking, induction, ...
 In all these games, knowledge and learning plays a key role. Humans compensate their lack of (conscious) computational power with pattern matching, abstract thinking and efficient memory structures. Particularly, we can classify required abilities for players to perform well in different gameplays by:

@@ -22,7 +22,7 @@
 
 \citep{Wolfe11} % BOUNDED INTENTION PLANNING
 
-\section{Code Architecture}
+\section{Code architecture}
 
 \label{sec:codearchitecture}
 mapping schéma code <-> schéma info-flow.
@@ -35,7 +35,7 @@ mapping schéma code <-> schéma info-flow.
 \end{center}
 \end{figure}
 
-\subsection{Tactical Goals}
+\subsection{Tactical goals}
 \label{sec:goals}
 The decision that we want our AI system to make at this level is \textit{where} and \textit{how} to attack. This is reflected in the StarCraft bot as a \texttt{Goal} creation. \texttt{Goals} are interfacing high level tactical thinking with the steps necessary to their realization. A \texttt{Goal} recruits units and binds them under a \texttt{UnitsGroup} (see section~\ref{sec:unitsgroup}). A \texttt{Goal} is an \glos{FSM} in which two states are simple planners (an FSM with some form of procedural autonomy), it has:
 \begin{itemize}
@@ -53,7 +53,7 @@ In the \textit{in progress} and \textit{in cancel} modes, the ``plan'' is a simp
 The tactical model can specify \textit{where} to attack by setting a localized subgoal (Formation/See/Regroup/KillSubgoal...) to the right place. It can specify \textit{how} by setting the adequate precondition(s).
 
 
-\section{A Game Walkthrough}
+\section{A game walkthrough}
 The tree of decisions.
 
 

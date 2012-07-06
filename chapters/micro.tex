@@ -34,7 +34,7 @@ Life is the sum of all your choices.}
 \label{fig:conceptMICRO}
 \end{figure}
 
-\section{Units Management}
+\section{Units management}
 \subsection{Micro-management complexity}
 In this part, we focus on \glos{micro}, which is the lower-level in our hierarchy of decision-making levels (see Fig.~\ref{fig:sc_abstraction_times}) and directly affect units control/inputs. Micro-management consists in maximizing the effectiveness of the units \textit{i.e.} the damages given/damages received ratio. These has to be performed simultaneously for units of different types, in complex battles, and possibly on heterogeneous terrain. 
 For instance: retreat and save a wounded unit so that the enemy units would have to chase it either boosts your firepower (if you save the unit) or weakens the opponent's (if they chase). 
@@ -54,11 +54,11 @@ stay where it is, attack, and sometimes cast different spells: which yields more
 \label{fig:sc_fight}
 \end{figure}
 
-\subsection{Our Approach}
+\subsection{Our approach}
 Our full robot has separate agents types for separate tasks (strategy, tactics, economy, army, as well as enemy estimations and predictions): the part that interests us here, the unit control, is managed by Bayesian units directly. Their objectives are set by military goal-wise atomic units group, themselves spawned to achieve tactical goals (see Fig.~\ref{fig:conceptMICRO}). Units groups tune their Bayesian units modes (scout, fight, move) and give them objectives as sensory inputs. The Bayesian unit is the smallest entity and controls individual units as sensory-motor robots according to the model described above. The only inter Bayesian units communication about attack targets is handled by a structure shared at the units group level. This distributed sensory-motor model for \glos{micro} is able to handle both the complexity of unit control and the need of hierarchy (see Figure~\ref{fig:conceptMICRO}). We treat the units independently, thus reducing the complexity (no communication between our ``Bayesian units''), and allows to take higher-level orders into account along with local situation handling. For instance: the tactical planner may decide to retreat, or go through a choke under enemy fire, each Bayesian unit will have the higher-level order as a sensory input, along with topography, foes and allies positions. From its perception, our Bayesian robot \citep{Lebeltel04} can compute the distribution over its motor control. The performances of our models are evaluated against the original StarCraft AI and a reference AI (based on our targeting heuristic): they have proved excellent in this benchmark setup.
 
 
-\section{Related Work}
+\section{Related work}
 Technical solutions include finite states machines (FSM) \citep{FSM}, genetic algorithms (GA) \citep{GA,Bakkes04,teamCompositionRTS}, reinforcement learning (RL) \citep{Marthi05concurrenthierarchical,Madeira06}, case-based reasoning (CBR) \citep{LTW,CBR-RL}, continuous action models \citep{Molineaux08}, reactive planning \citep{WeberCIG10}, upper confidence bounds tree (UCT) \citep{UCT}, potential fields \citep{Hagelback2009}, influence maps\citep{teamCompositionRTS}, and cognitive human-inspired models \citep{SORTS}.
 
 FSM are well-known and widely used for control tasks due to their efficiency and implementation simplicity. However, they don't allow for state sharing, which increases the number of transitions to manage, and state storing, which makes collaborative behavior hard to code \citep{Cutumisu09}. Hierarchical FSM (HFSM) solve some of this problems (state sharing) and evolved into behavior trees (BT, hybrids HFSM) \citep{Isla} and behavior multi-queues (resumable, better for animation) \citep{Cutumisu09} that conserved high performances. %%%All these architectures does not include mechanisms to receive orders from separate entities. For instance, our strategic leader and tactical planners should be part of the (hierarchical) state machine, down to the control of units, which is not very flexible. 
@@ -86,8 +86,8 @@ Even if specialized algorithms, such as D*-Lite \cite{KoenigL02} exist, it is mo
 
 Finally, there are some cognitive approaches to RTS AI \citep{SORTS}, and we particularly agree with Wintermute \textit{et al.} analysis of RTS AI problems. Our model has some similarities: separate agents for different levels of abstraction/reasoning and a perception-action approach (see Figure~\ref{fig:conceptMICRO}).
 
-\section{A Pragmatic Approach to Units Control}
-\subsection{Action and Perception}
+\section{A pragmatic approach to units control}
+\subsection{Action and perception}
 \subsubsection{Movement}
 The possible actions for each unit are to move from where they are to wherever on the map, plus to attack and/or use special abilities or spells. Atomic moves (shown in Fig.~\ref{fig:sc_fight} by white and gray plain arrows) correspond to move orders which will make the unit go in a straight line and \textit{not} call the pathfinder (if the terrain is unoccupied/free). There are collisions with buildings, other units, and the terrain (cliffs, water, etc.) which denies totally some movements for ground units. Flying units do not have any collision (neither with units, nor with terrain obviously). When a \textit{move order} is issued, if the selected position is further than atomic moves, the pathfinder function will be called to decide which path to follow. We decided to use only atomic (i.e. small and direct) moves for this reactive model, using other kinds of moves is discussed later in perspectives.
 
@@ -126,7 +126,7 @@ The goals coming from the tactician model (see Fig.~\ref{fig:conceptMICRO}) are 
 \end{figure}
 
 
-\subsection{A Simple Unit}
+\subsection{A simple unit}
 \subsubsection{Greedy pragmatism}
 Is staying alive better than killing an enemy unit? Is a large splash damage better than killing an enemy unit? Is it better to fire or move? In that event, where? Even if we could compute to the end of the fight and apply the same approach that we have for board games, how do we infer the best ``set of next moves'' for the enemy? %when the space of possible moves is so huge and the number of possible reasoning methods %(sacrifices and influences of other parts of the game for instance) 
 %is bigger than for Chess? 
@@ -179,7 +179,7 @@ Based on this targeting heuristic, we design a very simple \glos{FSM} based unit
 \end{figure}
 
 
-\subsection{Units Group}
+\subsection{Units group}
 
 \label{sec:unitsgroup}
 The units group (\texttt{UnitsGroup}, see Fig.~\ref{fig:conceptMICRO}) makes the shared \textit{future damage} data structure available to all units taking part in a fight. Units control is not limited to fight. As it is adversarial, it is perhaps the hardest task, but units control problems comprehends efficient team maneuvering and other behaviors such as scouting or staying in position (formation). The units group structure helps for all that: it decides of the modes in which the unit has to be. We implemented 4 modes in our Bayesian unit (see Fig.~\ref{fig:unit_HFSM}): \textit{fight, move, scout, inposition}. When given a task, also named goal, by the tactician model (see Fig.~\ref{conceptMICRO}), the units group has to transform the task objective into sensory inputs for the units. 
@@ -195,10 +195,10 @@ The units group (\texttt{UnitsGroup}, see Fig.~\ref{fig:conceptMICRO}) makes the
 \end{itemize}
 \end{itemize} 
 
-\section{A Bayesian Model for Units Control}
+\section{A Bayesian model for units control}
 
 \label{sec:bayesianunit}
-\subsection{Bayesian Unit}
+\subsection{Bayesian unit}
 
 We use Bayesian programming as an alternative to logic, transforming incompleteness of knowledge about the world into uncertainty. In the case of units management, we have mainly \textit{intensional} uncertainty. Instead of asking questions like: where are other units going to be 10 frames later? Our model is based on rough estimations that are not taken as ground facts. Knowing the answer to these questions would require for our own (allied) units to communicate a lot and to stick to their plan (which does not allow for quick reaction nor adaptation). 
 
@@ -527,7 +527,7 @@ This model can be used to specify the behavior of units in RTS games. Instead of
 
 \subsection{Perspectives}
 
-\subsubsection{Adding a Sensory Input: Height Attraction}
+\subsubsection{Adding a sensory input: height attraction}
 We make an example of adding a sensory input (that we sometimes use in our bot): height attraction. From a tactical point of view, it is interesting for units to always try to have the higher ground as lower ranged units have a high miss rate (almost 50\%) on higher positioned units. For each of the direction tiles $Dir_i$, we just have to introduce a new set of sensory variables: $H_{i \in \llbracket 0 \dots n \rrbracket} \in \{normal, high, very\_high, unknown\}$ ($unknown$ can be given by the game engine). $\PP(H_i|Dir_i)$ is just an additional factor in the decomposition: $JD \leftarrow JD \times \Pi_{i=1}^{n}\PP(H_i|Dir_i)$. The probability table looks like:
 \begin{center}
 \begin{tabular}{|l|c|}
@@ -554,13 +554,13 @@ unknown & 0.05 \\
 %%% \end{tabular}
 %%% \end{center}
 
-\subsubsection{Even More Realistic Behaviors}
+\subsubsection{Even more realistic behaviors}
 The realism of units movements can also be augmented with a simple-to-set $\PP(Dir^{t-1}|Dir^t)$ steering parameter, although we do not use it in the competitive setup. We introduce $Dir_{i \in \llbracket 1 \dots n\rrbracket }^{t-1} \in \{True, False\}$: the previous selected direction, $Dir_i^{t-1} = T$ \textit{iff} the unit went to the direction $i$, else $False$ for a steering (smooth) behavior. The $JD$ would then be $JD \times \Pi_{i=1}^{n} \PP(Dir_i^{t-1} | Dir_i)$, with $\PP(Dir_i^{t-1} | Dir_i)$ the influence of the last direction, either a dot product (with minimal threshold) as before for the objective and flocking, or a parametrized Bell shape over all the $i$.
 
-\subsubsection{Reinforcement Learning}
+\subsubsection{Reinforcement learning}
 Future work could consist in using reinforcement learning \citep{Sutton} or evolutionary algorithms \citep{SmithCIG10} to learn the probability tables. It should enhance the performance of our Bayesian units in specific setups. It implies making up challenging scenarii and dealing with huge sampling spaces \citep{Asmuth09}. We learned the distribution of $\PP(Dmg_i | Dir_i)$ through simulated annealing on a specific fight task (by running thousands of games). Instead of having 4 parameters of the probability table to learn, we further restrained $\PP(Dmg_i|Dir_i)$ to be a discrete exponential distribution and we optimized the $\lambda$ parameter. When discretized back to the probability table (for four values of $Dmg$), the parameters that we learned, by optimizing the efficiency of the army in a fixed fight micro-management scenario, were even more risk adverse than the table presented with this model. The major problem with this approach is that parameters which are learned in a given scenario (map, setup) are not trivially re-usable in other setups, so that boundaries have to be found to avoid over-learning/optimization, and/or discovering in which typical scenario our units are at a given time.
 
-\subsubsection{Reducing Collisions}
+\subsubsection{Reducing collisions}
 Also, there are yet many collision cases that remain unsolved (particularly visible with contact units like Zealots and Zerglings), so we could also try adding local priority rules to solve collisions (for instance through an asymmetrical $\PP(Dir_i^{t-1}|Dir_i)$) that would entails units crossing lines with a preferred side (some kind of ``social rule''),
 %\item use a units group level supervision using Bayesian units' distributions over $Dir$ as preferences or constraints (for a solver),
 %\item use $\PP(Dir)$ as an input to another Bayesian model at the units group level of reasoning.
@@ -575,10 +575,10 @@ In collision due to concurrency for ``best'' positions: as seen in Figure.~\ref{
 \end{center}
 \end{figure}
 
-\subsubsection{Tuning Parameters}
+\subsubsection{Tuning parameters}
 If we learn the parameters of such a model to mimic existing data (data mining) or to maximize a reward function (reinforcement learning), we can interpret the parameters that will be obtained more easily than parameters of an artificial neural network for instance. Parameters learned in one setup can be reused in another if they are understood. We claim that specifying or changing the behavior of this model is much easier than changing the behavior generated by a FSM, and game developers can have a fine control over it. Dynamic switches of behavior (as we do between the scout/flock/inposition/fight modes) are just one probability tables switch away. In fact, probability tables for each sensory input (or group of sensory inputs) can be linked to \textit{sliders} in a \textit{behavior editor} and game makers can specify the behavior of their units by specifying the degree of effect for each perception (sensory input) on the behavior of the unit and see the effect in real time. This is not restricted to RTS and could be applied to \glos{RPG} and even \glos{FPS} \gloss{gameplay}.
 
-\subsubsection{Avoiding Local Optima}
+\subsubsection{Avoiding local optima}
 Local optimum could trap and struck our reactive, small look-ahead, units: concave (strong) repulsors (static terrain, very high damage field). A pragmatic solution to that is to remember that the $Obj$ sensory inputs come from the pathfinder and have its influence to grow when in difficult situations (not moved for a long time, concave shape detected...). Another solution is inspired by ants: simply release a repulsive field (a repulsive ``pheromone'') behind the unit and it will be repulsed by places it already visited instead of oscillating around the local optima (see Fig.~\ref{fig:BayesianTrailingPheromone}).
 
 \begin{figure}[h]
@@ -591,7 +591,7 @@ Local optimum could trap and struck our reactive, small look-ahead, units: conca
 
 Another solution would be to consider more than just the atomic directions. Indeed, if one decides to cover a lot of space with directions (\textit{i.e.} use this model for with path-planning), one needs to consider directions whose paths collide with each others: if a direction is no longer atomic, this means that there are at least two paths leading to it, from the current unit position. The added complexity of dealing with these paths (and their possible collision routes with allier units or going through potential damages) may not be very aligned with the very reactive behavior that we envisioned here, but an in-between our proposed solution and full path-planning, for which it is costly to consider several dynamic different influences leading to frequent re-computation.
 
-\subsubsection{Probabilistic Modality}
+\subsubsection{Probabilistic modality}
 Finally, we could use multi-modality \citep{Colas10} to get rid of the remaining (small: fire-retreat-move) FSM. Instead of being in ``hard'' modes, the unit could be in a weighted sum of modes (summing to one) and we would have:
 \ifthenelse{\equal{\myprintformat}{true}}{
 \begin{footnotesize}

@@ -63,8 +63,8 @@ Our solutions are real-time on a laptop.
 %%% \item Conclusion and perspectives: still enabled for meta-game, and even in-game, adaptation. Could learn the action sequences of tactics from replays ($\approx$HMM).
 %%% \end{itemize}
 
-\section{What are Tactics?}
-\subsection{A Tactical Abstraction}
+\section{What are tactics?}
+\subsection{A tactical abstraction}
 In their study on human like characteristics in RTS games, Hagelb\"{a}ck and Johansson \cite{HagelbackCIG10} found out that ``tactics was one of the most successful indicators of whether the player was human or not''. Tactics are in between strategy (high-level) and micro-management (lower-level), as seen in Fig.~\ref{fig:sc_abstraction_times}. When players talk about specific tactics, they use a specific vocabulary which represents a set of actions and compresses subgoals of a tactical goal in a sentence. %(see Fig.~\ref{fig:conceptTACTICS}). 
 
 Units have different abilities, which leads to different possible tactics. Each faction has invisible (temporarily or permanently) units, flying transport units, flying attack units and ground units. Some units can only attack ground or air units, some others have splash damage attacks, immobilizing or illusion abilities. Fast and mobile units are not cost-effective in head-to-head fights against slower bulky units. We used the gamers' vocabulary to qualify different types of tactics: 
@@ -78,14 +78,14 @@ This will be the only four types of tactics that we will use in this chapter: \t
 
 RTS games maps, StarCraft included, consist in a closed arena in which units can evolve. It is filled with terrain features like uncrossable terrain for ground units (water, space), cliffs, ramps, walls. Particularly, each RTS game which allows production also give some economical (gathering) mechanism and so there are some resources scattered on the map, where players need to go collect. It is way more efficient to build expansion (auxiliary bases) to collect resources directly on site. So when a player decides to attack, she has to decide \textit{where} to attack, and this decision takes into account \textit{how} it can attack different places, due to their geographical remoteness, topological access posibilities and defense strengh. Choosing \textit{where} to attack is a complex decision to make: of course it is always wanted to attack poorly defended economic expansions of the opponent, but the player has to consider if it places its own bases in jeopardy, or if it may trap her own army. With a perfect estimator of battles outcomes (which is a hard problem due to terrain, army composition combinatorics and units control complexity), and perfect information, this would result in a game tree problem which could be solved my $\alpha-\beta$. Unfortunately, StarCraft is a partial observation game with complex terrain and fight mechanics.
 
-\subsection{Our Approach}
+\subsection{Our approach}
 The idea is to have (most probably biased) lower-level heuristics from units observations which produce information exploitable at the tactical level, and take advantage of strategic inference too. 
 For that, we propose a model which can either predict enemy attacks or give us a distribution on \textit{where} and \textit{how} we should attack the opponent. Information from the higher-level strategy \citep{SYNNAEVE:StratPred,SYNNAEVE:OpeningPred} (Chapter~\ref{chapter:strategy}) constrains what types of attacks are possible. As shown in Fig.~\ref{fig:conceptTACTICS}, information from units' positions (or possibly an enemy units particle filter as in \citep{weber2011aiide} or Chapter~\ref{chapter:perspectives}) constrains where the armies can possibly be in the future. In the context of our StarCraft bot, once we have a decision: we generate a goal (attack order) passed to units groups, which set the objectives of the low-level Bayesian units control model \citep{SYNNAEVE:Micro} (Chapter~\ref{chapter:micro}).
 
 %Our approach (and bot architecture, depicted in Fig.~\ref{fig:conceptTACTICS}) can be seen as goal-driven autonomy \cite{Weber2010cr} dealing with multi-level reasoning by passing distributions (without any assumption about how they were obtained) on the module input. Using distributions as messages between specialized modules makes dealing with uncertainty first class, this way a given model do not care if the uncertainty comes from incompleteness in the data, a complex and biased heuristic, or another probabilistic model. We then take a decision by sampling or taking the most probable value in the output distribution. Another particularity of our model is that it allows for prediction of the enemy tactics using the same model with different inputs. Finally, our approach is not exclusive to most of the techniques presented above, and it could be interesting to combine it with UCT \citep{UCT} and more complex/precise tactics generated through planning \citep{Chung05} % TODO
 
 
-\section{Related Work}
+\section{Related work}
 
 On spatial reasoning, \cite{Pottinger00} described the \textit{BANG} engine implemented for the game Age of Empires II (Ensemble Studios), which provides terrain analysis functionalities to the game using influence maps and areas with connectivity information. 
 \cite{Forbus2002} presented a tactical qualitative description of terrain for wargames through geometric and pathfinding analysis. \cite{Hale08} presented a 2D geometric navigation mesh generation method from expanding convex regions from seeds. \cite{Perkins2010} automatically extracted choke points and regions of StarCraft maps from a pruned Voronoi diagram, which we used for our regions representations. 
@@ -100,8 +100,8 @@ In Starcraft, \cite{Weber2010cr,WeberCIG10} produced tactical goals through reac
 \cite{SORTS} used a cognitive approach mimicking human attention for tactics and units control in ORTS. \cite{PonsenMSA06} developed an evolutionary state-based tactics generator for Wargus. %On influence maps, \cite{teamCompositionRTS} studied team composition and maneuvering by learning a self-organizing map, while \cite{HagelbackJ08} presented a multi-agent potential field based bot .....
 Finally, Avery et al. \cite{Avery09} and Smith et al. \cite{SmithCIG10} co-evolved influence map trees for spatial (tactical) reasoning in RTS games. 
 
-\section{Perception and Tactical Goals}
-\subsection{Space Representation}
+\section{Perception and tactical goals}
+\subsection{Space representation}
 The \textit{maps} on which we play restrain movement and vision of ground units (flying units are not affected). As ground units are much more prevalent and more cost-efficient than flying units, being able to reason about terrain particularities is key for tactical reasoning. For that, we clustered the map in regions. 
 \newacronym{BWTA}{BWTA}{BroodWar Terrain Analyser}
 We used two kinds of regions: 
@@ -119,8 +119,8 @@ Figure~\ref{fig:terrainanalysis} illustrate regions and choke-dependent regions 
 \end{center}
 \end{figure}
 
-\subsection{Evaluating Regions}
-\subsubsection{Partial Observations}
+\subsection{Evaluating regions}
+\subsubsection{Partial observations}
 From partial observations, one has to derive meaningful information about what may be the state of the game. For tactics, as we are between micro-management and strategy, we are interested in knowing:
 \begin{itemize}
     \item enemy units positions. In this chapter, we consider that units we have seen and that are now under the \glos{fogofwar} are at the last seen position for some time ($\approx few\ minutes$), and then we have no clue where they are (uniform distribution on regions which are not visible) but we know that they exist. We could diffuse their position (respecting the terrain constraints for ground units) proportionally to their speed, or use a more advanced particle filter as \cite{weber2011aiide} did for StarCraft, or as explained in section~\ref{sec:enemyunitsfilter}.
@@ -129,7 +129,7 @@ From partial observations, one has to derive meaningful information about what m
 \end{itemize}
 The units and buildings perceptions are too low-level to be exploited directly in a tactical model. We will now present importance and defense scoring heuristics.
 
-\subsubsection{Scoring Heuristics}
+\subsubsection{Scoring heuristics}
 \label{sec:scoringheuristics}
 To decide \textit{where} and \textit{how} to attack (or defend), we need information about the particularity of above-mentioned regions. For that, we built heuristics taking low-level information about enemy units and buildings positions, and giving higher level estimator. They are mostly encoding common sense. We do not put too much care into building these heuristics because they will also be used during learning and the learned parameters of the model will have adapted it to their bias. 
 
@@ -152,7 +152,7 @@ $$air\_defense^d(r) = \frac{v^d_{can\_attack\_air}(r)}{v^a_{air\_units}(r)}$$
 $$invis\_defense^d(r) = number^d_{detectors}(r)$$
 \end{itemize}
 
-\subsection{Tech Tree}
+\subsection{Tech tree}
 \label{sec:techtree}
 Our model also uses the estimation of the opponent's \glos{techtree} to know what types of attacks are possible from them. An introduction to the tech tree is given in section~\ref{sec:rtsgameplay}. The tech tree is the backbone of the strategy: it defines what can and what cannot be built by the player. The left diagram of Figure~\ref{fig:techtreetwogatesgoonrange} shows the tech tree of the player after completion of the build order \ref{bo:two_gates_goon_range} in section~\ref{sec:rtsgameplay}. The strategic aspect of the tech tree is that it takes time (between 30 seconds to 2 minutes) to make a building, so tech trees and their evolutions through time result from a plan and reveal the intention of the player. 
 
@@ -216,7 +216,7 @@ child {node {\begin{footnotesize}Forge\end{footnotesize}}
 \label{fig:techtreetwogatesgoonrange}
 \end{figure}
 
-\subsection{Attack Types}
+\subsection{Attack types}
 \label{sec:attacktypes}
 With the discretization of the map into regions and choke-dependent regions, one can reason about \textit{where} attacks will happen. The types of the attacks depends on the units types involved and their use. There may be numerous variations but we decided to keep the four main types of attacks in the vocabulary of gamers:
 \begin{itemize}
@@ -320,7 +320,7 @@ We trigger an attack tracking heuristic when one unit dies and there are at leas
 \end{algorithm}
 
 
-\section{A Bayesian Tactical Model}
+\section{A Bayesian tactical model}
 \label{sec:tacticalmodel}
 
 \subsection{Tactical Model}
@@ -363,7 +363,7 @@ This decomposition is also shown in Figure~\ref{fig:SpecialTacticsSimple_plate}.
 \end{center}
 \end{figure}
 
-\subsubsection{Forms and Learning}
+\subsubsection{Forms and learning}
 \label{sec:tacticalidentification}
 We will explain the forms for a given/fixed $i$ region number:
 \begin{itemize}
@@ -483,7 +483,7 @@ Questions\\
 \section{Results on StarCraft}
 \label{sec:tacticalresults}
 
-\subsection{Learning and Posterior Analysis}
+\subsection{Learning and posterior analysis}
 To measure fairly the prediction performance of such a model, we applied ``leave-100-out'' cross-validation from our dataset: as we had many games (see Table~\ref{tab:all_results}), we set aside 100 games of each match-up for testing (with more than 1 battle per match: rather $\approx 15$ battles/match) and train our model on the rest. We write match-ups XvY with X and Y the first letters of the factions involved (Protoss, Terran, Zerg). Note that mirror match-ups (PvP, TvT, ZvZ) have fewer games but twice as many attacks from a given faction (it is two times the same faction). Learning was performed as explained in section~\ref{sec:tacticalidentification}: for each battle in $r$ we had one observation for: $\PP(e_r,t_r,ta_r,b_r|A=true)$, and $\#regions-1$ observations for the $i$ regions which were not attacked: $\PP(e_{i \neq r},t_{i \neq r}, ta_{i \neq r}, b_{i \neq r}|A=false)$. For each battle of type $t$ we had one observation for $P(ad,gd,id|H=t)$ and $P(H=t|p)$. By learning with a Laplace's law of succession \cite{Jaynes}, we allow for unseen event to have a non-zero probability.
 
 An exhaustive presentation of the learned tables is out of the scope of this chapter, but we analyzed the posteriors and the learned model concur with human expertise (e.g. Figures~\ref{fig:P_H_AD},~\ref{fig:PossibleP} and~\ref{fig:Where3D}). We looked at the posteriors of:
@@ -524,7 +524,7 @@ It shows the transition between two types of encounters: tactics aimed at engagi
 %\vspace{-0.5cm}
 \end{figure}
 
-\subsection{Prediction Performance}
+\subsection{Prediction performance}
 \subsubsection{Setup}
 We learned and tested one model for each race and for each match-up. As we want to predict \textit{where} ($\PP(A_{1:n})$) and \textit{how} ($\PP(H_{battle})$) the next attack will happen to us, we used inferred enemy $TT$ (to produce $P$) and $TA$, our scores being fully known: $E$, $T$, $B$, $ID$. We consider $GD$, $AD$ to be fully known even though they depend on the attacker force, we should have some uncertainty on them, but we tested that they accounted (being known instead of fully unknown) for 1 to 2\% of $\PP(H)$ accuracy (in prediction) once $HP$ was known. We should point that pro-gamers scout very well and so it allows for a highly accurate $TT$ estimation with \citep{SYNNAEVE:StratPred}. The learning phase requires to recreate battle states (all units' positions) and count parameters for up to 70,000 battles. Once that is done, inference is very quick: a look-up in a probability table for known values and $\#F$ look-ups for free variables $F$ on which we sum. We chose to try and predict the next battle 30 seconds before it happens, 30 seconds being an approximation of the time needed to go from the middle of a map %(where the entropy on ``next battle position'' is maximum as the army's average distance 
 to all other regions is minimal) to any region by ground, so that the prediction is useful for the defender (they can position their army). The model code\footnote{\url{https://github.com/SnippyHolloW/AnalyzeBWData}} (for learning and testing) as well as the datasets (see above) are freely available. 
@@ -613,7 +613,7 @@ measure & type & \% & \begin{scriptsize}$\frac{type}{total}$\end{scriptsize} & \
 \end{center}
 \end{sidewaystable}
 
-\subsection{Error Analysis}
+\subsection{Error analysis}
 
 \subsubsection{Distance}
 
