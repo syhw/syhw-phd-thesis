@@ -243,18 +243,32 @@ This is a Boolean variable saying if the $i$th character if going to die anytime
 The joint distribution of the model is: 
 \begin{eqnarray}
 \PP(S, T^{t-1,t}, HP_{1:n}, D_{1:n}, A_{1:n}, \Delta HP_{1:n}, ID_{1:n}, C_{1:n}, R_{1:n}) = \\
-\PP(S).\PP(T^t|T^{t-1}).\PP(T^{t-1}).\prod_{i=1}^n [ \PP(HP_i | A_i, C_i, S, T).\PP(D_i | A_i, S, T).\PP(A_i | S, T) \\
-        \PP(\Delta HP_i | A_i, S, T). \PP(R_i | C_i, S, T). \PP(C_i | A_i, S, T) ]
+\PP(S).\PP(T^t|T^{t-1}).\PP(T^{t-1}).\prod_{i=1}^n \big[ \PP(HP_i | A_i, C_i, S, T).\PP(D_i | A_i, S, T).\PP(A_i | S, T) \\
+        \PP(\Delta HP_i | A_i, S, T). \PP(R_i | C_i, S, T). \PP(C_i | A_i, S, T) \PP(ID_i | T)\big]
 \end{eqnarray}
-As previously for targets, we are interested in the conditional probabilities of each character's state variables given other state variables and given our target ($T$) and the skill that we use ($S$). If we target the $i$th unit ($T=i$), happening to be an allied ($A_i=true$) tank ($C_i=tank$) with a ``big heal'' ($S=big\_heal$), the probability that they will have low hit points ($HP_i=0$ or $1$ (very low)) is very high. Some skills have optimal ranges to be used at and so $\PP(D_i)$ will be affected. As we use heals $s_h\in \{heals\}$ exclusively on allies, $\PP(A_i=true|S=s_h) =1.0$. Conversely, as we use attacks ($s_a\in \{damage\}$) exclusively on foes, $\PP(A_i=false|S=s_a)=1.0$. The probability that the $i$th units is being damaged ($\Delta HP_i=``-''$) will top when we use a heal ($S=heal$) on an ally, as we want to maintain everyone alive. The one of the resist to ``nature based effects'' ($R_i=nature$) for skills involving ``nature'' damage ($s \in \{nature\_damage\}$) will be very low as it will be useless to use spells that the receiver is protected against. The probability that the $i$th character will die soon ($ID_i$) will be high if $i$ is targeted ($T=i$) with a big heal or big instant damage ($S=big\_heal$ or $S=big\_damage$, depending on whether $i$ is an ally or not). %For the task of computing the distribution on Skill we use:
+We want to compute the probability distribution on the variable target ($T$) and skill ($S$), so we have to consider the joint distribution with all variables on which target ($T$) or skill ($S$) are conditionally dependent: the previous value of target ($T^{t-1}$), and all the perceptions variables on each character. 
+
+\begin{itemize}
+    \item The probability of a given target depends on the previous one (it encodes the previous decision and so all previous states). 
+    \item The health (or hit) points ($HP_i$) depends on the facts that the $i$th character is an ally ($A_i$), on his class ($C_i$), and if he is a target ($T$). Such a conditional probability table should be learned, but we can already foresee that a targeted ally with a tanking class ($C=tank$) would have a high probability of having low hit points ($HP$) because taking it for target means that we intend to heal him.
+    \item The distance of the unit $i$ ($D_i$) is more probably far if unit $i$ is an enemy ($A_i=false$) and we target it ($T=i$) as our kind of druid attacks with ranged spells and does not fare well in the middle of the battlefield.
+    \item The probability of the $i$th character being an ally depends on if we target allies of foes more often: that is $\PP(A_i|T)$ encodes our propensity to target allies (with heals and enhancements) or foes (with damaging or crippling abilities).
+    \item The probability that the $i$th units is losing hit points ($\Delta HP_i=minus$) is higher for foes ($A_i=false$) with vulnerable classes ($C_i=healer$) that are more succeptible to be targeted ($T=i$), and also for allies ($A_i=true$) whose role is to take most of the damages ($C_i=tank$). As for $A_i$, the probability of $ID_i$ is driven by our %
+||
+. The probability that the $i$th units is being damaged ($\Delta HP_i=``-''$) will top when we use a heal ($S=heal$) on an ally, as we want to maintain everyone alive.  
+    \item Obviously, the usage of skills depends on their efficiency on the target ($R$, resistances), and on their class. As a result, we have $\PP(R_i|C_i,S,T)$ as the conditional distribution on ``resists''. The probability of the resist to ``nature based effects'' ($R_i=nature$) for skills involving ``nature'' damage ($s \in \{nature\_damage\}$) will be very low as it will be useless to use spells that the receiver is protected against.
+    \item The probability that the $i$th character will die soon ($ID_i$) will be high if $i$ is targeted ($T=i$) with a big heal or big instant damage ($S=big\_heal$ or $S=big\_damage$, depending on whether $i$ is an ally or not). 
+
+\end{itemize}
+% As previously for targets, we are interested in the conditional probabilities of each character's state variables given other state variables and given our target ($T$) and the skill that we use ($S$). If we target the $i$th unit ($T=i$), happening to be an allied ($A_i=true$) tank ($C_i=tank$) with a ``big heal'' ($S=big\_heal$), the probability that they will have low hit points ($HP_i=0$ or $1$ (very low)) is very high. Some skills have optimal ranges to be used at and so $\PP(D_i)$ will be affected. As we use heals $s_h\in \{heals\}$ exclusively on allies, $\PP(A_i=true|S=s_h) =1.0$. Conversely, as we use attacks ($s_a\in \{damage\}$) exclusively on foes, $\PP(A_i=false|S=s_a)=1.0$The probability that the $i$th character will die soon ($ID_i$) will be high if $i$ is targeted ($T=i$) with a big heal or big instant damage ($S=big\_heal$ or $S=big\_damage$, depending on whether $i$ is an ally or not). %For the task of computing the distribution on Skill we use:
 
 
 \subsubsection{Parameters}
 
 \begin{itemize}
-    \item $\PP(T^{t-1})$ is unknown and unspecified (uniform). In the question, we always know what was the previous target, except when there was not one.
-    \item $\PP(T|T^{t-1})$ is a probability corresponding to the propensity to switch targets. It can be learned, or uniform if there is no previous target (it the prior on the target then).
-    \item $\PP(S)$ is unknown and so unspecified, it could be a prior.
+    \item $\PP(T^{t-1})$ is unknown and unspecified (uniform). In the question, we always know what was the previous target, except when there was not one (at the beginning).
+    \item $\PP(T|T^{t-1})$ is a probability corresponding to the propensity to switch targets. It can be learned, or uniform if there is no previous target (it the prior on the targets then).
+    \item $\PP(S)$ is unknown and so unspecified, it could be a prior on the preferred skills (for style of for efficiency).
     %\item $\PP(Left\_Value | Right\_Value)$ All others are \textit{learned tables}.
     \item $\PP(HP_i | A_i, C_i, S, T)$ is a $2\times4\times m \times 2$ probability table, indexed on if the $i$th character is an ally or not, on its class, on the skills ($\#S=m$) and on where it is the target or not. It can be learned (and/or parametrized), for instance $\PP(HP_i=x|a_i,c_i,s,t)=\frac{1+\mathrm{count}(x,a_i,c_i,s,t)}{10+\mathrm{count}(a_i,c_i,s,t)}$.
     \item $\PP(D_i | A_i, S, T)$ is a $4\times2 \times m \times 2$ (possibly learned) probability table.
@@ -266,7 +280,9 @@ As previously for targets, we are interested in the conditional probabilities of
 
 \subsubsection{Identification}
 
-If there were only perceived variables, learning the right conditional probability tables would just be counting and averaging. However, some variables encode combinations of perceptions and passed states. We could learn such parameters through the EM algorithm but we propose something simpler for the moment as our ``not directly observed variables'' are not complex to compute, we compute them from perceptions as the same time as we learn. For instance we map in-game values to their discrete values for each variables online and only store the resulting state ``compression''. In the following Results part however, we did not apply learning but instead manually specified the probability tables to show the effects of gamers' \textit{common sense} rules and how it/they can be correctly encoded in this model.
+In the following Results part however, we did not apply learning but instead manually specified the probability tables to show the effects of gamers' \textit{common sense} rules and how it/they can be correctly encoded in this model.
+
+About learning: if there were only perceived variables, learning the right conditional probability tables would just be counting and averaging. However, some variables encode combinations of perceptions and passed states. We could learn such parameters through the EM algorithm but we propose something simpler for the moment as our ``not directly observed variables'' are not complex to compute, we compute them from perceptions as the same time as we learn. For instance we map in-game values to their discrete values for each variables online and only store the resulting state ``compression''. 
 
 \subsubsection{Questions}
 
@@ -276,7 +292,7 @@ P(S,T|t^{t-1},hp_{1:n},d_{1:n}, a_{1:n}, \Delta hp_{1:n}, id_{1:n}, c_{1:n}, r_{
 \end{equation}
 Which means that we want to know the distribution on $S$ and $T$ knowing all the state variables. We then choose to do the highest scoring combination of $S \wedge T$ that is available (skills may have cooldowns or cost more mana/energy that we have available).
 
-As (Bayes rule) $P(S,T) = P(S|T).P(T)$, to decompose this question, we can ask:
+As (Bayes rule) $P(S,T) = P(S|T).P(T)$, if we want to decompose this question, we can ask:
 $$P(T | t^{t-1}, hp_{1:n},d_{1:n}, a_{1:n}, \Delta hp_{1:n}, id_{1:n}, c_{1:n})$$ 
 Which means that we want to know the distribution on $T$ knowing all the relevant state variables, followed by (with the newly computed distribution on $T$):
 $$P(S | T, hp_{1:n},d_{1:n}, a_{1:n}, \Delta hp_{1:n}, id_{1:n}, c_{1:n}, r_{1:n})$$ 
