@@ -60,10 +60,11 @@ The tree of decisions.
 \section{Results}
 
 
-BroodwarBotQ took part in the AIIDE 2011 StarCraft AI competition:
+BroodwarBotQ took part in the AIIDE 2011 StarCraft AI competition. It got 67 ``crashes'' on 360 games because of a misinterpretation of rules on the first frame\footnote{the additional terrain analysis was not serialized and taking more than one minute on the frame 0, which has no special tolerance as opposed as the year before.}, which is not the real unstability of the bot ($\approx$ 0,75\% as seen in \ref{fig:ladderbots}). The results of AIIDE are in Table~\ref{tab:botsAIIDE}.
 
 \begin{table}[h]
     \begin{center}
+    \begin{small}
     \begin{tabular}{|l|l|l|c|l|}
         \hline
         bot & race & refs & win rate & notes \\
@@ -75,16 +76,18 @@ ItayUndermind & Zerg & & 0.658 & 6-pooling \\
        EISBot\footnote{\url{http://code.google.com/p/eisbot/}} & Protoss & \citep{WeberCIG10,Weber2010cr} & 0.606 & 2-Gates or Dragoons opening \\
          SPAR\footnote{\url{http://www.planiart.usherbrooke.ca/projects/spar/}} & Protoss & \citep{Kabanza2010} & 0.539 & uses Dark Templars \\
     Undermind & Terran & & 0.517 & Barracks units \\
-         Nova\footnote{\url{http://www.planiart.usherbrooke.ca/projects/spar/}} & Terran & \citep{NovaBot2011} &  0.475 \\
- BroodwarBotQ\footnote{\url{https://github.com/SnippyHolloW/BroodwarBotQ}} & Protoss  & \citep{SYNNAEVE:OpeningPred} \citep{SYNNAEVE:Micro} & 0.328 & adapts to the opening \\
+         Nova\footnote{\url{http://www.planiart.usherbrooke.ca/projects/spar/}} & Terran & \citep{NovaBot2011} &  0.475 & robust play \\
+ BroodwarBotQ\footnote{\url{https://github.com/SnippyHolloW/BroodwarBotQ}} & Protoss  & %\citep{SYNNAEVE:OpeningPred} \citep{SYNNAEVE:Micro} 
+& 0.328 & adapts to the opening \\
         BTHAI\footnote{\url{http://code.google.com/p/bthai/}} & Zerg & \citep{Hagelback2009} & 0.319 & Lurkers opening  \\
     Cromulent & Terran & & 0.300 & Factory units \\
    bigbrother & Zerg & & 0.278 & Hydralisks and Lurkers \\
        Quorum & Terran & & 0.094 & expands and produce Factory units \\
         \hline
     \end{tabular}
+    \end{small}
     \end{center}
-    \caption{67 loses on 360 games not the case in \ref{fig:ladderbots} TODO}
+    \caption{Result table for the AIIDE 2011 StarCraft AI competition with 360 games played by each bot.}
     \label{tab:botsAIIDE}
 \end{table}
 %%% AIIDE 2011
@@ -102,15 +105,22 @@ ItayUndermind & Zerg & & 0.658 & 6-pooling \\
 %%% bigbrother
 %%% Quorum
 
+Also in 2011 was the CIG 2011 StarCraft AI competition. It has 10 entries and BroodwarBotQ placed 4th with a little luck of seed (it did not have to play against Aiur). The finals are depicted in Table~\ref{tab:botsCIG}.
+\begin{table}[h]
+    \begin{center}
+    \begin{tabular}{|l|c|c|c|}
+        \hline
+bot & crashes & games & wins \\ 
+Skynet & 0 & 30 & 26 \\ 
+UAlbertaBot & 0 & 30 &  22\\
+Xelnaga\footnote{A modified version of AIUR doing only Dark Templar rushes.} & 3 & 30 & 11 \\
+BroodwarBotQ & 2 & 30 & 1\\
+        \hline
+    \end{tabular}
+    \end{center}
+    \caption{Result table of the finals for the CIG 2011 StarCraft AI competition (10 entries)}
+    \label{tab:botsCIG}
+\end{table}
 
-
-%%% CIG
-%%% Crashes Games Bot Wins
-%%% 0 30 Skynet 26
-%%% 0 30 UAlbertaBot 22
-%%% 3 30 Xelnaga 11
-%%% 2 30 BroodwarBotQ 1
-%%% 10 entries                    
-
-Finally, there is ladder running in which BroodwarBotQ (last updated January 2012) is ranked between 7 and 9 (without counting duplicates) and is on-par with EISBot \citep{WeberCIG10,Weber2010cr} as can be seen in Figure~\ref{fig:ladderbots}
+Finally, there is ladder running in which BroodwarBotQ (last updated January 2012) is ranked between 7 and 9 (without counting duplicates, there are $\approx$ 20 different bots) and is on-par with EISBot \citep{WeberCIG10,Weber2010cr} as can be seen in Figure~\ref{fig:ladderbots} (February 2012 ladder ranking).
 
