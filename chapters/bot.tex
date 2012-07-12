@@ -12,7 +12,7 @@
 \begin{flushright}Alan J. Perlis (1982)\end{flushright}
 \end{quotation}
 
-\lettrine{I}{n} this chapter, we present some of the engineering that went in the robotic player's (bot) implementation. We will also present the different flows of informations and how decisions are made during a game. Finally we will present the results of the full robotic player to various bots competitions.
+\lettrine{I}{n} this chapter, we present some of the engineering that went in the robotic player's (bot) implementation, which may help the comprehension of the organization and utility of the different chapters. We will also present the different flows of informations and how decisions are made during a game. Finally we will present the results of the full robotic player to various bots competitions.
 
 \ifthenelse{\equal{\myebookformat}{false}}{
 \chaptertoc
@@ -20,13 +20,11 @@
 
 
 
-\citep{Wolfe11} % BOUNDED INTENTION PLANNING
+%\citep{Wolfe11} % BOUNDED INTENTION PLANNING TODO
 
 \section{Code architecture}
 
 \label{sec:codearchitecture}
-mapping schéma code <-> schéma info-flow.
-
 \begin{figure}[h]
 \begin{center}
 \includegraphics[width=16cm]{images/BBQEarly2012.pdf}
@@ -34,6 +32,109 @@ mapping schéma code <-> schéma info-flow.
 \label{fig:codearchitecture}
 \end{center}
 \end{figure}
+% mapping schéma code <-> schéma info-flow.
+
+We start by presenting short descriptions of the relative organizations of the different parts.
+
+%%% \begin{figure}[h]
+%%% \subsection{Micro-management}
+%%% \begin{lstlisting}
+%%% class UnitsGroup
+%%% {
+%%%     vector<BayesianUnit*> units;
+%%%     vector<BayesianUnit*> arrivingUnits;
+%%%     vector<Position> path;
+%%%     virtual void update();
+%%%     virtual void formation(Formation* f);
+%%%     void takeControl(Unit* u);
+%%%     void giveUpControl(Unit* u);
+%%%     void switchMode(unit_mode um);
+%%% };
+%%% 
+%%% void UnitsGroup::update()
+%%% {
+%%%     updateArrivingUnits();
+%%%     updateCenter();
+%%%     updateNearbyUnitsFromFilter();
+%%%     chooseLeadingUnit();
+%%%     if (groupMode == MODE_SCOUT || groupMode == MODE_MOVE)
+%%%         temporaryPosition = groupTargetPosition;
+%%%     if (mustFight()) // always false in MODE_SCOUT
+%%%     {
+%%%         if (outnumbered())
+%%%             temporaryPosition = fallBackPosition;
+%%%         else if (outnumbering())
+%%%             temporaryPosition = groupTargetPosition;
+%%%         else
+%%%             temporaryPosition = NULL;
+%%%     }
+%%%     for each (BayesianUnit* bu in this->units)
+%%%     {
+%%%         bu->target = temporaryPosition;
+%%%         bu->switchMode(selectMode());
+%%%         bu->update();
+%%%     }
+%%% }
+%%% \end{lstlisting}
+%%% \caption{Simplified code listings for UnitsGroup}
+%%% \label{fig:microcode1}
+%%% \end{figure}
+%%% 
+%%% \begin{figure}[h]
+%%% \begin{lstlisting}
+%%% class BayesianUnit
+%%% {
+%%%     void setObjective(Position p);
+%%%     virtual void update();
+%%%     virtual void micro(); // fight
+%%% };
+%%% 
+%%% class SpecialUnitType // an example of a specializing class
+%%% {
+%%%     void update();
+%%%     void micro();
+%%% };
+%%% 
+%%% 
+%%% void BayesianUnit::micro() 
+%%% {
+%%%     updateRangeEnemies();
+%%%     decideToFlee?();
+%%%     if (iCanFire())
+%%%     {
+%%%         enemyTarget = selectTarget(); // uses the targetting heuristic
+%%%         attackEnemyUnit(enemyTarget);
+%%%     }
+%%%     else if (lagControlOK)
+%%%     {
+%%%         if (iShouldFlee())
+%%%             flee(); // updateDir with special attractors (damage gradient)
+%%%         else
+%%%             fightMove(); // updateDir with special attractors (priority target)
+%%%     }
+%%% }
+%%% 
+%%% void BayesianUnit::updateDir()
+%%% {
+%%%     updateAttractors(); // all the sensory inputs except the Objective
+%%%     updateObj(); // Objective coming from the UnitsGroup
+%%%     computeProbs(); // Bayesian fusion
+%%%     selectDir(); // sampling in the possible directions if group > limit size
+%%%     clickDir(); // performs the action
+%%% }
+%%% 
+%%% void BayesianUnit::update()
+%%% {
+%%%     if (mode == MODE_FIGHT)
+%%%         micro();
+%%%     else
+%%%         updateDir();
+%%% }
+%%% \end{lstlisting}
+%%% \caption{Simplified code listings for BayesianUnit(s)}
+%%% \label{fig:microcode2}
+%%% \end{figure}
+
 
 \subsection{Tactical goals}
 \label{sec:goals}
@@ -52,6 +153,8 @@ In the \textit{in progress} and \textit{in cancel} modes, the ``plan'' is a simp
 
 The tactical model can specify \textit{where} to attack by setting a localized subgoal (Formation/See/Regroup/KillSubgoal...) to the right place. It can specify \textit{how} by setting the adequate precondition(s).
 
+\subsection{Technology Estimation}
+
 
 \section{A game walkthrough}
 The tree of decisions.
@@ -60,32 +163,39 @@ The tree of decisions.
 \section{Results}
 
 
-BroodwarBotQ took part in the AIIDE 2011 StarCraft AI competition. It got 67 ``crashes'' on 360 games because of a misinterpretation of rules on the first frame\footnote{the additional terrain analysis was not serialized and taking more than one minute on the frame 0, which has no special tolerance as opposed as the year before.}, which is not the real unstability of the bot ($\approx$ 0,75\% as seen in \ref{fig:ladderbots}). The results of AIIDE are in Table~\ref{tab:botsAIIDE}.
+BroodwarBotQ took part in the AIIDE 2011 StarCraft AI competition. It got 67 games counted as ``crashes'' on 360 games because of a misinterpretation of rules on the first frame\footnote{the additional terrain analysis was not serialized and taking more than one minute on the frame 0, which has no special tolerance as opposed as the year before.}, which is not the real unstability of the bot ($\approx$ 0,75\% as seen in \ref{fig:ladderbots}). The results of AIIDE are in Table~\ref{tab:botsAIIDE}.
 
 \begin{table}[h]
     \begin{center}
-    \begin{small}
+    \begin{scriptsize}
     \begin{tabular}{|l|l|l|c|l|}
         \hline
         bot & race & refs & win rate & notes \\
         \hline
-     Skynet\footnote{\url{http://code.google.com/p/skynetbot/} } & Protoss & & 0.889 & robust openings depending on opponent's race \\
+     Skynet%\footnote{\url{http://code.google.com/p/skynetbot/} } 
+& Protoss & & 0.889 & openings depending on opponent's race \\
 UAlbertaBot & Protoss & \citep{Churchill2011} & 0.794 & always 2-Gates opening \\
-       Aiur\footnote{\url{http://code.google.com/p/aiurproject/}} & Protoss & & 0.703 & robust and stochastic strategies \\
+       Aiur%\footnote{\url{http://code.google.com/p/aiurproject/}} 
+& Protoss & & 0.703 & robust and stochastic strategies \\
 ItayUndermind & Zerg & & 0.658 & 6-pooling \\
-       EISBot\footnote{\url{http://code.google.com/p/eisbot/}} & Protoss & \citep{WeberCIG10,Weber2010cr} & 0.606 & 2-Gates or Dragoons opening \\
-         SPAR\footnote{\url{http://www.planiart.usherbrooke.ca/projects/spar/}} & Protoss & \citep{Kabanza2010} & 0.539 & uses Dark Templars \\
+       EISBot%\footnote{\url{http://code.google.com/p/eisbot/}} 
+& Protoss & \citep{WeberCIG10,Weber2010cr} & 0.606 & 2-Gates or Dragoons opening \\
+         SPAR%\footnote{\url{http://www.planiart.usherbrooke.ca/projects/spar/}} 
+& Protoss & \citep{Kabanza2010} & 0.539 & uses Dark Templars \\
     Undermind & Terran & & 0.517 & Barracks units \\
-         Nova\footnote{\url{http://www.planiart.usherbrooke.ca/projects/spar/}} & Terran & \citep{NovaBot2011} &  0.475 & robust play \\
- BroodwarBotQ\footnote{\url{https://github.com/SnippyHolloW/BroodwarBotQ}} & Protoss  & %\citep{SYNNAEVE:OpeningPred} \citep{SYNNAEVE:Micro} 
+         Nova%\footnote{\url{http://www.planiart.usherbrooke.ca/projects/spar/}} 
+& Terran & \citep{NovaBot2011} &  0.475 & robust play \\
+ BroodwarBotQ%\footnote{\url{https://github.com/SnippyHolloW/BroodwarBotQ}} 
+& Protoss  & %\citep{SYNNAEVE:OpeningPred} \citep{SYNNAEVE:Micro} 
 & 0.328 & adapts to the opening \\
-        BTHAI\footnote{\url{http://code.google.com/p/bthai/}} & Zerg & \citep{Hagelback2009} & 0.319 & Lurkers opening  \\
+        BTHAI%\footnote{\url{http://code.google.com/p/bthai/}} 
+& Zerg & \citep{Hagelback2009} & 0.319 & Lurkers opening  \\
     Cromulent & Terran & & 0.300 & Factory units \\
    bigbrother & Zerg & & 0.278 & Hydralisks and Lurkers \\
        Quorum & Terran & & 0.094 & expands and produce Factory units \\
         \hline
     \end{tabular}
-    \end{small}
+    \end{scriptsize}
     \end{center}
     \caption{Result table for the AIIDE 2011 StarCraft AI competition with 360 games played by each bot.}
     \label{tab:botsAIIDE}
@@ -105,7 +215,8 @@ ItayUndermind & Zerg & & 0.658 & 6-pooling \\
 %%% bigbrother
 %%% Quorum
 
-Also in 2011 was the CIG 2011 StarCraft AI competition. It has 10 entries and BroodwarBotQ placed 4th with a little luck of seed (it did not have to play against Aiur). The finals are depicted in Table~\ref{tab:botsCIG}.
+Also in 2011 was the CIG 2011 StarCraft AI competition. It had 10 entries\footnote{BroodwarBotQ \url{https://github.com/SnippyHolloW/BroodwarBotQ}, BTHAI \url{http://code.google.com/p/bthai/}, AIUR \url{http://code.google.com/p/aiurproject/}, LSAI \url{http://cs.lafayette.edu/~taylorm}, 
+EvoBot, Protoss Beast Jelly \url{http://wwbwai.sourceforge.net/}, Xelnaga (modified AIUR), Skynet \url{http://code.google.com/p/skynetbot/}, Nova \url{http://nova.wolfwork.com/}, UAlbertaBot \url{http://webdocs.cs.CanadaProtosshttpualberta.ca/~cdavid/}} and BroodwarBotQ placed 4th with a little luck of seed (it did not have to play against Aiur). The finals are depicted in Table~\ref{tab:botsCIG}.
 \begin{table}[h]
     \begin{center}
     \begin{tabular}{|l|c|c|c|}

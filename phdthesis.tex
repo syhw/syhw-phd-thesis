@@ -8,6 +8,7 @@
 \def \myprintformat {false} % true or false
 \def \myebookformat {false} % true or false
 
+\setcounter{secnumdepth}{2}
 %%% PACKAGES:
 
 \usepackage[utf8]{inputenc}
@@ -30,6 +31,16 @@
 \usetikzlibrary{shapes,arrows,mindmap,trees}
 \usetikzlibrary{decorations.pathmorphing}
 \usetikzlibrary{decorations.markings}
+
+\usepackage{listings}%,bera}
+\definecolor{keywords}{RGB}{255,0,90}
+\definecolor{comments}{RGB}{60,179,113}
+\lstset{language=c++,frame=ltrb,framesep=5pt,basicstyle=\scriptsize,
+  keywordstyle=\color{keywords},breaklines=true,
+ commentstyle=\color{comments}emph,
+ stringstyle=\ttfamily,
+ %font=bera,
+ showstringspaces=true}
 
 %%% FONT:
 
@@ -141,9 +152,10 @@ $\ccbynceu$
 }
 
 %%%\byncsa
-\chapter*{Remerciements}
-\chapter*{R\'{e}sum\'{e}}
-\input{abstract/resume.tex} %%% TODO
+%%% \chapter*{Remerciements}
+%%% Si c'\'{e}tait \`{a} refaire, je le referais peut-\^{e}tre diff\'{e}remment mais assur\'{e}ment avec les m\^{e}mes personnes. TODO
+%%% \chapter*{R\'{e}sum\'{e}}
+%%% \input{abstract/resume.tex} %%% TODO
 \chapter*{Abstract}
 \input{abstract/abstractEN.tex}
 \clearpage

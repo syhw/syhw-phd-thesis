@@ -19,11 +19,12 @@ Reinforcement learning, \citep{Marthi05concurrenthierarchical}
 
 
 Evolving control policies, \citep{Miles2007}
+%\citep{Schoenauer1996} 
 \subsection{Tactics}
 
 Two important research directions for tactics would be:
 \begin{itemize}
-    \item Tactical assault generation, so that we do not have to hard-code the tactical goals behaviors. Previous works, which would be compatible with StarCraft, in this direction include \citep{Chung05,PonsenMSA06,UCT}.
+    \item Tactical assault generation, so that we do not have to hard-code the tactical goals behaviors. Previous works, which would be compatible with StarCraft, in this direction include \citep{Chung05,PonsenMSA06,UCT,GellySchoenauer}.
     \item Improve tactical state estimation, so that both our tactical decision-making and tactical prediction benefit it. A first step would be to use a (dynamic) filtering on enemy units, either with a particle filter \citep{Thrun02d,weber2011aiide} or with hidden semi-Markov models \citep{Hladky_anevaluation}. We propose here a simple units filtering model based on the decomposition of the map in regions.
 \end{itemize}
 

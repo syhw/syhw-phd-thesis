@@ -8,7 +8,10 @@
 \end{quotation}
 
 
-\lettrine{W}e present our solutions to some of the dimensions of strategies. The main idea is to reduce the complexity encoding all possible variations of strategies to a few strong indicators: the \glos{buildtree} (closely related to the \glos{techtree}) and canonical army compositions. We also try and abstract early game strategies to ``openings'' (as in Chess). Build trees estimation was published at the Annual Conference on Artificial Intelligence and Interactive Digital Entertainment (AAAI AIIDE) 2011 in Palo Alto \citep{SYNNAEVE:StratPred} and openings prediction was published at Computational Intelligence in Games (IEEE CIG) 2011 in Seoul \citep{SYNNAEVE:OpeningPred}.
+\lettrine{W}e present our solutions to some of the problems raised at the strategic level. The main idea is to reduce the complexity encoding all possible variations of strategies to a few strong indicators: the \glos{buildtree} (closely related to the \glos{techtree}) and canonical army compositions. 
+We start by explaining what we consider that belongs to strategic thinking and related work. We then describe the information that we will use and the decisions that can be taken. As we try and abstract early game strategies to ``openings'' (as in Chess), we will present how we labeled a dataset of games with openings. Then, we present the Bayesian model for build tree prediction (from partial observations), followed by its augmented version able to predict the opponent's opening. Both models were evaluated in prediction dataset of skilled players. Finally we explain our work on army composition adaptation (to the opponent's army).
+
+Build trees estimation was published at the Annual Conference on Artificial Intelligence and Interactive Digital Entertainment (AAAI AIIDE) 2011 in Palo Alto \citep{SYNNAEVE:StratPred} and openings prediction was published at Computational Intelligence in Games (IEEE CIG) 2011 in Seoul \citep{SYNNAEVE:OpeningPred}.
 
 \ifthenelse{\equal{\myebookformat}{false}}{
 \chaptertoc
@@ -84,7 +87,7 @@ They improve the speed of CPB by using a decision tree to select relevant featur
 \subsection{Buildings}
 \label{sec:buildings}
 
-From last chapter (section~\ref{sec:techtree}), we recall the \textit{\glos{techtree}} is a directed acyclic graph which contains the whole technological (buildings and upgrades) development of a player. Also, each unit and building has a \textit{sight range} that provides the player with a view of the map. Parts of the map not in the sight range of the player's units are under \textit{fog of war} and the player ignores what is and happens there. We also recall the notion of \glos{buildorder}: the timings at which the first buildings are constructed. 
+From last chapter (section~\ref{sec:techtree}), we recall that the \textit{\glos{techtree}} is a directed acyclic graph which contains the whole technological (buildings and upgrades) development of a player. Also, each unit and building has a \textit{sight range} that provides the player with a view of the map. Parts of the map not in the sight range of the player's units are under \textit{fog of war} and the player ignores what is and happens there. We also recall the notion of \glos{buildorder}: the timings at which the first buildings are constructed. 
 
 In this chapter, we will use \textit{\gloss{buildtree}} as a proxy for estimating some of the strategy. A build tree is a little different than the \glos{techtree}: it is the tech tree without upgrades and researches (only buildings) and augmented of some duplications of buildings. For instance, $\{Pylon\wedge Gateway\}$ and $\{Pylon\wedge Gateway, Gateway2\}$ gives the same tech tree but we consider that they are two different build trees. Indeed, the second Gateway gives some units producing power to the player (it allows for producing two Gateway units at ones). Very early in the game, it also shows investment in production and the strategy is less likely to be focused on quick opening of technology paths/upgrades. 
 We have chosen how many different versions of a given building type to put in the build trees (as shown in Table~\ref{tab:labels}), so it is a little more arbitrary than the tech trees. Note that when we know the build tree, we have a very strong conditioning on the tech tree.
@@ -327,9 +330,11 @@ A $\sigma$ with variable volume, variable shape and variable orientation is also
 \subsubsection{Labeling, score filtering}
 
 We produce ``2 bins clustering'' for each set of features (corresponding to each opening), and label the replays belonging to the cluster with the lower norm of features' appearances (that is exactly the purpose of our features). Figures~\ref{PvPspeedzeal}, \ref{TvZraxFE}
-and \ref{ZvPmutas} show the clusters out of EM with the features of the corresponding openings. We thought of clustering because there are two cases in which you build a specific military unit of research a specific upgrade: either it is part of your opening, or it is part of your longer term game plan or even in reaction to the opponent. So the distribution over the time at which a feature appears is bimodal, with one (sharp) mode corresponding to ``opening with it'' and the other for the rest of the games, as can be seen in Figure~\ref{PvTfastDT}.
+and \ref{ZvPmutas} show the clusters out of EM with the features of the corresponding openings. We thought of clustering because there are two cases in which you build a specific military unit or research a specific upgrade: either it is part of your opening, or it is part of your longer term game plan or even in reaction to the opponent. So the distribution over the time at which a feature appears is bimodal, with one (sharp) mode corresponding to ``opening with it'' and the other for the rest of the games, as can be seen in Figure~\ref{PvTfastDT}.
 
-Finally, some replays are labeled two or three times with different labels (due to the different time of effect of different openings), so we apply a score filtering to transform multiple label replays into unique label ones (see Figure~\ref{replays_labeling}). For that we choose the openings labels that were happening the earliest (as they are a closer threat to the bot in a game setup) if and only if they were also the most probable or at 10\% of probability of the most probable label (to exclude transition boundaries of clusters) for this replay. We find the earliest by comparing the norms of the clusters means in competition. All replays without a label or with multiple labels (\textit{i.e.} which did not had a unique solution in filtering) after the filtering were labeled as \textit{unknown}. We then used this labeled dataset as well as Weber and Mateas' labels in the testing of our Bayesian model for opening prediction.
+%Finally, some replays are labeled two or three times with different labels (due to the different time of effect of different openings), so we apply a score filtering to transform multiple label replays into unique label ones (see Figure~\ref{replays_labeling}). 
+Due to the different time of effect of different openings, some replays are labeled two or three times with different labels. So, finally, we apply a score filtering to transform multiple label replays into unique label ones (see Figure~\ref{replays_labeling}). 
+For that we choose the openings labels that were happening the earliest (as they are a closer threat to the bot in a game setup) if and only if they were also the most probable or at 10\% of probability of the most probable label (to exclude transition boundaries of clusters) for this replay. We find the earliest by comparing the norms of the clusters means in competition. All replays without a label or with multiple labels (\textit{i.e.} which did not had a unique solution in filtering) after the filtering were labeled as \textit{unknown}. We then used this labeled dataset as well as Weber and Mateas' labels in the testing of our Bayesian model for opening prediction.
 
 \clearpage
 
@@ -343,7 +348,7 @@ The work described in the next two sections can be classified as probabilistic p
 \subsubsection{Variables}
 \begin{itemize}
 \item BuildTree: $BT \in \{\emptyset, \{building_1\}, \{building_2\}, \{building_1\wedge building_2\}, \dots\}$: all the possible building trees for the given race. For instance $\{pylon, gate\}$ and $\{pylon, gate, core\}$ are two different $BuildTrees$.
-\item Observations: $O_{i \in \llbracket 1\dots N \rrbracket} \in \{0, 1\}$, $O_k$ is $1/true$ if we have seen (observed) the $k$th building (it can have been destroyed, it will stay ``seen''). Otherwise, it is $1/false$.
+\item Observations: $O_{i \in \llbracket 1\dots N \rrbracket} \in \{0, 1\}$, $O_k$ is $1/true$ if we have seen (observed) the $k$th building (it can have been destroyed, it will stay ``seen''). Otherwise, it is $0/false$.
 \item $\lambda \in \{0, 1\}$: coherence variable (restraining $BuildTree$ to possible values with regard to $O_{1:N}$)
 \item Time: $T \in \llbracket 1\dots P \rrbracket$, time in the game (1 second resolution).
 \end{itemize}
@@ -455,15 +460,15 @@ All the results presented in this section represents the nine match-ups (races c
 The \textbf{predictive power} of our model is measured by the $k>0$ next buildings for which we have ``good enough'' prediction of future build trees in:
 $$\PP(BT^{t+k} | T=t, O_{1:N}=o_{1:N}, \lambda = 1)$$
 
-``Good enough'' is measured by a distance $d$ to the actual build tree of the opponent that we tolerate. We used a set distance: $d(bt_1, bt_2) = \mathrm{card}(bt_1 \Delta bt_2) = \mathrm{card}((bt_1\bigcup bt_2) \backslash (bt_1\bigcap bt_2))$. One less or more building in the prediction is at a distance of $1$ from the actual build tree. The same set of buildings except for one replacement is at a distance of $2$ (that would be $1$ is we used tree edit distance with substitution). 
+``Good enough'' is measured by a \textbf{distance} $d$ to the actual build tree of the opponent that we tolerate. We used a set distance: $d(bt_1, bt_2) = \mathrm{card}(bt_1 \Delta bt_2) = \mathrm{card}((bt_1\bigcup bt_2) \backslash (bt_1\bigcap bt_2))$. One less or more building in the prediction is at a distance of $1$ from the actual build tree. The same set of buildings except for one replacement is at a distance of $2$ (that would be $1$ is we used tree edit distance with substitution). 
 \begin{itemize}
     \item We call $d(best,real)=$``best'' the distance between the most probable build tree and the one that actually happened.
     \item We call $d(bt,real)*\PP(bt)$=``mean'' the marginalized distance between what was inferred balanced (variable $bt$) by the probability of inferences ($\PP(bt)$). 
 \end{itemize} 
-Note that this distance is always over \textbf{all} the build tree (and not only the next inference). This distance was taken into account only after the fourth (4th) building so that the first buildings would not penalize the prediction metric (the first building can not be predicted 4 buildings in advance). The first 4 buildings for a Terran player are more often amongst his first supply depot, barracks, refinery (gas), and factory or expansion or second barracks. For Zerg, the first 4 buildings are in first overlord, zergling pool, extractor (gas), expansion and lair tech. For Protoss, it can be first pylon, gateway, assimilator (gas), cybernectics core, and sometimes robotics center, or forge or expansion.
+Note that this distance is always over the \textbf{complete} build tree, and not only the newly inferred buildings. This distance metric was counted only after the fourth (4th) building so that the first buildings would not penalize the prediction metric (the first building can not be predicted 4 buildings in advance). For information, the first 4 buildings for a Terran player are more often amongst his first supply depot, barracks, refinery (gas), and factory or expansion or second barracks. For Zerg, the first 4 buildings are in first overlord, zergling pool, extractor (gas), expansion and lair tech. For Protoss, it can be first pylon, gateway, assimilator (gas), cybernectics core, and sometimes robotics center, or forge or expansion.
 
 \subsubsection{Predictive power}
-To test the predictive power of our model, we used $d=1,2,3$, with $d=1$ we have a very strong sense of what the opponent is doing or will be doing, with $d=3$, we may miss one key building or have switched a tech path. We can see in Table~\ref{tab:buildtreeresults} that with $d=1$ and without noise, our model predicts in average more than one building in advance what the opponent will build next if we use only its best prediction, and almost \textbf{four} buildings in advance if we marginalize over all the predictions. Of course, if we accept more error, the predictive power (number of buildings ahead that our model is capable to predict) increases, up to $6.122$ (in average) for $d=3$ without noise.
+To test the predictive power of our model, we used $d=1,2,3$: with $d=1$ we have a very strong sense of what the opponent is doing or will be doing, with $d=3$, we may miss one key building or the opponent may have switched of tech path. We can see in Table~\ref{tab:buildtreeresults} that with $d=1$ and without noise, our model predicts in average more than one building in advance ($k>1$) what the opponent will build next if we use only its best prediction. If we use the weighed sum on TODO almost \textbf{four} buildings in advance if we marginalize over all the predictions. Of course, if we accept more error, the predictive power (number of buildings ahead that our model is capable to predict) increases, up to $6.122$ (in average) for $d=3$ without noise.
 
 \begin{table*}[h]
 \caption{Summarization of the main results/metrics, one full results set for 10\% noise}
@@ -526,7 +531,7 @@ To test the predictive power of our model, we used $d=1,2,3$, with $d=1$ we have
 & max & 1.414 & 1.707 & 0.840 & 2.483 & 2 & 3.100 & 2.083 & 3.327\\
 \hline
 \multirow{3}{3mm}{\begin{sideways}\parbox{3mm}{70\%\ \ }\end{sideways}}
-& verage & 1.038 & 1.314 & 0.277 & 1.291 & 1.342 & 2.039 & 1.470 & 2.270\\
+& average & 1.038 & 1.314 & 0.277 & 1.291 & 1.342 & 2.039 & 1.470 & 2.270\\
 & min & 0.633 & 0.994 & 0.16 & 0.79 & 1.101 & 1.653 & 1.244 & 1.83\\
 & max & 1.683 & 1.871 & 0.537 & 1.85 & 1.7 & 2.512 & 1.85 & 2.714\\
 \hline
@@ -542,11 +547,11 @@ To test the predictive power of our model, we used $d=1,2,3$, with $d=1$ we have
 \end{table*}
 
 
-\subsubsection{Robustness to noise}
+\subsubsection{Robustness to missing informations (``noise'')}
 The robustness of our algorithm is measured by the quality of the predictions of the build trees for $k=0$ (reconstruction, estimation) or $k>0$ (prediction) with missing observations in:
 $$ \PP(BT^{t+k} | T=t, O_{1:N}=partial(o_{1:N}), \lambda = 1)$$
 
-The ``reconstructive'' power (infer what has not been seen) ensues from the learning of our parameters from real data: even in the set of build trees that are possible, with regard to the game rules, only a few will be probable at a given time and/or with some key structures. Abiding by probability theory gives us consistency with regard to concurrent build tree.
+The ``reconstructive'' power (infer what has not been seen) ensures from the learning of our parameters from real data: even in the set of build trees that are possible, with regard to the game rules, only a few will be probable at a given time and/or with some key structures. Abiding by probability theory gives us consistency with regard to concurrent build tree.
 This ``reconstructive'' power of our model is shown in Table~\ref{tab:buildtreeresults} with $d$ (distance to actual building tree) for increasing noise at fixed $k=0$. 
 
 Figure~\ref{fig:buildtreenoise} displays first (on top) the evolution of the error rate in reconstruction (distance to actual building) with increasing random noise (from 0\% to 80\%, no missing observations to 8 missing observations over 10). We consider that having an average distance to the actual build tree a little over $1$ for 80\% missing observations is a success. This means that our reconstruction of the enemy build tree with a few rightly timed observations is very accurate. We should ponder that this average ``missed'' (unpredicted or wrongly predicted) building can be very important (for instance if it unlocks game changing technology). We think that this robustness to noise is due to $\PP(T|BT)$ being precise with the amount of data that we used, and the build tree structure. 
@@ -565,7 +570,7 @@ Secondly, Figure~\ref{fig:buildtreenoise} displays (at the bottom) the evolution
 \subsection{Possible extensions}
 %\subsubsection{Possible improvements}
 \label{sec:buildtreeimprovements}
-This work can be extended by have a model for the two players (the bot/AI and the opponent):
+This work can be extended by having a model for the two players (the bot/AI and the opponent):
 $$\PP(BT_{bot}, BT_{op}, O_{op,1:N}, T, \lambda)$$
 So that we could ask this (new) model: $$\PP(BT_{bot} | obs_{op, 1:N}, t, \lambda=1)$$
 This would allow for simple and dynamic build tree adaptation to the opponent strategy (dynamic re-planning), by the inference path:
@@ -755,7 +760,7 @@ Table~\ref{tab:openingsresults} sums up all the prediction probabilities (scores
 \begin{figure}[h]
 \centerline{\includegraphics[width=0.7\columnwidth]{images/TvP_prediction.png}}
 \centerline{\includegraphics[width=0.7\columnwidth]{images/TvPx_prediction.png}}
-\caption{Evolution of $\PP(Opening)$ with increasing observations in a TvP match-up, with Weber's labeling on top, our labeling on the bottom. The x-axis corresponds to the construction of buildings.}
+\caption{Evolution of $\PP(Opening)$ with increasing observations in a TvP match-up, with Weber's labeling on top, our labeling on the bottom. The x-axis corresponds to the construction of buildings. The interpolation was obtained by fitting a second order polynomial.}
 \label{fig:openingsprediction}
 \end{figure}
 
@@ -952,7 +957,7 @@ while $C_f$ take the tech tree constraints into account. This can seem tedious b
 
     \item $U^{t+1} \in ([0,1]\dots[0,1])$, our $N$ dimensional unit types ($U$) proportions at time $t+1$, i.e. $U^{t+1} \in [0,1]^M$. For instance, an army with equal numbers of $zealots$ and $dragoons$ (and nothing else) is represented as $\{U_{zealot}=0.5, U_{dragoon}=0.5, \forall ut \neq zealot|dragoon\ U_{ut}=0.0\}$, i.e. $U=(0.5,0.5,0,\dots,0)$ if $zealots$ and $dragoons$ are the first two components of the $U$ vector. So $\sum_i U_i = 1$ whatever the composition of the army.
 
-    \item $EU^t$ and $EU^{t+1} \in ([0,1]\dots [0,1])$, the $M$ enemy units types ($EU$) at time $t$ and $t+1$, i.e. $EU^t \in [0,1]^M$. Same as above, but for the enemy and at two times ($t$ and $t+1$).
+    \item $EU^t$ and $EU^{t+1} \in ([0,1]\dots [0,1])$, the $M$ enemy units types ($EU$) at time $t$ and $t+1$, i.e. $EU^t \in [0,1]^M$. Same as above, but for the enemy and at two different times ($t$ and $t+1$).
 
     \item $\lambda \in \{0, 1\}$ is a coherence variable unifying $C_{m}^{t+1}$ and $C_{f}^{t+1}$ to possible values with regard to $TT^t$.
 
@@ -1154,11 +1159,11 @@ disparity & in \% & m & ws & m & ws & m & ws & m & ws & m & ws& m & ws \\
 %%% TODO Isomap ?
 \begin{figure}
 \centerline{\includegraphics[width=0.65\columnwidth]{images/GMM_ISO_Z2.png}}
-\label{isoz}
 \caption{2 dimensional Isomap projection of a small dataset of battles for Zerg (vs Protoss) with most probable Gaussian mixture model components as labels.}
+\label{fig:isoz}
 \end{figure}
 
-Figure~\ref{isoz} shows a 2D Isomap \citep{isomap} projection of the battles on a small ZvP dataset. Isomap finds a low-dimensional non-linear embedding of the high dimensionality ($N$ or $N'$ dimensions, as much as unit types, the length of $U$ or $EU$) space in which we represent armies. The fact that the embedding is quasi-isometric allows us to compare the intra- and inter- clusters similarities. The cluster identified by $2$ seems strange (in this projection), but all the others clusters seem to make sense.
+Figure~\ref{fig:isoz} shows a 2D Isomap \citep{isomap} projection of the battles on a small ZvP dataset. Isomap finds a low-dimensional non-linear embedding of the high dimensionality ($N$ or $N'$ dimensions, as much as unit types, the length of $U$ or $EU$) space in which we represent armies. The fact that the embedding is quasi-isometric allows us to compare the intra- and inter- clusters similarities. The cluster identified by $2$ seems strange (in this projection), but all the others clusters seem to make sense.
 
 Figure~\ref{fig:parallelplot} shows a parallel plot of \textit{army compositions}. Each vertical (and parallel) axis represents one dimension and is scaled between $value\_min$ and $value\_max$ for the associated feature. We removed the less frequent components to keep only the 8 most important unit types of the PvP match-up. The rightmost axis corresponds to the 8 mixtures of the GMM associated to PvP army types. We colored each army (each trajectory in this 8 dimensional space) by the dominant (most probable) mixture. Expert StarCraft player will directl recognize the clusters.
 

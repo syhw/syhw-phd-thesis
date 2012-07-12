@@ -1,4 +1,4 @@
-\chapter{Bayesian Modeling of Multi-player Games}
+\chapter{Bayesian modeling of multi-player games}
 
 %%% Nothing in Nature is random. ... A thing appears random only through the incompleteness of our knowledge.
 %%% - Benedict Spinoza -
@@ -11,6 +11,10 @@ One sees, from this Essay, that the theory of probabilities is basically just co
 %\vspace{0.2cm} \\
 \begin{flushright}Pierre-Simon de Laplace (Essai philosophique sur les probabilit\'{e}s, 1814)\end{flushright}\end{quotation}
 %\begin{flushright}Pierre-Simon de Laplace (1814)\end{flushright}\end{quotation}
+
+%%% The old adage ‘knowledge is power’ is a very cogent truth, both in human relations and in thermodynamics. Jaynes
+
+
 
 %%% \begin{quotation}
 %%% The actual science of logic is conversant at present only with things either certain, impossible, or entirely doubtful, none of which (fortunately) we have to reason on. Therefore the true logic for this world is the calculus of Probabilities, which takes account of the magnitude of the probability which is, or ought to be, in a reasonable man's mind.
@@ -32,27 +36,28 @@ One sees, from this Essay, that the theory of probabilities is basically just co
 %\item The bot can't be in the head of your opponent (meta-)
 %\end{itemize}
 
-\section{Problems in Game AI}
+\section{Problems in game AI}
 We sum up the problems that we have detailed in the previous chapter to make a good case for a consistent reasoning scheme which can deal with uncertainty.
 
-\subsection{Partial information}
-If the AI has perfect information, behaving realistically is the problem. Cheating bots are not fun, so either AI should just use information available to the players, or it should fake having only partial information. In probabilistic modeling, sensor models allow for the computation of the state $S$ from observations $O$ by asking $\PP(S|O)$. One can easily specify or learn $\PP(O|S)$: either the game designers specify it, or the bot uses perfect information to get $S$ and learns (counts) $\PP(O|S)$, then infer $\PP(S|O) = \frac{\PP(O|S).\PP(S)}{\PP(O)}$ (Bayes rule). Incompleteness of information is just uncertainty about the full state.
+\subsection{Sensing and partial information} % extensional uncertainty
+If the AI has perfect information, behaving realistically is the problem. Cheating bots are not fun, so either AI should just use information available to the players, or it should fake having only partial information. That is what is done is \glos{FPS} games with sight range (often ray casted) and sound propagation for instance. In probabilistic modeling, sensor models allow for the computation of the state $S$ from observations $O$ by asking $\PP(S|O)$. One can easily specify or learn $\PP(O|S)$: either the game designers specify it, or the bot uses perfect information to get $S$ and learns (counts) $\PP(O|S)$. Then, when training is finished, the bot infers $\PP(S|O) = \frac{\PP(O|S).\PP(S)}{\PP(O)}$ (Bayes rule). Incompleteness of information is just uncertainty about the full state.
 
-\subsection{Randomness}
-Some games have inherent stochasticity (variable random action effects) part of the gameplay. In any case, an AI can't assume optimal play from the opponent due to the complexity of video games. In the context of state estimation and control, dealing with this randomness require ad-hoc methods for scripting of boolean logic, while it is dealt with natively through probabilistic modeling. Where a program would have to test for an effect/value $V$ to be in a given interval to decide on a given course of action $A$, a probabilistic model just computes the distribution on $A$ given $V$: $\PP(A|V) = \frac{\PP(V|A).\PP(A)}{\PP(V)}$.
+\subsection{Uncertainty (from rules, complexity)} % intentional uncertainty
+Some games have inherent stochasticity part of the gameplay, through random action effects of attacks/spells for instance. This has to be taken into account while designing the AI and dealt with either to maximize the expectation at a given time. In any case, in a multi-player setting, an AI cannot assume optimal play from the opponent due to the complexity of video games. In the context of state estimation and control, dealing with this randomness require ad-hoc methods for scripting of boolean logic, while it is dealt with natively through probabilistic modeling. Where a program would have to test for the value of an effect $E$ to be in a given interval to decide on a given course of action $A$, a probabilistic model just computes the distribution on $A$ given $E$: $\PP(A|E) = \frac{\PP(E|A).\PP(A)}{\PP(E)}$.
 
 \subsection{Vertical continuity}
-Abstracting higher level cognitive functions (strategy and tactics for instance) is an efficient way to break the complexity barrier of writing game AI. Exploiting the vertical continuity, i.e. the conditioning of higher level thinking on actions, is totally possible in a hierarchical Bayesian model. With strategies as values of $S$ and tactics as values of $T$, $\PP(T|S)$ gives the conditioning of $T$ on $S$ and thus enables us to evaluate only those $T$ values that are possible with given $S$ values.
+As explained in section~\ref{sec:verticalcontinuity}, there are different levels of abstraction use to reason about a game. Abstracting higher level cognitive functions (strategy and tactics for instance) is an efficient way to break the complexity barrier of writing game AI. Exploiting the vertical continuity, i.e. the conditioning of higher level thinking on actions, is totally possible in a hierarchical Bayesian model. With strategies as values of $S$ and tactics as values of $T$, $\PP(T|S)$ gives the conditioning of $T$ on $S$ and thus enables us to evaluate only those $T$ values that are possible with given $S$ values.
 
 \subsection{Horizontal continuity}
-Real-time games may use discrete time-steps (24Hz for instance for StarCraft), it does not prevent temporal continuity in strategies, tactics and, most strongly, actions. There are several Bayesian models able to deal with sequences, filter models, from which \newglossaryentry{HMM}{name=HMM,description={Hidden Markov Model, a dynamic Bayesian network estimating hidden states following a Markov process from observations}}Hidden Markov Models (\glos{HMM}) \citep{Rabiner}, Kalman filters \citep{Kalman1960} and particle filters \citep{particleFiltering} are specializations of. With states $S$ and observations $O$, filter models under the Markov assumption represent the joint $\PP(S^0).\PP(O^0|S^0).\prod_{t=1}^T[\PP(S^t | S^{t-1}).\PP(O^t|S^t)]$.
+Real-time games may use discrete time-steps (24Hz for instance for StarCraft), it does not prevent temporal continuity in strategies, tactics and, most strongly, actions. Once a decision has been made at a given level, it may conditions subsequent decisions at same level (see section~\ref{sec:sec:horizontalcontinuity}). There are several Bayesian models able to deal with sequences, filter models, from which \newglossaryentry{HMM}{name=HMM,description={Hidden Markov Model, a dynamic Bayesian network estimating hidden states following a Markov process from observations}}Hidden Markov Models (\glos{HMM}) \citep{Rabiner}, Kalman filters \citep{Kalman1960} and particle filters \citep{particleFiltering} are specializations of. With states $S$ and observations $O$, filter models under the Markov assumption represent the joint $\PP(S^0).\PP(O^0|S^0).\prod_{t=1}^T[\PP(S^t | S^{t-1}).\PP(O^t|S^t)]$. Thus, from partial informations, one can use more than just the probability of observations knowing states to reconstruct the state, but also the probability of states transitions (the sequences).
 
-\subsection{Autonomy and Programming}
-Autonomy is the ability to deal with new states: the challenge of autonomous characters arises from state spaces too big to be fully specified (in scripts / FSM). Again, probabilistic modeling enables one to recognize unspecified states as soft mixtures of known states. It also allows to deal with unknown state as an incomplete version of a known state which subsumes it. Autonomy can also be reached through learning, being it through online or offline learning. Offline learning is used to learn parameters that does not have to be specified by the programmers and/or game designers. One can use data or experiments with known/wanted situations (supervised learning, reinforcement learning), or explore data (unsupervised learning) or game states (evolutionary algorithms). Online learning can provide adaptability of the AI to the player and/or its own competency playing the game.
+\subsection{Autonomy and robust programming}
+Autonomy is the ability to deal with new states: the challenge of autonomous characters arises from state spaces too big to be fully specified (in scripts / FSM). In the case of discrete, programmer-specified states, the (modes of) behaviors of the autonomous agent are limited to what has been authored. Again, probabilistic modeling enables one to recognize unspecified states as soft mixtures of known states. For instance, with $S$ the state, instead of having either $\PP(S=0)=1.0$ or $\PP(S=1)=1.0$, one can be in $\PP(S=0)=0.2$ and $\PP(S=1)=0.8$, which allows to have behaviors composed from different states. This form of continuum allows to deal with unknown state as an incomplete version of a known state which subsumes it. Autonomy can also be reached through learning, being it through online or offline learning. Offline learning is used to learn parameters that does not have to be specified by the programmers and/or game designers. One can use data or experiments with known/wanted situations (supervised learning, reinforcement learning), or explore data (unsupervised learning), or game states (evolutionary algorithms). Online learning can provide adaptability of the AI to the player and/or its own competency playing the game. %This gives some form of continuum, which makes the bot more robust to unknown situations.
 
-\section{The Bayesian Programming Methodology}
 
-\subsection{The Hitchhiker's Guide to Bayesian Probability}
+\section{The Bayesian programming methodology}
+
+\subsection{The hitchhiker's guide to Bayesian probability}
 \begin{figure}[h]
 \centering
 \includegraphics[width=8cm]{images/zapBayes3.png}
@@ -62,18 +67,26 @@ Autonomy is the ability to deal with new states: the challenge of autonomous cha
 
 
 The reverend Thomas Bayes is the first credited to have worked on inversing probabilities: by knowing something about the probability of $A$ given $B$, how can one draw conclusions on the probability of $B$ given $A$? Bayes theorem states: $$\PP(A|B) = \frac{\PP(B|A)\PP(A)}{\PP(B)}$$
-\cite{Laplace} rediscovered this theorem and published the work of inductive reasoning by using probabilities. Later, by extending logic to \textit{plausible reasoning}, \cite{Jaynes} arrived at the same properties than \cite{Kolmogorov33} probability theory. Plausible reasoning originates from logic, whose statements have degrees of plausibility represented by real numbers. %We note ``the conditional plausibility that A is true, given that B is true'' $A|B$.
-Adding consistency: a) all the possible ways to reach a conclusion leads to the same result, b) information cannot be ignored, c) two equal states of knowledge have the same plausibilities; Cox %%% Jaynes too
-derived the ``product-rule'' ($\PP(A,B)=\PP(A\cap B)=\PP(A|B)\PP(B)$) and the ``sum-rule'' ($\PP(A+B)=\PP(A)+\PP(B)-\PP(A,B)$ or $\PP(A\cup B) = \PP(A)+\PP(B)-\PP(A\cap B)$) of probabilities. As for rules of inferences, the links between logic and plausible reasoning are direct, with $C=[A\Rightarrow B]$:
+\cite{Laplace} independently rediscovered Bayes' theorem and published the work of inductive reasoning by using probabilities. He presented ``inverse probabilities'' (inferential statistics) allowing the study of causes by observing effects: the first use of learning the probabilities of observations knowing states to then infer states having only observations.
+
+Later, by extending logic to \textit{plausible reasoning}, \cite{Jaynes} arrived at the same properties than the theory of probability of \cite{Kolmogorov33}. Plausible reasoning originates from logic, whose statements have degrees of plausibility represented by real numbers. %We note ``the conditional plausibility that A is true, given that B is true'' $A|B$.
+By turning rules of inferences into their probabilistic counterparts, the links between logic and plausible reasoning are direct. With $C=[A\Rightarrow B]$, we have:
 \begin{itemize}
-    \item modus ponens $$\frac{[A\Rightarrow B] \wedge [A=true]}{B=true}$$ translates to $$\PP(B|A,C)=\frac{\PP(A,B|C)}{\PP(A|C)}$$
-    \item modus tollens $$\frac{[A\Rightarrow B] \wedge [B=false]}{A=false}$$ translates to $$\PP(A|C\neg B)=\frac{\PP(A \neg B|C)}{\PP(\neg B|C)}$$
+    \item modus ponens, $A$ entails $B$ and $A=true$ gives us $B=false$: $$\frac{[A\Rightarrow B] \wedge [A=true]}{B=true}$$ translates to $$\PP(B|A,C)=\frac{\PP(A,B|C)}{\PP(A|C)}$$
+    If $A$ stands for ``the enemy has done action $a$'' and $B$ for ``the enemy is doing action $b$'', the probabilistic version of modus ponens means ``the enemy may have doing action $a$ and thus be doing action $b$''. The probability that the enemy is doing $b$ knowing she did $a$ is the probability the she does $a$ and $b$ considering that she did $a$ already (i.e. divided by the probability of $a$).
+    \item modus tollens, $A$ entails $B$ and $B=false$ gives us $A=false$ (otherwise $B=true$): $$\frac{[A\Rightarrow B] \wedge [B=false]}{A=false}$$ translates to $$\PP(A|C\neg B)=\frac{\PP(A \neg B|C)}{\PP(\neg B|C)}$$
+    With the same meanings for $A$ and $B$ as above: ``the enemy may not be doing action $b$ and thus it is less probable that she did action $a$''. The probability that the enemy has done action $a$ knowing she is not doing $b$ is the probability that she does $a$ and not $b$ considering she is not doing $b$ (i.e. divided by the probability of not doing $b$).
+    
 \end{itemize}
 Also, additionally to the two strong logic syllogisms above, plausible reasoning gets two weak syllogisms, from:
 \begin{itemize}
     \item $$\PP(A|B,C)=\PP(A|C)\frac{\PP(B|A,C)}{\PP(B|C)}$$ we get $$\frac{[A\Rightarrow B] \wedge [B=true]}{A\ \mathrm{becomes\ more\ plausible}}$$
+    Using the same meanings for $A$ and $B$ as above: ``the enemy is doing $b$ so it is more probable that she did $a$ beforehand (than if we knew nothing)''. Because there are only a (not strict) subset of all the possible states (possibly all possible states) which may lead in new states, when we are in these new states, the probability of their origin states goes up.
     \item $$\PP(B| C\neg A)=\PP(B|C)\frac{\PP(\neg A|B,C)}{\PP(\neg A|C)}$$ we get $$\frac{[A\Rightarrow B] \wedge [A=false]}{B\ \mathrm{becomes\ less\ plausible}}$$
+    Using the same meanings for $A$ and $B$ as above: ``the enemy has not done $a$ so it is less probable that she does $b$ (than if we knew nothing)''. Because there are only a (not strict) subset of all the possible states (possibly all possible states) which may lead in new states, when we are not in one of these origin states, there are less ways to go to new states.
 \end{itemize}
+
+A reasoning mechanism needs to be consistent (one cannot prove $A$ and $\neg A$ at the same time). For plausible reasoning, consistency means: a) all the possible ways to reach a conclusion leads to the same result, b) information cannot be ignored, c) two equal states of knowledge have the same plausibilities. Adding consistency to plausible reasoning leads to Cox's theorem \citep{Cox46}, which derives the laws of probability: the ``product-rule'' ($\PP(A,B)=\PP(A\cap B)=\PP(A|B)\PP(B)$) and the ``sum-rule'' ($\PP(A+B)=\PP(A)+\PP(B)-\PP(A,B)$ or $\PP(A\cup B) = \PP(A)+\PP(B)-\PP(A\cap B)$) of probabilities. 
 
 Indeed, this was proved by \cite{Cox46}, producing Cox's theorem (also named Cox-Jayne's theorem):
 \begin{mythm}
@@ -88,7 +101,7 @@ is isomorphic to probability theory.
 So, the degrees of belief, of any consistent induction mechanism, verify Kolmogorov's axioms. \cite{DeFinetti37} showed that if reasoning is made in a system which is not isomorphic to probability theory, then it is always possible to find a \textit{Dutch book} (a set of bets which guarantees a profit regardless of the outcomes). \textbf{In our quest for a consistent reasoning mechanism which is able to deal with (extensional and intentional) uncertainty, we are thus bound to probability theory.} %%% ``Probability does not exist''
 
 
-\subsection{A Formalism for Bayesian Models}
+\subsection{A formalism for Bayesian models}
 Inspired by plausible reasoning, we present Bayesian programming, a formalism that can be used to describe entirely any kind of Bayesian model. It subsumes Bayesian networks and Bayesian maps, as it is equivalent to probabilistic factor graphs \cite{Diard03}. There are mainly two parts in a \newacronym{BP}{BP}{Bayesian program}\glos{BP}, the \textbf{description} of how to compute the joint distribution, and the \textbf{question(s)} that it will be asked. 
 
 The description consists in exhibiting the relevant \textit{variables} $\{X^1,\dots,X^n\}$ and explain their dependencies by \textit{decomposing} the joint distribution $\PP(X^1\dots X^n | \delta, \pi)$ with existing preliminary (\textit{prior}) knowledge $\pi$ and data $\delta$. The \textit{forms} of each term of the product specify how to compute their distributions: either parametric forms (laws or probability tables, with free parameters that can be learned from data $\delta$) or recursive questions to other Bayesian programs.
@@ -104,15 +117,17 @@ Answering a question is computing the distribution $\PP(Searched | Known)$, with
 General Bayesian inference is practically intractable, but conditional independence hypotheses and constraints (stated in the description) often simplify the model. There are efficient ways to calculate the joint distribution like message passing and junction tree algorithms \citep{Pearl,AjiM00,Nai04,mekhnacha,Koller}. Also, there are different well-known approximation techniques: either by sampling with Monte-Carlo (and Monte-Carlo Markov Chains) methods \citep{MacKay,Andrieu}, or by calculating on a simpler (tractable) model which approximate the full joint as with variational Bayes \citep{Beal}.
 
 %\begin{small}
+We sum-up the full model by what is called a \textit{Bayesian program}, represented as:
 \begin{eqnarray*}
-%\begin{sideways}\parbox{35mm}{\hspace{-1.3cm}Bayesian program}\end{sideways}
-BP
+\begin{sideways}\parbox{20mm}{\hspace{-1.3cm}\textit{Bayesian program}}\end{sideways}
+%Bayesian
+%program
 \begin{cases}
 %\begin{sideways}\parbox{15mm}{\hspace{-0.8cm}Description}\end{sideways}
-Desc.
+Description
 \begin{cases}
 %\begin{sideways}\parbox{35mm}{\hspace{-1.1cm}Specification ($\pi$)}\end{sideways}
-Specif. (\pi)
+Specification (\pi)
 \begin{cases}
 Variables\\
 Decomposition\\
@@ -128,7 +143,8 @@ Question
 
 For the use of Bayesian programming in sensory-motor systems, see \citep{PRDMSMS}. For its use in cognitive modeling, see \citep{Colas10}. For its first use in video game AI, applied to the first person shooter gameplay (Unreal Tournament), see \citep{LeHy04}.
 
-To sum-up, by viewing probabilities as an extension of logic, the method by which to build Bayesian models gets clearer: there is a strong parallel between writing a Bayesian program and logic or declarative programming. In order:
+To sum-up, by using probabilities as an extension of propositional logic, the method %by which 
+to build Bayesian models gets clearer: there is a strong parallel between Bayesian programming and logic or declarative programming. In the same order as the presentation of Bayesian programs, modeling consists in the following steps:
 \begin{enumerate}
     \item Isolate the variables of the problem: it is the first prior that the programmer puts into the system. The variables can be anything, from existing input or output values of the problem to abstract/aggregative values or parameters of the model. Discovering which variable to use for a given problem is one of the most complicated form of machine learning.
     \item Suppose and describe the influences and dependencies between these variables. This is another prior that the programmer can have on the problem, and learning the structure between these variables is the second most complicated form of learning \citep{Fra04b,Ler05a}.
@@ -144,7 +160,7 @@ Indeed, when evaluating two models $\pi_1$ and $\pi_2$, doing the ratio of evide
 \frac{\PP(\pi_1 | \delta)}{\PP(\pi_2 | \delta)} = \frac{\PP(\pi_1) \PP(\delta| \pi_1)}{\PP(\pi_2 | \delta) \PP(\delta | \pi_2)}
 \end{equation}
 
-If our model is complicated, its expressiveness is higher, and so it can model more complicated datasets. However, the probability mass will be spread thiner on the space of possible datasets than for a simpler model. For instance, in the task of regression, if $\pi_1$ can only encode linear regression ($y = Ax + b$) and $\pi_2$ can also encore quadratic regression ($y = Ax + Bx^2 + c$), all the predictions for $\pi_1$ are concentrated on linear (affine) functions, while for $\pi_2$ the probability mass of predictions is spread on more possible functions. If we only have data $\delta$ of linear functions, the evidence for $\pi_1$, $\PP(\pi_1|\delta)$ will be higher. If $\delta$ contains some quadratic functions, the evidence ratio will shift towards $\pi_2$ as the second model has better predictions: the shift to $\pi_2$ happens when the additional model complexity of $\pi_2$ and the prediction errors of $\pi_1$ balance each other.
+If our model is complicated, its expressiveness is higher, and so it can model more complex causes of/explanations for the dataset. However, the probability mass will be spread thiner on the space of possible datasets than for a simpler model. For instance, in the task of regression, if $\pi_1$ can only encode linear regression ($y = Ax + b$) and $\pi_2$ can also encore quadratic regression ($y = Ax + Bx^2 + c$), all the predictions for $\pi_1$ are concentrated on linear (affine) functions, while for $\pi_2$ the probability mass of predictions is spread on more possible functions. If we only have data $\delta$ of linear functions, the evidence for $\pi_1$, $\PP(\pi_1|\delta)$ will be higher. If $\delta$ contains some quadratic functions, the evidence ratio will shift towards $\pi_2$ as the second model has better predictions: the shift to $\pi_2$ happens when the additional model complexity of $\pi_2$ and the prediction errors of $\pi_1$ balance each other.
 
 
 %%% How?
@@ -161,9 +177,9 @@ If our model is complicated, its expressiveness is higher, and so it can model m
 
 We will now present a model of a \glos{MMORPG} player with the Bayesian programming framework \citep{SYNNAEVE:MMORPG}. A role-playing game (RPG) consist in the incarnation by the human player of an avatar with specific skills, items, numbers of health points (HP) and stamina or mana (magic energy) points (we already presented this gameplay in section~\ref{sec:MMORPG}). We want to program a robotic player which we can substitute to a human player in a battle scenario. More specifically here, we modeled the ``druid'' class, which is complex because it can cast spells to deal damages or other negative effects as well as to heal allies or enhance their capacities (``buff'' them). The model described here deals only with a sub-task of a global AI for autonomous NPC. 
 
-The problem that we try to solve is: how do we choose which skill to use, and on which target, in a \glos{PvE} battle? The possible targets are all our allies and foes. There are also several skills that we can use. We will elaborate a model taking all our perceptions into account and giving back a distribution over possible target and skills. We can then pick the most probable combination that is yet possible to achieve (enough energy/mana, no cooldown/reload time) or simply sample in this distribution. %For that, we first choose what should be the target given all surrounding variables: is an ally near death that he should be healed, which foe should we focus our attacks on? Once we have the distribution over possible targets, we search the distribution about our skills, pondered by the one on targets. However, some variables can be things that humans subconsciously interpolate from perceptions.
+The problem that we try to solve is: how do we choose which skill to use, and on which target, in a \glos{PvE} battle? The possible targets are all our allies and foes. There are also several skills that we can use. \textbf{We will elaborate a model taking all our perceptions into account and giving back a distribution over possible target and skills.} We can then pick the most probable combination that is yet possible to achieve (enough energy/mana, no cooldown/reload time) or simply sample in this distribution. %For that, we first choose what should be the target given all surrounding variables: is an ally near death that he should be healed, which foe should we focus our attacks on? Once we have the distribution over possible targets, we search the distribution about our skills, pondered by the one on targets. However, some variables can be things that humans subconsciously interpolate from perceptions.
 
-An example of the tasks that we have to solve is depicted in Figure~\ref{fig:wow_fight}): red characters are foes, green ones are allies, we control the blue one. The ``Lich'' is inflicting damages to the ``MT'' (main tank), the ``Add'' is hitting the ``Tank''. In setup A, only the ``Tank'' is near death, while in setup B both the ``Tank'' and the ``Add'' are almost dead. A first approach to reason about these kind of situations would be to use the combination of simple rules and try to give them some priority.
+An example of a task that we have to solve is depicted in Figure~\ref{fig:wow_fight}, which shows two different setups (states) of the same scenario: red characters are foes, green ones are allies, we control the blue one. The ``Lich'' is inflicting damages to the ``MT'' (main tank), the ``Add'' is hitting the ``Tank''. In setup A, only the ``Tank'' is near death, while in setup B both the ``Tank'' and the ``Add'' are almost dead. A first approach to reason about these kind of situations would be to use the combination of simple rules and try to give them some priority.
 \begin{itemize}
     \item if an ally has less than \textit{X} (threshold) HP then use a ``heal'' on him.
     \item if the enemy receiving most damage has resistances (possibly in a list), lower them if possible.
@@ -171,7 +187,7 @@ An example of the tasks that we have to solve is depicted in Figure~\ref{fig:wow
     \item default: shoot at the most targeted enemy.
     \item self-preservation, etc.
 \end{itemize}
-The problem with such an approach is that tuning or modifying it can quickly be cumbersome. Also, the behavior would seem pretty repetitive and robustness is not ensured.
+The problem with such an approach is that tuning or modifying it can quickly be cumbersome: for a game with a large state space, robustness is hard to ensure. Also, the behavior would seem pretty repetitive, and thus predictable. 
 
 \begin{figure}[h!]
 \begin{center}
@@ -182,10 +198,11 @@ The problem with such an approach is that tuning or modifying it can quickly be 
 \end{figure}
 
 \subsection{Perceptions and actions}
-We now list some of the perceptions available to the player (and thus the robot):
+To solve this problem without having the downsides of this naive first approach, we will use a Bayesian model. We now list some of the perceptions available to the player (and thus the robot):
 \begin{itemize}
     \item the names and positions of all other players, this gives their distances, which is useful to know which abilities can be used.
-    \item hit points (also health points, noted HP) of all the players, when the HP of a player fall to 0, her avatar dies. It can be resurrected, but not during the fight, at least in the situations that we consider.
+    \item hit points (also health points, noted HP) of all the players, when the HP of a player fall to 0, her avatar dies. %It can be resurrected, %but not during the fight, 
+It cannot be resurrected, at least in the situations that we consider (not for the fight).
     \item the natures of other players (ally or foe).
     \item the class of other players: some have a tanking role (take incoming damages for the rest of the group), others are damage dealers (either by contact or ranged attacks), the last category are healers, whose role is to maintain everyone alive.
     \item an approximation of the resistance to certain types of attacks for every player.
@@ -222,7 +239,7 @@ A simple set of variables is as follows:
 This is a Boolean variable saying if the $i$th character if going to die anytime soon. This is an example of what we consider that an experienced human player will infer automatically from the screen and notifications. 
     \item Class: $C_{i \in \llbracket 1 \dots n} \in \{Tank, Contact, Ranged, Healer\}$ is the class of the $i$th player. Class ($C$) is simplified over 4 values: a Tank can take a lot of damages and taunt enemies, a Contact class which can deal huge amounts of damage with contact weapons (rogue, barbarian...), Ranged stands for the class that deals damages from far away (hunters, mages...) and Healers are classes that can heal in considerable amounts. 
     %\item Class: $C_{i \in \llbracket 1 \dots n} \in \{Tank, Contact, Ranged, Healer\}$ is the class of the $i$th player. Class ($C$) is simplified over 4 values: a Tank can take a lot of damages and taunt enemies, a Contact class which can deal huge amounts of damage with contact weapons (rogue, barbarian...), Ranged stands for the class that deals damages from far away (hunters, mages...) and Healers are classes that can heal in considerable amounts. 
-    \item Resists: $R_{i \in \llbracket 1 \dots n \rrbracket} \in \{Nothing, Fire, Ice, Nature, FireIce, IceNat, FireNat, All\}$ informs about the resistances of the $i$th player. The Resist variable is the combination of binary variables of resistance to certain types of (magical) damages into one variable. With 3 possible resistances we get ($2^3$) 8 possible values. For instance ``$R_i=FireNat$'' means that the $i$th character resists fire and nature-based damages. Armor (physical damages) could have been included, and the variables could have been separated. 
+    \item Resists: $R_{i \in \llbracket 1 \dots n \rrbracket} \in \{Nothing, Fire, Ice, Nature, FireIce, IceNat, FireNat, All\}$ informs about the resistances of the $i$th player. The resist variable is the combination of binary variables of resistance to certain types of (magical) damages into one variable. With 3 possible resistances we get ($2^3$) 8 possible values. For instance ``$R_i=FireNat$'' means that the $i$th character resists fire and nature-based damages. Armor (physical damages) could have been included, and the variables could have been separated. 
     \item Skill: $S \in \{Skill_1 \dots Skill_m\}$. The skill variable takes all the possible skills for the given character, and not only the available ones to cast at the moment to be able to have reusable probability tables (i.e. it is invariant of the dynamics of the game).
 \end{itemize}
 
@@ -253,9 +270,9 @@ We want to compute the probability distribution on the variable target ($T$) and
     \item The health (or hit) points ($HP_i$) depends on the facts that the $i$th character is an ally ($A_i$), on his class ($C_i$), and if he is a target ($T$). Such a conditional probability table should be learned, but we can already foresee that a targeted ally with a tanking class ($C=tank$) would have a high probability of having low hit points ($HP$) because taking it for target means that we intend to heal him.
     \item The distance of the unit $i$ ($D_i$) is more probably far if unit $i$ is an enemy ($A_i=false$) and we target it ($T=i$) as our kind of druid attacks with ranged spells and does not fare well in the middle of the battlefield.
     \item The probability of the $i$th character being an ally depends on if we target allies of foes more often: that is $\PP(A_i|T)$ encodes our propensity to target allies (with heals and enhancements) or foes (with damaging or crippling abilities).
-    \item The probability that the $i$th units is losing hit points ($\Delta HP_i=minus$) is higher for foes ($A_i=false$) with vulnerable classes ($C_i=healer$) that are more succeptible to be targeted ($T=i$), and also for allies ($A_i=true$) whose role is to take most of the damages ($C_i=tank$). As for $A_i$, the probability of $ID_i$ is driven by our %
-||
-. The probability that the $i$th units is being damaged ($\Delta HP_i=``-''$) will top when we use a heal ($S=heal$) on an ally, as we want to maintain everyone alive.  
+    \item The probability that the $i$th units is losing hit points ($\Delta HP_i=minus$) is higher for foes ($A_i=false$) with vulnerable classes ($C_i=healer$) that are more susceptible to be targeted ($T=i$), and also for allies ($A_i=true$) whose role is to take most of the damages ($C_i=tank$). As for $A_i$, the probability of $ID_i$ is driven by our %
+%||
+%. The probability that the $i$th units is being damaged ($\Delta HP_i=``-''$) will top when we use a heal ($S=heal$) on an ally, as we want to maintain everyone alive.  
     \item Obviously, the usage of skills depends on their efficiency on the target ($R$, resistances), and on their class. As a result, we have $\PP(R_i|C_i,S,T)$ as the conditional distribution on ``resists''. The probability of the resist to ``nature based effects'' ($R_i=nature$) for skills involving ``nature'' damage ($s \in \{nature\_damage\}$) will be very low as it will be useless to use spells that the receiver is protected against.
     \item The probability that the $i$th character will die soon ($ID_i$) will be high if $i$ is targeted ($T=i$) with a big heal or big instant damage ($S=big\_heal$ or $S=big\_damage$, depending on whether $i$ is an ally or not). 
 
@@ -286,21 +303,22 @@ About learning: if there were only perceived variables, learning the right condi
 
 \subsubsection{Questions}
 
-In any case, we ask our (updated) model:\\
+In any case, we ask our (updated) model the distribution on $S$ and $T$ knowing all the state variables:\\
 \begin{equation}
-P(S,T|t^{t-1},hp_{1:n},d_{1:n}, a_{1:n}, \Delta hp_{1:n}, id_{1:n}, c_{1:n}, r_{1:n})
+\PP(S,T|t^{t-1},hp_{1:n},d_{1:n}, a_{1:n}, \Delta hp_{1:n}, id_{1:n}, c_{1:n}, r_{1:n})
 \end{equation}
-Which means that we want to know the distribution on $S$ and $T$ knowing all the state variables. We then choose to do the highest scoring combination of $S \wedge T$ that is available (skills may have cooldowns or cost more mana/energy that we have available).
 
-As (Bayes rule) $P(S,T) = P(S|T).P(T)$, if we want to decompose this question, we can ask:
-$$P(T | t^{t-1}, hp_{1:n},d_{1:n}, a_{1:n}, \Delta hp_{1:n}, id_{1:n}, c_{1:n})$$ 
+We then proceed to choose to do the highest scoring combination of $S \wedge T$ that is available (skills may have cooldowns or cost more mana/energy that we have available).
+
+As (Bayes rule) $\PP(S,T) = \PP(S|T).\PP(T)$, if we want to decompose this question, we can ask:
+$$\PP(T | t^{t-1}, hp_{1:n},d_{1:n}, a_{1:n}, \Delta hp_{1:n}, id_{1:n}, c_{1:n})$$ 
 Which means that we want to know the distribution on $T$ knowing all the relevant state variables, followed by (with the newly computed distribution on $T$):
-$$P(S | T, hp_{1:n},d_{1:n}, a_{1:n}, \Delta hp_{1:n}, id_{1:n}, c_{1:n}, r_{1:n})$$ 
+$$\PP(S | T, hp_{1:n},d_{1:n}, a_{1:n}, \Delta hp_{1:n}, id_{1:n}, c_{1:n}, r_{1:n})$$ 
 in which we use this distribution on $T$ to compute the distribution on $S$ with:
-$$P(S=skill_1 | \dots) = \sum_T P(S=skill_1 | T, \dots).P(T)$$
+$$\PP(S=skill_1 | \dots) = \sum_T \PP(S=skill_1 | T, \dots).\PP(T)$$
 We here choose to sum over all possible values of T. Note that we did not ask:\\
-$P(S|T=most\_probable , \dots)$ but computed instead
-$$\sum_T P(S|T,hp_{1:n},d_{1:n}, a_{1:n}, \Delta hp_{1:n}, id_{1:n}, c_{1:n}, r_{1:n})$$
+$\PP(S|T=most\_probable , \dots)$ but computed instead
+$$\sum_T \PP(S|T,hp_{1:n},d_{1:n}, a_{1:n}, \Delta hp_{1:n}, id_{1:n}, c_{1:n}, r_{1:n})$$
 %In presence of several possible targets and skills, this computation may have a high complexity, so we could choose not to do the sum and use and instantiate ``most probable values'', for instance of Target, but there we would make a choice earlier and so lose information. There are possibly good combinations of $S$ and $T$ for a value of $T$ that is not the most probable one. This downside may be so hard that we may want to reduce the complexity of computation by simplifying our model or its computation to be able to sum. We propose a solution in the discussion.
 
 
@@ -318,8 +336,8 @@ Desc.
         S, T^{t-1,t}, HP_{1:n}, D_{1:n}, A_{1:n}, \Delta HP_{1:n}, ID_{1:n}, C_{1:n}, R_{1:n}\\
         Decomposition\\
         \PP(S, T^{t-1,t}, HP_{1:n}, D_{1:n}, A_{1:n}, \Delta HP_{1:n}, ID_{1:n}, C_{1:n}, R_{1:n}) = \\
-        \PP(S).\PP(T|T^{t-1}).\PP(T^{t-1}).\prod_{i=1}^n [ \PP(HP_i | A_i, C_i, S, T).\PP(D_i | A_i, S, T).\PP(A_i | S, T) \\
-                \PP(\Delta HP_i | A_i, S, T). \PP(R_i | C_i, S, T). \PP(C_i | A_i, S, T) ]\\
+        \PP(S)\PP(T|T^{t-1})\PP(T^{t-1})\prod_{i=1}^n \big[ \PP(HP_i | A_i, C_i, S, T)\PP(D_i | A_i, S, T) \\
+                \PP(A_i | S, T)\PP(\Delta HP_i | A_i, S, T) \PP(R_i | C_i, S, T) \PP(C_i | A_i, S, T) \PP(ID_i | T)\big]\\
         Forms\\
         \mathrm{probability\ tables\ parametrized\ on\ wether\ }i\ \mathrm{is\ targeted}\\
         \end{cases}\\
@@ -333,45 +351,71 @@ Question\\
 
 \subsection{Example}
 
-This model has been applied to a simulated situation with 2 foes and 4 allies while our robot took the part of a ``druid'', a versatile class that can cast spells to do direct damages, damages over time, buff (enhancements), debuff, crowd-control, heal and heal over time. We display a schema of this situation in Fig.~\ref{fig:wow_fight} The arrows indicate foes attacks on allies. MT stands for ``main tank'', Add for ``additional foe''. We worked with the skills corresponding to a Druid. HOT stands for heal over time, DOT for damage over time, ``abol'' for abolition and ``regen'' for regeneration, a ``buff'' is an enhancement and a ``dd'' is a direct damage. ``Root'' is a spell which disables the target to move for a short period of time, useful to flee or to put some distance between the enemy and the druid to cast attack spells. ``Small'' spells are usually faster to cast than ``big'' spells. The difference between setup A and setup B is simply to test the concurrency between healing and dealing damage and the changes in behavior if the player can lower the menace (damage dealer).
+This model has been applied to a simulated situation with 2 foes and 4 allies while our robot took the part of a druid. %, a versatile class that can cast spells to do direct damages, damages over time, buff (enhancements), debuff, crowd-control, heal and heal over time. 
+We display a schema of this situation in Figure~\ref{fig:wow_fight}. The arrows indicate foes attacks on allies. % MT stands for ``main tank'', Add for ``additional foe''. We worked with the skills corresponding to a Druid. 
+HOT stands for heal over time, DOT for damage over time, ``abol'' for abolition and ``regen'' for regeneration, a ``buff'' is an enhancement and a ``dd'' is a direct damage. ``Root'' is a spell which prevents the target from moving for a short period of time, useful to flee or to put some distance between the enemy and the druid to cast attack spells. ``Small'' spells are usually faster to cast than ``big'' spells. The difference between setup A and setup B is simply to test the concurrency between healing and dealing damage and the changes in behavior if the player can lower the menace (damage dealer).
 
 \begin{eqnarray*}
 Skills \in \{ small\_heal, big\_heal, HOT, poison\_abol, malediction\_abol,\\
             buff\_armor, regen\_mana, small\_dd, big\_dd, DOT, debuff\_armor, root \}
 \end{eqnarray*}
 
-We did not do the ``Identification'' part, which consists in learning the probability tables from observations. To keep things simple and because we wanted to analyze the answers of the model, we worked with manually defined probability tables, %. So we introduced ``soft evidences'', indeed parameters that will modify the conditional probability tables, 
-which we will change to watch their effects on the full behavior of the model. 
+%We did not do the ``Identification'' part, which consists in learning the probability tables from observations. 
+To keep things simple and because we wanted to analyze the answers of the model, we worked with manually defined probability tables.%, %. So we introduced ``soft evidences'', indeed parameters that will modify the conditional probability tables, 
+%%%which we will change to watch their effects on the full behavior of the model. 
 %For instance the
 %``soft evidence that a selected target is foe'' and the ``soft evidence that a selected target will soon die ($ID=true$)'' that will consequently modify the probability tables of $P(A_i)$ and $P(ID_i)$ respectively. 
 %probability that a selected target is a foe $\PP(A_i|T=i)$ and the probability that a selected target will soon die will $\PP(ID_i=``soon''|T=i)$
-In the experiments, we will try different values for the ``soft evidence that a selected target will soon die'', that is $\PP(ID_i | T=i)$, and see how the behavior of the agent changes. 
+In the experiments, we will try different values %for the ``soft evidence that a selected target will soon die'', that is 
+$\PP(ID_i | T=i)$, and see how the behavior of the agent changes. 
+
 We set the probability to target the same target as before ($\PP(T^t=i|T^{t-1}=i)$) to 0.4 and the previous target to ``Lich'' so that the prior probability for all other 6 targets is 0.1 (4 times more chances to target the Lich than any other character). 
-We set the probability to target an enemy (instead of an ally) $\PP(A_i=false|T=i)$ to 0.6. This means that our robotic druid is mainly a damage dealer and just a backup healer. For the ``target selection'' sub-model, we can see on Fig.~\ref{fig:wow_target} (left) that the evolution from selecting the main foe ``Lich'' to selecting the ally ``Tank'' is driven by the increase of 
-``soft evidence that a selected target will soon die'' and our robot eventually moves on targeting their ``Tank'' ally (to heal them). We can see on Fig.~\ref{fig:wow_target} (right) that, at some point, the robotic Druid prefers to kill the dying ``add'' (additional foe) to save their ally Tank instead of healing them. Note that there is no variable showing the relation between ``Add'' and ``Tank'' (the first is attacking the second, who is taking damages from the first), but this could be taken into account in a more complete model.
+
+We set the probability to target an enemy (instead of an ally) $\PP(A_i=false|T=i)$ to 0.6. This means that our Druid is mainly a damage dealer and just a backup healer. 
+%For the ``target selection'' sub-model, we can see on Fig.~\ref{fig:wow_target} (left) that the evolution from selecting the main foe ``Lich'' to selecting the ally ``Tank'' is driven by the increase of 
+
+When we only ask what the target should be:
+$$\PP(T | t^{t-1}, hp_{1:n},d_{1:n}, a_{1:n}, \Delta hp_{1:n}, id_{1:n}, c_{1:n})$$ 
+We can see on Figure~\ref{fig:wow_target} (left) that the evolution from selecting the main foe ``Lich'' to selecting the ally ``Tank'' is driven by the increase of 
+the probability that the selected target is near death, 
+%``soft evidence that a selected target will soon die'' and our robot eventually moves on targeting their ``Tank'' ally (to heal them). We can see on Fig.~\ref{fig:wow_target} (right) that, at some point, the robotic Druid prefers to kill the dying ``add'' (additional foe) to save their ally Tank instead of healing them. Note that there is no variable showing the relation between ``Add'' and ``Tank'' (the first is attacking the second, who is taking damages from the first), but this could be taken into account in a more complete model.
+and our robot eventually moves on targeting their ``Tank'' ally (to heal them). We can see on Figure~\ref{fig:wow_target} (right) that, at some point, our robot prefers to kill the dying ``add'' (additional foe) to save their ally Tank instead of healing them. Note that there is no variable showing the relation between ``Add'' and ``Tank'' (the first is attacking the second, who is taking damages from the first), but this could be taken into account in a more complete model.
 
 \begin{figure}[h!]
 \begin{center}
 \includegraphics[width=7.8cm]{images/wow_distrib_target1.png} \includegraphics[width=7.8cm]{images/wow_distrib_target2.png}
-\caption{Left: probabilities of targets depending on the soft evidence that a target is dying ($\PP(ID_i=true | T=i)$) with setup A (no ally is risking death). Right: same, with setup B (the ``tank'' ally is risking death).}
+\caption{Left: probabilities of targets depending on the probability that a target is dying ($\PP(ID_i=true | T=i)$) with setup A (no ally is risking death). Right: same, with setup B (the ``tank'' ally is risking death).}
 \label{fig:wow_target}
 \end{center}
 \end{figure}
 \begin{figure}[h!]
 \begin{center}
 \includegraphics[width=7.8cm]{images/wow_distrib_skill1.png} \includegraphics[width=7.8cm]{images/wow_distrib_skill2.png}
-\caption{Left: Probabilities of skills depending on the soft evidence that a target is dying ($\PP(ID_i=true|T=i)$) with setup A (no ally is risking death). Right: same, with setup B (the ``tank'' ally is risking death).}
+\caption{Left: Probabilities of skills depending on the probability that a target is dying ($\PP(ID_i=true|T=i)$) with setup A (no ally is risking death). Right: same, with setup B (the ``tank'' ally is risking death).}
 \label{fig:wow_skill}
 \end{center}
 \end{figure}
 
-For the ``skill selection'' model, we can see on Fig.~\ref{fig:wow_skill} the influence of $ID_i$ on Skill which is coherent with the Target distribution: either, in setup A (left), we evolve with the increase of $\PP(ID_i=true|Target=i)$ to choose to heal our ally or, in setup B (right), to deal direct damage (and hopefully, kill) the foe attacking him. As you can see here, when we have the highest probability to attack the main enemy (``Lich'', when $\PP(ID_i=true|Target=i)$ is low), who is a $C=tank$, we get a high probability for the Skill \textit{debuff\_armor}. We only cast this skill if the debuff is not already present, so perhaps that we will cast \textit{small\_dd} instead. To conclude this example, Fig.~\ref{fig:wow_target_skill} shows the distribution on $\PP(T,S|all\_status\_variables)$ with setup A and the probability to target the previous target (set to ``Lich'' here) only $\approx 2$ times greater than any other character (so that we focus less on the same character), soft evidences $\PP(ID_i=true|Target=i)=0.9$ and $\PP(A_i=false|Target=i)=0.6$. On the decision-making side of this model, a simple approach would be a greedy one: if the first couple $(T,S)$ is already done or not available, we perform the second, and so on.
 
+When we ask what skill we should use:
+$$\PP(S|t^{t-1},hp_{1:n},d_{1:n}, a_{1:n}, \Delta hp_{1:n}, id_{1:n}, c_{1:n}, r_{1:n})$$
+We can see on Figure~\ref{fig:wow_skill} the influence of imminent death ($ID_i$) on skill ($S$) which is coherent with the target distribution: 
+\begin{itemize}
+    \item in setup A (left), we evolve with the increase of $\PP(ID_i=true|T=i)$ to choose to heal (our ally), 
+    \item in setup B (right), to deal direct damage (and hopefully, kill) the foe attacking our ally.
+\end{itemize} 
+As you can see here, when we have the highest probability to attack the main enemy (``Lich'', when $\PP(ID_i=true|T=i)$ is low), who is a $C=tank$, we get a high probability for the skill \textit{debuff\_armor}. We need only cast this skill if the debuff is not already present, so perhaps that we will cast \textit{small\_dd} instead. 
+
+To conclude this example, we ask the full question, what is the distribution on skill and target:
+$$\PP(S,T|t^{t-1},hp_{1:n},d_{1:n}, a_{1:n}, \Delta hp_{1:n}, id_{1:n}, c_{1:n}, r_{1:n})$$
+Figure~\ref{fig:wow_target_skill} shows this distribution %$\PP(T,S|all\_status\_variables)$ 
+with setup A and the probability to target the previous target (set to ``Lich'' here) only $\approx 2$ times greater than any other character, %(so that we focus less on the same character), 
+$\PP(ID_i=true|T=i)=0.9$ and $\PP(A_i=false|T=i)=0.6$. To make decisions about our actions, a simple approach would be a greedy one: if the first couple $(T,S)$ is already done or not available, we perform the second, and so on. Another approach would be to sample in this distribution.
 
 \begin{figure}[h!]
 \begin{center}
 \includegraphics[width=12.5cm]{images/wow_distrib_target_skill.png}
-\caption{Log-probabilities of Target and Skill with setup A, and $\PP(ID_i=true|T=i)=0.9, \PP(A_i=false|T=i)=0.6$. This plot corresponds to the answer to the full question on which decision-making has to be done.}
+\caption{Log-probabilities of target ($T$) and skill ($S$) with setup A, and $\PP(ID_i=true|T=i)=0.9, \PP(A_i=false|T=i)=0.6$. This plot corresponds to the answer to the full question on which decision-making has to be done.}
 \label{fig:wow_target_skill}
 \end{center}
 \end{figure}

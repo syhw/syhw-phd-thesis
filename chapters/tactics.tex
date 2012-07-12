@@ -2,8 +2,10 @@
 \newacronym{MCMC}{MCMC}{Monte-Carlo Markov chain}
 \label{chapter:tactics}
 \begin{quotation}
-\textit{Probability theory can tell us how our hypothesis fares relative to the alternatives that we have specified; it does not have the creative imagination to invent new hypotheses for us.}
-\begin{flushright}E.T. \cite{Jaynes}\end{flushright}
+%\textit{Probability theory can tell us how our hypothesis fares relative to the alternatives that we have specified; it does not have the creative imagination to invent new hypotheses for us.}
+\textit{It appears to be a quite general principle that, whenever there is a randomized way of doing something, then there is a nonrandomized way that delivers better performance but requires more thought.}
+%Philosophers are free to do whatever they please, because they don’t have to do anything right
+\begin{flushright}E.T. Jaynes (Probability Theory: The Logic of Science, \citeyear{Jaynes})\end{flushright}
 \end{quotation}
 
 %%% Beyond the age of information is the age of choices.
@@ -33,7 +35,11 @@
 
 %%% “SUCCESS: to laugh often and much; to win the respect of intelligent people and the affection of children; to earn the appreciation of honest critics and endure the betrayal of false friends; to appreciate beauty, to find the best in others; to leave the world a bit better, whether by a healthy child, a garden patch or a redeemed social condition ; to know even one life has breathed easier because you have lived. This is to have succeeded.” Emerson
 
-\lettrine{W}{e} present a Bayesian model for tactical decision-making in real-time strategy games. The main idea is to adapt the model to inputs from (possibly) biased heuristics. We evaluated the model in prediction of the enemy tactics on professional gamers data. This work was accepted for publication at Computational Intelligence in Games (IEEE CIG) 2012 in Grenada \citep{SYNNAEVE:Tactics} and will be presented at the Computer Games Workshop of the European Conference of Artificial Intelligence (ECAI) 2012 \citep{SYNNAEVE:TacticsECAI}.
+\lettrine{W}{e} present a Bayesian model for opponent's tactics prediction and tactical decision-making in real-time strategy games. 
+We first give our definitions of tactics and an overview of the related works on tactical elements of RTS games. 
+We then present the useful perceptions and decisions relative to tactics. We assembled a dataset for which we present information available and how we collected it. Then, the detail of the Bayesian program is presented. The main idea is to adapt the model to inputs from (possibly) biased heuristics. We evaluated the model in prediction of the enemy tactics on professional gamers data. 
+
+This work was accepted for publication at Computational Intelligence in Games (IEEE CIG) 2012 in Grenada \citep{SYNNAEVE:Tactics} and will be presented at the Computer Games Workshop of the European Conference of Artificial Intelligence (ECAI) 2012 \citep{SYNNAEVE:TacticsECAI}.
 
 \ifthenelse{\equal{\myebookformat}{false}}{
 \chaptertoc
@@ -76,7 +82,7 @@ Units have different abilities, which leads to different possible tactics. Each 
 \end{itemize}
 This will be the only four types of tactics that we will use in this chapter: \textit{how} did the player attack or defend? That does not mean that it is an exhaustive classification, nor that our model can not be adapted a) to other types of tactics b) to dynamically learning types of tactics.
 
-RTS games maps, StarCraft included, consist in a closed arena in which units can evolve. It is filled with terrain features like uncrossable terrain for ground units (water, space), cliffs, ramps, walls. Particularly, each RTS game which allows production also give some economical (gathering) mechanism and so there are some resources scattered on the map, where players need to go collect. It is way more efficient to build expansion (auxiliary bases) to collect resources directly on site. So when a player decides to attack, she has to decide \textit{where} to attack, and this decision takes into account \textit{how} it can attack different places, due to their geographical remoteness, topological access posibilities and defense strengh. Choosing \textit{where} to attack is a complex decision to make: of course it is always wanted to attack poorly defended economic expansions of the opponent, but the player has to consider if it places its own bases in jeopardy, or if it may trap her own army. With a perfect estimator of battles outcomes (which is a hard problem due to terrain, army composition combinatorics and units control complexity), and perfect information, this would result in a game tree problem which could be solved my $\alpha-\beta$. Unfortunately, StarCraft is a partial observation game with complex terrain and fight mechanics.
+RTS games maps, StarCraft included, consist in a closed arena in which units can evolve. It is filled with terrain features like uncrossable terrain for ground units (water, space), cliffs, ramps, walls. Particularly, each RTS game which allows production also give some economical (gathering) mechanism and so there are some resources scattered on the map, where players need to go collect. It is way more efficient to build expansion (auxiliary bases) to collect resources directly on site. So when a player decides to attack, she has to decide \textit{where} to attack, and this decision takes into account \textit{how} it can attack different places, due to their geographical remoteness, topological access posibilities and defense strengh. Choosing \textit{where} to attack is a complex decision to make: of course it is always wanted to attack poorly defended economic expansions of the opponent, but the player has to consider if it places its own bases in jeopardy, or if it may trap her own army. With a perfect estimator of battles outcomes (which is a hard problem due to terrain, army composition combinatorics and units control complexity), and perfect information, this would result in a game tree problem which could be solved by alpha-beta. Unfortunately, StarCraft is a partial observation game with complex terrain and fight mechanics.
 
 \subsection{Our approach}
 The idea is to have (most probably biased) lower-level heuristics from units observations which produce information exploitable at the tactical level, and take advantage of strategic inference too. 
@@ -88,13 +94,13 @@ For that, we propose a model which can either predict enemy attacks or give us a
 \section{Related work}
 
 On spatial reasoning, \cite{Pottinger00} described the \textit{BANG} engine implemented for the game Age of Empires II (Ensemble Studios), which provides terrain analysis functionalities to the game using influence maps and areas with connectivity information. 
-\cite{Forbus2002} presented a tactical qualitative description of terrain for wargames through geometric and pathfinding analysis. \cite{Hale08} presented a 2D geometric navigation mesh generation method from expanding convex regions from seeds. \cite{Perkins2010} automatically extracted choke points and regions of StarCraft maps from a pruned Voronoi diagram, which we used for our regions representations. 
+\cite{Forbus2002} presented a tactical qualitative description of terrain for wargames through geometric and pathfinding analysis. \cite{Hale08} presented a 2D geometric navigation mesh generation method from expanding convex regions from seeds. \cite{Perkins2010} automatically extracted choke points and regions of StarCraft maps from a pruned Voronoi diagram, which we used for our regions representations (see below). 
 
 \cite{Hladky_anevaluation} benchmarked hidden semi-Markov models (HSMM) and particle filters in first person shooter games (FPS) units tracking. They showed that the accuracy of occupancy maps was improved using movement models (learned from the player behavior) in HSMM. \cite{particlefiltergameAI} used a particle filter for player position prediction in a FPS. \cite{Kabanza2010} improve the probabilistic hostile agent task tracker (PHATT \citep{PHATT}, a simulated HMM for plan recognition) by encoding strategies as HTN, used for plan and intent recognition to find tactical opportunities. \cite{weber2011aiide} used a particle model for hidden units' positions estimation in StaCraft.
 
 \cite{LTW} used case-based reasoning (CBR) to perform dynamic tactical plan retrieval (matching) extracted from domain knowledge in Wargus. \cite{Ontanon2007} based their real-time case-based planning (CBP) system on a plan dependency graph which is learned from human demonstration in Wargus. A case based behavior generator spawn goals which are missing from the current state and plan according to the recognized state. In \citep{Mishra2008,metalevelbehavioradaptrts}, they used a knowledge-based approach to perform situation assessment to use the right plan, performing runtime adaptation by monitoring its performance. \cite{CBR-RL} combined CBR and reinforcement learning to enable reuse of tactical plan components. 
 \cite{Bakkes09} used richly parametrized CBR for strategic and tactical AI in Spring (Total Annihilation open source clone). 
-\cite{CadenaG11} used fuzzy CBR (fuzzy case matching) for strategic and tactical planning (including expert knowledge) in StarCraft. \cite{Chung05} applied Monte-Carlo planning for strategic and tactical planning to a capture-the-flag mod of Open RTS. \cite{UCT} applied upper confidence bounds on trees (UCT: a MCTS algorithm) to tactical assault planning in Wargus. 
+\cite{CadenaG11} used fuzzy CBR (fuzzy case matching) for strategic and tactical planning (including expert knowledge) in StarCraft. \cite{Chung05} applied Monte-Carlo planning for strategic and tactical planning to a capture-the-flag mode of Open RTS. \cite{UCT} applied upper confidence bounds on trees (UCT: a MCTS algorithm) to tactical assault planning in Wargus. 
 
 In Starcraft, \cite{Weber2010cr,WeberCIG10} produced tactical goals through reactive planning and goal-driven autonomy, finding the more relevant goal(s) to follow in unforeseen situations. 
 \cite{SORTS} used a cognitive approach mimicking human attention for tactics and units control in ORTS. \cite{PonsenMSA06} developed an evolutionary state-based tactics generator for Wargus. %On influence maps, \cite{teamCompositionRTS} studied team composition and maneuvering by learning a self-organizing map, while \cite{HagelbackJ08} presented a multi-agent potential field based bot .....
@@ -109,7 +115,7 @@ We used two kinds of regions:
     \item \glos{BWTA}\footnote{http://code.google.com/p/bwta/} regions and choke-dependent (choke-centered) regions (CDR). BWTA regions are obtained from a pruned Voronoi diagram on walkable terrain \citep{Perkins2010} and give regions for which chokes are the boundaries. We will note this regions ``Reg'' or regions.
     \item As battles often happens at chokes, choke-dependent regions are created by doing an additional (distance limited) Voronoi tesselation spawned at chokes, its regions set is $(regions \setminus chokes) \cup chokes$. We will note this regions ``CDR'' or choke-dependent regions.
 \end{itemize}
-Figure~\ref{fig:terrainanalysis} illustrate regions and choke-dependent regions (CDR). Results for choke-dependent regions are not fully detailed. Figure~\ref{fig:BWTA} shows a real StarCraft map and its decomposition into regions with BWTA.
+Figure~\ref{fig:terrainanalysis} illustrate regions and choke-dependent regions (CDR). Results for choke-dependent regions are not fully detailed. Figure~\ref{fig:BWTA} (in appendix) shows a real StarCraft map and its decomposition into regions with BWTA.
 
 \begin{figure}[!h]
 \begin{center}
@@ -398,7 +404,7 @@ $$\PP(H=h|HP=hp) = \frac{1 + n_{battles}(h,hp)}{\abs{H} + \sum_{H} n_{battles}(H
 
 There are two approaches to fill up these probability tables, either by observing games (supervised learning), as we did in the evaluation section, or by acting (reinforcement learning). %We first learned all the parameters from observations on the dataset. 
 
-The model is highly modular, and some parts are more important than others. We can separate three main parts: $\PP(E,T,TA,B|A)$, $\PP(AD,GD,ID|H)$ and $\PP(H|HP)$. In prediction, $\PP(E,T,TA,B|A)$ uses the inferred (uncertain) economic ($E$), tactical ($T$) and belonging ($B$) scores of the opponent while knowing our own tactical position fully ($TA$). In decision-making, we know $E,T,B$ (for us) and estimate $TA$. In our prediction benchmarks, $\PP(AD,GD,ID|H)$ has the lesser impact on the results of the three main parts, either because the uncertainty from the attacker on $AD,GD,ID$ is too high or because our heuristics are too simple, though it still contributes positively to the score. In decision-making, it allows for reinforcement learning to have pivoting tuple values for $AD,GD,ID$ at which to switch attack types. In prediction, $\PP(H|HP)$ is used to take $\PP(TT)$ (coming from strategy prediction \citep{SYNNAEVE:StratPred}, chapter~\ref{chapter:strategy}) into account and constraints $H$ to what is possible. For the use of $\PP(H|HP)\PP(HP|TT)\PP(TT)$ in decision-making, see the \textit{results} section (\ref{sec:tacticalresults}) or the appendix~\ref{appdx:softevidences}.
+The model is highly modular, and some parts are more important than others. We can separate three main parts: $\PP(E,T,TA,B|A)$, $\PP(AD,GD,ID|H)$ and $\PP(H|HP)$. In prediction, $\PP(E,T,TA,B|A)$ uses the inferred (uncertain) economic ($E$), tactical ($T$) and belonging ($B$) scores of the opponent while knowing our own tactical position fully ($TA$). In decision-making, we know $E,T,B$ (for us) and estimate $TA$. In our prediction benchmarks, $\PP(AD,GD,ID|H)$ has the lesser impact on the results of the three main parts, either because the uncertainty from the attacker on $AD,GD,ID$ is too high or because our heuristics are too simple, though it still contributes positively to the score. In decision-making, it allows for reinforcement learning to have tuple values for $AD,GD,ID$ at which to switch attack types. In prediction, $\PP(H|HP)$ is used to take $\PP(TT)$ (coming from strategy prediction \citep{SYNNAEVE:StratPred}, chapter~\ref{chapter:strategy}) into account and constraints $H$ to what is possible. For the use of $\PP(H|HP)\PP(HP|TT)\PP(TT)$ in decision-making, see the \textit{results} section (\ref{sec:tacticalresults}) or the appendix~\ref{appdx:softevidences}.
 
 \subsubsection{Questions}
 For a given region $i$, we can ask the probability to attack here,
@@ -444,18 +450,18 @@ The Bayesian program of the model is as follows:% (\ref{bp:BayesianTactician}):
 \begin{sideways}\parbox{35mm}{\hspace{-1.1cm}Specification ($\pi$)}\end{sideways}
         \begin{cases}
         Variables\\
-A_{1:n}, E_{1:n}, T_{1:n}, TA_{1:n}, B_{1:n}, B'_{1:n}, \lambda_{B,1:n},
+A_{1:n}, E_{1:n}, T_{1:n}, TA_{1:n}, B_{1:n}, %B'_{1:n}, \lambda_{B,1:n},
 H_{1:n}, GD_{1:n}, AD_{1:n}, ID_{1:n}, HP, TT\\
         Decomposition\\
-\PP(A_{1:n}, E_{1:n}, T_{1:n}, TA_{1:n}, B_{1:n}, B'_{1:n}, \lambda_{B,1:n}, 
+\PP(A_{1:n}, E_{1:n}, T_{1:n}, TA_{1:n}, B_{1:n}, %B'_{1:n}, \lambda_{B,1:n}, 
 H_{1:n}, GD_{1:n}, AD_{1:n}, ID_{1:n}, HP, TT) \\
-= \prod_{i=1}^n \left[\PP(A_i)\PP(E_i,T_i,TA_i,B_i|A_i)\right.
-\PP(\lambda_{B,i} | B_{1:n},B'_{1:n})\PP(B'_{1:n}) \\
+= \prod_{i=1}^n \left[\PP(A_i)\PP(E_i,T_i,TA_i,B_i|A_i)\right.\\
+%\PP(\lambda_{B,i} | B_{1:n},B'_{1:n})\PP(B'_{1:n}) \\
 \left. \PP(AD_i,GD_i,ID_i|H_i)\PP(H_i|HP)\right]\PP(HP|TT)\PP(TT)\\
         Forms\\
 \PP(A_i)\ \mathrm{prior\ on\ attack\ in\ region}\ i\\
 \PP(E,T,TA,B|A)\ \mathrm{covariance/probability\ table}\\ 
-\PP(\lambda_{B}|B,B') = 1.0\ iff\ B=B',\ else\ \PP(\lambda_{B}|B,B') = 0.0\ (functional\ Dirac)\\ 
+%\PP(\lambda_{B}|B,B') = 1.0\ iff\ B=B',\ else\ \PP(\lambda_{B}|B,B') = 0.0\ (functional\ Dirac)\\ 
 \PP(AD,GD,ID|H)\ \mathrm{covariance/probability\ table}\\
 \PP(H|HP) = Categorical(4,HP)\\
 \PP(HP=hp|TT) = 1.0\ iff\ TT\rightarrow hp,\ else\ \PP(HP|TT)=0.0\\
@@ -470,7 +476,7 @@ H_{1:n}, GD_{1:n}, AD_{1:n}, ID_{1:n}, HP, TT) \\
 \PP(H=h|HP=hp) = \frac{1 + n_{battles}(h,hp)}{\abs{H} + \sum_{H} n_{battles}(H,hp)}\\
     \end{cases}\\
 Questions\\
-\forall i \in regions \PP(A_i|e_i,t_i,ta_i,\lambda_{B,i}=1)\\
+\forall i \in regions \PP(A_i|e_i,t_i,ta_i)\\ %,\lambda_{B,i}=1)\\
 \forall i \in regions \PP(H_i|ad_i,gd_i,id_i) \\
 \PP(A,H|FullyObserved)\\
 \end{cases}
@@ -484,13 +490,20 @@ Questions\\
 \label{sec:tacticalresults}
 
 \subsection{Learning and posterior analysis}
-To measure fairly the prediction performance of such a model, we applied ``leave-100-out'' cross-validation from our dataset: as we had many games (see Table~\ref{tab:all_results}), we set aside 100 games of each match-up for testing (with more than 1 battle per match: rather $\approx 15$ battles/match) and train our model on the rest. We write match-ups XvY with X and Y the first letters of the factions involved (Protoss, Terran, Zerg). Note that mirror match-ups (PvP, TvT, ZvZ) have fewer games but twice as many attacks from a given faction (it is two times the same faction). Learning was performed as explained in section~\ref{sec:tacticalidentification}: for each battle in $r$ we had one observation for: $\PP(e_r,t_r,ta_r,b_r|A=true)$, and $\#regions-1$ observations for the $i$ regions which were not attacked: $\PP(e_{i \neq r},t_{i \neq r}, ta_{i \neq r}, b_{i \neq r}|A=false)$. For each battle of type $t$ we had one observation for $P(ad,gd,id|H=t)$ and $P(H=t|p)$. By learning with a Laplace's law of succession \cite{Jaynes}, we allow for unseen event to have a non-zero probability.
+To measure fairly the prediction performance of such a model, we applied ``leave-100-out'' cross-validation from our dataset: as we had many games (see Table~\ref{tab:all_results}), we set aside 100 games of each match-up for testing (with more than 1 battle per match: rather $\approx 15$ battles/match) and train our model on the rest. We write match-ups XvY with X and Y the first letters of the factions involved (Protoss, Terran, Zerg). Note that mirror match-ups (PvP, TvT, ZvZ) have fewer games but twice as many attacks from a given faction (it is twice the same faction). Learning was performed as explained in section~\ref{sec:tacticalidentification}: for each battle in $r$ we had one observation for: $\PP(e_r,t_r,ta_r,b_r|A=true)$, and $\#regions-1$ observations for the $i$ regions which were not attacked: $\PP(e_{i \neq r},t_{i \neq r}, ta_{i \neq r}, b_{i \neq r}|A=false)$. For each battle of type $t$ we had one observation for $P(ad,gd,id|H=t)$ and $P(H=t|HP=hp)$. By learning with a Laplace's law of succession \cite{Jaynes}, we allow for unseen event to have a non-zero probability.
 
 An exhaustive presentation of the learned tables is out of the scope of this chapter, but we analyzed the posteriors and the learned model concur with human expertise (e.g. Figures~\ref{fig:P_H_AD},~\ref{fig:PossibleP} and~\ref{fig:Where3D}). We looked at the posteriors of:
 \begin{itemize}
-    \item $\PP(H)$ for varying values of $GD,AD,ID$, by summing on other variables of the model. Figure~\ref{fig:P_H_AD} shows some of the distributions of $H$ in these conditions: we can see that it is far more likely that invisible (``sneaky'') attacks happen where there is low ground presence (top left plot). 
-Drops at lower values of $GD$ correspond to unexpected (surprise) drops (top right plot). It is twice more likely to attack a region (by \textit{air}) with less than 1/10th of the flying force in anti-aircraft warfare than to attack a region with up to one half of our force. We can also notice than drops are to be preferred either when it is safe to land (no anti-aircraft defense) or when there is a large defense (harassment tactics and/or drops which are expected by the defender). 
+    \item $\PP(H)$ for varying values of $GD,AD,ID$, by summing on other variables of the model. Figure~\ref{fig:P_H_AD} shows some of the distributions of $H$ in these conditions: 
+\begin{itemize}
+    \item (top left plot) We can see that it is far more likely that invisible (``sneaky'') attacks happen where there is low ground presence, which concurs with the fact that invisible units are not cost-efficient against ground units once detected.
+
+    \item (right plots) Drops at lower values of $GD$ correspond to unexpected (surprise) drops, because otherwise the defender would have prepared his army for interception and there would be a high $GD$ (top right plot). We can also notice than drops are to be preferred either when it is safe to land (no anti-aircraft defense, bottom right plot) or when there is a large defense (harassment tactics and/or drops which are expected by the defender: both right plots).
+
+    \item (bottom left plot) It is twice more likely to attack a region (by \textit{air}) with less than 1/10th of the flying force in anti-aircraft warfare than to attack a region with up to one half of our force. 
+\end{itemize}
 Finally, as ground units are more cost efficient than flying units in a static battle, we see that both $\PP(H=air|AD=0.0)$ and $\PP(H=drop|AD=0.0)$ (bottom plots) are much more probable than situations with air defenses: air raids/attacks are quite risk averse. 
+
 
 
     \item $\PP(H)$ for varying values of $HP$, by summing on other variables of the model, depicted in Figure~\ref{fig:PossibleP}. 
@@ -511,8 +524,8 @@ It shows the transition between two types of encounters: tactics aimed at engagi
 
 \begin{figure}[!h]
 \centerline{\includegraphics[width=11cm]{images/PossibleP.png}}
-%\caption{$\PP(H|HP)$ for varying values $H$ and for different values of $P$ (derived from inferred $TT$), for Protoss in PvT.}
-\caption{$\PP(H|HP)$ for varying values of $H$ and for different values of $P$ (derived from inferred $TT$), for Protoss in PvT. Conditioning on what is possible given the \textit{tech tree} gives a lot of information about what attack types are possible or not. More interestingly, it clusters the game phases in different tech levels and allows for learning the relative distributions of attack types with regard to each phase. For instance, the last (bottom right) plot shows the distribution on attack types at the end of a technologically complete game.}
+%\caption{$\PP(H|HP)$ for varying values $H$ and for different values of $HP$ (derived from inferred $TT$), for Protoss in PvT.}
+\caption{$\PP(H|HP)$ for varying values of $H$ and for different values of $HP$ (derived from inferred $TT$), for Protoss in PvT. Conditioning on what is possible given the \textit{tech tree} gives a lot of information about what attack types are possible or not. More interestingly, it clusters the game phases in different tech levels and allows for learning the relative distributions of attack types with regard to each phase. For instance, the last (bottom right) plot shows the distribution on attack types at the end of a technologically complete game.}
 \label{fig:PossibleP}
 \end{figure}
 
@@ -526,7 +539,7 @@ It shows the transition between two types of encounters: tactics aimed at engagi
 
 \subsection{Prediction performance}
 \subsubsection{Setup}
-We learned and tested one model for each race and for each match-up. As we want to predict \textit{where} ($\PP(A_{1:n})$) and \textit{how} ($\PP(H_{battle})$) the next attack will happen to us, we used inferred enemy $TT$ (to produce $P$) and $TA$, our scores being fully known: $E$, $T$, $B$, $ID$. We consider $GD$, $AD$ to be fully known even though they depend on the attacker force, we should have some uncertainty on them, but we tested that they accounted (being known instead of fully unknown) for 1 to 2\% of $\PP(H)$ accuracy (in prediction) once $HP$ was known. We should point that pro-gamers scout very well and so it allows for a highly accurate $TT$ estimation with \citep{SYNNAEVE:StratPred}. The learning phase requires to recreate battle states (all units' positions) and count parameters for up to 70,000 battles. Once that is done, inference is very quick: a look-up in a probability table for known values and $\#F$ look-ups for free variables $F$ on which we sum. We chose to try and predict the next battle 30 seconds before it happens, 30 seconds being an approximation of the time needed to go from the middle of a map %(where the entropy on ``next battle position'' is maximum as the army's average distance 
+We learned and tested one model for each race and for each match-up. As we want to predict \textit{where} ($\PP(A_{1:n})$) and \textit{how} ($\PP(H_{battle})$) the next attack will happen to us, we used inferred enemy $TT$ (to produce $HP$) and $TA$, our scores being fully known: $E$, $T$, $B$, $ID$. We consider $GD$, $AD$ to be fully known even though they depend on the attacker force, we should have some uncertainty on them, but we tested that they accounted (being known instead of fully unknown) for 1 to 2\% of $\PP(H)$ accuracy (in prediction) once $HP$ was known. We should point that pro-gamers scout very well and so it allows for a highly accurate $TT$ estimation with \citep{SYNNAEVE:StratPred}. The learning phase requires to recreate battle states (all units' positions) and count parameters for up to 70,000 battles. Once that is done, inference is very quick: a look-up in a probability table for known values and $\#F$ look-ups for free variables $F$ on which we sum. We chose to try and predict the next battle 30 seconds before it happens, 30 seconds being an approximation of the time needed to go from the middle of a map %(where the entropy on ``next battle position'' is maximum as the army's average distance 
 to all other regions is minimal) to any region by ground, so that the prediction is useful for the defender (they can position their army). The model code\footnote{\url{https://github.com/SnippyHolloW/AnalyzeBWData}} (for learning and testing) as well as the datasets (see above) are freely available. 
 
 \subsection{Predictions}
@@ -661,24 +674,21 @@ For the location only (\textit{where} question), we also counted the mean number
 
 Note that our current model consider a uniform prior on regions (no bias towards past battlefields) and that we do not incorporate any derivative of the armies' movements. There is no player modeling at all: learning and fitting the mean player's tactics is not optimal, so we should specialize the probability tables for each player. Also, we use all types of battles in our training and testing. Short experiments showed that if we used only attacks on bases, the probability of good \textit{where} predictions for the maximum of $\PP(A_{1:n})$ goes above 50\% (which is not a surprise, there are far less bases than regions in which attacks happen). To conclude on tactics positions prediction: if we sum the 2 most probable regions for the attack, we are right at least half the time; if we sum the 4 most probable (for our robotic player, it means it prepares against attacks in 4 regions as opposed to 19), we are right $\approx$ 70\% of the time.
 
-
-
-\section{Discussion}
-%\subsection{Possible Improvements}
-
 \subsection{In-game decision-making}
 
-In a StarCraft game, our bot has to make decisions about where and how to attack or defend, it does so by reasoning about opponent's tactics, bases, its priors, and under strategic constraints (Fig.~\ref{conceptTACTICS}). Once a decision is taken, the output of the tactical model is an offensive or defensive (typed) goal (see sections~\ref{sec:attacktypes} and~\ref{sec:goals}). %There are different military goal types (base defense, ground attacks, air attacks, drops...), and each type of goal has pre-requisites (for instance: a drop goal needs to have the control of a dropship and military units to become active). 
+In a StarCraft game, our bot has to make decisions about where and how to attack or defend, it does so by reasoning about opponent's tactics, bases, its priors, and under strategic constraints (Fig.~\ref{fig:conceptTACTICS}). Once a decision is taken, the output of the tactical model is an offensive or defensive (typed) goal (see sections~\ref{sec:attacktypes} and~\ref{sec:goals}). %There are different military goal types (base defense, ground attacks, air attacks, drops...), and each type of goal has pre-requisites (for instance: a drop goal needs to have the control of a dropship and military units to become active). 
 The spawned goal then autonomously sets objectives for Bayesian units \cite{SYNNAEVE:Micro}, sometimes procedurally creating intermediate objectives or canceling itself in the worst cases. 
 
-We can use this model to spawn both offensive and defensive goals, either by taking the most probable attacks/threats, or by sampling in the answer to the question, or by taking into account the \textbf{risk} of the different plausible attacks \textbf{weighted} by their probabilities: %%% TODO
+There is no direct way of evaluating decision-making without involving at least micro-management and others parts of the bot. Regardless, we will explain how the decision-making process works.
+
+We can use this model to spawn both offensive and defensive goals, either by taking the most probable attacks/threats, or by sampling in the answer to the question, or by taking into account the \textbf{risk} of the different plausible attacks \textbf{weighted} by their probabilities:
 \begin{itemize}
     \item defensive goals (we are the defender, the opponent is the attacker):
     \begin{itemize}
         \item location: $\PP(A_{1:n})$
         \item type: what counters $\PP(H_{1:n})$, what is available close to the most probable(s) $\PP(A_{1:n})$
         \item total knowledge: we know fully our army positioning $T_{1:n}=t_{1:n}$, our economy $E_{1:n}=e_{1:n}$, if and where we have detectors $ID_{1:n}=id_{1:n}$
-        \item partial knowledge: from partial observations, the positioning of the opponent's army $\PP(TA_{1:n})$, the belonging of regions $\PP(B_{1:n})$. We also infer their \glos{techtree} $\PP(TT)$ with \citep{SYNNAEVE:StratPred} presented in section~\ref{sec:techtreepred}. Note also that, even though we know our defenses, $\PP(GD_{1:n})$ and $\PP(AD_{1:n})$ are dependent on the attackers army: with a gross estimation on the opponent's forces (from what we have seen and their tech tree for instance), we can consider that we know it fully or not. See appendix~\ref{appdx:softevidences} for how to take it into account.
+        \item partial knowledge: from partial observations, the positioning of the opponent's army $\PP(TA_{1:n})$, the belonging of regions $\PP(B_{1:n})$. We also infer their \glos{techtree} $\PP(TT)$ with \citep{SYNNAEVE:StratPred} presented in section~\ref{sec:techtreepred}. Note also that, even though we know our defenses, $\PP(GD_{1:n})$ and $\PP(AD_{1:n})$ are dependent on the attackers army: with a gross estimation on the opponent's forces (from what we have seen and their tech tree for instance), we can consider that we know it fully or not. Most often, we have only ``soft evidences'' on this variables, which means that we have a distribution on the variable values. By abusing the notation, we will write $\PP(Var)$ for a variable on which we have a distribution. See appendix~\ref{appdx:softevidences} for how to take it into account with coherence variables.
         \item question:
 \begin{small}
 \begin{eqnarray*}
@@ -686,7 +696,7 @@ We can use this model to spawn both offensive and defensive goals, either by tak
 = \PP(A_{1:n}|t_{1:n},e_{1:n},\PP(TA_{1:n}),\PP(B_{1:n}))\times \PP(H_{1:n}|id_{1:n},\PP(GD_{1:n}),\PP(AD_{1:n},\PP(TT)))
 \end{eqnarray*}
 \end{small}
-The question may give back the best tactical interests of the opponent, taking into account partial observations, their strengths and our weaknesses. From here we can anticipate and spawn the right defend goals (put the adequate units at the right place, and even build defensive structures). 
+The question may give back the best tactical interests of the opponent, taking into account partial observations, their strengths and our weaknesses. From here we can anticipate and spawn the right defense goals (put the adequate units at the right place, and even build defensive structures). 
     \end{itemize}
 
     \item offensive goals (we are the attacker, the opponent is the defender): 
@@ -694,7 +704,7 @@ The question may give back the best tactical interests of the opponent, taking i
         \item location: $\PP(A_{1:n})$
         \item type: $\PP(H_{1:n})$
         \item total knowledge: we fully know what attack types are possible $HP_{1:n}=hp_{1:n}$ (our units available, we also know our tech tree $TT=tt$ but that is useless here), along with our military positions $TA_{1:n}=ta_{1:n}$.
-        \item partial knowledge: from partial (potentially outdated) observations, we have information about $E_{1:n}$, $T_{1:n}$, $B_{1:n}$, $ID_{1:n}$, $GD_{1:n}$, $AD_{1:n}$. See appendix~\ref{appdx:softevidences} for how to take it into account.
+        \item partial knowledge: from partial (potentially outdated) observations, we have information about $E_{1:n}$, $T_{1:n}$, $B_{1:n}$, $ID_{1:n}$, $GD_{1:n}$, $AD_{1:n}$. We still abuse the notation with $\PP(Var)$ for a variable $Var$ on which we only have a distribution (``soft evidence''). See appendix~\ref{appdx:softevidences} for how to take it into account with coherence variables.
         \item question: 
 \begin{small}
 \begin{eqnarray*}
@@ -723,8 +733,14 @@ Finally, we can steer our technological growth towards the opponent's weaknesses
 $$\PP(TT|h_i) \propto \sum_{HP} \PP(h_i|HP)\PP(HP|TT)\PP(TT)$$
 so that it gives us a distribution on the tech trees ($TT$) needed to be able to perform the wanted attack type. To take a decision on our technology direction, we can consider the distances between our current $tt^t$ and all the probable values of $TT^{t+1}$.
 
+
+\section{Discussion}
+%\subsection{Possible Improvements}
+
+
 \subsection{In-game learning}
-$\PP(A)$ can be tailored to the opponent ($\PP(A|opponent)$). In a given match, it should be initialized to uniform and progressively learn the preferred attack regions of the opponent for better predictions. We can also penalize or reward ourselves and learn the regions in which our attacks fail or succeed for decision-making. Both these can easily be done with some form of weighted counting (``add-n smoothing'') or even Laplace's rule of succession.
+The prior on $A$ %($\PP(A)$) 
+can be tailored to the opponent ($\PP(A|opponent)$). In a given match, it should be initialized to uniform and progressively learn the preferred attack regions of the opponent for better predictions. We can also penalize or reward ourselves and learn the regions in which our attacks fail or succeed for decision-making. Both these can easily be done with some form of weighted counting (``add-n smoothing'') or even Laplace's rule of succession.
 
 In match situation against a given opponent, for inputs that we can unequivocally attribute to their intention (style and general strategy), we can also refine the probability tables of $\PP(E,T,TA,B|A,opponent)$, $\PP(AD,GD,ID|H,opponent)$ and $\PP(H|HP,opponent)$ (with Laplace's rule of succession). For instance, we can refine $\sum_{E,T,TA}\PP(E,T,TA,B|A,opponent)$ corresponding to their aggressiveness (aggro) or our successes and failures. Indeed, if we sum over $E$, $T$ and $TA$, we consider the inclination of our opponent to venture into enemy territory or the interest that we have to do so by counting our successes with aggressive or defensive parameters. By refining $\PP(H|HP,opponent)$, we are learning the opponent's inclination for particular types of tactics according to what is available to them, or for us the effectiveness of our attack types choices.
 
@@ -750,6 +766,6 @@ Finally, our approach is not exclusive to most of the techniques presented above
 % TODO OR NOT Real-time A* (RTA) \citep{Korf88} can help in generating subgoals earning the heuristic by which // for automatic selection of subgoals in pathfinding, \citep{BulitkoBL10} case-based subgoaling
 
 We have presented a Bayesian tactical model for RTS AI, which allows both for opposing tactics prediction and autonomous tactical decision-making. Being a probabilistic model, it deals with uncertainty easily, and its design allows easy integration into multi-granularity (multi-scale) AI systems as needed in RTS AI. The advantages are that 1) learning will adapt the model output to its biased heuristic inputs %2) the model is agnostic to where input variables' values come from 
-3) the updating process is the same for offline and online (in-game) learning. 
+2) the updating process is the same for offline and online (in-game) learning. 
 Without any temporal dynamics, the position prediction is above a baseline heuristic ([32.8-40.9\%] vs [20.5-25.2\%]). Moreover, its exact prediction rate of the joint position and tactical type is in [23-32.8]\% (depending on the match-up), and considering the 4 most probable regions it goes up to $\approx$ 70\%. More importantly, it allows for tactical decision-making under (technological) constraints and (state) uncertainty. It can be used in production thanks to its low CPU and memory footprint. %The dataset, its documentation\footnote{\url{http://snippyhollow.github.com/bwrepdump/}}, as well as our model implementation\footnote{\url{https://github.com/SnippyHolloW/AnalyzeBWData}} (and other data-exploration tools) are free software and can be found online. We plan to use this model in our StarCraft AI competition entry bot as it gives our bot tactical autonomy and a way to adapt to our opponent.
 
