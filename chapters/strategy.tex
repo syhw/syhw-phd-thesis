@@ -99,7 +99,7 @@ We have chosen how many different versions of a given building type to put in th
 
 \newglossaryentry{rush}{name=rush,description={quick aggressive opening}}
 
-In RTS games jargon, an \textit{\glos{opening}} denotes the same thing than in Chess: an early game plan for which the player has to make choices. In Chess because one can not move many pieces at once (each turn), in RTS games because during the development phase, one is economically limited and has to choose between economic and military priorities and can only open so many tech paths at once. A \textit{\glos{rush}} is an aggressive attack ``as soon as possible'', the goal is to use an advantage of surprise and/or number of units to weaken a developing opponent. A \textit{push} (also timing push or timing attack) is a solid and constructed attack that aims at striking when the opponent is weaker: either because we reached a wanted army composition and/or because we know the opponent is expanding or ``teching''. The \glos{opening} is also (often) strongly tied to the first military (tactical) moves that will be performed. It corresponds to the 5 (early rushes) to 15 minutes (advanced technology / late push) timespan. 
+In RTS games jargon, an \textit{\glos{opening}} denotes the same thing than in Chess: an early game plan for which the player has to make choices. In Chess because one can not move many pieces at once (each turn), in RTS games because during the development phase, one is economically limited and has to choose between economic and military priorities and can not open several tech paths at once. A \textit{\glos{rush}} is an aggressive attack ``as soon as possible'', the goal is to use an advantage of surprise and/or number of units to weaken a developing opponent. A \textit{push} (also timing push or timing attack) is a solid and constructed attack that aims at striking when the opponent is weaker: either because we reached a wanted army composition and/or because we know the opponent is expanding or ``teching''. The \glos{opening} is also (often) strongly tied to the first military (tactical) moves that will be performed. It corresponds to the 5 (early rushes) to 15 minutes (advanced technology / late push) timespan. 
 
 Players have to find out what opening their opponents are doing to be able to effectively deal with the strategy (army composition) and tactics (military moves: where and when) thrown at them. For that, players scout each other and reason about the incomplete information they can bring together about army and buildings composition. This chapter presents a probabilistic model able to predict the \textit{\glos{opening}} of the enemy that is used in a StarCraft AI competition entry bot. Instead of hard-coding strategies or even considering plans as a whole, we consider the long term evolution of our \glos{techtree} and the evolution of our army composition separately (but steering and constraining each others), as shown in Figure~\ref{fig:conceptSTRATEGY}. With this model, our bot asks ``what units should I produce?'' (assessing the whole situation), being able to revise and adapt its production plans.
 
@@ -112,6 +112,8 @@ Strategy is not limited to technology state, openings and timings. The player mu
 The different attack types and ``armor'' (size) types of units make it so that pairing units against each others is like a soft rock-paper-scissors (shi-fu-mi). But there is more to army composition than playing (anticipated, units take time to be produced) rock-paper-scissors with partial information: some units combine well with each others. The simplest example of combinations are ranged units and contact units which can be very weak (lots of weaknesses) taken separately but combined form an efficient army. There are also units which empower others through abilities, or units with very strong defensive or offensive abilities with which one unit can change the course of a battle. As stated before, these different units need different parts of the tech tree to be available and they have different resources costs. All things considered, deciding which units to produce is dependent on the opponent's army, the requirements of the planned tactics, the resources and the current (and future) technology available to the player.
 
 \section{Replays labeling}
+
+A \glos{replay} contains all the actions of each players during a game. We used a dataset of replays to see when the players build which buildings. We attributed a label for each player for each game which notes the players \glos{opening}.
 
 \subsection{Dataset}
 
@@ -141,15 +143,18 @@ total & 542 & 1139 & 1024 & total & 1139 & 628 & 1150 & total & 1024 & 1150 & 10
 \label{tab:weberdatasetnumbers}
 \end{table}
 
-\subsection{Our labeling}
+\subsection{Probabilistic labeling}
+
+Instead of labeling with rules, we used (positive labeling vs rest) clustering of the opening's main features to label the games of each player.
 
 \subsubsection{The pitfall of logical/rule-based labeling}
-Openings are closely related to \gloss{buildorder} (BO) but different BO can lead to the same opening and some BO are shared by different openings. Particularly, if we do not take into account the time at which the buildings are constructed, we may have a wrong opening label too often: if an opening consist in having building C as soon as possible, it does not matter if we built B-A-C instead of the standard A-B-C as long as we have built C quickly. That is the kind of case that will be overlooked by logical labeling. For that reason, we tried to label replays with the statistical appearance of key features with a semi-supervised method (see Figure~\ref{replays_labeling}). Indeed, the purpose of our opening prediction model is to help our StarCraft playing bot to deal with rushes and special tactics. This was not the main focus of Weber and Mateas' labels, which follow exactly the build tree. So, we used the key components of openings that we want to be aware of as features for our labeling algorithm as shown in Table~\ref{tab:labels}.
+Openings are closely related to \gloss{buildorder} (BO) but different BO can lead to the same opening and some BO are shared by different openings. Particularly, if we do not take into account the time at which the buildings are constructed, we may have a wrong opening label too often: if an opening consist in having building C as soon as possible, it does not matter if we built B-A-C instead of the standard A-B-C as long as we have built C quickly. That is the kind of case that will be overlooked by logical labeling. For that reason, we tried to label replays with the statistical appearance of key features with a semi-supervised method (see Figure~\ref{fig:replays_labeling}). Indeed, the purpose of our opening prediction model is to help our StarCraft playing bot to deal with rushes and special tactics. This was not the main focus of Weber and Mateas' labels, which follow exactly the build tree. So, we used the key components of openings that we want to be aware of as features for our labeling algorithm as shown in Table~\ref{tab:labels}.
 
 \begin{figure}[h]
 \centerline{\includegraphics[width=0.80\columnwidth]{images/replays_labeling.pdf}}
-\caption{Data centric view of our semi-supervised labeling of replays}
-\label{replays_labeling}
+\caption{Data centric view of our semi-supervised labeling of replays. 
+We put together a replays dataset and pass each game (for each player) through a Gaussian mixtures model (\glos{GMM}) expectation-maximization (\glos{EM}) clustering for each label against the rest. We then filter and keep only the most probable and first to appear \glos{opening} label for each player for each game.}
+\label{fig:replays_labeling}
 \end{figure}
 
 \subsubsection{Main features of openings}
@@ -198,7 +203,7 @@ Zerg & TwoHatchMuta & fast\_mutas & Mutalisk, Gas & early air raid \\
 \end{table}
 
 \begin{table}[h]
-\caption{Openings distributions for Terran in all the match-ups}
+\caption{Openings distributions for Terran in all the match-ups. They are the result of the clustering-based labeling with selection of one label per replay and per player. We can see that openings usage is different depending on the \glos{matchup}.}
 \begin{center}
 \begin{tabular}{|c|cc|cc|cc|}
 \hline
@@ -328,13 +333,13 @@ A $\sigma$ with variable volume, variable shape and variable orientation is also
 
 
 \subsubsection{Labeling, score filtering}
-
+The whole process of labeling replays (games) is shown in Figure~\ref{fig:replays_labeling}.
 We produce ``2 bins clustering'' for each set of features (corresponding to each opening), and label the replays belonging to the cluster with the lower norm of features' appearances (that is exactly the purpose of our features). Figures~\ref{PvPspeedzeal}, \ref{TvZraxFE}
 and \ref{ZvPmutas} show the clusters out of EM with the features of the corresponding openings. We thought of clustering because there are two cases in which you build a specific military unit or research a specific upgrade: either it is part of your opening, or it is part of your longer term game plan or even in reaction to the opponent. So the distribution over the time at which a feature appears is bimodal, with one (sharp) mode corresponding to ``opening with it'' and the other for the rest of the games, as can be seen in Figure~\ref{PvTfastDT}.
 
 %Finally, some replays are labeled two or three times with different labels (due to the different time of effect of different openings), so we apply a score filtering to transform multiple label replays into unique label ones (see Figure~\ref{replays_labeling}). 
-Due to the different time of effect of different openings, some replays are labeled two or three times with different labels. So, finally, we apply a score filtering to transform multiple label replays into unique label ones (see Figure~\ref{replays_labeling}). 
-For that we choose the openings labels that were happening the earliest (as they are a closer threat to the bot in a game setup) if and only if they were also the most probable or at 10\% of probability of the most probable label (to exclude transition boundaries of clusters) for this replay. We find the earliest by comparing the norms of the clusters means in competition. All replays without a label or with multiple labels (\textit{i.e.} which did not had a unique solution in filtering) after the filtering were labeled as \textit{unknown}. We then used this labeled dataset as well as Weber and Mateas' labels in the testing of our Bayesian model for opening prediction.
+Due to the different time of effect of different openings, some replays are labeled two or three times with different labels. So, finally, we apply a score filtering to transform multiple label replays into unique label ones (see Figure~\ref{fig:replays_labeling}). 
+For that we choose the openings labels that were happening the earliest (as they are a closer threat to the bot in a game setup) if and only if they were also the most probable or at 10\% of probability of the most probable label (to exclude transition boundaries of clusters) for this replay. We find the earliest by comparing the norms of the clusters means in competition. All replays without a label or with multiple labels (\textit{i.e.} which did not had a unique solution in filtering) after the filtering were labeled as \textit{unknown}. An example of what is the final distribution amongst replays' openings labels is given for the three Terran \gloss{matchup} in Table~\ref{tab:openings_distrib}. We then used this labeled dataset as well as Weber and Mateas' labels in the testing of our Bayesian model for opening prediction.
 
 \clearpage
 
@@ -371,7 +376,7 @@ This can also be see as a plate diagram in Figure~\ref{fig:buildtreeplate}.
 
 \begin{figure}[h]
 \begin{center}
-\includegraphics[width=0.38\columnwidth]{images/BuildTreePrediction_plate.pdf}
+\includegraphics[width=0.35\columnwidth]{images/BuildTreePrediction_plate.pdf}
 \end{center}
 \caption{Graphical model (plate notation) of the build tree Bayesian model, gray variables are known.}
 \label{fig:buildtreeplate}
@@ -415,13 +420,8 @@ The question that we will ask in all the benchmarks is:
 \begin{equation}
 \PP(BT|T=t, O_{1:N}=o_{1:N}, \lambda = 1)  \propto \PP(t|BT)\PP(BT) \PP(\lambda | BT, o_{1:N})\prod_{i=1}^N\PP(o_{i})
 \end{equation}
+An example of the evolution of this question with new observations is depicted in Figure~\ref{fig:ttinf}, in which we can see that build trees (possibly closely related) succeed each others (normal) until convergence.
 %Note that if we see $\PP(BT, T)$ as a plan, asking $\PP(BT | T)$ for ourselves boils down to use our ``plan recognition'' mode as a planning algorithm. %, which could provide good approximations of the optimal goal set \cite{Ramirez}, or build orders. %%%This gives us a distribution on the build orders that we can follow.
-
-\begin{figure}[h]
-\centerline{\includegraphics[width=0.69\columnwidth]{images/techtree_inference_color2.png}}
-\caption{Evolution of $\PP(BT|observations,time,\lambda=1)$ in time (seen/observed buildings on the x-axis). Only $BT$ with a probability $> 0.01$ are shown.}
-\label{ttinf}
-\end{figure}
 
 \subsubsection{Bayesian program}
 The full Bayesian program is:
@@ -451,12 +451,22 @@ Question \\
 \end{cases}
 \end{eqnarray*}
 
+\begin{figure}
+\centerline{\includegraphics[width=0.72\columnwidth]{images/techtree_inference_color3.png}}
+\caption{Evolution of $\PP(BT|observations,time,\lambda=1)$ in time (seen/observed buildings on the x-axis). Only $BT$ with a probability $> 0.01$ are shown. The numbers in the legend correspond to build trees identifier numbers.}
+\label{fig:ttinf}
+\end{figure}
+
 
 \subsection{Results}
 All the results presented in this section represents the nine match-ups (races combinations) in 1 versus 1 (duel) of StarCraft. We worked with a data-set of 8806 replays ($\approx$ 1000 per match-up) of skilled human players (see \ref{tab:weberdatasetnumbers}) and we performed cross-validation with 9/10th of the dataset used for learning and the remaining 1/10th of the dataset used for evaluation. Performance wise, the learning part (with $\approx$ 1000 replays) takes around $0.1$ second on a 2.8 Ghz Core 2 Duo CPU (and it is serializable). Each inference (question) step takes around $0.01$ second. The memory footprint is around 3Mb on a 64 bits machine.
 
 \subsubsection{Metrics}
 \label{sec:buildtreemetrics}
+$k$ is the numbers of buildings ahead that we can accurately predict the build tree of the opponent at a fixed $d$. $d$ values are distances between the predicted build tree(s) and the reality (at fixed $k$).
+
+The \textbf{robustness to noise} is measured by the distance $d$ to the real build tree with increasing levels of noise, for $k=0$.
+
 The \textbf{predictive power} of our model is measured by the $k>0$ next buildings for which we have ``good enough'' prediction of future build trees in:
 $$\PP(BT^{t+k} | T=t, O_{1:N}=o_{1:N}, \lambda = 1)$$
 
@@ -465,10 +475,32 @@ $$\PP(BT^{t+k} | T=t, O_{1:N}=o_{1:N}, \lambda = 1)$$
     \item We call $d(best,real)=$``best'' the distance between the most probable build tree and the one that actually happened.
     \item We call $d(bt,real)*\PP(bt)$=``mean'' the marginalized distance between what was inferred balanced (variable $bt$) by the probability of inferences ($\PP(bt)$). 
 \end{itemize} 
-Note that this distance is always over the \textbf{complete} build tree, and not only the newly inferred buildings. This distance metric was counted only after the fourth (4th) building so that the first buildings would not penalize the prediction metric (the first building can not be predicted 4 buildings in advance). For information, the first 4 buildings for a Terran player are more often amongst his first supply depot, barracks, refinery (gas), and factory or expansion or second barracks. For Zerg, the first 4 buildings are in first overlord, zergling pool, extractor (gas), expansion and lair tech. For Protoss, it can be first pylon, gateway, assimilator (gas), cybernectics core, and sometimes robotics center, or forge or expansion.
+Note that this distance is always over the \textbf{complete} build tree, and not only the newly inferred buildings. This distance metric was counted only after the fourth (4th) building so that the first buildings would not penalize the prediction metric (the first building can not be predicted 4 buildings in advance). 
+
+For information, the first 4 buildings for a Terran player are more often amongst his first supply depot, barracks, refinery (gas), and factory or expansion or second barracks. For Zerg, the first 4 buildings are is first overlord, zergling pool, extractor (gas), and expansion or lair tech. For Protoss, it can be first pylon, gateway, assimilator (gas), cybernectics core, and sometimes robotics center, or forge or expansion.
+
+
+Table~\ref{tab:buildtreeresults} shows the \textbf{full results}, the first line has to be interpreted as ``without noise, the average of the following measures are'' (columns):
+\begin{itemize}
+    \item $d$ for $k=0$:
+        \begin{itemize}
+            \item $d(best,real) = 0.535$, it means that the average distance from the most probable (``best'') build tree to the real one is 0.535 building.
+            \item $d(bt,real)*\PP(bt) = 0.870$, it means that the average distance from each value $bt$ of the distribution on $BT$, weighted by its own probability ($\PP(bt)$), to the real one is 0.87 building.
+        \end{itemize}
+    \item $k$ for $d=1$:
+        \begin{itemize}
+            \item best $k=1.193$, it means that the average number of buildings ahead (of their construction) that the model predicts at a fixed maximum error of 1 ($d=1$) for the most probable build tree (``best'') is 1.193 buildings.
+            \item ``mean'' $k=3.991$, it means that the average number of buildings ahead (of their construction) that the model predicts at a fixed maximum error 1 ($d=1$), summed for $bt$ in $BT$ value and weighted by $\PP(bt)$ is 3.991\footnote{This shows that when the most probable build tree is mistaken, there is 1) not much confidence in it (otherwise we would have $\PP(bt_{best}) \approx 1.0$ and the ``mean'' $k$ for fixed $d$ values would equal the ``best'' one). 2) much information in the distribution on $BT$, in the subsequent $\PP(bt_{\neg best})$ values.}
+        \end{itemize}
+    \item idem that the bullet above but $k$ for $d=2$ and $d=3$.
+\end{itemize}
+The second line (``min'') is the minimum across the different \gloss{matchup} (as they are detailed for $noise=10\%$), the third (``max'') is for the maximum across match-ups, both still at zero noise. Subsequent sets of lines are for increasing values of noise (i.e. missing observations).
 
 \subsubsection{Predictive power}
-To test the predictive power of our model, we used $d=1,2,3$: with $d=1$ we have a very strong sense of what the opponent is doing or will be doing, with $d=3$, we may miss one key building or the opponent may have switched of tech path. We can see in Table~\ref{tab:buildtreeresults} that with $d=1$ and without noise, our model predicts in average more than one building in advance ($k>1$) what the opponent will build next if we use only its best prediction. If we use the weighed sum on TODO almost \textbf{four} buildings in advance if we marginalize over all the predictions. Of course, if we accept more error, the predictive power (number of buildings ahead that our model is capable to predict) increases, up to $6.122$ (in average) for $d=3$ without noise.
+To test the predictive power of our model, we are interested at looking at how big $k$ is (how much ``time'' before we can predict a build tree) at fixed values of $d$. We used $d=1,2,3$: with $d=1$ we have a very strong sense of what the opponent is doing or will be doing, with $d=3$, we may miss one key building or the opponent may have switched of tech path. 
+
+We can see in Table~\ref{tab:buildtreeresults} that with $d=1$ and without noise (first line), our model predicts in average more than one building in advance ($k>1$) what the opponent will build next if we use only its best prediction. If we marginalize over $BT$ (sum on $BT$ weighted by $\PP(bt)$), we can almost predict \textbf{four} buildings in advance. Of course, if we accept more error, the predictive power (number of buildings ahead that our model is capable to predict) increases, up to $6.122$ (in average) for $d=3$ without noise.
+
 
 \begin{table*}[h]
 \caption{Summarization of the main results/metrics, one full results set for 10\% noise}
@@ -551,7 +583,8 @@ To test the predictive power of our model, we used $d=1,2,3$: with $d=1$ we have
 The robustness of our algorithm is measured by the quality of the predictions of the build trees for $k=0$ (reconstruction, estimation) or $k>0$ (prediction) with missing observations in:
 $$ \PP(BT^{t+k} | T=t, O_{1:N}=partial(o_{1:N}), \lambda = 1)$$
 
-The ``reconstructive'' power (infer what has not been seen) ensures from the learning of our parameters from real data: even in the set of build trees that are possible, with regard to the game rules, only a few will be probable at a given time and/or with some key structures. Abiding by probability theory gives us consistency with regard to concurrent build tree.
+The ``reconstructive'' power (infer what has not been seen) ensues from the learning of our parameters from real data: even in the set of build trees that are possible, with regard to the game rules, only a few will be probable at a given time and/or with some key structures. %Abiding by probability theory gives us consistency with regard to concurrent build tree.
+The fact that we have a distribution on $BT$ allows us to compare different values $bt$ of $BT$ on the same scale and to use $\PP(BT)$ (``soft evidence'') as an \textbf{input} in other models. 
 This ``reconstructive'' power of our model is shown in Table~\ref{tab:buildtreeresults} with $d$ (distance to actual building tree) for increasing noise at fixed $k=0$. 
 
 Figure~\ref{fig:buildtreenoise} displays first (on top) the evolution of the error rate in reconstruction (distance to actual building) with increasing random noise (from 0\% to 80\%, no missing observations to 8 missing observations over 10). We consider that having an average distance to the actual build tree a little over $1$ for 80\% missing observations is a success. This means that our reconstruction of the enemy build tree with a few rightly timed observations is very accurate. We should ponder that this average ``missed'' (unpredicted or wrongly predicted) building can be very important (for instance if it unlocks game changing technology). We think that this robustness to noise is due to $\PP(T|BT)$ being precise with the amount of data that we used, and the build tree structure. 
@@ -567,9 +600,12 @@ Secondly, Figure~\ref{fig:buildtreenoise} displays (at the bottom) the evolution
 \label{fig:buildtreenoise}
 \end{figure}
 
-\subsection{Possible extensions}
+\subsection{Possible improvements}
 %\subsubsection{Possible improvements}
 \label{sec:buildtreeimprovements}
+
+We recall that we used the prediction of build trees (or tech trees), as a proxy for the estimation of an opponent's technologies and production capabilities.
+
 This work can be extended by having a model for the two players (the bot/AI and the opponent):
 $$\PP(BT_{bot}, BT_{op}, O_{op,1:N}, T, \lambda)$$
 So that we could ask this (new) model: $$\PP(BT_{bot} | obs_{op, 1:N}, t, \lambda=1)$$
@@ -676,13 +712,6 @@ $$\PP(BT=bt|Op^t=op) = \frac{1 + \mathrm{count\_games}(bt\wedge op)}{\abs{BT} + 
 
 The learning of the $\PP(T | BT, Op^t)$ bell shapes parameters takes into account the uncertainty of the couples $(bt, op)$ for which we have few observations. This is even more important as observations may (will) be sparse for some values of $Op^t$, as can be seen in Figure~\ref{fig:sparseBTOp}. As for the previous, the normal distribution $\PP(T|bt, op)$ begins with a high $\sigma_{bt,op}^2$. This accounts for the fact that the first(s) observation(s) may be outlier(s). %This learning process is independent on the order of the stream of examples, seeing point A and then B or B and then A in the learning phase produces the same result. 
 
-\begin{figure}[htp]
-\centerline{\includegraphics[width=0.52\columnwidth]{images/BW_HeatMap_knowing_ReaverDrop.png}}
-\caption{$\PP(T, BT | Op^t=ReaverDrop)$}
-\label{fig:sparseBTOp}
-\end{figure}
-
-
 \subsubsection{Questions}
 %%%\begin{eqnarray*}
 %%%\PP(Op|T=t, O_{1:N}=o_{1:N}, \lambda = 1) \\
@@ -741,6 +770,11 @@ Question \\
 \end{cases}
 \end{eqnarray*}
 
+\begin{figure}
+\centerline{\includegraphics[width=0.82\columnwidth]{images/BW_HeatMap_knowing_ReaverDrop.png}}
+\caption{$\PP(T, BT | Op^t=ReaverDrop)$ Values of $BT$ are in y-axis and values of $T$ in x-axis. We have sparse 1-dimensional Gaussian distributions depending on $T$ for each value of $BT$.}
+\label{fig:sparseBTOp}
+\end{figure}
 
 \subsection{Results}
 
@@ -751,11 +785,13 @@ For each match-up, we ran cross-validation testing with 9/10th of the dataset us
 \item the \textit{online twice} (OT), which counts the openings that have emerged as most probable twice a test (so that their predominance is not due to noise),
 \item the \textit{online once} $> 3$ (OO3), which counts the openings that have emerged as most probable openings after 3 minutes (so that these predictions are based on really meaningful information).
 \end{itemize}
-After 3 minutes, a Terran player will have or be building his first supply depot, barracks, refinery (gas), and at least factory or expansion. A Zerg player would have his first overlord, zergling pool, extractor (gas) and most of the time his expansion and lair tech. A Protoss player would have his first pylon, gateway, assimilator (gas), cybernectics core, and sometimes his robotics center, or forge and expansion.
+After 3 minutes, a Terran player will have built his first supply depot, barracks, refinery (gas), and at least factory or expansion. A Zerg player would have his first overlord, zergling pool, extractor (gas) and most of the time his expansion and lair tech. A Protoss player would have his first pylon, gateway, assimilator (gas), cybernectics core, and sometimes his robotics center, or forge and expansion.
 
 
-\subsubsection{Prediction}
-Table~\ref{tab:openingsresults} sums up all the prediction probabilities (scores) for the most probable opening according to our model (compared to the replay label) in all the match-ups with both labeling of the game logs. \textbf{Note that when an opening is mispredicted, the distribution on openings is often not $\PP(badopening)=1, \PP(others)=0$ and that we can extract some value out of these distributions} (see the bot's strategy adaptation in chapter~\ref{chapter:bot}). Also, we observed that $\PP(Opening=unknown)>\PP(others)$ is often a case of misprediction: our bot uses the next prediction in this case. 
+\subsubsection{Predictive power}
+Table~\ref{tab:openingsresults} sums up all the prediction probabilities (scores) for the most probable opening according to our model (compared to the replay label) in all the match-ups with both labeling of the game logs. The first line should be read as: in the Protoss vs Protoss (PvP) \glos{matchup}, with the rule-based openings labels (Weber's labels), the most probable \glos{opening} (in the $Op$ values) at 5 minutes (``final'') is 65\% correct. The proportion of times that the most probable opening twice (``OT'') in the firsts 5 minutes period was the real one (the game label for this player) is 53\%. The proportion of times that the most probable opening after 3 minutes (``OO3'') and in the firsts 5 minutes periods was the real one is 0.59\%. Then the other columns show the same metrics for 10 and 15 minutes periods, and then the same with our probabilistic clustering.
+
+Note that when an opening is mispredicted, the distribution on openings is often \textbf{not} $\PP(badopening)=1, \PP(others)=0$ and that we can extract some value out of these distributions (see the bot's strategy adaptation in chapter~\ref{chapter:bot}). Also, we observed that $\PP(Opening=unknown)>\PP(others)$ is often a case of misprediction: our bot uses the next prediction in this case. 
 
 \begin{figure}[h]
 \centerline{\includegraphics[width=0.7\columnwidth]{images/TvP_prediction.png}}
@@ -765,6 +801,8 @@ Table~\ref{tab:openingsresults} sums up all the prediction probabilities (scores
 \end{figure}
 
 Figure~\ref{fig:openingsprediction} shows the evolutions of the distribution $\PP(Opening)$ during a game for Weber's and our labeling or the openings. We can see that in this game, their \glos{buildtree} and rule-based labeling (top plot) enabled the model to converge faster towards \textit{FastDropship}. With our labeling (bottom plot), the corresponding \textit{drop} opening peaked earlier (5th building vs 6th with their labeling) but it was then eclipsed by \textit{two\_facto} (while staying good second) until later with another key observation (11th building). This may due to unorthodox timings of the \textit{drop} opening, probably because the player was delayed (by a rush, or changed his mind), and that the \textit{two\_facto} opening has a larger (more robust to delays) support in the dataset.
+
+\subsubsection{Robustness to noise}
 
 Figure~\ref{fig:openingsnoise} shows the resistance of our model to noise. We randomly removed some observations (buildings, attributes), from 1 to 15, knowing that for Protoss and Terran we use 16 buildings observations and 17 for Zerg. We think that our model copes well with noise because it backtracks unseen observations: for instance if we have only the $core$ observation, it will work with build trees containing $core$ that will passively infer unseen $pylon$ and $gate$. 
 
@@ -777,7 +815,8 @@ Figure~\ref{fig:openingsnoise} shows the resistance of our model to noise. We ra
 \end{figure}
 
 \begin{sidewaystable}
-\caption{Prediction probabilities for all the match-ups, at 5 minutes, 10 minutes, 15 minutes, both for Weber's labels and for our labels. The three metrics are: final: 1 if what is the most probable at the end of the time limit equals the label, else 0; OT: (online twice) 1 if what was the most probable in two different inferences during the game equals the label, else 0; OO3 (online once > 3 minutes) 1 if what was the most probable opening after 3 minutes of game was equal to the label, else 0.}
+\caption{Prediction probabilities for all the match-ups, at 5 minutes, 10 minutes, 15 minutes, both for Weber's labels and for our labels. The three metrics are 1) final: what is the most probable at the end of the time equals compared to the label, 2) OT: (online twice) what was the most probable in two different inferences during the game compared to the label, 3) OO3 (online once > 3 minutes) what was the most probable opening after 3 minutes of game compared to the label.}
+%\caption{Prediction probabilities for all the match-ups, at 5 minutes, 10 minutes, 15 minutes, both for Weber's labels and for our labels. The three metrics are: final: 1 if what is the most probable at the end of the time limit equals the label, else 0; OT: (online twice) 1 if what was the most probable in two different inferences during the game equals the label, else 0; OO3 (online once > 3 minutes) 1 if what was the most probable opening after 3 minutes of game was equal to the label, else 0.}
 \begin{center}
 \begin{tabular}{|c|ccc|ccc|ccc|ccc|ccc|ccc|}
 \hline
@@ -860,9 +899,9 @@ Z \begin{tiny}(Zerg)\end{tiny} & 896 & 0.089014 & 0.00796715 & 0.00123551 \\ \hl
 \end{center}
 \end{table}
 
-\subsubsection{Strengths and weaknesses}
+\subsubsection{Strengths and weaknesses of StarCraft openings}
 
-We also proceeded to analyze the strengths and weaknesses of openings against each others. For that, we labeled the dataset with openings and then learned the $\PP(Win=true|Op_{player1}^t,Op_{player2}^t)$ probability table with Laplace's rule of succession. As can be seen in Table~\ref{tab:weberdatasetnumbers}, not all openings are used for one race in each of its 3 \gloss{matchup}. Table~\ref{table:openingcontingency} shows some parts of this $\PP(Win=true|Op_{player1}^t,Op_{player2}^t)$ ratios of wins of openings against each others.
+We also proceeded to analyze the strengths and weaknesses of openings against each others. For that, we labeled the dataset with openings and then learned the $\PP(Win=true|Op_{player1}^t,Op_{player2}^t)$ probability table with Laplace's rule of succession. As can be seen in Table~\ref{tab:weberdatasetnumbers}, not all openings are used for one race in each of its 3 \gloss{matchup}. Table~\ref{table:openingcontingency} shows some parts of this $\PP(Win=true|Op_{player1}^t,Op_{player2}^t)$ ratios of wins of openings against each others. This analysis can serve the purpose of choosing the right opening as soon as the opponent's opening was inferred.
 
 \begin{table}[h] 
 \begin{center}
@@ -894,15 +933,13 @@ rax fe &  0.579& 0.478& 0.364& 0.584\\
 \label{table:openingcontingency}
 \end{table}
 
-\subsection{Discussion}
-\subsubsection{Possible uses}
-We recall how we used this whole model:
-\begin{itemize}
-    \item for build trees or tech trees prediction, as a proxy for the estimation of an opponent's technologies and production capabilities.
-    \item for opening prediction, as a proxy for timing attacks and aggressiveness.
-\end{itemize}
-
-\noindent{It can also be used:}
+\subsection{Possible uses}
+%%% We recall how we used this whole model:
+%%% \begin{itemize}
+%%%     \item for build trees or tech trees prediction, as a proxy for the estimation of an opponent's technologies and production capabilities.
+%%%     \item for opening prediction, as a proxy for timing attacks and aggressiveness.
+%%% \end{itemize}
+We recall that we used this model for opening prediction, as a proxy for timing attacks and aggressiveness. It can also be used:
 \begin{itemize}
     \item for build tree suggestion when wanting to achieve a particular opening. Particularly one does not have to encode all the openings into a finite state machine: simply train this model and then ask $\PP(BT|time,opening,\lambda=1)$ to have a distribution on the build trees that generally are used to achieve this $opening$.
     \item as a commentary assistant AI. In the StarCraft and StarCraft 2 communities, there are a lot of progamers tournaments that are commented and we could provide a tool for commentators to estimate the probabilities or different openings or technology paths. As in commented poker matches, where the probabilities of different hands are drawn on screen for the spectators, we could display the probabilities of openings. In such a setup we could use more features as the observers and commentators can see everything that happens (upgrades, units) and we limited ourselves to ``key'' buildings in the work presented here.
@@ -928,7 +965,6 @@ and perform an early rush instead. We think that this can be handled by our mode
 %\subsubsection{Partial Conclusion}
 
 
-\clearpage
 \section{Army composition}
 We reuse the predictions on the \glos{buildtree} ($\PP(BT)$) directly for the \glos{techtree} ($\PP(TT)$) (for the enemy, so $ETT$) by estimating $BT$ as presented above and simply adding the tech tree additional features (upgrades, researches) that we already saw\footnote{We could also modify the models above and incorporate tech tree features but it is of little benefit. Also, $BT$ contains duplicates of buildings and is it easier to downgrade to $TT$ than to estimate the openings from $TT$ instead of $BT$.}. You can just assume that $BT=TT$, or refer to section~\ref{sec:buildings}.
 
@@ -942,18 +978,19 @@ we can reason about which mixture of clusters the opponent is probably going to 
     %\item $BT^t$ is a \glos{buildtree}\footnote{with an exception for the Zerg Lurker, which requires a research, we can know all the units types that it is possible to train/recruit/product this way.} variable, at time $t$. $BT \in \{\emptyset, \{building_1\}, \{building_2\}, \{building_1\wedge building_2\},$ $\dots\}$: all the possible building trees for the given race ). For instance $\{pylon, gate\}$ and $\{pylon, gate, core\}$ are two different $TechTrees$. $TT$ has $V$ possible values and $ETT$ has $V'$ possible values (depending on the faction).
     \item $TT^t$ is a \glos{techtree} variable, at time $t$. $TT \in \{\emptyset, \{building_1\}, \{building_2\}, \{building_1\wedge building_2\},$ $\dots\}$: all the possible building trees for the given race. %Strictly speaking, we here only use build tree $\cap$ tech tree: 
 We just want to know what unit types we can produce and not recreate the whole technological state. %For instance $\{pylon, gate\}$ and $\{pylon, gate, core\}$ are two different $TechTrees$. 
-$TT$ has $V$ possible values ($V$ is the number of unit types and depends on the faction).
+$TT$ has $V$ possible values ($V$ is the number different \gloss{techtree} and depends on the faction).
 
     \item $ETT^t$ the enemy tech tree, same as above but for the enemy. $ETT$ has $V'$ possible values.
 
-    \item $C_{t,c,m,f}^{t+1} \in \{our\ race's\ clusters\}$, our army cluster ($C$), both wanted ($C_{t}$ for $tactics$,$C_{c}$ for $counter$, $C_{m}$ for $merge$) and decided ($C_{f}$ for $final$) at $t+1$. $C_{t},C_{c},C_{m},C_{f}$ have $K$ values ($K$ units clusters for us). 
-$C_t$ is %a distribution of 
-the cluster we want for tactics. % or just a value (for instance we just need a \textit{dropship/shuttle}). 
-$C_c$ is the counter to what we infer the enemy army will be ($EC^{t+1}$). 
-$C_m$ merge our tactics desiderata ($C_t$) with our adaptability ($C_c$), 
-while $C_f$ take the tech tree constraints into account. This can seem tedious but these variables are all to be seen as different states of $C$, representing our army composition.
+    \item $EC^{t,t+1} \in \{enemy's\ race's\ clusters\}$ the enemy's cluster ($EC$) estimated at $t$ from their units that we saw, and estimated at $t+1$ from their (estimated distribution on) tech trees ($ETT$) and previous $EC^t$. $EC^t, EC^{t+1}$ each have $K'$ values (number of mixtures components).
 
-    \item $EC^{t,t+1} \in \{enemy's\ race's\ clusters\}$ the enemy's cluster ($EC$) estimated at $t$ from their units that we saw, and estimated at $t+1$ from their (estimated distribution on) tech trees and previous $EC^t$. $EC^t, EC^{t+1}$ each have $K'$ values (number of mixtures components).
+    \item $C_{t,c,m,f}^{t+1} \in \{our\ race's\ clusters\}$, our army cluster ($C$), both wanted ($C_{t}$ for $tactics$,$C_{c}$ for $counter$, $C_{m}$ for $merge$) and decided ($C_{f}$ for $final$) at $t+1$. $C_{t},C_{c},C_{m},C_{f}$ have $K$ values ($K$ units clusters for us). 
+We infer $C_c$ the ``counter'' cluster for (adaptation to) $EC^{t+1}$. $C_t$ (a distribution $C_t$) comes from the needs of specific units by the tactical model, we merge $C_t$ and $C_c$ in $C_m$ (merge). The final clusters ($C_f$) corresponds to what is coherent with our tech tree ($TT$) so use a coherence variable ($\lambda$) to make $C_m$ and $C_f$ coherent. See Figure~\ref{fig:armycompositionplate}.
+%$C_t$ is %a distribution of 
+%the cluster we want for tactics. % or just a value (for instance we just need a \textit{dropship/shuttle}). 
+%$C_c$ is the counter to what we infer the enemy army will be ($EC^{t+1}$). 
+%$C_m$ merge our tactics desiderata ($C_t$) with our adaptability ($C_c$), 
+%while $C_f$ take the tech tree constraints into account. This can seem tedious but these variables are all to be seen as different states of $C$, representing our army composition.
 
     \item $U^{t+1} \in ([0,1]\dots[0,1])$, our $N$ dimensional unit types ($U$) proportions at time $t+1$, i.e. $U^{t+1} \in [0,1]^M$. For instance, an army with equal numbers of $zealots$ and $dragoons$ (and nothing else) is represented as $\{U_{zealot}=0.5, U_{dragoon}=0.5, \forall ut \neq zealot|dragoon\ U_{ut}=0.0\}$, i.e. $U=(0.5,0.5,0,\dots,0)$ if $zealots$ and $dragoons$ are the first two components of the $U$ vector. So $\sum_i U_i = 1$ whatever the composition of the army.
 
@@ -975,8 +1012,8 @@ The joint distribution of our model is the following:
 %%% & & \times \PP(\lambda|C_{f}^{t+1},C_{m}^{t+1})\PP(C_{m}^{t+1}|C_{t}^{t+1},C_{c}^{t+1}) \PP(U_{1:N}^{t+1}|C_{f}^{t+1})
 & & \PP(TT^t,C_{t}^{t+1},C_{c}^{t+1},C_{m}^{t+1},C_{f}^{t+1},ETT^t,EC^{t},EC^{t+1},U^{t+1},EU^{t}) \\
 & = & \PP(EU^t|EC^t)\PP(EC^t|EC^{t+1})\PP(EC^{t+1}|ETT^t)\PP(ETT^t)\\
-& & \times \PP(C_{c}^{t+1}|EC^{t+1})\PP(C_{t}^{t+1})\PP(TT^t)\PP(C_{f}^{t+1}|TT^{t})\\
-& & \times \PP(\lambda|C_{f}^{t+1},C_{m}^{t+1})\PP(C_{m}^{t+1}|C_{t}^{t+1},C_{c}^{t+1}) \PP(U^{t+1}|C_{f}^{t+1})
+& & \times \PP(C_{c}^{t+1}|EC^{t+1})\PP(C_{t}^{t+1})\PP(C_{m}^{t+1}|C_{t}^{t+1},C_{c}^{t+1}) \\
+& & \times \PP(\lambda|C_{f}^{t+1},C_{m}^{t+1})\PP(C_{f}^{t+1}|TT^{t})\PP(TT^t)\PP(U^{t+1}|C_{f}^{t+1})
 \end{eqnarray}
 This can also be see as Figure~\ref{fig:armycompositionplate}.
 \begin{figure}[h]
@@ -988,21 +1025,21 @@ This can also be see as Figure~\ref{fig:armycompositionplate}.
 \subsubsection{Forms}
 \begin{itemize}
 %%% \item $\PP(U^{t+1}|C_f^{t+1}=c) = \PP(U_{1:N}^{t+1}|C_f^{t+1}=c) = \mathcal{N}(\mu_{c},\sigma_{c}^2)$, the $\mu$ and $\sigma$ come from a Gaussian mixture model learned from all the battles in the dataset (see left diagram on Fig.~\ref{fig:armycompositionplate} and section~\ref{GMMEM}). 
-\item $\PP(U^{t+1}|C_f^{t+1}=c) = \mathcal{N}(\mu_{c},\sigma_{c}^2)$, the $\mu$ and $\sigma$ come from a Gaussian mixture model learned from all the battles in the dataset (see left diagram on Fig.~\ref{fig:armycompositionplate} and section~\ref{GMMEM}). 
-
 %%% \item $\PP(EU^t | EC^t=ec) = \PP(EU_{1:M}^t|EC^t=ec) = \mathcal{N}(\mu_{ec},\sigma{ec}^2)$, as above but with different parameters for the enemy's race (if it is not a mirror match-up).
 \item $\PP(EU^t | EC^t=ec) = \mathcal{N}(\mu_{ec},\sigma{ec}^2)$, as above but with different parameters for the enemy's race (if it is not a mirror match-up).
 
 \item $\PP(EC^t|EC^{t+1}=ec^{t+1}) = Categorical(K',p_{ec^{t+1}})$, $\PP(EC^t|EC^{t+1})$ is a probability table of dimensions $K' \times K'$ resulting of the temporal dynamic between clusters, that is learned from the dataset with a soft Laplace's law of succession (``add one'' smoothing) \cite{Jaynes}. 
 
-
-\item $\PP(ETT^t) = Categorical(V',p_{eracett})$, it is a categorical distribution on $V'$ values, i.e. an histogram distribution on the enemy's tech trees. It comes from the build/tech tree prediction model explained above. For us, $TT \sim Categorical(V)$ too, and we know our own tech tree ($TT$) exactly.
-
 \item $\PP(EC^{t+1}|ETT^t=ett) = Categorical(K',p_{ett})$, $\PP(EC^{t+1}|ETT^t)$ is a probability table of dimensions $K' \times V'$ resulting of the inter-dependency between some tech trees and clusters/mixtures. It is learned from the dataset with a soft Laplace's law of succession.
+
+\item $\PP(ETT^t) = Categorical(V',p_{eracett})$, it is a categorical distribution on $V'$ values, i.e. an histogram distribution on the enemy's tech trees. It comes from the build/tech tree prediction model explained above (section~\ref{sec:strategyprediction}). For us, $TT \sim Categorical(V)$ too, and we know our own tech tree ($TT$) exactly.
 
 \item $\PP(C_c^{t+1}|EC^{t+1}=ec) = Categorical(K,p_{ec})$, $\PP(C_c^{t+1}|EC^{t+1})$ is a probability table of dimensions $K \times K'$, which is learned from battles with a soft Laplace's law of succession on victories. 
 
 \item $\PP(C_t^{t+1}) = Categorical(K,p_{tac})$ (histogram on the $K$ clusters values) coming from the tactical model. Note that it can be degenerate: $\PP(C_t^{t+1}=shuttle)=1.0$. It serves the purpose of merging tactical needs with strategic ones.
+
+%\item $\PP(C_m^{t+1}|C_t^{t+1},C_c^{t+1})$
+\item $\PP(C_m^{t+1}|C_t^{t+1},C_c^{t+1}) = \alpha \PP(C_t^{t+1})+(1-\alpha) \PP(C_c^{t+1})$ with $\alpha \in [0\dots1]$ the aggressiveness/initiative parameter which can be set fixed, learned, or be variable ($P(\alpha|situation)$). If $\alpha=1$ we only produce units wanted by the tactical model, if $\alpha=0$ we only produce units that adapts our army to the opponent's army composition.
 
 \item $\PP(\lambda | C_f^{t+1},C_m^{t+1})$ is a functional $Dirac$ that restricts $C_m$ values to the ones that can co-exist with our tech tree ($C_f$).
 \begin{eqnarray*}
@@ -1014,7 +1051,8 @@ This was simply implemented as a function. This is not strictly necessary (as on
 
 \item $\PP(C_f^{t+1}|TT)$ is either a learned probability table, as for $P(EC^{t+1}|ETT^t)$, or a functional $Dirac$ distribution which tells which $C_f$ values ($c_f$) are compatible with the current tech tree $TT=tt$. We used this second option. A given $c$ is compatible with the tech tree ($tt$) if it allows for building all units present in $c$. For instance, $tt=\{pylon, gate, core\}$ is compatible with a $c=\{\mu_{U_{zealot}}=0.5, \mu_{U_{dragoon}}=0.5, \forall ut \neq zealot|dragoon\ \mu_{U_{ut}}=0.0\}$, but it is not compatible with $c'=\{\mu_{U_{arbiter}}=0.1, \dots\}$.
 
-%\item $\PP(C_m^{t+1}|C_t^{t+1},C_c^{t+1}) = \alpha.\PP(C_t^{t+1})+(1-\alpha).\PP(C_c^{t+1})$ with $\alpha$ the aggressiveness/initiative parameter which can be set fixed, learned, or be variable ($P(\alpha|situation...)$).
+\item $\PP(U^{t+1}|C_f^{t+1}=c) = \mathcal{N}(\mu_{c},\sigma_{c}^2)$, the $\mu$ and $\sigma$ come from a Gaussian mixture model learned from all the battles in the dataset (see left diagram on Fig.~\ref{fig:armycompositionplate} and section~\ref{GMMEM}). 
+
 
 
 \end{itemize}
@@ -1026,7 +1064,7 @@ We learned Gaussian mixture models (GMM) with the expectation-maximization (EM) 
 \begin{itemize}
     \item $\PP(U^{t+1}|C_f^{t+1}=c)$ is the result of the clustering of the armies compositions ($U$) into $C$, and so depends from the clustering model. 
 %In the best model that we tried, they come from a Gaussian mixtures model (GMM) and so are from $\mathcal{N}(\mu_{z_i}, \sigma^2_{z_i})$ with $z_i \sim Categorial(K)$, respectively $Categorical(K')$.
-In our implementation, $\mu_{c},\sigma_{c}$ are learned from the data through expectation maximization. One can get a good grasp on this parameters by looking at Figure~\ref{parallelplot}.
+In our implementation, $\mu_{c},\sigma_{c}$ are learned from the data through expectation maximization. One can get a good grasp on this parameters by looking at Figure~\ref{fig:parallelplot}.
 %%% TODO GMM EM
 
     \item It is the same for $\mu_{ec},\sigma_{ec}$, they are learned by EM on the dataset (see section~\ref{GMMEM}).
@@ -1071,18 +1109,19 @@ or we can sample $U^{t+1}$ from $P(C_f^{t+1})$ or even from $c_f^{t+1}$ (a reali
         Decomposition\\
             \PP(TT^t,C_{t}^{t+1},C_{c}^{t+1},C_{m}^{t+1},C_{f}^{t+1},ETT^t,EC^{t},EC^{t+1},U^{t+1},EU^{t}) \\
             = \PP(EU^t|EC^t)\PP(EC^t|EC^{t+1})\PP(EC^{t+1}|ETT^t)\PP(ETT^t)\\
-            \times \PP(C_{c}^{t+1}|EC^{t+1})\PP(C_{t}^{t+1})\PP(TT^t)\PP(C_{f}^{t+1}|TT^{t})\\
-            \times \PP(\lambda|C_{f}^{t+1},C_{m}^{t+1})\PP(C_{m}^{t+1}|C_{t}^{t+1},C_{c}^{t+1}) \PP(U^{t+1}|C_{f}^{t+1})\\
+            \times \PP(C_{c}^{t+1}|EC^{t+1})\PP(C_{t}^{t+1})\PP(C_{m}^{t+1}|C_{t}^{t+1},C_{c}^{t+1}) \\
+            \times \PP(\lambda|C_{f}^{t+1},C_{m}^{t+1}) \PP(C_{f}^{t+1}|TT^{t}) \PP(TT^t)  \PP(U^{t+1}|C_{f}^{t+1})\\
         Forms\\
-            \PP(U^{t+1}|C_f^{t+1}=c) = \mathcal{N}(\mu_{c},\sigma_{c}^2)\\
             \PP(EU^t | EC^t=ec) = \mathcal{N}(\mu_{ec},\sigma{ec}^2)\\
             \PP(EC^t|EC^{t+1}=ec^{t+1}) = Categorical(K',p_{ec^{t+1}})\\
-            \PP(ETT^t) = Categorical(V',p_{ETT}),\ \mathrm{comes\ from\ an\ other\ model}\\
             \PP(EC^{t+1}|ETT^t=ett) = Categorical(K',p_{ett})\\
+            \PP(ETT^t) = Categorical(V',p_{ett}),\ \mathrm{comes\ from\ an\ other\ model}\\
             \PP(C_c^{t+1}|EC^{t+1}=ec) = Categorical(K,p_{ec})\\
             \PP(C_t^{t+1}) = Categorical(K,p_{tac})\\
+            \PP(C_m^{t+1}|C_t^{t+1},C_c^{t+1}) = \alpha \PP(C_t^{t+1}) + (1-\alpha)\PP(C_c^{t+1})\\
             \PP(\lambda = 1 | C_f, C_m=c_m) = 1\ \mathrm{iff\ } \PP(C_f=c_m) \neq 0,\ \mathrm{else}\ 0\\
             \PP(C_f^{t+1}=c_f|TT=tt) = 1\ \mathrm{iff\ } c_f\ \mathrm{producible\ with}\ tt,\ \mathrm{else}\ 0\\
+            \PP(U^{t+1}|C_f^{t+1}=c) = \mathcal{N}(\mu_{c},\sigma_{c}^2)\\
         \end{cases}\\
     Identification\\
             \mu_{c},\sigma_{c}\ \mathrm{learned\ by\ EM\ on\ the\ full\ dataset}\\
@@ -1104,7 +1143,7 @@ Question \\
 
 %%% To benchmark our clustering, we use a slightly different model in which $\PP(EC^{t+1})=\PP(EC^t)$ (we want to know which army counters the other in a given battle). The question that we will ask is $\PP(C_c^{t+1}|eu^t)$, the distribution on the counter army cluster knowing all the enemy's army unit types proportions. TODO
 
-\subsubsection{Evaluation of clustering}
+We did not evaluate directly $\PP(U^{t+1}|eu^t,tt^t,\lambda=1)$ the efficiency of the army compositions which would be produced. Indeed, it is difficult to make it independent from (at least) the specific micro-management of different unit types composing the army. The quality of $\PP(ETT)$ also has to be taken into account. Instead, we evaluated the reduction of armies compositions ($EU$ and $U$ sets of variables) into clusters ($EC$ and $C$ variables) and the subsequent $\PP(C_c | EC)$ table. 
 
 We use the dataset presented in section~\ref{sec:dataset} in last chapter (tactics). It contains everything we need about the state and battles, units involved, units lost, winners. There are 7708 games. We only consider battles with about even force sizes, but that lets a sizable number on the more than 178,000 battles of the dataset. 
 %All the results presented in this section represent the nine match-ups (races combinations) in 1 versus 1 (duel) of StarCraft. We worked with a data-set of 7708 replays of highly skilled human players. 
@@ -1112,21 +1151,52 @@ For each match-up, we set aside 100 test matches, and use the remaining of the d
 We preferred robustness to precision and thus we did not remove outliers: better scores can easily be achieved by considering only stereotypical armies/battles. %or more amateur players (which styles are less pronounced). 
 Performance wise, for the biggest dataset (PvT) the learning part takes around 100 second on a 2.8 Ghz Core 2 Duo CPU (and it is easily serializable) for 2408 games (57 seconds to fit and select the GMM, and 42 seconds to fill the probability tables / fit the Categorical distributions). The time to parse all the dataset is far larger (617 seconds with an SSD). %Each inference (question) step takes around $YYY$ second. 
 
-To benchmark our clustering method%s (home-made, K-means, GMM)
-, we reduced battle observations to clusters for both parties and used the learned $P(C_c|EC)$ to estimate the outcome of the battle. For that, we used battles with limited \textit{disparities} (the maximum strength ratio of one army over the other) of 1.1 to 1.5. There is an average of 5 battles per game at a 1.3 disparity threshold (more above). The baseline heuristic uses the sum of the values of the units (see section~\ref{sec:scoringheuristics} for a reminder) to decide which side should win. If we note $v(unit)$ the value of a unit, the heuristic computes $\sum_{unit} v(unit)$ for each army and predicts that the winner is the one with the biggest score.
+\subsubsection{Evaluation of clustering}
 
-A summary of the main metrics is shown in Table~\ref{tab:openingsresults}: we can see that predicting battle outcomes (even with a high disparity) with ``just probabilities'' of $P(C_c|EC)$ (without taking the forces into account) gives relevant results. Note that this is a very high level (abstract) view of a battle, we do not consider tactical positions, nor players' attention, actions, etc. We can somehow view the ``just prob.'' results as the military efficiency improvement we can (at least) expect from having the right army composition. 
-Also, without explicitly labeling clusters, one can apply thresholding to special units (observers, arbiters, science vessels...) to generate more specific clusters: we did not include these results here but they sometimes drastically increase prediction scores. % TODO
+We will look at the predictive power of the $\PP(C_c | EC)$ (comprehending the reduction from $U$ to $C$ and $EU$ to $EC$) for the results of battles. For each battle, we know the units involved (types and numbers) and we look at predicting the winner.
+
+\vspace{0.2cm}
+\textit{Metrics}\\
+Each battle consists in numbers of units involved for each types and each parties (the two players). For each battle we reduce the two armies to two Gaussian mixtures ($\PP(C)$ and $\PP(EC)$). To benchmark our clustering method%s (home-made, K-means, GMM)
+, %we reduced battle observations to clusters for both parties and. 
+we then used the learned $P(C_c|EC)$ to estimate the outcome of the battle. For that, we used battles with limited \textit{disparities} (the maximum strength ratio of one army over the other) of 1.1 to 1.5. Note that the army which has the superior forces numbers has \textbf{more than a linear advantage} over their opponent (because of focus firing\footnote{Efficiently micro-managed, an army 1.5 times superior to their opponents can keep much more than one third of the units alive.}), so a disparity of 1.5 is very high. For information, there is an average of 5 battles per game at a 1.3 disparity threshold, and the numbers of battles per game increase with the disparity threshold.
+
+We also made up a baseline heuristic, which uses the sum of the values of the units (see section~\ref{sec:scoringheuristics} for a reminder) to decide which side should win. If we note $v(unit)$ the value of a unit, the heuristic computes $\sum_{unit} v(unit)$ for each army and predicts that the winner is the one with the biggest score. Of course, we recall that a random predictor would predict the result of the battle correctly $50\%$ of the time.
+
+A summary of the main metrics is shown in Table~\ref{tab:openingsresults}, the first line can be read as: for a forces disparity of 1.1, for Protoss vs Protoss (first column),
+\begin{itemize}
+    \item considering only military units
+\begin{itemize}
+    \item the heuristic predicts the outcome of the battle correctly 63\% of the time.
+    \item the probability of a clusters mixture to win against another ($\PP(C|EC)$), without taking the forces sizes into account, predicts the outcome correctly 54\% of the time.
+    \item the probability of a clusters mixture to win against another, taking also the forces sizes into account ($\PP(C|EC)\times \sum_{unit}v(unit)$), predicts the outcome correctly 61\% of the time.
+\end{itemize}
+    \item considering only all units involved in the battle (military units, plus static defenses and workers): same as above.
+\end{itemize}
+And then it is given for all \gloss{matchup} (columns) and different forces disparities (lines). The last column sums up the means on all match-ups, with the whole army (military units plus static defenses and workers involved), for the three metrics.
+
+Also, without explicitly labeling clusters, one can apply thresholding to special units (observers, arbiters, science vessels...) to generate more specific clusters: we did not include these results here (they include too much expertize/tuning) but they sometimes drastically increase prediction scores. % TODO
+
+\vspace{0.2cm}
+\textit{Predictive power}\\
+We can see that predicting battle outcomes (even with a high disparity) with ``just probabilities'' of $\PP(C_c|EC)$ (without taking the forces into account) gives relevant results as they are always above random predictions. Note that this is a very high level (abstract) view of a battle, we do not consider tactical positions, nor players' attention, actions, etc. Also, it is better (in average) to consider the heuristic with the composition of the army (prob$\times$heuristic) than to consider the heuristic alone, even for high forces disparity. This prediction results with ``just prob.'', or the fact that heuristic with $\PP(C_c|EC)$ tops the heuristic alone, are a proof that the assimilation of armies compositions as Gaussian mixtures of cluster works.
+
+\vspace{0.2cm}
+\textit{Army efficiency}\\
+Secondly, and perhaps more importantly, we can view the difference between ``just prob.'' results and random guessing (50\%) as the military \textbf{efficiency improvement} that we can (at least) expect from having the right army composition. 
+Indeed, we see that for small forces disparities (up to 1.1 for instance), the prediction with army composition only (``just prob.'': 63.2\%) is better that the prediction with the baseline heuristic (61.7\%). It means that \textit{we can expect to win 63.2\% of the time (instead of 50\%) with an (almost) equal investment if we have the right composition}. %If we consider that half the time the player with the best composition also has the smallest army, it means that 29.25\% of the time, this player with down to only two third of the enemy's army force won against 
+Also, when we predict 58.5\% of the time the accurate result of a battle with disparity up to 1.5 from ``just prob.'', this success in prediction is independent of the sizes of the armies. What we predicted is that the player with the better army composition won (not necessarily the one with more or more expensive units). 
+
 
 \setlength{\tabcolsep}{6pt}
 \begin{table}[h]
 %\caption{Summary of the clustering evaluation (for GMM), main metrics}
 \begin{center}
 \begin{small}
-\begin{tabular}{|c|c|cc|cc|cc|cc|cc|cc|}%cc|}
+\begin{tabular}{|c|c|cc|cc|cc|cc|cc|cc|c|}%cc|}
 \hline
-forces & scores & \multicolumn{2}{|c|}{PvP} & \multicolumn{2}{|c|}{PvT} & \multicolumn{2}{|c|}{PvZ} & \multicolumn{2}{|c|}{TvT} & \multicolumn{2}{|c|}{TvZ} & \multicolumn{2}{|c|}{ZvZ} \\%& \multicolumn{2}{|c|}{Mean amateurs} \\
-disparity & in \% & m & ws & m & ws & m & ws & m & ws & m & ws& m & ws \\
+\begin{footnotesize}forces\end{footnotesize} & scores & \multicolumn{2}{|c|}{PvP} & \multicolumn{2}{|c|}{PvT} & \multicolumn{2}{|c|}{PvZ} & \multicolumn{2}{|c|}{TvT} & \multicolumn{2}{|c|}{TvZ} & \multicolumn{2}{|c|}{ZvZ} & mean \\%& \multicolumn{2}{|c|}{Mean amateurs} \\
+\begin{footnotesize}disparity\end{footnotesize} & in \% & m & ws & m & ws & m & ws & m & ws & m & ws& m & ws & ws\\
 \hline
 
  %& \multicolumn{2}{|l|}{\#battles learn} & & & & & & \\
@@ -1134,17 +1204,17 @@ disparity & in \% & m & ws & m & ws & m & ws & m & ws & m & ws& m & ws \\
 % & \multicolumn{2}{|l|}{\#battles test} & & & & & & \\
  %& \multicolumn{2}{|c|}{\#test} & & & & & & \\
  %& \begin{sideways}\parbox{3mm}{\begin{small}w\end{small}}\end{sideways}
-& heuristic & \textbf{63} & 63 & 58 & 58 & 58 & 58 & \textbf{65} & \textbf{65} & 70 & 70 & 56 & 56 \\
-1.1     & \textbf{just prob.} & 54 & 58 & 68 & \textit{72} & 60 & 61 & 55 & 56 & 69 & 69 & 62 & 63 \\ 
-    & prob$\times$heuristic & 61 & \textbf{63} & \textbf{69} & \textbf{72} & \textbf{59} & \textbf{61} & 62 & 64 & \textbf{70} & \textbf{73} & \textbf{66} & \textbf{69} \\
+& heuristic & \textbf{63} & 63 & 58 & 58 & 58 & 58 & \textbf{65} & \textbf{65} & 70 & 70 & 56 & 56 & 61.7 \\
+1.1     & \textbf{just prob.} & 54 & 58 & 68 & \textit{72} & 60 & 61 & 55 & 56 & 69 & 69 & 62 & 63 & 63.2 \\ 
+    & prob$\times$heuristic & 61 & \textbf{63} & \textbf{69} & \textbf{72} & \textbf{59} & \textbf{61} & 62 & 64 & \textbf{70} & \textbf{73} & \textbf{66} & \textbf{69} & 67.0 \\
 \hline
-& heuristic & \textbf{73} & 73 & 66 & 66 & \textbf{69} & \textbf{69} & \textbf{75} & 72 & 72 & \textbf{72} & 70 & 70 \\
-1.3     & \textbf{just prob.} & 56 & 57 & 65 & \textit{66} & 54 & 55 & 56 & 57 & 62 & 61 & 63 & 61 \\
-    & prob$\times$heuristic & 72 & \textbf{73} & \textbf{70} & \textbf{70} & 66 & 66 & 71 & \textbf{72} & \textbf{72} & 70 & \textbf{75} & \textbf{75} \\
+& heuristic & \textbf{73} & 73 & 66 & 66 & \textbf{69} & \textbf{69} & \textbf{75} & 72 & 72 & \textbf{72} & 70 & 70 & 70.3 \\
+1.3     & \textbf{just prob.} & 56 & 57 & 65 & \textit{66} & 54 & 55 & 56 & 57 & 62 & 61 & 63 & 61 & 59.5 \\
+    & prob$\times$heuristic & 72 & \textbf{73} & \textbf{70} & \textbf{70} & 66 & 66 & 71 & \textbf{72} & \textbf{72} & 70 & \textbf{75} & \textbf{75} & 71.0 \\
 \hline
-& heuristic & 75 & 75 & 73 & 73 & \textbf{75} & \textbf{75} & 78 & \textbf{80} & \textbf{76} & 76 & 75 & 75 \\
-1.5     & \textbf{just prob.} & 52 & 55 & 61 & 61 & 54 & 54 & 55 & 56 & 61 & \textit{63} & 56 & 60 \\
-    & prob$\times$heuristic & \textbf{75} & \textbf{76} & \textbf{74} & \textbf{75} & 72 & 72 & \textbf{78} & 78 & 73 & \textbf{76} & \textbf{77} & \textbf{80} \\
+& heuristic & 75 & 75 & 73 & 73 & \textbf{75} & \textbf{75} & 78 & \textbf{80} & \textbf{76} & 76 & 75 & 75 & 75.7 \\
+1.5     & \textbf{just prob.} & 52 & 55 & 61 & 61 & 54 & 54 & 55 & 56 & 61 & \textit{63} & 56 & 60 & 58.2 \\
+    & prob$\times$heuristic & \textbf{75} & \textbf{76} & \textbf{74} & \textbf{75} & 72 & 72 & \textbf{78} & 78 & 73 & \textbf{76} & \textbf{77} & \textbf{80} & 76.2 \\
 \hline
  %& measure & \multicolumn{2}{|c|}{$d$ for $k=0$} & \multicolumn{2}{|c|}{$k$ for $d=1$} & \multicolumn{2}{|c|}{$k$ for $d=2$} & \multicolumn{2}{|c|}{$k$ for $d=3$} \\
 \end{tabular}
@@ -1159,13 +1229,21 @@ disparity & in \% & m & ws & m & ws & m & ws & m & ws & m & ws& m & ws \\
 %%% TODO Isomap ?
 \begin{figure}
 \centerline{\includegraphics[width=0.65\columnwidth]{images/GMM_ISO_Z2.png}}
-\caption{2 dimensional Isomap projection of a small dataset of battles for Zerg (vs Protoss) with most probable Gaussian mixture model components as labels.}
+\caption{2 dimensional Isomap projection of a small dataset of battles for Zerg (vs Protoss) with most probable Gaussian mixture components as labels. The clusters are (Gaussian components) are labeled in colored numbers and projected in this 2 dimensional space.}
 \label{fig:isoz}
 \end{figure}
 
-Figure~\ref{fig:isoz} shows a 2D Isomap \citep{isomap} projection of the battles on a small ZvP dataset. Isomap finds a low-dimensional non-linear embedding of the high dimensionality ($N$ or $N'$ dimensions, as much as unit types, the length of $U$ or $EU$) space in which we represent armies. The fact that the embedding is quasi-isometric allows us to compare the intra- and inter- clusters similarities. The cluster identified by $2$ seems strange (in this projection), but all the others clusters seem to make sense.
+Figure~\ref{fig:isoz} shows a 2D Isomap \citep{isomap} projection of the battles on a small ZvP dataset. Isomap finds a low-dimensional non-linear embedding of the high dimensionality ($N$ or $N'$ dimensions, as much as unit types, the length of $U$ or $EU$) space in which we represent armies. The fact that the embedding is quasi-isometric allows us to compare the intra- and inter- clusters similarities. Most clusters seem to make sense as strong, discriminating components. The clusters identified by the numbers $2$ and $7$ (in this projection) are not so discriminative, so they probably correspond to a classic backbone that we find in several mixtures.
 
-Figure~\ref{fig:parallelplot} shows a parallel plot of \textit{army compositions}. Each vertical (and parallel) axis represents one dimension and is scaled between $value\_min$ and $value\_max$ for the associated feature. We removed the less frequent components to keep only the 8 most important unit types of the PvP match-up. The rightmost axis corresponds to the 8 mixtures of the GMM associated to PvP army types. We colored each army (each trajectory in this 8 dimensional space) by the dominant (most probable) mixture. Expert StarCraft player will directl recognize the clusters.
+Figure~\ref{fig:parallelplot} shows a parallel plot of \textit{army compositions}. We removed the less frequent unit types to keep only the 8 most important unit types of the PvP match-up, and we display a 8 dimensional representation of the army composition, each vertical axis represents one dimension. Each line (trajectory in this 8 dimensional space) represents an army composition (engaged in a battle) and gives the percentage\footnote{scales are between 0 and a maximum value $\leq 100\%$, different across unit types} of each of the unit types. This lines (armies) are colored with their most probable mixture component, which are shown in the rightmost axis. We have 8 clusters (Gaussian mixtures components), this not related to the 8 unit types used as the number of mixtures was chosen by \glos{BIC} score. Expert StarCraft players will directly recognize the clusters of typical armies, here are some of them:
+\begin{itemize}
+    \item Light blue corresponds to the ``Reaver Drop'' tactical squads, which aims are to transport (with the flying Shuttle) the slow Reaver (zone damage artillery) inside the opponent's base to cause massive economical damages.
+    \item Red corresponds to the ``Nony'' typical army that is played in PvP (lots of Dragoons, supported by Reaver and Shuttle).
+    \item Green corresponds to a High Templar and Archon heavy army, the gas invested in such high tech units makes it that there are less Dragoons, completed by more Zealots (which cost no gas).
+    \item Purple corresponds to Dark Templar (``sneaky'', as Dark Templars are invisible) special tactics (and opening).
+\end{itemize}
+
+%Each vertical (and parallel) axis represents one dimension and is scaled between $value\_min$ and $value\_max$ for the associated feature. We removed the less frequent components to keep only the 8 most important unit types of the PvP match-up. The rightmost axis corresponds to the 8 mixtures of the GMM associated to PvP army types. We colored each army (each trajectory in this 8 dimensional space) by the dominant (most probable) mixture. Expert StarCraft player will directly recognize the clusters.
 
 \begin{figure}[h]
 \centerline{\includegraphics[width=1.16\columnwidth]{images/PvP_small.png}}
@@ -1193,19 +1271,11 @@ Figure~\ref{ecknowingecnext} showcases the dynamics of clusters components: $P(E
 %%% \label{ecnextknowingett}
 %%% \end{figure}
 
-\subsubsection{Extensions}
+\subsection{Possible Improvements}
 
 Here, we focused on asking $\PP(U^{t+1}|eu^t, tt^t, \lambda=1)$, and evaluated (in the absence of ground truth for full armies compositions) the two key components that are $\PP(U|C)$ (or $\PP(EC_{1:M}|EC)$) and $\PP(C_c|EC)$. Many other questions can be asked: $\PP(TT^t|eu^t)$ can help us adapt our tech tree development to the opponent's army. If we know the opponent's army composition only partially, we can benefit of knowledge about $ETT$ to know what is possible, but also probable, by asking $P(EC^t|Observations)$.
 
 TODO
-
-
-
-
-%\subsection{Possible improvements}
-
-
-%%% \subsection{Results on StarCraft}
 
 %%% \begin{quotation}\textit{
 %%% However beautiful the strategy, you should occasionally look at the results.
@@ -1218,8 +1288,10 @@ TODO
 \section{Conclusion}
 
 We contributed a probabilistic model to be able to compute the distribution over openings (strategies) of the opponent in a RTS game from partial and noisy observations. %The authors are not aware of any previous works able to deal effectively with partial and noisy observations. 
-The bot can adapt to the opponent's strategy as it predicts the opening with $63-68\%$ of recognition rate at 5 minutes and $>70\%$ of recognition rate at 10 minutes (up to $94\%$), while having strong robustness to noise ($>50\%$ recognition rate with $50\%$ missing observations). It can be used in production due to its low CPU (and memory) footprint. We also contributed a semi-supervised method to label RTS game logs (replays) with openings (strategies). Both our implementations are free software and can be found online\footnote{\url{https://github.com/SnippyHolloW/OpeningTech/}}. We use this model in our StarCraft AI competition entry bot as it enables it to deal with the incomplete knowledge gathered from scouting.
+The bot can adapt to the opponent's strategy as it predicts the opening with $63-68\%$ of recognition rate at 5 minutes and $>70\%$ of recognition rate at 10 minutes (up to $94\%$), while having strong robustness to noise ($>50\%$ recognition rate with $50\%$ missing observations). It can be used in production due to its low CPU (and memory) footprint. 
 
-We presented a probabilistic model inferring the best army composition given what was previously seen (from replays, or previous games), integrating adaptation to the opponent with other constraints (tactics). One of the main advantages of this approach is to be able to deal natively with incomplete information, due to player's intentions, and to the fog of war in RTS. The army composition dimensionality reduction (clustering: unsupervised) can be applied to any game and coupled with other techniques, for instance for situation assessment in case-based planning. The results in battle outcome prediction (from few information) shows its situation assessment potential. %Finally, we will use this model in our StarCraft AI competition entry bot as it facilitates adaptive decision-making on the production plan. The main research direction is now to find a way to evaluate the full model integrated to a bot, both for performance of the bot and for the fun of a human player.
+We also contributed a semi-supervised method to label RTS game logs (replays) with openings (strategies). Both our implementations are free software and can be found online\footnote{\url{https://github.com/SnippyHolloW/OpeningTech/}}. We use this model in our StarCraft AI competition entry bot as it enables it to deal with the incomplete knowledge gathered from scouting.
+
+We presented a probabilistic model inferring the best army composition given what was previously seen (from replays, or previous games), integrating adaptation to the opponent with other constraints (tactics). One of the main advantages of this approach is to be able to deal natively with incomplete information, due to player's intentions, and to the fog of war in RTS. The army composition dimensionality reduction (clustering) can be applied to any game and coupled with other techniques, for instance for situation assessment in case-based planning. The results in battle outcome prediction (from few information) shows its situation assessment potential. %Finally, we will use this model in our StarCraft AI competition entry bot as it facilitates adaptive decision-making on the production plan. The main research direction is now to find a way to evaluate the full model integrated to a bot, both for performance of the bot and for the fun of a human player.
 
 %%% Not easy to use in bot TODO
