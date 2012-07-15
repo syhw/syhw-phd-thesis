@@ -633,6 +633,7 @@ That way, one can ask ``what build/tech tree should I go for against what I see 
 
 \clearpage
 \section{Openings}
+\label{sec:openingspred}
 
 \subsection{Bayesian model}
 We now build upon the previous \glos{buildtree} predictor model to predict the opponent's strategies (openings) from partial observations.
@@ -1254,12 +1255,13 @@ Figure~\ref{fig:parallelplot} shows a parallel plot of \textit{army compositions
 
 \subsubsection{Analysis of dynamics}
 
-Figure~\ref{ecknowingecnext} showcases the dynamics of clusters components: $P(EC^t|EC^{t+1}$, for Zerg (vs Protoss) for $\Delta t$ of 2 minutes. TODO %As shown in Figure~\ref{bbq_dataflow}, this model is part of the strategy module of our next AIIDE competition bot.
+Figure~\ref{ecknowingecnext} showcases the dynamics of clusters components: $P(EC^t|EC^{t+1}$, for Zerg (vs Protoss) for $\Delta t$ of 2 minutes. The diagonal components correspond to those which do not change between $t$ and $t+1$ ($\Leftrightarrow t+2$minutes), and so it is normal that they are very high. The others components show the shift between clusters. For instance, the first line seventh column (in (0,6)) square shows a brutal transition from the first component (0) to the seventh (6). This may be the production of Mutalisks\footnote{Mutalisks are a flying units which require to unlock several technologies and thus for which player save up for the production while opening their tech tree.} from a previously very low-tech army (Zerglings).
+%As shown in Figure~\ref{bbq_dataflow}, this model is part of the strategy module of our next AIIDE competition bot.
 %Finally, in the absence of ground truth to directly evaluate the whole model, we can only 
 
 \begin{figure}[h]
 \centerline{\includegraphics[width=0.76\columnwidth]{images/Z_EC_knowing_ECnext.png}}
-\caption{Dynamics of clusters: $\PP(EC^t|EC^{t+1})$ for Zerg}
+\caption{Dynamics of clusters: $\PP(EC^t|EC^{t+1})$ for Zerg, with $\Delta t = 2$ minutes}
 \label{ecknowingecnext}
 \end{figure}
 
@@ -1271,16 +1273,14 @@ Figure~\ref{ecknowingecnext} showcases the dynamics of clusters components: $P(E
 %%% \label{ecnextknowingett}
 %%% \end{figure}
 
-\subsection{Possible Improvements}
+\subsubsection{Extensions}
 
-Here, we focused on asking $\PP(U^{t+1}|eu^t, tt^t, \lambda=1)$, and evaluated (in the absence of ground truth for full armies compositions) the two key components that are $\PP(U|C)$ (or $\PP(EC_{1:M}|EC)$) and $\PP(C_c|EC)$. Many other questions can be asked: $\PP(TT^t|eu^t)$ can help us adapt our tech tree development to the opponent's army. If we know the opponent's army composition only partially, we can benefit of knowledge about $ETT$ to know what is possible, but also probable, by asking $P(EC^t|Observations)$.
-
-TODO
+Here, we focused on asking $\PP(U^{t+1}|eu^t, tt^t, \lambda=1)$, and evaluated (in the absence of ground truth for full armies compositions) the two key components that are $\PP(U|C)$ (or $\PP(EU|EC)$) and $\PP(C_c|EC)$. Many other questions can be asked: $\PP(TT^t|eu^t)$ can help us adapt our tech tree development to the opponent's army. If we know the opponent's army composition only partially, we can benefit of knowledge about $ETT$ to know what is possible, but also probable, by asking $P(EC^t|Observations)$.
+% TODO
 
 %%% \begin{quotation}\textit{
 %%% However beautiful the strategy, you should occasionally look at the results.
 %%% } Winston Churchill\end{quotation}
-
 
 \clearpage
 

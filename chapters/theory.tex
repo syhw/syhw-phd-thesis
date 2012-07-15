@@ -49,7 +49,7 @@ Some games have inherent stochasticity part of the gameplay, through random acti
 As explained in section~\ref{sec:verticalcontinuity}, there are different levels of abstraction use to reason about a game. Abstracting higher level cognitive functions (strategy and tactics for instance) is an efficient way to break the complexity barrier of writing game AI. Exploiting the vertical continuity, i.e. the conditioning of higher level thinking on actions, is totally possible in a hierarchical Bayesian model. With strategies as values of $S$ and tactics as values of $T$, $\PP(T|S)$ gives the conditioning of $T$ on $S$ and thus enables us to evaluate only those $T$ values that are possible with given $S$ values.
 
 \subsection{Horizontal continuity}
-Real-time games may use discrete time-steps (24Hz for instance for StarCraft), it does not prevent temporal continuity in strategies, tactics and, most strongly, actions. Once a decision has been made at a given level, it may conditions subsequent decisions at same level (see section~\ref{sec:sec:horizontalcontinuity}). There are several Bayesian models able to deal with sequences, filter models, from which \newglossaryentry{HMM}{name=HMM,description={Hidden Markov Model, a dynamic Bayesian network estimating hidden states following a Markov process from observations}}Hidden Markov Models (\glos{HMM}) \citep{Rabiner}, Kalman filters \citep{Kalman1960} and particle filters \citep{particleFiltering} are specializations of. With states $S$ and observations $O$, filter models under the Markov assumption represent the joint $\PP(S^0).\PP(O^0|S^0).\prod_{t=1}^T[\PP(S^t | S^{t-1}).\PP(O^t|S^t)]$. Thus, from partial informations, one can use more than just the probability of observations knowing states to reconstruct the state, but also the probability of states transitions (the sequences).
+Real-time games may use discrete time-steps (24Hz for instance for StarCraft), it does not prevent temporal continuity in strategies, tactics and, most strongly, actions. Once a decision has been made at a given level, it may conditions subsequent decisions at same level (see section~\ref{sec:horizontalcontinuity}). There are several Bayesian models able to deal with sequences, filter models, from which \newglossaryentry{HMM}{name=HMM,description={Hidden Markov Model, a dynamic Bayesian network estimating hidden states following a Markov process from observations}}Hidden Markov Models (\glos{HMM}) \citep{Rabiner}, Kalman filters \citep{Kalman1960} and particle filters \citep{particleFiltering} are specializations of. With states $S$ and observations $O$, filter models under the Markov assumption represent the joint $\PP(S^0).\PP(O^0|S^0).\prod_{t=1}^T[\PP(S^t | S^{t-1}).\PP(O^t|S^t)]$. Thus, from partial informations, one can use more than just the probability of observations knowing states to reconstruct the state, but also the probability of states transitions (the sequences).
 
 \subsection{Autonomy and robust programming}
 Autonomy is the ability to deal with new states: the challenge of autonomous characters arises from state spaces too big to be fully specified (in scripts / FSM). In the case of discrete, programmer-specified states, the (modes of) behaviors of the autonomous agent are limited to what has been authored. Again, probabilistic modeling enables one to recognize unspecified states as soft mixtures of known states. For instance, with $S$ the state, instead of having either $\PP(S=0)=1.0$ or $\PP(S=1)=1.0$, one can be in $\PP(S=0)=0.2$ and $\PP(S=1)=0.8$, which allows to have behaviors composed from different states. This form of continuum allows to deal with unknown state as an incomplete version of a known state which subsumes it. Autonomy can also be reached through learning, being it through online or offline learning. Offline learning is used to learn parameters that does not have to be specified by the programmers and/or game designers. One can use data or experiments with known/wanted situations (supervised learning, reinforcement learning), or explore data (unsupervised learning), or game states (evolutionary algorithms). Online learning can provide adaptability of the AI to the player and/or its own competency playing the game. %This gives some form of continuum, which makes the bot more robust to unknown situations.
@@ -73,15 +73,19 @@ Later, by extending logic to \textit{plausible reasoning}, \cite{Jaynes} arrived
 By turning rules of inferences into their probabilistic counterparts, the links between logic and plausible reasoning are direct. With $C=[A\Rightarrow B]$, we have:
 \begin{itemize}
     \item modus ponens, $A$ entails $B$ and $A=true$ gives us $B=false$: $$\frac{[A\Rightarrow B] \wedge [A=true]}{B=true}$$ translates to $$\PP(B|A,C)=\frac{\PP(A,B|C)}{\PP(A|C)}$$
-    If $A$ stands for ``the enemy has done action $a$'' and $B$ for ``the enemy is doing action $b$'', the probabilistic version of modus ponens means ``the enemy may have doing action $a$ and thus be doing action $b$''. The probability that the enemy is doing $b$ knowing she did $a$ is the probability the she does $a$ and $b$ considering that she did $a$ already (i.e. divided by the probability of $a$).
+As $\PP(A,B|C) = \PP(A|C)$ we have $\PP(B|A,C)=1$
+    %If $A$ stands for ``the enemy has done action $a$'' and $B$ for ``the enemy is doing action $b$'', the probabilistic version of modus ponens means ``the enemy may have doing action $a$ and thus be doing action $b$''. The probability that the enemy is doing $b$ knowing she did $a$ is the probability that she does $a$ and $b$ considering that she did $a$ already (i.e. divided by the probability of $a$).
     \item modus tollens, $A$ entails $B$ and $B=false$ gives us $A=false$ (otherwise $B=true$): $$\frac{[A\Rightarrow B] \wedge [B=false]}{A=false}$$ translates to $$\PP(A|C\neg B)=\frac{\PP(A \neg B|C)}{\PP(\neg B|C)}$$
-    With the same meanings for $A$ and $B$ as above: ``the enemy may not be doing action $b$ and thus it is less probable that she did action $a$''. The probability that the enemy has done action $a$ knowing she is not doing $b$ is the probability that she does $a$ and not $b$ considering she is not doing $b$ (i.e. divided by the probability of not doing $b$).
+As $\PP(A\neg B | C) = 0$ we have $\PP(A|\neg B, C) =0$, so $\PP(\neg A| \neg B, C)=1$
+    %With the same meanings for $A$ and $B$ as above: ``the enemy may not be doing action $b$ and thus it is less probable that she did action $a$''. The probability that the enemy has done action $a$ knowing she is not doing $b$ is the probability that she does $a$ and not $b$ considering she is not doing $b$ (i.e. divided by the probability of not doing $b$).
     
 \end{itemize}
 Also, additionally to the two strong logic syllogisms above, plausible reasoning gets two weak syllogisms, from:
 \begin{itemize}
     \item $$\PP(A|B,C)=\PP(A|C)\frac{\PP(B|A,C)}{\PP(B|C)}$$ we get $$\frac{[A\Rightarrow B] \wedge [B=true]}{A\ \mathrm{becomes\ more\ plausible}}$$
-    Using the same meanings for $A$ and $B$ as above: ``the enemy is doing $b$ so it is more probable that she did $a$ beforehand (than if we knew nothing)''. Because there are only a (not strict) subset of all the possible states (possibly all possible states) which may lead in new states, when we are in these new states, the probability of their origin states goes up.
+If $A$ stands for ``the enemy has done action $a$'' and $B$ for ``the enemy is doing action $b$'': 
+%Using the same meanings for $A$ and $B$ as above: 
+``the enemy is doing $b$ so it is more probable that she did $a$ beforehand (than if we knew nothing)''. Because there are only a (not strict) subset of all the possible states (possibly all possible states) which may lead in new states, when we are in these new states, the probability of their origin states goes up.
     \item $$\PP(B| C\neg A)=\PP(B|C)\frac{\PP(\neg A|B,C)}{\PP(\neg A|C)}$$ we get $$\frac{[A\Rightarrow B] \wedge [A=false]}{B\ \mathrm{becomes\ less\ plausible}}$$
     Using the same meanings for $A$ and $B$ as above: ``the enemy has not done $a$ so it is less probable that she does $b$ (than if we knew nothing)''. Because there are only a (not strict) subset of all the possible states (possibly all possible states) which may lead in new states, when we are not in one of these origin states, there are less ways to go to new states.
 \end{itemize}
@@ -221,6 +225,7 @@ Actions available to the players are to move and to use their abilities:
 Here, we consider that the choice of a target and an ability to use on it strongly condition the movements of the player, so we will not deal with moving the character.
 
 \subsection{Bayesian model}
+We recall that write a Bayesian model by first \textit{describing} the variables, their relations (the decomposition of the join probability), and the forms of the distribution. Then we explain how we \textit{identified} the parameters and finally give the \textit{questions} that will be asked.
 \subsubsection{Variables}
 
 A simple set of variables is as follows: 
@@ -269,7 +274,7 @@ We want to compute the probability distribution on the variable target ($T$) and
     \item The probability of a given target depends on the previous one (it encodes the previous decision and so all previous states). 
     \item The health (or hit) points ($HP_i$) depends on the facts that the $i$th character is an ally ($A_i$), on his class ($C_i$), and if he is a target ($T$). Such a conditional probability table should be learned, but we can already foresee that a targeted ally with a tanking class ($C=tank$) would have a high probability of having low hit points ($HP$) because taking it for target means that we intend to heal him.
     \item The distance of the unit $i$ ($D_i$) is more probably far if unit $i$ is an enemy ($A_i=false$) and we target it ($T=i$) as our kind of druid attacks with ranged spells and does not fare well in the middle of the battlefield.
-    \item The probability of the $i$th character being an ally depends on if we target allies of foes more often: that is $\PP(A_i|T)$ encodes our propensity to target allies (with heals and enhancements) or foes (with damaging or crippling abilities).
+    \item The probability of the $i$th character being an ally depends on if we target allies of foes more often: that is $\PP(A_i|S,T)$ encodes our propensity to target allies (with heals and enhancements) or foes (with damaging or crippling abilities).
     \item The probability that the $i$th units is losing hit points ($\Delta HP_i=minus$) is higher for foes ($A_i=false$) with vulnerable classes ($C_i=healer$) that are more susceptible to be targeted ($T=i$), and also for allies ($A_i=true$) whose role is to take most of the damages ($C_i=tank$). As for $A_i$, the probability of $ID_i$ is driven by our %
 %||
 %. The probability that the $i$th units is being damaged ($\Delta HP_i=``-''$) will top when we use a heal ($S=heal$) on an ally, as we want to maintain everyone alive.  
@@ -383,15 +388,15 @@ and our robot eventually moves on targeting their ``Tank'' ally (to heal them). 
 
 \begin{figure}[h!]
 \begin{center}
-\includegraphics[width=7.8cm]{images/wow_distrib_target1.png} \includegraphics[width=7.8cm]{images/wow_distrib_target2.png}
-\caption{Left: probabilities of targets depending on the probability that a target is dying ($\PP(ID_i=true | T=i)$) with setup A (no ally is risking death). Right: same, with setup B (the ``tank'' ally is risking death).}
+\includegraphics[width=0.496\columnwidth]{images/wow_distrib_target1.png} \includegraphics[width=0.496\columnwidth]{images/wow_distrib_target2.png}
+\caption{Left: probabilities of targets depending on the probability that a target is dying ($\PP(ID_i=true | T=i)$) with setup A (no enemy is risking death). Right: same, with setup B (the foe ``Add'' is risking death). We can see that the target is shifted from the ``Tank'' in setup A to the ``Add'' in setup B.}
 \label{fig:wow_target}
 \end{center}
 \end{figure}
 \begin{figure}[h!]
 \begin{center}
-\includegraphics[width=7.8cm]{images/wow_distrib_skill1.png} \includegraphics[width=7.8cm]{images/wow_distrib_skill2.png}
-\caption{Left: Probabilities of skills depending on the probability that a target is dying ($\PP(ID_i=true|T=i)$) with setup A (no ally is risking death). Right: same, with setup B (the ``tank'' ally is risking death).}
+\includegraphics[width=0.496\columnwidth]{images/wow_distrib_skill1.png} \includegraphics[width=0.496\columnwidth]{images/wow_distrib_skill2.png}
+\caption{Left: Probabilities of skills depending on the probability that a target is dying ($\PP(ID_i=true|T=i)$) with setup A (no enemy is risking death). Right: same, with setup B (the foe ``Add'' is risking death). We can see that the skill switches from ``big\_heal'' in setup A to ``big\_dd'' in setup B.}
 \label{fig:wow_skill}
 \end{center}
 \end{figure}
@@ -414,8 +419,8 @@ $\PP(ID_i=true|T=i)=0.9$ and $\PP(A_i=false|T=i)=0.6$. To make decisions about o
 
 \begin{figure}[h!]
 \begin{center}
-\includegraphics[width=12.5cm]{images/wow_distrib_target_skill.png}
-\caption{Log-probabilities of target ($T$) and skill ($S$) with setup A, and $\PP(ID_i=true|T=i)=0.9, \PP(A_i=false|T=i)=0.6$. This plot corresponds to the answer to the full question on which decision-making has to be done.}
+\includegraphics[width=0.92\columnwidth]{images/wow_distrib_target_skill.png}
+\caption{Log-probabilities of target ($T$) and skill ($S$) with setup A, and $\PP(ID_i=true|T=i)=0.9, \PP(A_i=false|T=i)=0.6$. This plot corresponds to the answer to the full question on which decision-making has to be done. The first choice (most probable $\PP(S,T)$) is to cast a ``big\_heal'' on the ``tank''. The second choice is to cast ``debuff\_armor'' on the ``lich''...}
 \label{fig:wow_target_skill}
 \end{center}
 \end{figure}
@@ -454,7 +459,7 @@ This limited model served the purpose of presenting Bayesian programming in prac
 \begin{itemize}
     \item cooperative behavior is not too hard to incorporate in a decision (instead of being hard-coded),
     \item it can be learned, either from observations of a human player or by reinforcement (exploration),
-    \item it is computationally tractable (for use in all games), the inference is just a series of ``probabilistic \textit{if}s'',
+    \item it is computationally tractable (for use in all games).%, the inference is just a series of ``probabilistic \textit{if}s'',
 \end{itemize}
 Moreover, using this model on another agent than the one controlled by the AI can give a prediction on what it will do, resulting in human-like, adaptive, playing style.
 
