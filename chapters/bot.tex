@@ -144,7 +144,7 @@ As presented in chapter~\ref{chapter:micro}, units are controlled in a sensory-m
 
 The \texttt{BayesianUnit} class has different fusion modes (see section~\ref{sec:unitsgroup}) set by the \texttt{UnitsGroup} depending on the \texttt{Goal} type and on the situation (number and types of enemies, terrain...). Its sensory inputs are fed by the \texttt{UnitsGroup} (objectives) and by the \texttt{MapManager} (potential damages, terrain) and the \texttt{EUnitsFilter} (enemy units).
 
-A derivative (child) of the \texttt{BayesianUnit} class is instantiated for each unit that is controlled. A \texttt{BayesianUnit} is a modal \glos{FSM} as shown in Figure~\ref{fig:unit_HFSM}. It presents a simple interface to move and fight (\texttt{micro()}. Some parameter can be specialized depending on the particularities of unit types:
+A derivative (child) of the \texttt{BayesianUnit} class is instantiated for each unit that is controlled. A \texttt{BayesianUnit} is a modal \glos{FSM} as shown in Figure~\ref{fig:unit_HFSM}. It presents a simple interface to move and fight (the \texttt{micro()} method). Some parameter can be specialized depending on the particularities of unit types:
 \begin{itemize}
     \item the list of priority unit types to target (because of units attacks efficiencies as in rock/paper/scissors),
     \item the reasons for which to flee (\texttt{flee?()}),
@@ -198,7 +198,7 @@ At the moment, enemy units filtering is very simple and just diffuse uniformly (
 
 \label{sec:enemyunitsfilter}
 We consider a simple model, without speed nor steering nor $See$ variable for each position/unit. The fact that we see positions where the enemy units are is taken into account during the update.
-The idea is to have (learn) a multiple influences transition matrix on a Markov chain on top the regions discretization (see chapter~\ref{chapter:tactics}), which can be seen as one Markov chain for each combination of motion-influencing factors.
+The idea is to have (learn) a multiple influences transition matrix on a Markov chain on top of the regions discretization (see chapter~\ref{chapter:tactics}), which can be seen as one Markov chain for each combination of motion-influencing factors.
 
 The \textbf{perception} of such a model would be for each unit if it is in a given region, as the bottom diagram in Figure~\ref{fig:BWTA}. From there, we can consider either map-dependent regions, regions uniquely identified as they are in given maps that is; or we can consider regions labeled by their utility. We prefer (and will explain) this second approach as it allows our model to be applied on unknown (never seen) maps directly and allows us to incorporate more training data. The regions get a number in the order in which they appear after the main base of the player (e.g. see region numbering in Fig.~\ref{fig:terrainanalysis} and~\ref{fig:examplefilter}). %For instance regions ordering is $1 \rightarrow main\_base, 2 \rightarrow first\_expansion, 3 \rightarrow
 
@@ -214,10 +214,10 @@ The full filter works on $n$ units, each of the units having a mass in the each 
 %%%     \item $X^{t}_{i \in \llbracket 1\dots m \rrbracket , j \in \llbracket 1\dots n \rrbracket} \in \{regions\}$, the $j$th particle for the $i$th unit at time $t$.
 %%% \end{itemize}
 \begin{itemize}
-    \item $Agg \in \{true,false\}$, the player's aggressiveness (is he attacking or defending?), which can comes from other models but can also be an output here. 
-    \item $UT_{i \in \llbracket 1\dots n \rrbracket} \in \{unit\ types\}$ the type of the $i$th tracked unit.
-    \item $X^{t-1}_{i \in \llbracket 1\dots n \rrbracket} \in \llbracket r_1 \dots r_p \rrbracket$, the $i$th unit at time $t-1$.
-    \item $X^{t}_{i \in \llbracket 1\dots n \rrbracket} \in \llbracket r_1 \dots r_p \rrbracket$, the $i$th unit at time $t$.
+    \item $Agg \in \{true,false\}$, the player's aggressiveness (are they attacking or defending?), which can comes from other models but can also be an output here. 
+    \item $UT_{i \in \llbracket 1\dots n \rrbracket} \in \{unit\ types\}$ the type of the $i$th tracked unit, with $K$ unit types.
+    \item $X^{t-1}_{i \in \llbracket 1\dots n \rrbracket} \in \llbracket r_1 \dots r_m \rrbracket$, the region in which is the $i$th unit at time $t-1$.
+    \item $X^{t}_{i \in \llbracket 1\dots n \rrbracket} \in \llbracket r_1 \dots r_m \rrbracket$, the region in which is the $i$th unit at time $t$.
 \end{itemize}
 
 %we have And the $Map \in \{maps\}$ variable for map dependent models. 
@@ -240,10 +240,10 @@ We consider all units conditionally independent give learned parameters. (This m
 \textit{Forms}\\
 
 \begin{itemize}
-    \item $\PP(Agg)$ is a binomial distribution.
-    \item $\PP(UT_i)$ is categorical distribution (on unit types).
-    \item $\PP(X^{t-1}_{i}$ is a categorical distribution (on regions).
-    \item $\PP(X^t_i|X^{t-1}_i,UT_i,Agg)$ are $\#\{units\_types\} \times \abs{Agg}$ different $m\times m$ matrices of transitions from regions to other regions depending on the type of unit $i$ and of the aggressiveness of the player. (We just have $\#\{units\_types\} \times \abs{Agg} \approx 15\times 2$ different matrices for each race.)
+    \item $\PP(Agg)=Binomial(p_{agg})$ is a binomial distribution.
+    \item $\PP(UT_i)=Categorical(K,p_{ut})$ is categorical distribution (on unit types).
+    \item $\PP(X^{t-1}_{i})=Categorical(m, p_{reg})$ is a categorical distribution (on regions).
+    \item $\PP(X^t_i|X^{t-1}_i,UT_i,Agg)$ are $\#\{units\_types\} \times \abs{Agg} = K \times 2$ different $m\times m$ matrices of transitions from regions to other regions depending on the type of unit $i$ and of the aggressiveness of the player. (We just have around 15 unit types per race ($K \approx 15$) so we have $\approx 15\times 2$ different matrices for each race.)
 \end{itemize}
 
 
@@ -256,7 +256,7 @@ $\PP(X^t_i|X^{t-1}_i, UT_i, Agg)$ is learned with a Laplace rule of succession f
 & \propto & \frac{1+n_{transitions}(r'\rightarrow r, ut, agg)\PP(agg)}{\#\{entries\_to\_r\} + \sum_{j=1}^{m} n_{transitions}(r' \rightarrow r_j, ut, agg)\PP(agg)}
 \end{eqnarray*}
 
-Note that we can also (try to) learn specific parameters of this model during games against a given opponent with \glos{EM} to reconstruct all the partial observations.
+Note that we can also (try to) learn specific parameters of this model during games (not a replay, so without full information) against a given opponent with \glos{EM} to reconstruct and learn from the most likely state given all the partial observations.
 
 \vspace{0.3cm}
 \textit{Update (filtering)}\\
@@ -266,7 +266,7 @@ Note that we can also (try to) learn specific parameters of this model during ga
 \begin{eqnarray*}
 \begin{cases}
 \PP(X^t_{i} = r) = 1.0\\
-\PP(X^t_{i} = j) = 0.0\ \mathrm{iff}\ j \neq r
+\PP(X^t_{i} = r_j) = 0.0\ \forall j \ \mathrm{iff}\ r_j \neq r
 \end{cases}
 \end{eqnarray*}
 
@@ -291,7 +291,7 @@ Note that we can also (try to) learn specific parameters of this model during ga
 \end{algorithm}
 
     \item For all the other cases, we have:
-$$\PP(X^t_{i} = r) = \sum_{j=1}{m} \PP(X^{t-1}_i = r')\PP(X^t_i = r | X^{t-1}_i = r', UT_i, Agg)$$
+$$\PP(X^t_{i} = r) = \sum_{j=1}^{m} \PP(X^{t-1}_i = r_j')\PP(X^t_i = r | X^{t-1}_i = r_j', UT_i, Agg)$$
 \end{itemize}
 
 \vspace{0.3cm}
@@ -301,13 +301,13 @@ $$\PP(X^t_{i} = r) = \sum_{j=1}{m} \PP(X^{t-1}_i = r')\PP(X^t_i = r | X^{t-1}_i 
     \item When we want to infer where the $n$ enemy units are, we ask:
 \begin{eqnarray*}
 & & \PP(X_{1:n}^t| UT_{1:n}=ut_{1:n})\\
-& \propto= & \sum_{Agg} \PP(Agg) \prod_{i=1}^n \PP(ut_i) \sum_{X_i^{t-1}} \PP(X_i^t|X_i^{t-1},ut_i,Agg)\\
-& \propto & \sum_{agg=false}^{true} \PP(Agg) \prod_{i=1}^n \PP(UT_i=ut_i) \sum_{r = 1}^{m} \PP(X_i^t|X_i^{t-1}=r,ut_i,Agg=agg)
+& \propto & \sum_{Agg} \PP(Agg) \prod_{i=1}^n \PP(ut_i) \sum_{X_i^{t-1}} \PP(X_i^t|X_i^{t-1},ut_i,Agg)\\
+& \propto & \sum_{Agg=false}^{true} \PP(Agg) \prod_{i=1}^n \PP(UT_i=ut_i) \sum_{j = 1}^{m} \PP(X_i^t|X_i^{t-1}=r_j,ut_i,Agg)
 \end{eqnarray*}
     \item When we want to infer the aggressiveness of the enemy (from the troupes' movements that we have seen), we ask:
 \begin{eqnarray*}
 & & P(Agg | UT_{1:n} = ut_{1:n})\\
-& \propto & \PP(Agg) \prod_{i=1}^{n} \PP(ut_i)\sum_{X_i^t}\PP(X_i^{t-1}) \sum_{X_i^{t-1}}  \PP(X_i^t|X_i^{t-1},ut_i,Agg) 
+& \propto & \PP(Agg) \prod_{i=1}^{n} \PP(ut_i)\sum_{X_i^{t-1}}\PP(X_i^{t-1}) \sum_{X_i^{t}}  \PP(X_i^t|X_i^{t-1},ut_i,Agg) 
 \end{eqnarray*}
 \end{itemize}
 
@@ -350,7 +350,7 @@ We will now show key moments of the game, as was done with a human-played game i
 \begin{tabular}{cc}
 \includegraphics[width=0.90\columnwidth]{images/botgame/macro0.png}
 \end{tabular}
-\caption{A full screen capture of the some debug output of economical parts of BroodwarBotQ. The orange text at the top left shows the minerals/minute and gas/minute rates as well as the resources reserved for planned buildings and additional supply. The teal rectangle at the bottom of the game's view shows the buildings that will be constructed (and their future tentative positions). The big blue ellipses show the Pylons construction coverage, and the yellow rectangles show the future buildings positions.}
+\caption{A full screen capture of some debug output of economical parts of BroodwarBotQ. The orange text at the top left shows the minerals/minute and gas/minute rates as well as the resources reserved for planned buildings and additional supply. The teal rectangle at the bottom of the game's view shows the buildings that will be constructed (and their future tentative positions). The big plan blue ellipses show the Pylons construction coverage. The yellow rectangles (with numbers in their top left corners) show the future buildings planned positions.}
 \label{fig:bot_macro}
 \end{center}
 \end{figure}
@@ -361,36 +361,36 @@ Our buildings placer make it sure that there is always a path around our buildin
 
 \begin{figure}[h]
 \begin{center}
-\begin{tabular}{cc}
+%\begin{tabular}{cc}
 %\includegraphics[width=0.49\columnwidth]{images/botgame/scout0.png} &
 %\includegraphics[width=0.49\columnwidth]{images/botgame/scout0b.png} \\
-\includegraphics[width=0.499\columnwidth]{images/botgame/scout1.png} & 
-\includegraphics[width=0.499\columnwidth]{images/botgame/scout2.png}
-\end{tabular}
-\caption{Crops of screenshots of the first scouting (discovery) of an opponent's base in a Protoss vs Protoss game. The buildings shown here are the ones of the opponent. The yellow squares represent the pathfinding output. On the right, in the blue rectangle, are displayed the possible openings for the Protoss opponent and their respective probabilities (in percentage) according what we have seen. The left picture was captured a few seconds before the right one and thus we had less information about the opponent's buildings (the upper right part is black because of the fog of war).}
+\includegraphics[width=0.66\columnwidth]{images/botgame/scout1.png} %& 
+\includegraphics[width=0.66\columnwidth]{images/botgame/scout2.png}
+%\end{tabular}
+\caption{Crops of screenshots of the first scouting (discovery) of an opponent's base in a Protoss vs Protoss game. The buildings shown here are the ones of the opponent. The yellow squares represent the pathfinding output. On the bottom, in the blue rectangle, are displayed the possible openings for the Protoss opponent and their respective probabilities (in percentage) according what we have seen. The top picture was captured a few seconds before the right one and thus we had less information about the opponent's buildings (the upper right part is black because of the fog of war).}
 \label{fig:bot_scout}
 \end{center}
 \end{figure}
 
-At the beginning of the game, we have no idea about what the opponent is doing and thus our belief about their opening equals the prior (here, we set the priori to be uniform, see section~\ref{sec:openingspossibleimprovements} for how we could set it otherwise) we send a worker unit to ``scout'' the enemy's base both to know where it is and what the enemy is up to. Figure~\ref{fig:bot_scout} shows when we first arrive at the opponent's base in a case in which we have a strong evidence of what the opponent is doing and so our beliefs are heavily favoring the ``Fast Legs'' opening (in the blue rectangle on the right). We can see that with more information (the right picture) we make an even stronger prediction.
+At the beginning of the game, we have no idea about what the opponent is doing and thus our belief about their opening equals the prior (here, we set the priori to be uniform, see section~\ref{sec:openingspossibleimprovements} for how we could set it otherwise) we send a worker unit to ``scout'' the enemy's base both to know where it is and what the enemy is up to. Figure~\ref{fig:bot_scout} shows when we first arrive at the opponent's base in a case in which we have a strong evidence of what the opponent is doing and so our beliefs are heavily favoring the ``Fast Legs'' opening (in the blue rectangle on the right). We can see that with more information (the bottom picture) we make an even stronger prediction.
 
 \begin{figure}[h]
 \begin{center}
-\begin{tabular}{cc}
-\includegraphics[width=0.499\columnwidth]{images/botgame/attack0.png} &
-\includegraphics[width=0.499\columnwidth]{images/botgame/attack1.png} \\
-\includegraphics[width=0.499\columnwidth]{images/botgame/attack2.png} & 
-\includegraphics[width=0.499\columnwidth]{images/botgame/attack3.png}
-\end{tabular}
-\caption{Crops of screenshots of an attack towards a Protoss opponent. The first screenshot (top left) shows the units arriving at their formation \texttt{SubGoal} objectives (purple disks), the second (top right) shows the switch to the fight mode (for ground units) with the first enemy units appearing on the right. The third (bottom left) and fourth (bottom right) screenshots show the battle as it happens. The small squares (white to blue) show the attraction of one unit for its possible directions ($\PP(Dir_i) \forall i$): the whiter it is, the higher the probability to go there.}
+%\begin{tabular}{cc}
+\includegraphics[width=0.69\columnwidth]{images/botgame/attack0.png}
+\includegraphics[width=0.69\columnwidth]{images/botgame/attack1.png} 
+\includegraphics[width=0.496\columnwidth]{images/botgame/attack2.png}
+\includegraphics[width=0.496\columnwidth]{images/botgame/attack3.png}
+%\end{tabular}
+\caption{Crops of screenshots of an attack towards a Protoss opponent. The first screenshot (top) shows the units arriving at their formation \texttt{SubGoal} objectives (purple disks), the second shows the switch to the fight mode (for ground units) with the first enemy units appearing on the right. The third (bottom left) and fourth (bottom right) screenshots show the battle as it happens. The small squares (white to blue) show the attraction of one unit for its possible directions ($\PP(Dir_i) \forall i$): the whiter it is, the higher the probability to go there.}
 \label{fig:bot_attack}
 \end{center}
 \end{figure}
 
 If our bot does not have to defend an early rush by the opponent, it chooses to do a ``push'' (a powerful attack towards the front of the opponent's base) once it has a sufficient amount of military units, while it \gloss{expand} (take a second base) or opens up its \glos{techtree}. The first push is depicted in Figure~\ref{fig:bot_attack}: 
 \begin{itemize}
-    \item First (top left), we regroup the our forces in front of the opponent's base with a formation \texttt{SubGoal}.
-    \item By trying to enter the opponent's base (top right), our units have to fight they way through.
+    \item First (top), we regroup the our forces in front of the opponent's base with a formation \texttt{SubGoal}.
+    \item By trying to enter the opponent's base (second screenshot), our units have to fight they way through.
     \item The bottom left picture shows the distribution on $\PP(Dir_i)$ for the possible movements directions of one of the units at the top. We can see that it wants to avoid collision with allied units while going towards its target.
     \item The bottom right picture shows our units ``kiting back'' (retreating while fighting) to avoid being exposed in the ramp up the cliff (right part of the image).
 \end{itemize}
@@ -455,7 +455,7 @@ ItayUndermind & Zerg & & 0.658 & 6-pooling \\
 %%% Quorum
 
 Also in 2011 was the Computational Intelligence and Games (IEEE CIG) 2011 StarCraft AI competition. This competition had 10 entries\footnote{BroodwarBotQ \url{https://github.com/SnippyHolloW/BroodwarBotQ}, BTHAI \url{http://code.google.com/p/bthai/}, AIUR \url{http://code.google.com/p/aiurproject/}, LSAI \url{http://cs.lafayette.edu/~taylorm}, 
-EvoBot, Protoss Beast Jelly \url{http://wwbwai.sourceforge.net/}, Xelnaga (modified AIUR), Skynet \url{http://code.google.com/p/skynetbot/}, Nova \url{http://nova.wolfwork.com/}, UAlbertaBot \url{http://webdocs.cs.CanadaProtosshttpualberta.ca/~cdavid/}} and BroodwarBotQ placed 4th with a little luck of seed (it did not have to play against Aiur). The finals are depicted in Table~\ref{tab:botsCIG}.
+EvoBot, Protoss Beast Jelly \url{http://wwbwai.sourceforge.net/}, Xelnaga (modified AIUR), Skynet \url{http://code.google.com/p/skynetbot/}, Nova \url{http://nova.wolfwork.com/}, UAlbertaBot} and BroodwarBotQ placed 4th with a little luck of seed (it did not have to play against Aiur). The finals are depicted in Table~\ref{tab:botsCIG}.
 \begin{table}[h]
     \begin{center}
     \begin{tabular}{|l|c|c|c|c|}

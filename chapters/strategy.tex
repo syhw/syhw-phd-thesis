@@ -81,6 +81,8 @@ They improve the speed of CPB by using a decision tree to select relevant featur
 
 \cite{HMMstrat_RTS_AIIDE11} presented their work at the same conference that we presented \citep{SYNNAEVE:StratPred}. They used an HMM which states are extracted from (unsupervised) maximum likelihood on the dataset. The HMM parameters are learned from unit counts (both buildings and military units) every 30 seconds and Viterbi inference is used to predict the most likely next states from partial observations. 
 
+\cite{bjorn2012} augmented the C4.5 decision tree \citep{quinlan1993} and nearest neighbour with generalized examplars \citep{martin1995}, also used by \cite{weberStrat}, with a Bayesian network on the buildings (\glos{buildtree}). Their results confirm ours: the predictive power is strictly better and the resistance to noise far greater than without encoding probabilistic estimations of the \glos{buildtree}.
+
 
 \section{Perception and interaction}
 
@@ -113,7 +115,7 @@ The different attack types and ``armor'' (size) types of units make it so that p
 
 \section{Replays labeling}
 
-A \glos{replay} contains all the actions of each players during a game. We used a dataset of replays to see when the players build which buildings. We attributed a label for each player for each game which notes the players \glos{opening}.
+A \glos{replay} contains all the actions of each players during a game. We used a dataset of replays to see when the players build which buildings (see Table~\ref{tab:replay_example} in appendix for an example of the buildings constructions actions). We attributed a label for each player for each game which notes the players \glos{opening}.
 
 \subsection{Dataset}
 
@@ -453,7 +455,7 @@ Question \\
 
 \begin{figure}
 \centerline{\includegraphics[width=0.72\columnwidth]{images/techtree_inference_color3.png}}
-\caption{Evolution of $\PP(BT|observations,time,\lambda=1)$ in time (seen/observed buildings on the x-axis). Only $BT$ with a probability $> 0.01$ are shown. The numbers in the legend correspond to build trees identifier numbers.}
+\caption{Evolution of $\PP(BT|observations,time,\lambda=1)$ in time (seen/observed buildings on the x-axis). Only $BT$ with a probability $> 0.01$ are shown. The numbers in the legend correspond to build trees identifier numbers. The interpolation was obtained by fitting a second order polynomial.}
 \label{fig:ttinf}
 \end{figure}
 
@@ -947,6 +949,7 @@ We recall that we used this model for opening prediction, as a proxy for timing 
 \end{itemize}
 
 \subsubsection{Possible improvements}
+\label{sec:openingspossibleimprovements}
 
 First, our prediction model can be upgraded to explicitly store transitions between $t$ and $t+1$ (or $t-1$ and $t$) for openings ($Op$) and for \gloss{buildtree} ($BT$). The problem is that $\PP(BT^{t+1}|BT^t)$ will be very sparse, so to efficiently learn something (instead of a sparse probability table) we have to consider a smoothing over the values of $BT$, perhaps with the distances mentioned in section~\ref{sec:buildtreemetrics}. If we can learn $\PP(BT^{t+1}|BT^t)$, it would perhaps increase the results of $\PP(Opening|Observations)$, and it almost surely would increase $\PP(BuildTree^{t+1}|Observations)$, which is important for late game predictions. 
 
