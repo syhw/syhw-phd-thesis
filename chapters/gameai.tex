@@ -52,7 +52,7 @@ There are TV channels broadcasting Brood War (OnGameNet, previously also MBC Gam
 ``E-sport'' is important to the subject of game AI because it ensures competitiveness of the human players. It is less challenging to write a competitive AI for game played by few and without competitions than to write an AI for Chess, Go or StarCraft. E-sport, through the distribution of \newglossaryentry{replay}{name=replay,description={the record of all players' actions during a game, allowing the game engine to recreate the game state deterministically},plural=replays}``\gloss{replay}'' also ensures a constant and heavy flow of human player data to mine and learn from. Finally, cognitive science researchers (like the Simon Fraser University Cognitive Science Lab) study the cognitive aspects (attention, learning) of high level RTS playing \citep{SkillCraft}.
 
 Good human players, through their ability to learn and adapt, and through high-level strategic reasoning, are still undefeated. Single players are often frustrated by the \gls{npc} behaviors in non-linear (not fully scripted) games. Nowadays, video games' AI can be used as part of the gameplay as a challenge to the player. 
-This is not the case in most of the games though, in decreasing order of resolution of the problem\footnote{Particularly considering games with possible free worlds and ``non-linear'' storytelling, current RPG and MMORPG are often limited \textit{because} of the untracted ``world interacting \gls{npc}'' AI problem.}: fast \newglossaryentry{FPS}{name=FPS,description={First Person Shooter: egocentric shooter game, strong sub-genres are fast FPS, also called ``Quake-likes'', e.g. Quake III; and team/tactical FPS, e.g. Counter-Strike, Team Fortress 2}}\glos{FPS} (first person shooters), team FPS, \newglossaryentry{RPG}{name=RPG,description={Role Playing Game, e.g. Dungeons \& Dragons based Baldur's Gate}}\glos{RPG} (role playing games), \newglossaryentry{MMORPG}{name=MMORPG,description={Massively Multi-player Online Role Playing Game, distinct of RPG by the scale of cooperation sometimes needed to achieve a common goal, e.g. Dark Age of Camelot, World of Warcraft}}\glos{MMORPG} (Massively Multi-player Online RPG), \newglossaryentry{RTS}{name=RTS,description={Real-Time Strategy games are (mainly) allocentric economic and military simulations from an operational tactical/strategist commander viewpoint, e.g. Command \& Conquer, Age of Empires, StarCraft, Total Annihilation}}\glos{RTS} (Real-Time Strategy). These games in which artificial intelligences do not beat top human players on equal footing requires increasingly more cheats to even be a challenge (not for long as they mostly do not adapt). AI cheats encompass (but are not limited to):
+This is not the case in most of the games though, in decreasing order of resolution of the problem\footnote{Particularly considering games with possible free worlds and ``non-linear'' storytelling, current RPG and MMORPG are often limited \textit{because} of the untracted ``world interacting \gls{npc}'' AI problem.}: fast \newglossaryentry{FPS}{name=FPS,description={First Person Shooter: egocentric shooter game, strong sub-genres are fast FPS, also called ``Quake-likes'', e.g. Quake III; and team/tactical FPS, e.g. Counter-Strike, Team Fortress 2}}\glos{FPS} (first person shooters), team FPS, \newglossaryentry{RPG}{name=RPG,description={Role Playing Game, e.g. Dungeons \& Dragons based Baldur's Gate}}\glos{RPG} (role playing games), \newglossaryentry{MMORPG}{name=MMORPG,description={Massively Multi-player Online Role Playing Game, distinct of RPG by the scale of cooperation sometimes needed to achieve a common goal, e.g. Dark Age of Camelot, World of Warcraft}}\glos{MMORPG} (Massively Multi-player Online RPG), \glos{RTS} (Real-Time Strategy). These games in which artificial intelligences do not beat top human players on equal footing requires increasingly more cheats to even be a challenge (not for long as they mostly do not adapt). AI cheats encompass (but are not limited to):
 \begin{itemize}
 \item RPG \gls{npc} often have at least 10 times more hit points (health points) than their human counterparts in equal numbers,
 \item FPS bots can see through walls and use perfect aiming,
@@ -809,11 +809,11 @@ In the decision-making process, vertical continuity describes when taking a high
 \label{fig:verticalcont}
 \end{figure}
 
-Examples? To edit, to choose with Pierre, ideas (+ point out example ``filtering out''):\\
-navigation: S=always go north, T -> limited\\
-whatever 2 player game: S=imitate, T -> limited\\
-RTS: S=short term win by all-in, T -> limited\\
-simpler examples?
+%%% Examples? To edit, to choose with Pierre, ideas (+ point out example ``filtering out''):\\
+%%% navigation: S=always go north, T -> limited\\
+%%% whatever 2 player game: S=imitate, T -> limited\\
+%%% RTS: S=short term win by all-in, T -> limited\\
+%%% simpler examples?
 
 
 \subsubsection{Horizontal continuity}
@@ -829,10 +829,10 @@ Horizontal continuity also helps out cutting the search in the state space to on
 \label{fig:horizontalcont}
 \end{figure}
 
-Examples? To edit, to choose with Pierre, ideas (+ point out example ``filtering out''):\\
-navigation: $T^t$=go round the block, $T^{t+1}$ -> limited by future position\\
-RTS: cannot switch between Front and Back attacks with the same army at close time-steps\\
-simpler examples?
+%%% Examples? To edit, to choose with Pierre, ideas (+ point out example ``filtering out''):\\
+%%% navigation: $T^t$=go round the block, $T^{t+1}$ -> limited by future position\\
+%%% RTS: cannot switch between Front and Back attacks with the same army at close time-steps\\
+%%% simpler examples?
 
 \subsection{Randomness}
 Randomness can be inherent to the gameplay. In board games and table top role-playing, randomness often comes from throwing dice(s) to decide the outcome of actions. In decision-making theory, this induced stochasticity is dealt with in the framework of a \newacronym{mdp}{MDP}{Markov decision process}\glos{mdp}. A \gls{mdp} is a tuple of $(S,A,T,R)$ with:

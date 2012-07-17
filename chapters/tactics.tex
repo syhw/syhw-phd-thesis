@@ -112,8 +112,8 @@ The \textit{maps} on which we play restrain movement and vision of ground units 
 \newacronym{BWTA}{BWTA}{BroodWar Terrain Analyser}
 We used two kinds of regions: 
 \begin{itemize}
-    \item \glos{BWTA}\footnote{http://code.google.com/p/bwta/} regions and choke-dependent (choke-centered) regions (CDR). BWTA regions are obtained from a pruned Voronoi diagram on walkable terrain \citep{Perkins2010} and give regions for which chokes are the boundaries. We will note this regions ``Reg'' or regions.
-    \item As battles often happens at chokes, choke-dependent regions are created by doing an additional (distance limited) Voronoi tesselation spawned at chokes, its regions set is $(regions \setminus chokes) \cup chokes$. We will note this regions ``CDR'' or choke-dependent regions.
+    \item \glos{BWTA}\footnote{\url{http://code.google.com/p/bwta/}} regions and choke-dependent (choke-centered) regions (CDR). BWTA regions are obtained from a pruned Voronoi diagram on walkable terrain \citep{Perkins2010} and give regions for which chokes are the boundaries. We will note this regions ``Reg'' or regions.
+    \item As battles often happens at chokes, choke-dependent regions are created by doing an additional (distance limited) Voronoi tessellation spawned at chokes, its regions set is $(regions \setminus chokes) \cup chokes$. We will note this regions ``CDR'' or choke-dependent regions.
 \end{itemize}
 Figure~\ref{fig:terrainanalysis} illustrate regions and choke-dependent regions (CDR). Results for choke-dependent regions are not fully detailed. Figure~\ref{fig:BWTA} (in appendix) shows a real StarCraft map and its decomposition into regions with BWTA.
 
@@ -245,7 +245,7 @@ The implication of considering only replays of very good player allows us to use
 
 
 \subsection{Information}
-Table~\ref{tab:dataset} shows some metrics about the dataset. In this chapter, we are particularly interested in the number of attacks. Note that there the numbers of attacks for a given race have to be divided by two in a given \textit{non-mirror} match-up. So, there are 7072 Protoss attacks in PvP but there are not 70,089 attacks by Protoss in PvT but about half that.
+Table~\ref{tab:dataset} shows some metrics about the dataset. In this chapter, we are particularly interested in the number of attacks. Note that the numbers of attacks for a given race have to be divided by two in a given \textit{non-mirror} match-up. So, there are 7072 Protoss attacks in PvP but there are not 70,089 attacks by Protoss in PvT but about half that.
 \begin{table}[h]
 \ifthenelse{\equal{\myprintformat}{true}}{
 \begin{footnotesize}
@@ -272,7 +272,7 @@ mean ground distance\footnote{for choke-dependent regions connected by ground, p
 \ifthenelse{\equal{\myprintformat}{true}}{
 \end{footnotesize}
 }{}
-\caption{Detailed numbers about our dataset. XvY means race X vs race Y matchs and is an abbreviation of the match-up: PvP stands for Protoss versus Protoss.}
+\caption{Detailed numbers about our dataset. XvY means race X vs race Y matches and is an abbreviation of the match-up: PvP stands for Protoss versus Protoss.}
 \label{tab:dataset}
 \end{table}
 
@@ -291,7 +291,7 @@ We trigger an attack tracking heuristic when one unit dies and there are at leas
 %, adapted from \url{http://github.com/SnippyHolloW/bwrepdump/}} 
 \label{alg:attackheuristic}
 \begin{algorithmic}
-\State $list tracked\_attacks$
+\State $\mathrm{\textbf{list}}\ tracked\_attacks$
 \Function{unit\_death\_event}{$unit$}
     \State $tmp \leftarrow tracked\_attacks.which\_contains(unit)$
     \If{$tmp \neq \emptyset$}
@@ -302,7 +302,7 @@ We trigger an attack tracking heuristic when one unit dies and there are at leas
 \EndFunction
 
 \Function{attack}{$unit$} \Comment{new attack constructor}
-    \State $self.convex\_enveloppe = propagate\_default\_enveloppe(unit)$ 
+    \State $self.convex\_enveloppe \leftarrow propagate\_default\_enveloppe(unit)$ 
     \State $ $ \Comment{$self \Leftrightarrow this$}
     \State $self.type \leftarrow determine\_attack\_type(update(self, unit))$
     \State \Return $self$
@@ -312,7 +312,7 @@ We trigger an attack tracking heuristic when one unit dies and there are at leas
     \State $attack.update\_enveloppe(unit)$ \Comment{takes units ranges into account}
     \State $c \leftarrow get\_context(attack.convex\_enveloppe)$
     \State $self.units\_involved.update(c)$ 
-    \State $self.tick = default\_timeout()$
+    \State $self.tick \leftarrow default\_timeout()$
     \State \Return $c$
 \EndFunction
 

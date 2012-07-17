@@ -1,40 +1,77 @@
 \chapter{Introduction}
+\newglossaryentry{RTS}{name=RTS,description={Real-Time Strategy games are (mainly) allocentric economic and military simulations from an operational tactical/strategist commander viewpoint, e.g. Command \& Conquer, Age of Empires, StarCraft, Total Annihilation}}
 
 \ifthenelse{\equal{\myebookformat}{false}}{
 \adjustmtc
 \chaptertoc
 }{}
 
-\section{Motivations}
-%\subsection{Context}
+\section{Context}
 %\subsection{Situation}
 %\subsection{Problem}
+\subsection{Motivations}
+\textit{Every game of skill is susceptible of being played by an automaton.} Charles Babbage\\
 
-Video games AI research is yielding new approaches to a wide range of problems, for instance in RTS: pathfinding, multiple agents coordination, collaboration, prediction, planning and (multi-scale) reasoning under uncertainty. These problems are particularly interesting in the RTS framework because the solutions have to deal with many objects, imperfect information and micro-actions while running in real-time on desktop hardware.
+%every game of skill is susceptible of being played by an automaton. Charles Babbage
+%All models are wrong; some models are useful. Georges Box
 
+%Games = beautiful mathematical problems
+%Video game AI = big industry
+%Piano/Chess, Real-world/Simu
+
+There is more to playing than entertainment, particularly, playing has been found to be a basis for motor and logical learning. Real-time video games require skill and deep reasoning, attributes respectively both of music playing and of board games. On many aspects, high-level real-time strategy (RTS) players can be compared to piano players which would write their partition depending on how they want to play a Chess match, simultaneously to their opponent. 
+
+
+A great motivation to work on video games is that they constitute an in-between real-world robotics and simulated robotics or theoretical games. Indeed, the simulated world in which game artificial intelligences (AI) evolve is populated with human-controlled and/or other AI (on which we may have no control) agents and the state space is much bigger than in board games. For instance, the branching factor in StarCraft is greater than $1.10^6$ compared to approximatively $35$ in Chess and $360$ in Go.
+
+
+Another strong motivation is that there are plenty of highly skilled human video game players. For \glos{RTS} games, there are professional players, whose games are recorded. This provides datasets of thousands of human-hours of play, by humans who beat any existing AI, which enables machine learning. Clearly, there is something missing to classical AI approaches to be able to handle video games as efficiently as humans do. I believe that RTS AI is where Chess AI was in the early 70s: we have RTS AI world competitions but even the best entries cannot win against skilled human players.
+
+
+So, because of these specificities (complexity, real-time constraints, uncertainty), video games AI research is yielding new approaches to a wide range of problems. For instance in \glos{RTS} games: pathfinding, multiple agents coordination, collaboration, prediction, planning and (multi-scale) reasoning under uncertainty. The RTS framework is particularly interesting because it encompasses most of these problems: the solutions have to deal with many objects, imperfect information, strategic reasoning and low-level actions while running in real-time on desktop hardware.
+
+%%% \begin{itemize}
+%%% \item Multi-player video games
+%%% Adversarial decision-making. Partial information. Real-time. Massive state spaces.
+%%% \item RTS games
+%%% Expert human play > AI. Data. Competitions.
+%%% \end{itemize}
+
+\subsection{Approach}
+Games are beautiful mathematical problems with adversarial, concurrent and sometimes even social dimensions, which have been formalized and studied through game theory. % studies the theoretical aspects of formal games. 
+On the other hand, the space complexity of video games make them intractable problems with only theoretical tools. Also, the real-time nature of the video games that we studied asks for efficient solutions. Finally, several video games incorporate different forms of uncertainty, being it from partial observations or stochasticity due to the rules.
+
+We have chosen to embrace uncertainty and produce simple models which can deal with the video games' state spaces while running in real-time on commodity hardware: \textit{All models are wrong; some models are useful.} (attributed to Georges Box). If our models are necessarily wrong, we have to consider that they are approximations, and work with probabilities distributions. The other reasons to do so confirm us in our choice:
 \begin{itemize}
-\item Multi-player video games
-Adversarial decision-making. Partial information. Real-time. Massive state spaces.
-\item RTS games
-Expert human play > AI. Data. Competitions.
+    \item Partial information forces us to be able to deal with state uncertainty. 
+    %\item The adversarial setting leads to uncertainty about the opponent's intention(s).
+    \item Not only we cannot be sure about our model relevance, but how can we assume ``optimal'' play from the opponent in a so complex game and so huge state space?
 \end{itemize}
+The unified framework to reason under uncertainty that we used is the one of plausible reasoning and Bayesian modeling.
+
+As we are able to collect data about high skilled human players or produce data through experience, we can learn the parameters of such Bayesian models. This modeling approach unifies \textit{all the possible sources of uncertainties, learning, along with prediction and decision-making} in a consistent framework.
 
 \section{Contributions}
-
 % Des espèces de design patterns / frameworks pour résoudres des problèmes : 1) (micro) si on veut une IA réactive et dont on peut changer très facilement le comportement (potentiellement multi-agents en environnement cooperatif et/ou adversarial), on peut faire de la fusion sensory motrice, 2) (tactique) si on veut résoudre un problème à informations partielles pour lequel il existe une certaine abstraction, une solution pragmatique est de faire des heuristiques (que l'on aurait fait de toutes façon) pour abstraire le bas niveau / observations au niveau de l'abstraction sur laquelle raisonner et résoudre le problème à ce niveau d'abstraction par un modèle bayésien. Le problème majeur de ce genre d'approche est le biais qu'introduisent les heuristiques, ici "il suffit" d'apprendre les paramètres du modèle bayésien avec les résultats des heuristiques (et on apprend/encode/s'adapte à leur biais). 3) (stratégie) pour raisonner sur la stratégie d'un jeu, a) il faut trouver la sous-structure des règles du jeu qui la conditionne le plus fortement (réduit le plus la dimension de) la stratégie (tech trees comme proxy de la strat); b) il faut étudier les données des intéractions entre joueurs et mieux vaut avoir peu de composantes en grandes dimensions que beaucoup de composantes en faibles dimensions (batailles, clusters de compositions d'armées qui rend le truc tractable). 
 
 \begin{itemize}
-\item A new approach to game AI with:
-\begin{itemize}
-\item first-class uncertainty.
-\item a tractable hierarchical decomposition of problems.
-\end{itemize}
-\item Integration of learning in a decision-making model. 
-\item An autonomous agent for StarCraft (BroodwarBotQ).
+    \item Several models to \textit{break complexity}:
+    \begin{itemize}
+        \item We showed that multi-agent behaviors can be authored through \textit{inverse programming} (specifying a sensor distribution knowing the state), as an extension of \citep{theseRonan}. We used decentralized control (for computational efficiency) by considering agents as sensory motor-robots: the incompleteness of not communicating with each others is transformed in uncertainty.
+        \item We took advantage of the \textit{hierarchy} of decision-making in games by presenting and exploiting abstractions for RTS games (strategy \& tactics) above units control. Producing abstractions, being it through heuristics or less supervised methods, produces ``bias'' and uncertainty.
+        \item We took advantage of the \textit{sequencing} and temporal continuity in games. When taking a decision, previous observations, prediction and decisions are compressed in distributions on variables under the Markovian assumption. %(filtering)
+    \end{itemize}
+
+    \item Machine \textit{learning} on models integrating prediction and decision-making:
+    \begin{itemize}
+        \item We produced some of our \textit{abstractions} through semi-supervised or unsupervised learning (clustering) from datasets.
+        \item We identified the \textit{parameters} of our models from human-played games, the same way that our models can learn from their opponents actions / past experiences.
+    \end{itemize}
+    \item A implementation of a competitive StarCraft AI able to play full games with decent results in worldwide competitions.
+
 \end{itemize}
 
-Finally, with this thesis, we hope to contribute a guide for industry practitioners who would like to have new tools for solving the ever increasing complexity of game AI, and more generally ``huge state space'' and multi-scale AI.
-
+Finally, video games is a billion dollars industry (\$65 billion worldwide in 2011). With this thesis, we hope to contribute a guide for industry practitioners who would like to have new tools for solving the ever increasing state space complexity of (multi-scale) game AI, and produce challenging and fun to play against AI.
 %\subsection{Decentralization}
 
 %\subsection{Learnings}
@@ -56,9 +93,8 @@ Chapter 6 deals with the tactical abstraction for partially observable games. Ou
 
 Chapter 7 shows our decompositions of strategy into specific prediction and adaptation (under uncertainty) tasks. Our approach was to reduce the complexity of strategies by using the structure of the game rules (technology trees) of expert players vocable (openings) decisions (unit types combinations/proportions). From partial observations, the probability distributions on the opponent's strategy are reconstructed, which allows for adaptation and decision-making.
 
-Chapter 8 describes briefly the software architecture of our robotic player. TODO
+Chapter 8 describes briefly the software architecture of our robotic player (bot). It makes the link between the Bayesian models presented before and their connection with the bot's program. We also comment some of the bot's debug output to show how a game played by our bot unfolds.
 
-
-TODO reading map la MacKay ?
+% TODO reading map la MacKay ?
 
 

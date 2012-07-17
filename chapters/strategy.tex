@@ -248,7 +248,7 @@ The Gaussian mixture model (\glos{GMM}) is as follows:
         \item $X_{i \in \llbracket 1 \dots n\rrbracket}$ the features for the $i$th replay/game. For instance for the ``fast\_expand'' opening (Barracks and then direct expanding), we used the features ``time of the first expansion'' and ``time of the first Barracks'', as is shown in Figure~\ref{TvZraxFE}, and each data point is an $X_i$.
         \item $Op_{i \in \llbracket1 \dots n\rrbracket}$ the opening of game $i$. Instead of doing one clustering with $k$ possible openings, we did $k$ clusterings of 1 opening vs the rest. So for us $Op_i \in \{opening, rest\}$.
     \end{itemize}
-    \item Decomposition:
+    \item Decomposition ($n$ data points, i.e. $n$ games):
 $$\PP(X_{1:n}, Op_{1:n}) = \prod_{i=1}^n \PP(X_i|Op_i)\PP(Op_i)$$
     \item Forms, for the $k$ openings we have:
     \begin{itemize}
@@ -273,8 +273,9 @@ Iterate until convergence (of $\theta$):
         \item M-step: $\theta^{(t+1)}=\argmax_{\theta} Q(\theta|\theta^{(t)})$
     \end{enumerate}
 
-    \item Question:
-$$\PP(Op_{1:n} | X_{1:n}) \propto \PP(X_{1:n}|Op_{1:n})\PP(Op_{1:n})$$
+    \item Question (for the $i$th game):
+%$$\PP(Op_{1:n} | X_{1:n}) \propto \PP(X_{1:n}|Op_{1:n})\PP(Op_{1:n})$$
+$$\PP(Op_i|X_i=x) = \PP(X_i=x|Op_i)\PP(Op_i)$$
 \end{itemize}
 
 %%% Full Bayesian program for (one) GMM trained with EM:
@@ -996,7 +997,7 @@ We infer $C_c$ the ``counter'' cluster for (adaptation to) $EC^{t+1}$. $C_t$ (a 
 %$C_m$ merge our tactics desiderata ($C_t$) with our adaptability ($C_c$), 
 %while $C_f$ take the tech tree constraints into account. This can seem tedious but these variables are all to be seen as different states of $C$, representing our army composition.
 
-    \item $U^{t+1} \in ([0,1]\dots[0,1])$, our $N$ dimensional unit types ($U$) proportions at time $t+1$, i.e. $U^{t+1} \in [0,1]^M$. For instance, an army with equal numbers of $zealots$ and $dragoons$ (and nothing else) is represented as $\{U_{zealot}=0.5, U_{dragoon}=0.5, \forall ut \neq zealot|dragoon\ U_{ut}=0.0\}$, i.e. $U=(0.5,0.5,0,\dots,0)$ if $zealots$ and $dragoons$ are the first two components of the $U$ vector. So $\sum_i U_i = 1$ whatever the composition of the army.
+    \item $U^{t+1} \in ([0,1]\dots[0,1])$, our $N$ dimensional unit types ($U$) proportions at time $t+1$, i.e. $U^{t+1} \in [0,1]^N$. For instance, an army with equal numbers of $zealots$ and $dragoons$ (and nothing else) is represented as $\{U_{zealot}=0.5, U_{dragoon}=0.5, \forall ut \neq zealot|dragoon\ U_{ut}=0.0\}$, i.e. $U=(0.5,0.5,0,\dots,0)$ if $zealots$ and $dragoons$ are the first two components of the $U$ vector. So $\sum_i U_i = 1$ whatever the composition of the army.
 
     \item $EU^t$ and $EU^{t+1} \in ([0,1]\dots [0,1])$, the $M$ enemy units types ($EU$) at time $t$ and $t+1$, i.e. $EU^t \in [0,1]^M$. Same as above, but for the enemy and at two different times ($t$ and $t+1$).
 
@@ -1163,7 +1164,7 @@ We will look at the predictive power of the $\PP(C_c | EC)$ (comprehending the r
 \textit{Metrics}\\
 Each battle consists in numbers of units involved for each types and each parties (the two players). For each battle we reduce the two armies to two Gaussian mixtures ($\PP(C)$ and $\PP(EC)$). To benchmark our clustering method%s (home-made, K-means, GMM)
 , %we reduced battle observations to clusters for both parties and. 
-we then used the learned $P(C_c|EC)$ to estimate the outcome of the battle. For that, we used battles with limited \textit{disparities} (the maximum strength ratio of one army over the other) of 1.1 to 1.5. Note that the army which has the superior forces numbers has \textbf{more than a linear advantage} over their opponent (because of focus firing\footnote{Efficiently micro-managed, an army 1.5 times superior to their opponents can keep much more than one third of the units alive.}), so a disparity of 1.5 is very high. For information, there is an average of 5 battles per game at a 1.3 disparity threshold, and the numbers of battles per game increase with the disparity threshold.
+we then used the learned $\PP(C_c|EC)$ to estimate the outcome of the battle. For that, we used battles with limited \textit{disparities} (the maximum strength ratio of one army over the other) of 1.1 to 1.5. Note that the army which has the superior forces numbers has \textbf{more than a linear advantage} over their opponent (because of focus firing\footnote{Efficiently micro-managed, an army 1.5 times superior to their opponents can keep much more than one third of the units alive.}), so a disparity of 1.5 is very high. For information, there is an average of 5 battles per game at a 1.3 disparity threshold, and the numbers of battles per game increase with the disparity threshold.
 
 We also made up a baseline heuristic, which uses the sum of the values of the units (see section~\ref{sec:scoringheuristics} for a reminder) to decide which side should win. If we note $v(unit)$ the value of a unit, the heuristic computes $\sum_{unit} v(unit)$ for each army and predicts that the winner is the one with the biggest score. Of course, we recall that a random predictor would predict the result of the battle correctly $50\%$ of the time.
 
@@ -1183,7 +1184,7 @@ Also, without explicitly labeling clusters, one can apply thresholding to specia
 
 \vspace{0.2cm}
 \textit{Predictive power}\\
-We can see that predicting battle outcomes (even with a high disparity) with ``just probabilities'' of $\PP(C_c|EC)$ (without taking the forces into account) gives relevant results as they are always above random predictions. Note that this is a very high level (abstract) view of a battle, we do not consider tactical positions, nor players' attention, actions, etc. Also, it is better (in average) to consider the heuristic with the composition of the army (prob$\times$heuristic) than to consider the heuristic alone, even for high forces disparity. This prediction results with ``just prob.'', or the fact that heuristic with $\PP(C_c|EC)$ tops the heuristic alone, are a proof that the assimilation of armies compositions as Gaussian mixtures of cluster works.
+We can see that predicting battle outcomes (even with a high disparity) with ``just probabilities'' of $\PP(C_c|EC)$ (without taking the forces into account) gives relevant results as they are always above random predictions. Note that this is a very high level (abstract) view of a battle, we do not consider tactical positions, nor players' attention, actions, etc. Also, it is better (in average) to consider the heuristic with the composition of the army (prob$\times$heuristic) than to consider the heuristic alone, even for high forces disparity. These prediction results with ``just prob.'', or the fact that heuristic with $\PP(C_c|EC)$ tops the heuristic alone, are a proof that the assimilation of armies compositions as Gaussian mixtures of cluster works.
 
 \vspace{0.2cm}
 \textit{Army efficiency}\\
@@ -1223,7 +1224,7 @@ Also, when we predict 58.5\% of the time the accurate result of a battle with di
  %& measure & \multicolumn{2}{|c|}{$d$ for $k=0$} & \multicolumn{2}{|c|}{$k$ for $d=1$} & \multicolumn{2}{|c|}{$k$ for $d=2$} & \multicolumn{2}{|c|}{$k$ for $d=3$} \\
 \end{tabular}
 \end{small}
-\caption{Winner prediction scores (in \%) for 3 main metrics. For the left columns (``m''), we considered only military units. For the right columns (``ws'') we also considered static defense and workers. The ``heuristic'' metric is a baseline heuristic for battle winner prediction for comparison using army values, while ``just prob.'' only considers $P(C_c|EC)$ to predict the winner, and ``prob$\times$heuristic'' balances the heuristic's predictions with $\sum_{C_c,EC}P(C_c|EC)P(EC)$.}
+\caption{Winner prediction scores (in \%) for 3 main metrics. For the left columns (``m''), we considered only military units. For the right columns (``ws'') we also considered static defense and workers. The ``heuristic'' metric is a baseline heuristic for battle winner prediction for comparison using army values, while ``just prob.'' only considers $\PP(C_c|EC)$ to predict the winner, and ``prob$\times$heuristic'' balances the heuristic's predictions with $\sum_{C_c,EC}\PP(C_c|EC)\PP(EC)$.}
 \label{tab:openingsresults}
 \end{center}
 \end{table}
@@ -1239,11 +1240,11 @@ Also, when we predict 58.5\% of the time the accurate result of a battle with di
 
 Figure~\ref{fig:isoz} shows a 2D Isomap \citep{isomap} projection of the battles on a small ZvP dataset. Isomap finds a low-dimensional non-linear embedding of the high dimensionality ($N$ or $N'$ dimensions, as much as unit types, the length of $U$ or $EU$) space in which we represent armies. The fact that the embedding is quasi-isometric allows us to compare the intra- and inter- clusters similarities. Most clusters seem to make sense as strong, discriminating components. The clusters identified by the numbers $2$ and $7$ (in this projection) are not so discriminative, so they probably correspond to a classic backbone that we find in several mixtures.
 
-Figure~\ref{fig:parallelplot} shows a parallel plot of \textit{army compositions}. We removed the less frequent unit types to keep only the 8 most important unit types of the PvP match-up, and we display a 8 dimensional representation of the army composition, each vertical axis represents one dimension. Each line (trajectory in this 8 dimensional space) represents an army composition (engaged in a battle) and gives the percentage\footnote{scales are between 0 and a maximum value $\leq 100\%$, different across unit types} of each of the unit types. This lines (armies) are colored with their most probable mixture component, which are shown in the rightmost axis. We have 8 clusters (Gaussian mixtures components), this not related to the 8 unit types used as the number of mixtures was chosen by \glos{BIC} score. Expert StarCraft players will directly recognize the clusters of typical armies, here are some of them:
+Figure~\ref{fig:parallelplot} shows a parallel plot of \textit{army compositions}. We removed the less frequent unit types to keep only the 8 most important unit types of the PvP match-up, and we display a 8 dimensional representation of the army composition, each vertical axis represents one dimension. Each line (trajectory in this 8 dimensional space) represents an army composition (engaged in a battle) and gives the percentage\footnote{scales are between 0 and a maximum value $\leq 100\%$, different across unit types} of each of the unit types. These lines (armies) are colored with their most probable mixture component, which are shown in the rightmost axis. We have 8 clusters (Gaussian mixtures components): this is not related to the 8 unit types used as the number of mixtures was chosen by \glos{BIC} score. Expert StarCraft players will directly recognize the clusters of typical armies, here are some of them:
 \begin{itemize}
     \item Light blue corresponds to the ``Reaver Drop'' tactical squads, which aims are to transport (with the flying Shuttle) the slow Reaver (zone damage artillery) inside the opponent's base to cause massive economical damages.
     \item Red corresponds to the ``Nony'' typical army that is played in PvP (lots of Dragoons, supported by Reaver and Shuttle).
-    \item Green corresponds to a High Templar and Archon heavy army, the gas invested in such high tech units makes it that there are less Dragoons, completed by more Zealots (which cost no gas).
+    \item Green corresponds to a High Templar and Archon-heavy army: the gas invested in such high tech units makes it that there are less Dragoons, completed by more Zealots (which cost no gas).
     \item Purple corresponds to Dark Templar (``sneaky'', as Dark Templars are invisible) special tactics (and opening).
 \end{itemize}
 
@@ -1258,7 +1259,7 @@ Figure~\ref{fig:parallelplot} shows a parallel plot of \textit{army compositions
 
 \subsubsection{Analysis of dynamics}
 
-Figure~\ref{ecknowingecnext} showcases the dynamics of clusters components: $P(EC^t|EC^{t+1}$, for Zerg (vs Protoss) for $\Delta t$ of 2 minutes. The diagonal components correspond to those which do not change between $t$ and $t+1$ ($\Leftrightarrow t+2$minutes), and so it is normal that they are very high. The others components show the shift between clusters. For instance, the first line seventh column (in (0,6)) square shows a brutal transition from the first component (0) to the seventh (6). This may be the production of Mutalisks\footnote{Mutalisks are a flying units which require to unlock several technologies and thus for which player save up for the production while opening their tech tree.} from a previously very low-tech army (Zerglings).
+Figure~\ref{ecknowingecnext} showcases the dynamics of clusters components: $\PP(EC^t|EC^{t+1}$, for Zerg (vs Protoss) for $\Delta t$ of 2 minutes. The diagonal components correspond to those which do not change between $t$ and $t+1$ ($\Leftrightarrow t+2$minutes), and so it is normal that they are very high. The other components show the shift between clusters. For instance, the first line seventh column (in (0,6)) square shows a brutal transition from the first component (0) to the seventh (6). This may be the production of Mutalisks\footnote{Mutalisks are flying units which require to unlock several technologies and thus for which player save up for the production while opening their tech tree.} from a previously very low-tech army (Zerglings).
 %As shown in Figure~\ref{bbq_dataflow}, this model is part of the strategy module of our next AIIDE competition bot.
 %Finally, in the absence of ground truth to directly evaluate the whole model, we can only 
 
@@ -1278,7 +1279,7 @@ Figure~\ref{ecknowingecnext} showcases the dynamics of clusters components: $P(E
 
 \subsubsection{Extensions}
 
-Here, we focused on asking $\PP(U^{t+1}|eu^t, tt^t, \lambda=1)$, and evaluated (in the absence of ground truth for full armies compositions) the two key components that are $\PP(U|C)$ (or $\PP(EU|EC)$) and $\PP(C_c|EC)$. Many other questions can be asked: $\PP(TT^t|eu^t)$ can help us adapt our tech tree development to the opponent's army. If we know the opponent's army composition only partially, we can benefit of knowledge about $ETT$ to know what is possible, but also probable, by asking $P(EC^t|Observations)$.
+Here, we focused on asking $\PP(U^{t+1}|eu^t, tt^t, \lambda=1)$, and evaluated (in the absence of ground truth for full armies compositions) the two key components that are $\PP(U|C)$ (or $\PP(EU|EC)$) and $\PP(C_c|EC)$. Many other questions can be asked: $\PP(TT^t|eu^t)$ can help us adapt our tech tree development to the opponent's army. If we know the opponent's army composition only partially, we can benefit of knowledge about $ETT$ to know what is possible, but also probable, by asking $\PP(EC^t|Observations)$.
 % TODO
 
 %%% \begin{quotation}\textit{
