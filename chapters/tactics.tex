@@ -1,5 +1,6 @@
 \chapter{Tactics}
 \newacronym{MCMC}{MCMC}{Monte-Carlo Markov chain}
+\newacronym{CBR}{CBR}{Case-Based Reasoning}
 \label{chapter:tactics}
 \begin{quotation}
 %\textit{Probability theory can tell us how our hypothesis fares relative to the alternatives that we have specified; it does not have the creative imagination to invent new hypotheses for us.}
@@ -98,7 +99,7 @@ On spatial reasoning, \cite{Pottinger00} described the \textit{BANG} engine impl
 
 \cite{Hladky_anevaluation} benchmarked hidden semi-Markov models (HSMM) and particle filters in first person shooter games (FPS) units tracking. They showed that the accuracy of occupancy maps was improved using movement models (learned from the player behavior) in HSMM. \cite{particlefiltergameAI} used a particle filter for player position prediction in a FPS. \cite{Kabanza2010} improve the probabilistic hostile agent task tracker (PHATT \citep{PHATT}, a simulated HMM for plan recognition) by encoding strategies as HTN, used for plan and intent recognition to find tactical opportunities. \cite{weber2011aiide} used a particle model for hidden units' positions estimation in StaCraft.
 
-\cite{LTW} used case-based reasoning (CBR) to perform dynamic tactical plan retrieval (matching) extracted from domain knowledge in Wargus. \cite{Ontanon2007} based their real-time case-based planning (CBP) system on a plan dependency graph which is learned from human demonstration in Wargus. A case based behavior generator spawn goals which are missing from the current state and plan according to the recognized state. In \citep{Mishra2008,metalevelbehavioradaptrts}, they used a knowledge-based approach to perform situation assessment to use the right plan, performing runtime adaptation by monitoring its performance. \cite{CBR-RL} combined CBR and reinforcement learning to enable reuse of tactical plan components. 
+\cite{LTW} used case-based reasoning (CBR) to perform dynamic tactical plan retrieval (matching) extracted from domain knowledge in Wargus. \cite{Ontanon2007} based their real-time case-based planning (CBP) system on a plan dependency graph which is learned from human demonstration in Wargus. A case based behavior generator spawn goals which are missing from the current state and plan according to the recognized state. In \citep{Mishra2008,metalevelbehavioradaptrts}, they used a knowledge-based approach to perform situation assessment to use the right plan, performing runtime adaptation by monitoring its performance. \cite{CBR-RL} combined \glos{CBR} and reinforcement learning to enable reuse of tactical plan components. 
 \cite{Bakkes09} used richly parametrized CBR for strategic and tactical AI in Spring (Total Annihilation open source clone). 
 \cite{CadenaG11} used fuzzy CBR (fuzzy case matching) for strategic and tactical planning (including expert knowledge) in StarCraft. \cite{Chung05} applied Monte-Carlo planning for strategic and tactical planning to a capture-the-flag mode of Open RTS. \cite{UCT} applied upper confidence bounds on trees (UCT: a MCTS algorithm) to tactical assault planning in Wargus. 
 

@@ -57,25 +57,6 @@
 %\linespread{1.05}
 \usepackage[T1]{fontenc}
 
-%%% TOC:
-
-%\usepackage[toc,page]{appendix} 
-\usepackage[toc]{glossaries}
-\makeglossaries
-\ifthenelse{\equal{\myebookformat}{false}}{
-\usepackage{minitoc}
-\setlength{\mtcindent}{24pt}
-\renewcommand{\mtcoffset}{0pt}
-\mtcsetoffset{minitoc}{0pt}
-\setlength{\mtcskipamount}{\bigskipamount}
-\setcounter{minitocdepth}{1} %%% can change to 2
-\renewcommand{\mtcfont}{\small\rmfamily\upshape\mdseries}
-\renewcommand{\mtcSfont}{\small\rmfamily\upshape\bfseries}
-\renewcommand{\mtctitle}{}
-\def\chaptertoc{\minitoc \vskip 16pt}
-}{}
-
-
 %%% Mes commandes
 \newcommand{\noi}{\noindent}
 \newcommand{\II}{\mbox{\large 1\hskip -0,353em 1}}
@@ -123,6 +104,25 @@
 %\checkandfixthelayout
 }
 }
+
+%%% TOC:
+
+%\usepackage[toc,page]{appendix} 
+\usepackage[toc]{glossaries}
+\makeglossaries
+\ifthenelse{\equal{\myebookformat}{false}}{
+\usepackage{minitoc}
+\setlength{\mtcindent}{24pt}
+\renewcommand{\mtcoffset}{0pt}
+\mtcsetoffset{minitoc}{0pt}
+\setlength{\mtcskipamount}{\bigskipamount}
+\setcounter{minitocdepth}{1} %%% can change to 2
+\renewcommand{\mtcfont}{\small\rmfamily\upshape\mdseries}
+\renewcommand{\mtcSfont}{\small\rmfamily\upshape\bfseries}
+\renewcommand{\mtctitle}{}
+\def\chaptertoc{\minitoc \vskip 16pt}
+}{}
+
 
 
 \begin{document}
@@ -188,7 +188,6 @@ $\ccbynceu$
 %%%\include{chapters/meta}
 \include{chapters/conclusion}
 
-\glsaddall
 \printglossaries
 %%% \bibliographystyle{plain}
 %\bibstyle{plainnat}

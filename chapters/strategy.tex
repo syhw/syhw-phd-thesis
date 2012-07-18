@@ -42,6 +42,7 @@ Chess \citep{Fraenkel81} and Go (with Japanese ko rules) are \textsc{exptime}-co
 \end{itemize}
 
 \section{What is strategy?}
+\label{sec:whatisstrategy}
 % tech tree, opening, army composition, build tree
 
 %In a RTS, players need to gather resources to build military units and defeat their opponents. To that end, they often have \textit{worker units} (or extraction structures) than can gather resources needed to build \textit{workers}, \textit{buildings}, \textit{military units} and \textit{research upgrades}. Workers are often also builders (as in StarCraft) and are weak in fights compared to military units. Resources may have different uses, for instance in StarCraft: minerals are used for everything, whereas gas is only required for advanced buildings or military units, and technology upgrades. Buildings and research upgrades define technology trees (directed acyclic graphs) and each state of a ``tech tree'' allow for different unit type production abilities and unit spells/abilities. The military can be of different types, any combinations of ranged, casters, contact attack, zone attacks, big, small, slow, fast, invisible, flying... Units can have attacks and defenses that counter each others as in rock-paper-scissors. We consider \textit{strategy} the way to expand the tech tree as well as the army composition, because both require long term planning under uncertainty, and a risk-reward trade-off. 
@@ -72,7 +73,7 @@ There are precedent works of Bayesian plan recognition \citep{BMPR}, even in gam
 
 There are related works in the domains of opponent modeling \citep{HsiehS08,schadd2007opponent,Kabanza2010}. The main methods used to these ends are case-based reasoning (CBR) and planning or plan recognition \citep{LTW,CBR_Planning,OntanonCBR,HTNPlanning,Ramirez}.
 
-\cite{LTW} used CBR to perform dynamic plan retrieval extracted from domain knowledge in Wargus (Warcraft II open source clone). \cite{CBR_Planning} base their real-time case-based planning (CBP) system on a plan dependency graph which is learned from human demonstration in Wargus. In \citep{OntanonCBR,PlanRetrieval}, they use CBR and expert demonstrations on Wargus. %They update their previous CPB approach by using ``situation assessment'' for plan retrieval. 
+\cite{LTW} used \glos{CBR} to perform dynamic plan retrieval extracted from domain knowledge in Wargus (Warcraft II open source clone). \cite{CBR_Planning} base their real-time case-based planning (CBP) system on a plan dependency graph which is learned from human demonstration in Wargus. In \citep{OntanonCBR,PlanRetrieval}, they use CBR and expert demonstrations on Wargus. %They update their previous CPB approach by using ``situation assessment'' for plan retrieval. 
 They improve the speed of CPB by using a decision tree to select relevant features. \cite{HsiehS08} based their work on \citep{LTW} and used StarCraft replays to construct states and building sequences. Strategies are choices of building construction order in their model. 
 
 \cite{schadd2007opponent} describe opponent modeling through hierarchically structured models of the opponent behavior and they applied their work to the Spring RTS game (Total Annihilation open source clone). \cite{HTNPlanning} use hierarchical task networks (\glos{HTN}) to model strategies in a first person shooter with the goal to use HTN planners. \cite{Kabanza2010} improve the probabilistic hostile agent task tracker (PHATT \citep{PHATT}, a simulated \glos{HMM} for plan recognition) by encoding strategies as HTN. 
@@ -114,6 +115,7 @@ Strategy is not limited to technology state, openings and timings. The player mu
 The different attack types and ``armor'' (size) types of units make it so that pairing units against each others is like a soft rock-paper-scissors (shi-fu-mi). But there is more to army composition than playing (anticipated, units take time to be produced) rock-paper-scissors with partial information: some units combine well with each others. The simplest example of combinations are ranged units and contact units which can be very weak (lots of weaknesses) taken separately but combined form an efficient army. There are also units which empower others through abilities, or units with very strong defensive or offensive abilities with which one unit can change the course of a battle. As stated before, these different units need different parts of the tech tree to be available and they have different resources costs. All things considered, deciding which units to produce is dependent on the opponent's army, the requirements of the planned tactics, the resources and the current (and future) technology available to the player.
 
 \section{Replays labeling}
+\label{sec:replayslabeling}
 
 A \glos{replay} contains all the actions of each players during a game. We used a dataset of replays to see when the players build which buildings (see Table~\ref{tab:replay_example} in appendix for an example of the buildings constructions actions). We attributed a label for each player for each game which notes the players \glos{opening}.
 
@@ -904,6 +906,7 @@ Z \begin{tiny}(Zerg)\end{tiny} & 896 & 0.089014 & 0.00796715 & 0.00123551 \\ \hl
 \end{table}
 
 \subsubsection{Strengths and weaknesses of StarCraft openings}
+\label{sec:openingsstrengthsweaknesses}
 
 We also proceeded to analyze the strengths and weaknesses of openings against each others. For that, we labeled the dataset with openings and then learned the $\PP(Win=true|Op_{player1}^t,Op_{player2}^t)$ probability table with Laplace's rule of succession. As can be seen in Table~\ref{tab:weberdatasetnumbers}, not all openings are used for one race in each of its 3 \gloss{matchup}. Table~\ref{table:openingcontingency} shows some parts of this $\PP(Win=true|Op_{player1}^t,Op_{player2}^t)$ ratios of wins of openings against each others. This analysis can serve the purpose of choosing the right opening as soon as the opponent's opening was inferred.
 
@@ -971,6 +974,7 @@ and perform an early rush instead. We think that this can be handled by our mode
 
 
 \section{Army composition}
+\label{sec:armycomposition}
 We reuse the predictions on the \glos{buildtree} ($\PP(BT)$) directly for the \glos{techtree} ($\PP(TT)$) (for the enemy, so $ETT$) by estimating $BT$ as presented above and simply adding the tech tree additional features (upgrades, researches) that we already saw\footnote{We could also modify the models above and incorporate tech tree features but it is of little benefit. Also, $BT$ contains duplicates of buildings and is it easier to downgrade to $TT$ than to estimate the openings from $TT$ instead of $BT$.}. You can just assume that $BT=TT$, or refer to section~\ref{sec:buildings}.
 
 \subsection{Bayesian model}

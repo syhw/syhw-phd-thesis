@@ -6,68 +6,95 @@ AC said, ``THERE IS AS YET INSUFFICIENT DATA FOR A MEANINGFUL ANSWER.''
 }
 \begin{flushright}Isaac Asimov (The Last Question, 1956)\end{flushright}\end{quotation}
 
-\lettrine{I}{ntro}
-\ifthenelse{\equal{\myebookformat}{false}}{
-\chaptertoc
-}{}
+%%% \ifthenelse{\equal{\myebookformat}{false}}{
+%%% \chaptertoc
+%%% }{}
 
-\section{Contrib}
-Résumer les contributions
-\subsection{Approaches}
+%\section{Summary}
+\section{Contributions summary}
+We classified the problems raised by game AI, and in particular by RTS AI. We showed how the complexity of video games makes it so that game AI systems can only be incompletely specified. This leads to uncertainty about our model, but also about the model of the opponent. Additionally, video games are often partially observable, sometimes stochastic, and most of them require motor skills, which will introduce randomness in the outcomes of player's actions. We chose to deal with incompleteness by transforming it about uncertainty about our reasoning model. We bind all these sources of uncertainty in Bayesian models. 
+
+%Specifically, we attacked three problems at three abstraction levels:
+Our contributions about breaking the complexity of \textit{specifying} and \textit{controlling} game AI systems are resumed by:
+\begin{itemize}
+    \item In chapter~\ref{chapter:micro}, we produced reactive, decentralized, multi-agent control by transforming the incompleteness about allied units intentions into uncertainty of their future locations. This can be viewed as an extension of Bayesian robot programming \citep{Lebeltel04} in a multi-agent setting. Instead of specifying a distribution on the possible directions knowing the sensory inputs, we specified the sensor distribution (independently of each other sensors) knowing the state ($\PP(Sensor|Direction)$). This approach, called \textit{inverse programming}, can be viewed as ``instead of specifying the states and their transitions based on sensors (an FSM), we specifying what the sensors should be when we are in a given state'', reverting some of the burden of specifying behaviors, and in a probabilistic setting. This is an extension of the work on inverse programming for Unreal Tournament avatars \citep{LeHy04}. Combined, these contributions lead to real-time micro-management behaviors for StarCraft, which achieved very satisfying results.
+
+    \item By going up in the ladder of abstraction (strategy \& tactics), we were able to exploit what we previously called \textit{vertical continuity} (see section~\ref{sec:verticalcontinuity}) through hierarchical models. About strategy (chapter~\ref{chapter:strategy}), from low-level observations, we produced \gloss{buildtree} (section~\ref{sec:techtreepred}), and built upon that to infer \gloss{opening} (section~\ref{sec:openingspred}) and to constrain the inference on the opponent's army composition (section~\ref{sec:armycomposition}). Tactics (chapter~\ref{chapter:tactics}) also make good use of the prediction on the opponent's \glos{techtree}. When used in decision-making, our models are even more constrained, because we have full knowledge of our state instead of distributions.
+
+    \item We also took advantage of sequencing of actions, previously called \textit{horizontal continuity} (see section~\ref{sec:horizontalcontinuity}), by assessing that, often, things which are done should not be undone (at least not immediately) and that some strategic and tactical steps are prerequisite of intended steps. At the strategic level, the distribution on \gloss{buildtree} is time-dependent: the sequencing is encoded in the learned discrete Gaussian distributions (section~\ref{sec:techtreepred}). The openings are filtered on previous inferences with a first order Markovian assumption (section~\ref{sec:openingspred}), i.e. the value at time $t$ is dependent on the value at time $t-1$. The army composition (section~\ref{sec:armycomposition}) makes use of temporal continuity to adapt to the player's army to the opponent's future army. %Tactics are based on lower-level units movement tracking (filtering). 
+Micro-management assumes an uncertain linear interpolation of future units position resulting of trajectory continuity (instead of considering all possible positions), as explained in subsection~\ref{sec:microrepulsionattraction}.
+\end{itemize}
+
+We used machine learning to help specifying our models, both used for prediction (opponent modeling) and for decision-making. We exploited different datasets for mainly two separate objectives:
+\begin{itemize}
+    \item We produced relevant \textit{abstract} models thanks to learning. For the labeling replays (allowing for supervised learning of our full \gloss{opening} prediction model), we used semi-supervised (by selecting features and a scoring function) \glos{GMM} clustering of replays, as presented in section~\ref{sec:replayslabeling}. In order to reason qualitatively and quantitatively about armies composition with a tractable model, we applied GMM to armies unit types percentages to find the different composing components (section~\ref{sec:armycomposition}). For tactics, we used heuristics (see subsection~\ref{sec:scoringheuristics}) for the evaluation of the regions, whose bias (incompleteness) the model was adapted to by learning.
+    
+    \item We learned the \textit{parameters} of our models from human-played games datasets. At the strategic level, we learned the time-dependent distributions on the build trees and the co-occurrence of openings with build trees in sections~\ref{sec:techtreepred} and \ref{sec:openingspred}. We also also able to study the strengths and weaknesses of openings this way (subsection~\ref{sec:openingsstrengthsweaknesses}, and we looked at the dynamics or army compositions (section~\ref{sec:armycomposition}). For tactics (see chapter~\ref{chapter:tactics}), we learned the co-occurrences of attacks with regions tactical properties.
+\end{itemize}
+
+Finally, we produced a StarCraft bot (chapter~\ref{chapter:bot}), which ranked 9th (on 13) and 4th (on 10), respectively at the AIIDE 2011 and CIG 2011 competitions. It is about 8th (on $\approx$ 20) on the ladder.
+
 %%% \begin{itemize}
 %%% \item train your IA from data
 %%% \item or train your IA by itself
 %%% \item or let the game designers set the parameters
 %%% \end{itemize}
-\begin{itemize}
-\item A tractable decomposition of game AI in a hierarchy of predictions, decisions and actions.
-\item Integration of learning in a decision-making model. 
-\item An autonomous agent for StarCraft (BroodwarBotQ).
-\end{itemize}
 
-\subsection{Results}
-Recall what works, what should be extended.
+%%% \begin{itemize}
+%%% \item A tractable decomposition of game AI in a hierarchy of predictions, decisions and actions.
+%%% \item Integration of learning in a decision-making model. 
+%%% \item An autonomous agent for StarCraft (BroodwarBotQ).
+%%% \end{itemize}
 
 \section{Perspectives}
 \label{chapter:perspectives}
 \subsection{Micro}
+An improvement (explained in subsection~\ref{sec:microreducingcollisions}) over our existing model usage would consist in using the distributions on directions ($\PP(Dir)$) for each units to make a centralized decision about which units should go where. This would allow for coordinated movements while retaining the tractability of a decentralized model. 
 
-Reinforcement learning, \citep{Marthi05concurrenthierarchical}
+For the problem of avoiding local optima ``trapping'', we proposed a ``trailing pheromones repulsion'' approach in subsection~\ref{sec:microavoidlocal} (see Fig.~\ref{fig:BayesianTrailingPheromone}), but other (adaptive) pathfinding approaches can be considered.
 
-
-Evolving control policies, \citep{Miles2007}
+Furthermore, the identification of the probability distributions of the sensors knowing the directions ($\PP(Sensor|Direction)$) is the main point of possible improvements. In the industry, behavior can be authored by game designers and an appropriate interface (with ``sliders'') to the model's parameters. As a competitive approach, reinforcement leaning or evolutionary learning of the probability tables (or probability distributions' parameters) seems the better choice. The main problems are: types/levels of opponents and situations. As we cannot assume optimal play from the opponents (at least not for large scale battles), the styles and types of the opponents' control will matter for the learning. As there are several types of micro-management situations, we have to choose the granularity of learning settings (battles) and how we recognize them in-game. We could consider the continuum of situations, and use Bayesian fusion of posteriors from models %parameters 
+learned in discrete contexts. As the domain (StarCraft) is large, distributions have to be efficiently parametrized (normal, log-normal, exponential distributions should fit our problem). The two main approaches to learn these sensors distributions would be:
+\begin{itemize}
+    \item Concurrent reinforcement learning, \citep{Marthi05concurrenthierarchical} showed how it can work in Wargus.
+    \item Co-evolving control policies, as presented in \citep{Miles2007,Avery09} with influence maps.
+\end{itemize}.
 %\citep{Schoenauer1996} 
+
 \subsection{Tactics}
 
-Two important research directions for tactics would be:
+The three most interesting research directions for tactics would be:
 \begin{itemize}
-    \item Tactical assault generation, so that we do not have to hard-code the tactical goals behaviors. Previous works, which would be compatible with StarCraft, in this direction include \citep{Chung05,PonsenMSA06,UCT,GellySchoenauer}.
-    \item Improve tactical state estimation, so that both our tactical decision-making and tactical prediction benefit it. A first step would be to use a (dynamic) filtering on enemy units, either with a particle filter \citep{Thrun02d,weber2011aiide} or with hidden semi-Markov models \citep{Hladky_anevaluation}. We propose here a simple units filtering model based on the decomposition of the map in regions.
+    \item Improve tactical state estimation, so that both our tactical decision-making and tactical prediction benefit it. A first step would be to use a (dynamic) filtering on enemy units, either with a particle filter \citep{Thrun02d} as \cite{weber2011aiide} did in Starcraft, or with hidden semi-Markov models \citep{Hladky_anevaluation}. We proposed here a simpler units filtering model based on the decomposition of the map in regions in section~\ref{sec:enemyunitsfilter}.
+
+    \item Use our learned parameters as bootstrap (``prior'') and keep on learning against a given opponent and/or on a given map. We should count how often and in which circumstances an attack, which should be successful, fails. It should even be done during a given game (as human players do). This may be seen as an exploration-exploitation trade-off in which our robotic player wants to minimize its regret for which multi-armed bandits \citep{Kuleshov2000} are a good fit and have proved their valor in Go AI \citep{GellySchoenauer}.
+
+    \item Tactical assault generation, so that we do not have to hard-code the tactical goals behaviors. The definition of \textit{tactics} used in \citep{PonsenMSA06} is not exactly matching ours, but they evolved some strategic and tactical decision elements (evolving knowledge bases for \glos{CBR}) in Wargus. Another approach is to use Monte-Carlo planning as \cite{Chung05} did for capture-the-flag in Open RTS. \glos{UCT} is a Monte-Carlo planning algorithm allowing to build a sparse tree over the state tree (edges are actions, nodes are states) which had excellent results in Go \citep{GellyUCT,GellySchoenauer}. \cite{UCT} showed that UCT could be used in an RTS game (with multiple simultaneous actions) to generate tactical plans.
 \end{itemize}
 
 
 \subsection{Strategy}
-Bandits (contextual bands)\\
+Strategy is a vast subject and impacts tactics very much. There are several ``strategic parameters'' (as described in section~\ref{sec:whatisstrategy}): aggressiveness (initiative), economy/technology/production distribution, resources planning.
+
+For all strategic models, the possible improvements (subsections~\ref{sec:buildtreeimprovements}, \ref{sec:openingspossibleimprovements}, \ref{sec:armycompoextensions}) would include to learn specific sets of parameters against the opponent's strategies (see below ``inter-game adaptation (meta-game)''). The problem here is that (contrary to battles/tactics) there are not much observations (games against a given opponent) to learn from. For instance, a naive approach would be to learn a Laplace's law of succession directly on $P(ETechTrees=ett|Player=p)= \frac{1 + nbgames(ett,p)}{\#ETT + nbgames(p)}$, and do the same for $EClusters$, but this could require several games (even if we see more than one tech tree per game for the opponent). Another part of the problem could arise if we want to learn really in-game as we would only have partial observations. %(and $ETactics$),  
+
+Another possibility is yet again to try and adapt bandits algorithms. Given a 
+
+An interesting perspective would be to use a hierarchy (from strategy to tactics) of reinforcement learning of the bot's parameters, which can be seen as learning the degrees of liberty (of the whole bot) one by one as in \citep{baranes2009}.
+
+
 Planning \citep{Wolfe11}\\
 Probabilistic planning?
+%Bandits (contextual bandits)\\
+
+
 
 \subsection{Inter-game Adaptation (Meta-game)}
+In a given match, and/or against a given player, players adapt their strategies against each other's. As this can be seen as a continuous learning problem (reinforcement learning, exploration-exploitation trade-off), there is more to it. Human players call this the \textit{\glos{metagame}}, as they enter the ``I think that he thinks that I think...'' game until arriving at fixed points. This ``meta-game'' is closely related to the balance of the game, and the fact that there are several equilibriums makes the interest of StarCraft.
 
-\glos{metagame} % TODO
-Other cases of learning not dealt with in previous chapters:
-\citep{metalevelbehavioradaptrts}
-Laplace smoothing $P(ETT=ett|Player=p)= \frac{1 + nbgames(ett,p)}{\#ETT + nbgames(p)}$. Same for $EClusters$ and $ETactics$.\\
+\cite{metalevelbehavioradaptrts} 
 
-The full (reinforcement) learning of the bot can be seen as learning degrees of liberty one by one with a hierarchy from strategies to actions by tactics. C.f R-IAC Baranes \& Oudeyer 2009 and 2012; $PI^2$-CMA (ES).\\
-
-meta question I think that he thinks that I think that...
-\citep{RussellW89}
+%\citep{RussellW89}
 \citep{metaMCTS}
-
-
-%\section{Perspectives:
-Not a solved problem yet\\
-Computers don't beat good (experts) humans (higher level strategic thinking: common sense, plus vision/interpolation for efficient micro). They are not so fun (do not adapt that much, our bot is the most adaptive ATM). Competition results.
-Tout ce qui peut se faire en recherche et ce qui est directement applicable par l'industrie.
 
 
