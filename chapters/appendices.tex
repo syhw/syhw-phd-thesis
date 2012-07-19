@@ -1,29 +1,43 @@
 \chapter{Game AI}
 \label{apdx:gameAI}
 
-\section{Algorithms}
+\section{Negamax}
 
 \begin{algorithm}
-\caption{Negamax algorithm}
+\caption{Negamax algorithm (with closures)}
 \label{alg:negamax}
 \begin{algorithmic}
 \Function{negamax}{depth}
     \If{$depth \leq 0$}
         \State \Return $value()$
     \EndIf
-    \State $\alpha = -\infty$
+    \State $\alpha \leftarrow -\infty$
     \ForAll{possible moves}
-        \State $\alpha = max(\alpha, -negamax(depth-1))$
+        \State $\alpha \leftarrow max(\alpha, -negamax(depth-1))$
     \EndFor
     \State \Return $\alpha$
 \EndFunction
 \end{algorithmic}
 \end{algorithm}
 
+%%% function MonteCarloPlanning(state)
+%%% 2: repeat
+%%% 3: search(state, 0)
+%%% 4: until Timeout
+%%% 5: return bestAction(state,0)
+%%% 6: function search(state, depth)
+%%% 7: if Terminal(state) then return 0
+%%% 8: if Leaf(state; d) then return Evaluate(state)
+%%% 9: action := selectAction(state, depth)
+%%% 10: (nextstate; reward) := simulateAction(state, action)
+%%% 11: q := reward + ° search(nextstate, depth + 1)
+%%% 12: UpdateValue(state; action; q; depth)
+%%% 13: return q
+
 \section{``Gamers' survey'' in section~\ref{surveygamers} page~\pageref{surveygamers}}
 
 \label{apdx:survey}
-\subsection{Questions}
+\subsubsection{Questions}
 
 How good are you?
 \begin{itemize}
@@ -84,7 +98,7 @@ What is more important:
     \item 0 both equal
 \end{itemize}
 
-\subsection{Results}
+\subsubsection{Results}
 
 \begin{sidewaystable}
 

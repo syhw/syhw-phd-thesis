@@ -240,7 +240,7 @@ The corresponding goal (orders) are described in section~\ref{sec:goals}.
 \subsection{Source}
 \newglossaryentry{metagame}{name={meta-game},description={preparation and maneuvering before (and between) games to exploit: current trends, opponent's style and weaknesses, map's specificities (safe zones, back doors, timings), and psychological ``mind games''.}}
 % PvP 1336, PvT 7225, PvZ 6082, TvT 1384, TvZ 6322, ZvZ 598
-We downloaded more than 8000 \gloss{replay} to keep 7649 uncorrupted, 1v1 replays from professional gamers leagues and international tournaments of StarCraft, from specialized websites\footnote{\url{http://www.teamliquid.net}}\footnote{\url{http://www.gosugamers.net}}\footnote{\url{http://www.iccup.com}}. We then ran them using BWAPI\footnote{\url{http://code.google.com/p/bwapi/}} and dumped units' positions, pathfinding and regions, resources, orders, vision events, for attacks: types, positions, outcomes. Basically, every BWAPI event, plus attacks, were recorded, the dataset and its source code are freely available\footnote{\url{http://snippyhollow.github.com/bwrepdump/}}. 
+We downloaded more than 8000 \gloss{replay} to keep 7649 uncorrupted, 1v1 replays from professional gamers leagues and international tournaments of StarCraft, from specialized websites\footnote{\url{http://www.teamliquid.net}}\footnote{\url{http://www.gosugamers.net}}\footnote{\url{http://www.iccup.com}}. We then ran them using BWAPI\footnote{\url{http://code.google.com/p/bwapi/}} and dumped units' positions, pathfinding and regions, resources, orders, vision events, for attacks: types, positions, outcomes. Basically, every \glos{BWAPI} event, plus attacks, were recorded, the dataset and its source code are freely available\footnote{\url{http://snippyhollow.github.com/bwrepdump/}}. 
 The implication of considering only replays of very good player allows us to use this dataset to learn the behaviors of our bot. Otherwise, particularly regarding the economy, a simple bot (AI) coupled with a planner can beat the average player, who does not have a tightly timed build order and/or not the sufficient \glos{APM} to execute. %carry it through. 
 %The only downside of using human-played games of StarCraft to train our bot is that the \glos{metagame}, the strategic and psychological game in-between rounds that is, is very different for bots (inexistant) than for humans.
 
@@ -303,15 +303,15 @@ We trigger an attack tracking heuristic when one unit dies and there are at leas
 \EndFunction
 
 \Function{attack}{$unit$} \Comment{new attack constructor}
-    \State $self.convex\_enveloppe \leftarrow propagate\_default\_enveloppe(unit)$ 
     \State $ $ \Comment{$self \Leftrightarrow this$}
+    \State $self.convex\_hull \leftarrow propagate\_default\_hull(unit)$ 
     \State $self.type \leftarrow determine\_attack\_type(update(self, unit))$
     \State \Return $self$
 \EndFunction
 
 \Function{update}{$attack, unit$}
-    \State $attack.update\_enveloppe(unit)$ \Comment{takes units ranges into account}
-    \State $c \leftarrow get\_context(attack.convex\_enveloppe)$
+    \State $attack.update\_hull(unit)$ \Comment{takes units ranges into account}
+    \State $c \leftarrow get\_context(attack.convex\_hull)$
     \State $self.units\_involved.update(c)$ 
     \State $self.tick \leftarrow default\_timeout()$
     \State \Return $c$
@@ -747,6 +747,7 @@ In match situation against a given opponent, for inputs that we can unequivocall
 
 
 \subsection{Possible improvements}
+\label{sec:tacticspossibleimprovements}
 There are several main research directions for possible improvements:
 \begin{itemize}
     \item improving the underlying heuristics: the heuristics presented here are quite simple but they may be changed, and even removed or added, for another RTS or FPS, or for more performance. In particular, our ``defense against invisible'' heuristic could take detector positioning/coverage into account. Our heuristic on tactical values can also be reworked to take terrain tactical values into account (chokes and elevation in StarCraft). %For the estimated position of enemy units, we could use a particle filter \cite{weber2011aiide} with a motion model (at least one for ground units and one for flying units). 
@@ -760,7 +761,9 @@ We now detail two particular improvements which could increase the performance s
     \item improving the model itself: finally, one of the strongest assumptions (which is a drawback particularly for prediction) of our model is that the attacking player is always considered to attack in this most probable regions. While this would be true if the model was complete (with finer army positions inputs and a model of what the player thinks), we believe such an assumption of completeness is far fetched. Instead we should express that incompleteness in the model itself and have a ``player decision'' variable $D \sim Multinomial(\PP(A_{1:n},H_{1:n}),player)$.
 \end{itemize} 
 
-Finally, our approach is not exclusive to most of the techniques presented above, and it could be interesting to combine it with UCT \citep{UCT} and more complex/precise tactics generated through planning \citep{Chung05}
+Finally, our approach is not exclusive to most of the techniques presented above, and it could be interesting to combine it with %UCT \citep{UCT} and more complex/precise tactics generated through planning \citep{Chung05}
+%Another approach is to use 
+Monte-Carlo planning, as \cite{Chung05} did for capture-the-flag tactics in Open RTS. Also, \glos{UCT} is a Monte-Carlo planning algorithm allowing to build a sparse tree over the state tree (edges are actions, nodes are states) which had excellent results in Go \citep{GellyUCT,GellySchoenauer}. \cite{UCT} showed that UCT could be used in an RTS game (with multiple simultaneous actions) to generate tactical plans. Another track (instead of UCT) would be to use metareasoning for \glos{MCTS} \citep{metaMCTS}, which would incorporate domain knowledge and/or hyper-parameters (aggressiveness...).
 
 \subsection{Conclusion}
 

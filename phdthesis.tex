@@ -3,10 +3,10 @@
 %%% \myprintformat == true ==> PDF for printing + binding
 %%% \myebookformat == true ==> HTML for transformation into ePub
 
-\documentclass[a4paper,11pt,twoside]{memoir}
-%\documentclass[ebook,oneside,openany]{book}%article, report
+%\documentclass[a4paper,11pt,twoside]{memoir}
+\documentclass[ebook,oneside,openany]{book}%article, report
 \def \myprintformat {false} % true or false
-\def \myebookformat {false} % true or false
+\def \myebookformat {true} % true or false
 
 \setcounter{secnumdepth}{2}
 %%% PACKAGES:
@@ -162,7 +162,7 @@ $\ccbynceu$
 
 \ifthenelse{\equal{\myebookformat}{false}}{
 \dominitoc
-\setcounter{tocdepth}{3}
+\setcounter{tocdepth}{2}
 }{}
 \tableofcontents
 %\listoffigures

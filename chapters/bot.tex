@@ -25,6 +25,9 @@
 
 \label{sec:codearchitecture}
 
+Our implementation\footnote{\textsc{BroodwarBotQ}, code and releases: \url{http://github.com/SnippyHolloW/BroodwarBotQ}} (BSD licensed) uses BWAPI\footnote{BWAPI: \url{http://code.google.com/p/bwapi/}} to get information from and to control StarCraft. The bot's last major revision (January 2011) consists of 23,234 lines of \texttt{C++} code, making good use of \texttt{boost} libraries and BWTA (Brood War Terrain Analyzer). The learning of the parameters from the replays is done by separated programs, which serialize the probability tables and distribution parameters, later loaded by \textsc{BroodwarBotQ} each game.
+
+
 The global (simplified) view of the whole bot's architecture is shown in Figure~\ref{fig:codearchitecture}. There are three main divisions: ``Macro'' (economical and production parts), ``Intelligence'' (everything information related) and ``Micro'' (military units control/actions). Units (workers, buildings, military units) control is granted through a centralized \texttt{Arbitrator} to ``Macro'' parts and Goals. This is a bidding system in which parts wanting a unit bid on it relatively to the importance of the task they will assign it. There may (should) be better systems but it works. We will now detail the parts which were explained in the previous three chapters.
 
 \begin{figure}[h]
@@ -325,7 +328,7 @@ Offline learning of matrices (as shown in Fig.~\ref{fig:examplefilter}) of aggre
 \end{center}
 \end{figure}
 
-By considering a particle filter, we could consider a finer model in which we deal with positions of units (in pixels or walk tiles or build tiles) directly, but there are some drawbacks:
+By considering a particle filter \citep{Thrun02d}, we could consider a finer model in which we deal with positions of units (in pixels or walk tiles or build tiles) directly, but there are some drawbacks:
 \begin{itemize}
     \item The data to learn (offline or online) is sparse as there are several versions of the same map and the combinatorics of start positions (2 occupied start positions on 4 possible most of the time). This would need any form of spatial abstraction anyway, like distance to most walked traces.
     \item Computation cost to track $\approx 40$ units makes it so that the particle sampling numbers should be low to stay real-time. Or that one should abandon the motion model for a Kalman filter \citep{Kalman1960}. 
@@ -357,16 +360,16 @@ We will now show key moments of the game, as was done with a human-played game i
 
 First, Figure~\ref{fig:bot_macro} shows some economical elements of BBQ. The yellow rectangles show future buildings placements. In the light blue (teal color) rectangle are the next buildings which are planned for construction with their future positions. Here, the Protoss Pylon was just added to the construction plan as our \texttt{Producer} estimated that we will be \glos{supply} blocked in 28 seconds at the current production rate. This is noted by the ``we need another pylon: prevision supply 84 in 28 sec'' line, as supply is shown doubled (for programmatic reasons, so that supply is always an integer): 84 is 42, and we have a current \glos{maxsupply} of 41 (top right corner). 
 
-Our buildings placer make it sure that there is always a path around our buildings blocks with a flow algorithm presented in the appendix in algorithm~\ref{alg:flood} and Figure~\ref{fig:buildingsplacer}. It is particularly important to be able to circulated in the base, and that newly produced units are not stuck when they are produced (as they could is there was a convex enclosure as in Fig.~\ref{fig:buildingsplacer}). Buildings cannot be placed anywhere on the map, even more so for Protoss buildings, as most of them need to be build under Pylon coverage (the plain blue ellipses in the screenshot). At the same time, there are some (hard) tactical requirements for the placement of defensive buildings.
+Our buildings placer make it sure that there is always a path around our buildings blocks with a flow algorithm presented in the appendix in algorithm~\ref{alg:flood} and Figure~\ref{fig:buildingsplacer}. It is particularly important to be able to circulated in the base, and that newly produced units are not stuck when they are produced (as they could is there was a convex enclosure as in Fig.~\ref{fig:buildingsplacer}). Buildings cannot be placed anywhere on the map, even more so for Protoss buildings, as most of them need to be build under Pylon coverage (the plain blue ellipses in the screenshot). At the same time, there are some (hard) tactical requirements for the placement of defensive buildings\footnote{A good benchmark for buildings positioning would be to test if an AI can perform a ``Forge expand'' which consists in blocking all ground paths with buildings and protecting against the early rushes with judiciously placed Photon Cannons, without any military unit.}. 
 
 \begin{figure}[h]
 \begin{center}
-%\begin{tabular}{cc}
+\begin{tabular}{c}
 %\includegraphics[width=0.49\columnwidth]{images/botgame/scout0.png} &
 %\includegraphics[width=0.49\columnwidth]{images/botgame/scout0b.png} \\
-\includegraphics[width=0.66\columnwidth]{images/botgame/scout1.png} %& 
+\includegraphics[width=0.66\columnwidth]{images/botgame/scout1.png}\\
 \includegraphics[width=0.66\columnwidth]{images/botgame/scout2.png}
-%\end{tabular}
+\end{tabular}
 \caption{Crops of screenshots of the first scouting (discovery) of an opponent's base in a Protoss vs Protoss game. The buildings shown here are the ones of the opponent. The yellow squares represent the pathfinding output. On the bottom, in the blue rectangle, are displayed the possible openings for the Protoss opponent and their respective probabilities (in percentage) according what we have seen. The top picture was captured a few seconds before the right one and thus we had less information about the opponent's buildings (the upper right part is black because of the fog of war).}
 \label{fig:bot_scout}
 \end{center}
@@ -398,7 +401,7 @@ If our bot does not have to defend an early rush by the opponent, it chooses to 
 \end{itemize}
 BroodwarBotQ then goes up the ramp and destroys the base of the built-in AI.
 
-%\clearpage
+\clearpage
 
 \section{Results}
 

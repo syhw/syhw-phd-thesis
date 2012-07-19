@@ -480,7 +480,7 @@ With an estimated number of legal 19x19 Go positions of $2.081681994 * 10^{170}$
 \end{algorithm}
 
 
-The MoGo team \citep{GellyUCT, Gelly2006, GellySchoenauer} introduced Upper Confidence Bounds for Trees (\newglossaryentry{UCT}{name=UCT,description={Upper Confidence Bounds for Trees}}\glos{UCT}) for \glos{MCTS} in Go AI. MoGo became the best 9x9 and 13x13 Go program, and the first to win against a pro on 9x9. UCT specializes MCTS in that it specifies \textsc{ExpandFrom} (as in Algorithm.~\ref{alg:expandfrom}) tree policy with a specific exploration-exploitation trade-off. UCB1 \citep{BanditBased} views the tree policy as a multi-armed bandit problem and so \textsc{ExpandFrom}$(node)$ UCB1 chooses the arms with the best upper confidence bound: $$\argmax_{c \in node.children} \frac{Q(c)}{N(c)}+k\sqrt{\frac{\ln N(node)}{N(c)}}$$ in which $k$ fixes the exploration-exploitation trade-off: $\frac{Q(c)}{N(c)}$ is simply the average reward when going through $c$ so we have exploitation only for $k=0$ and exploration only for $k=\infty$.
+The MoGo team \citep{GellyUCT, Gelly2006, GellySchoenauer} introduced the use of Upper Confidence Bounds for Trees (\newglossaryentry{UCT}{name=UCT,description={Upper Confidence Bounds for Trees}}\glos{UCT}) for \glos{MCTS} in Go AI. MoGo became the best 9x9 and 13x13 Go program, and the first to win against a pro on 9x9. UCT specializes MCTS in that it specifies \textsc{ExpandFrom} (as in Algorithm.~\ref{alg:expandfrom}) tree policy with a specific exploration-exploitation trade-off. UCB1 \citep{BanditBased} views the tree policy as a multi-armed bandit problem and so \textsc{ExpandFrom}$(node)$ UCB1 chooses the arms with the best upper confidence bound: $$\argmax_{c \in node.children} \frac{Q(c)}{N(c)}+k\sqrt{\frac{\ln N(node)}{N(c)}}$$ in which $k$ fixes the exploration-exploitation trade-off: $\frac{Q(c)}{N(c)}$ is simply the average reward when going through $c$ so we have exploitation only for $k=0$ and exploration only for $k=\infty$.
 
 \citet{BanditBased} showed that the probability of selecting sub-optimal actions converges to zero and so that UCT MCTS converges to the minimax tree and so is optimal. Empirically, they found several convergence rates of UCT to be in $O(b^{d/2})$, as fast as Alpha-beta tree search, and able to deal with larger problems (with some error). For a broader survey on MCTS methods, see \citep{MCTSsurvey}.
 
@@ -657,7 +657,7 @@ Some games allow for instant (or delayed, but asynchronous to other players) res
 
 While ``skill'' (speed of the movements, accuracy of the shots) is easy to emulate for an AI, team-play is much harder for bots and it is always a key ability. Team-play is the combination of distributed evaluation of the situation, planning and distribution of specialized tasks. Very high skill also requires integrating over enemy's tactical plans and positions to be able to take indirect shots (grenades for instance) or better positioning (coming from their back), which is hard for AI too. An example of that is that very good human players consistently beat the best bots (nearing 100\% accuracy) in Quake III (which is an almost pure skill ``fast FPS''), because they take advantage of being seen just when their weapons reload or come from their back. Finally, bots which equal the humans by a higher accuracy are less fun to play with: it is a frustrating experience to be shot across the map, by a bot which was stuck in the door because it was pushed out of its trail.
 
-\subsubsection{State of the art}
+\subsection{State of the art}
 
 FPS AI consists in controlling an agent in a complex world: it can have to walk, run, crouch, jump, swim, interact with the environment and tools, and sometimes even fly. Additionally, it has to shoot at moving, coordinated and dangerous, targets. %The first solution, in Wolfeinstein 3D, was to have enemies just shoot or run towards the player. The game was basically a linear indoors two-dimensional (no jumps, no stairs, nor the possibility to shoot up or down) labyrinth. 
 On a higher level, it may have to gather weapons, items or power-ups (health, armor, etc.), find interesting tactical locations, attack, chase, retreat...
@@ -673,7 +673,7 @@ More recent FPS games have dealt with these limitations by using combinations of
 
 In research, \citet{Laird01} focused on learning rules for opponent modeling, planning and reactive planning (on Quake), so that the robot builds plan by anticipating the opponent's actions. \citet{LeHy04,theseRonan} used robotics inspired Bayesian models to quickly learn the parameters from human players (on Unreal Tournament). \citet{Zanetti2004} and \citet{westraQ3} applied evolutionary neural networks to optimize Quake III bots. Predicting opponents positions is a central task to believability and has been solved successfully using particle filters \citep{particlefiltergameAI} and other models (like Hidden Semi-Markov Models) \citep{Hladky_anevaluation}. Multi-objective neuro-evolution \citep{Zanetti2004,schrum_cig11competition} combines learning from human traces with evolutionary learning for the structure of the artificial neural network, and leads to realistic (human-like) behaviors, in the context of the BotPrize challenge (judged by humans) \citep{Hingston_2009}.
 
-\subsubsection{Challenges}
+\subsection{Challenges}
 
 Single-player FPS campaigns immersion could benefit from more realistic bots and clever squad tactics. Multi-player FPS are competitive games, and a better game AI should focus on:
 \begin{itemize}
@@ -698,11 +698,11 @@ Inspired directly by tabletop and live action role-playing games (Dungeon \& Dra
 \end{itemize}
 NPC acting strangely are sometimes worse for the player's immersion than immobile and dull ones. However, it is more fun for the player to battle with hostile NPC which are not too dumb or predictable. Players really expect allied NPC to at least not hinder them, and it is even better when they adapt to what the player is doing. %Finally, for MMORPG, persistent character AI could maintain the player's avatar in the world when she is enjoying real-life.
 
-\subsubsection{State of the art}
+\subsection{State of the art}
 
 Methods used in \glos{FPS} are also used in \glos{RPG}. The needs are sometimes a little different for RPG games: for instance RPG need interruptible behaviors, behaviors that can be stopped and resumed (dialogs, quests, fights...) that is. RPG also require stronger story-telling capabilities than other gameplay genres, for which they use (logical) story representations (ontologies) \citep{kline2009,riedl11}. Behavior multi-queues \citep{Cutumisu09} resolve the problems of having resumable, collaborative, real-time and parallel behavior, and tested their approach on Neverwinter Nights. Basically they use prioritized behavior queues which can be inserted (for interruption and resumption) in each others. AI directors are control programs tuning the difficulty and pace of the game session in real-time from player's metrics. \citet{kline2011} used an AI director to adapt the difficulty of Dark Spore to the performance (interactions and score) of the player in real-time.
 
-\subsubsection{Challenges}
+\subsection{Challenges}
 
 There are mainly two axes for RPG games to bring more fun: interest in the game play(s), and immersion. For both these topics, we think game AI can bring a lot:
 \begin{itemize}
@@ -723,7 +723,7 @@ RTS gameplay consist in gathering resources, building up an economic and militar
 
 More will be said about RTS in the dedicated chapter~\ref{chapter:rtsai}.
 
-\subsubsection{State of the art \& challenges}
+\subsection{State of the art \& challenges}
 \citet{Buro04callfor} called for AI research in RTS games and identified the technical challenges as:% adversarial planning under uncertainty, learning and opponent modeling, and spatial and temporal reasoning.  
 
 %On planning under uncertainty, \citet{LTW} used \newacronym{cbr}{CBR}{case-based reasoning}\glos{cbr} to perform dynamic plan retrieval extracted from domain knowledge in Wargus (Warcraft II clone). \citet{Ontanon2007} based their real-time case-based planning (CBP) system on a plan dependency graph which is learned from human demonstration in Wargus. In \citep{Mishra2008,Ontanon2010,metalevelbehavioradaptrts}, they used a knowledge-based approach to perform situation assessment to use the right plan, and revise it (integrating learning, planning, and problem solving in CBR), performing runtime adaptation by monitoring its performance. \citet{Trusty2011} used a genetic-algorithm inspired method to mix and optimize existing expert plan, also in Wargus. \citet{Chung05} adapted Monte-Carlo tree search to planning in RTS games and applied it to a capture-the-flag mod of Open RTS. \citet{UCT} applied UCT (MCTS algorithm) to tactical assault planning in Wargus. Reactive planning and goal-driven autonomy (that is, find the more relevant goal to follow in unknown situations) are studied in \citep{Weber2010cr,WeberCIG10}. \citet{Churchill2011} used abstractions and heuristics to produce a real-time build-order planner. %\citet{CadenaG11} used fuzzy CBR for strategic and tactical planning.

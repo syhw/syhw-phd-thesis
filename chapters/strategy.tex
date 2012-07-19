@@ -34,7 +34,7 @@ Build trees estimation was published at the Annual Conference on Artificial Inte
 \begin{itemize}
 \item Problem: take the winning strategy in the absolute (knowing everything: complete observations, players intentions, effects of each possible actions).
 \item Problem that we solve: take the winning strategy (in average) knowing what we saw from the opponent and our model of the game. 
-\item Type: prediction is problem of \textit{inference} or \textit{plan recognition} from \textit{incomplete informations}; adaptation given what we know is a problem of \textit{planning under constraints}.
+\item Type: prediction is a problem of \textit{inference} or \textit{plan recognition} from \textit{incomplete informations}; adaptation given what we know is a problem of \textit{planning under constraints}.
 \item Complexity: simple StarCraft decision problems are \textsc{np}-hard \citep{GamingComplexity}. We would argue that basic StarCraft strategy with full information (remember that StarCraft is partially observable) is mappable to the Generalized Geography problem\footnote{As the \gloss{techtree} get opened, the choices in this dimension of strategy is being reduced as in Generalized Geography.} and thus is \textsc{pspace}-hard \citep{Lichtenstein78},
 Chess \citep{Fraenkel81} and Go (with Japanese ko rules) are \textsc{exptime}-complete \citep{Robson83}. Our solutions are real-time on a laptop. %%% TODO XXX
 %\item Results: better resistance to noise, which is fundamental in real setup RTS gameplay (fog of war). Full Bayesian model down to adaptation actions some day?
@@ -55,7 +55,7 @@ As it is an abstract concept, what constitutes \textit{strategy} is hard to gras
 \end{itemize}
 Strategy is a question of balance between these three axis, and of knowing when we can attack and when we should stay in defense. Being aggressive is best when we have a military advantage (in numbers or technology) over the opponent. Advantages are gained by investments in these axis, and capitalizing on them when we max out our returns (comparatively to the opponent's).
 
-The other aspect of strategy is to decide what to do with these resources. This is the part that we studied most, the decision-making questions are:
+The other aspect of strategy is to decide what to do with these resources. This is the part that we studied the most, and the decision-making questions are:
 \begin{itemize}
     \item Where do we expand? (We deal with this question by an ad-hoc solution.)
     \item Which tech path do we open? Which tech tree do we want to span in a few minutes? We have to follow a tech tree that enables us to perform the tactics and long term strategy that we want to do, but we also have to adapt to whatever the opponent is doing.
@@ -76,7 +76,7 @@ There are related works in the domains of opponent modeling \citep{HsiehS08,scha
 \cite{LTW} used \glos{CBR} to perform dynamic plan retrieval extracted from domain knowledge in Wargus (Warcraft II open source clone). \cite{CBR_Planning} base their real-time case-based planning (CBP) system on a plan dependency graph which is learned from human demonstration in Wargus. In \citep{OntanonCBR,PlanRetrieval}, they use CBR and expert demonstrations on Wargus. %They update their previous CPB approach by using ``situation assessment'' for plan retrieval. 
 They improve the speed of CPB by using a decision tree to select relevant features. \cite{HsiehS08} based their work on \citep{LTW} and used StarCraft replays to construct states and building sequences. Strategies are choices of building construction order in their model. 
 
-\cite{schadd2007opponent} describe opponent modeling through hierarchically structured models of the opponent behavior and they applied their work to the Spring RTS game (Total Annihilation open source clone). \cite{HTNPlanning} use hierarchical task networks (\glos{HTN}) to model strategies in a first person shooter with the goal to use HTN planners. \cite{Kabanza2010} improve the probabilistic hostile agent task tracker (PHATT \citep{PHATT}, a simulated \glos{HMM} for plan recognition) by encoding strategies as HTN. 
+\cite{schadd2007opponent} describe opponent modeling through hierarchically structured models of the opponent's behavior and they applied their work to the Spring RTS game (Total Annihilation open source clone). \cite{HTNPlanning} use hierarchical task networks (\glos{HTN}) to model strategies in a first person shooter with the goal to use HTN planners. \cite{Kabanza2010} improve the probabilistic hostile agent task tracker (PHATT \citep{PHATT}, a simulated \glos{HMM} for plan recognition) by encoding strategies as HTN. 
 
 \cite{weberStrat} presented ``a data mining approach to strategy prediction'' and performed supervised learning (from buildings features) on labeled StarCraft replays. In this chapter, for openings prediction, we worked with the same dataset as they did, using their openings labels and comparing it to our own labeling method. %\cite{Weber2010qf} applied this automated replay annotation approach to CBP on StarCraft.
 
@@ -106,13 +106,13 @@ In RTS games jargon, an \textit{\glos{opening}} denotes the same thing than in C
 
 Players have to find out what opening their opponents are doing to be able to effectively deal with the strategy (army composition) and tactics (military moves: where and when) thrown at them. For that, players scout each other and reason about the incomplete information they can bring together about army and buildings composition. This chapter presents a probabilistic model able to predict the \textit{\glos{opening}} of the enemy that is used in a StarCraft AI competition entry bot. Instead of hard-coding strategies or even considering plans as a whole, we consider the long term evolution of our \glos{techtree} and the evolution of our army composition separately (but steering and constraining each others), as shown in Figure~\ref{fig:conceptSTRATEGY}. With this model, our bot asks ``what units should I produce?'' (assessing the whole situation), being able to revise and adapt its production plans.
 
-Later in the game, as the possibilities of strategies ``diverge'' (as in Chess), there are no longer fixed foundations/terms that we can speak of as for openings. Instead, what is interesting is to know the technologies available to the enemy as well as have a sense of the composition of their army. The players have to adapt to each other technologies and armies compositions either to be able to defend or to attack. Some units are more cost-efficient than others against particular compositions. Some combinations of units play well with each others (for instance biological units with ``medics'' or a good ratio of strong contact units backed with fragile ranged or artillery units). Finally, some units can be game changing by themselves like cloaking units, detectors, massive area of effects units... 
+Later in the game, as the possibilities of strategies ``diverge'' (as in Chess), there are no longer fixed foundations/terms that we can speak of as for openings. Instead, what is interesting is to know the technologies available to the enemy as well as have a sense of the composition of their army. The players have to adapt to each other's technologies and armies compositions either to be able to defend or to attack. Some units are more cost-efficient than others against particular compositions. Some combinations of units play well with each others (for instance biological units with ``medics'' or a good ratio of strong contact units backed with fragile ranged or artillery units). Finally, some units can be game changing by themselves like cloaking units, detectors, massive area of effects units... 
 
 \subsection{Military units}
 \label{sec:militaryunits}
 Strategy is not limited to technology state, openings and timings. The player must also take strategic decisions about the army composition. While some special tactics (drops, air raids, invisible attacks) require some specific units, these does not constitute the bulk of the army, at least not after the first stages of the game ($\approx$ 10 minutes).
 
-The different attack types and ``armor'' (size) types of units make it so that pairing units against each others is like a soft rock-paper-scissors (shi-fu-mi). But there is more to army composition than playing (anticipated, units take time to be produced) rock-paper-scissors with partial information: some units combine well with each others. The simplest example of combinations are ranged units and contact units which can be very weak (lots of weaknesses) taken separately but combined form an efficient army. There are also units which empower others through abilities, or units with very strong defensive or offensive abilities with which one unit can change the course of a battle. As stated before, these different units need different parts of the tech tree to be available and they have different resources costs. All things considered, deciding which units to produce is dependent on the opponent's army, the requirements of the planned tactics, the resources and the current (and future) technology available to the player.
+The different attack types and ``armor'' (size) types of units make it so that pairing units against each others is like a soft rock-paper-scissors (shi-fu-mi). But there is more to army composition than playing rock-paper-scissors with anticipation (units take time to be produced) and partial information: some units combine well with each others. The simplest example of combinations are ranged units and contact units which can be very weak (lots of weaknesses) taken separately, but they form an efficient army when combined. There are also units which empower others through abilities, or units with very strong defensive or offensive abilities with which one unit can change the course of a battle. As stated before, these different units need different parts of the tech tree to be available and they have different resources costs. All things considered, deciding which units to produce is dependent on the opponent's army, the requirements of the planned tactics, the resources and the current (and future) technology available to the player.
 
 \section{Replays labeling}
 \label{sec:replayslabeling}
@@ -464,7 +464,7 @@ Question \\
 
 
 \subsection{Results}
-All the results presented in this section represents the nine match-ups (races combinations) in 1 versus 1 (duel) of StarCraft. We worked with a data-set of 8806 replays ($\approx$ 1000 per match-up) of skilled human players (see \ref{tab:weberdatasetnumbers}) and we performed cross-validation with 9/10th of the dataset used for learning and the remaining 1/10th of the dataset used for evaluation. Performance wise, the learning part (with $\approx$ 1000 replays) takes around $0.1$ second on a 2.8 Ghz Core 2 Duo CPU (and it is serializable). Each inference (question) step takes around $0.01$ second. The memory footprint is around 3Mb on a 64 bits machine.
+All the results presented in this section represents the nine match-ups (races combinations) in 1 versus 1 (duel) of StarCraft. We worked with a dataset of 8806 replays ($\approx$ 1000 per match-up) of skilled human players (see \ref{tab:weberdatasetnumbers}) and we performed cross-validation with 9/10th of the dataset used for learning and the remaining 1/10th of the dataset used for evaluation. Performance wise, the learning part (with $\approx$ 1000 replays) takes around $0.1$ second on a 2.8 Ghz Core 2 Duo CPU (and it is serializable). Each inference (question) step takes around $0.01$ second. The memory footprint is around 3Mb on a 64 bits machine.
 
 \subsubsection{Metrics}
 \label{sec:buildtreemetrics}
@@ -682,7 +682,7 @@ This can also be seen as Figure~\ref{fig:openingplate}.
 
 \subsubsection{Forms}
 \begin{itemize}
-\item $\PP(Op^t | Op^{t-1})$ we use it as a filter so that take into account previous inferences (compressed). 
+\item $\PP(Op^t | Op^{t-1})$, we use it as a filter, so that we take into account previous inferences (compressed). 
 We use a $Dirac$:
 %%% \begin{eqnarray*}
 %%% & & \PP(Op^t|Op^{t-1})\ \  (Dirac)\\
@@ -697,7 +697,7 @@ We use a $Dirac$:
 \end{eqnarray*}
 This does not prevent our model to switch predictions, it just uses the previous inference's posterior $\PP(Op^{t-1})$ to average $\PP(Op^t)$.
 
-\item $\PP(Op^{t-1})$ copied from one inference to another (mutated from $\PP(Op^t)$). The first $\PP(Op^{t-1})$ is bootstrapped with the uniform distribution. We could also use a prior on openings in the given match-up, which is directly shown in Tables~\ref{tab:weberdatasetnumbers} and \ref{tab:openings_distrib}.
+\item $\PP(Op^{t-1})$ is copied from one inference to another (mutated from $\PP(Op^t)$). The first $\PP(Op^{t-1})$ is bootstrapped with the uniform distribution. We could also use a prior on openings in the given match-up, which is directly shown in Tables~\ref{tab:weberdatasetnumbers} and \ref{tab:openings_distrib}.
 
 \item $\PP(BT | Op^t=op)=Categorical(\abs{BT},p_{op})$ is learned from the labeled replays. $\PP(BT|Op^t)$ are $M$ ($\#\{openings\}$) different histogram over the values of $BT$.
 \item $\PP(O_{i \in \llbracket 1 \dots N\rrbracket})$ is unspecified, we put the uniform distribution.
@@ -908,7 +908,7 @@ Z \begin{tiny}(Zerg)\end{tiny} & 896 & 0.089014 & 0.00796715 & 0.00123551 \\ \hl
 \subsubsection{Strengths and weaknesses of StarCraft openings}
 \label{sec:openingsstrengthsweaknesses}
 
-We also proceeded to analyze the strengths and weaknesses of openings against each others. For that, we labeled the dataset with openings and then learned the $\PP(Win=true|Op_{player1}^t,Op_{player2}^t)$ probability table with Laplace's rule of succession. As can be seen in Table~\ref{tab:weberdatasetnumbers}, not all openings are used for one race in each of its 3 \gloss{matchup}. Table~\ref{table:openingcontingency} shows some parts of this $\PP(Win=true|Op_{player1}^t,Op_{player2}^t)$ ratios of wins of openings against each others. This analysis can serve the purpose of choosing the right opening as soon as the opponent's opening was inferred.
+We also proceeded to analyze the strengths and weaknesses of openings against each others. For that, we labeled the dataset with openings and then learned the $\PP(Win=true|Op_{player1}^t,Op_{player2}^t)$ probability table with Laplace's rule of succession. As can be seen in Table~\ref{tab:weberdatasetnumbers}, not all openings are used for one race in each of its 3 \gloss{matchup}. Table~\ref{table:openingcontingency} shows some parts of this $\PP(Win=true|Op_{player1}^t,Op_{player2}^t)$ ratios of wins for openings against each others. This analysis can serve the purpose of choosing the right opening as soon as the opponent's opening was inferred.
 
 \begin{table}[h] 
 \begin{center}
@@ -949,7 +949,7 @@ rax fe &  0.579& 0.478& 0.364& 0.584\\
 We recall that we used this model for opening prediction, as a proxy for timing attacks and aggressiveness. It can also be used:
 \begin{itemize}
     \item for build tree suggestion when wanting to achieve a particular opening. Particularly one does not have to encode all the openings into a finite state machine: simply train this model and then ask $\PP(BT|time,opening,\lambda=1)$ to have a distribution on the build trees that generally are used to achieve this $opening$.
-    \item as a commentary assistant AI. In the StarCraft and StarCraft 2 communities, there are a lot of progamers tournaments that are commented and we could provide a tool for commentators to estimate the probabilities or different openings or technology paths. As in commented poker matches, where the probabilities of different hands are drawn on screen for the spectators, we could display the probabilities of openings. In such a setup we could use more features as the observers and commentators can see everything that happens (upgrades, units) and we limited ourselves to ``key'' buildings in the work presented here.
+    \item as a commentary assistant AI. In the StarCraft and StarCraft 2 communities, there are a lot of progamers tournaments that are commented and we could provide a tool for commentators to estimate the probabilities of different openings or technology paths. As in commented poker matches, where the probabilities of different hands are drawn on screen for the spectators, we could display the probabilities of openings. In such a setup we could use more features as the observers and commentators can see everything that happens (upgrades, units) and we limited ourselves to ``key'' buildings in the work presented here.
 \end{itemize}
 
 \subsubsection{Possible improvements}
@@ -957,7 +957,7 @@ We recall that we used this model for opening prediction, as a proxy for timing 
 
 First, our prediction model can be upgraded to explicitly store transitions between $t$ and $t+1$ (or $t-1$ and $t$) for openings ($Op$) and for \gloss{buildtree} ($BT$). The problem is that $\PP(BT^{t+1}|BT^t)$ will be very sparse, so to efficiently learn something (instead of a sparse probability table) we have to consider a smoothing over the values of $BT$, perhaps with the distances mentioned in section~\ref{sec:buildtreemetrics}. If we can learn $\PP(BT^{t+1}|BT^t)$, it would perhaps increase the results of $\PP(Opening|Observations)$, and it almost surely would increase $\PP(BuildTree^{t+1}|Observations)$, which is important for late game predictions. 
 
-Incorporating $\PP(Op^{t-1})$ priors per match-up (from Table~\ref{tab:weberdatasetnumbers}) and  would lead to better results but it would seem like overfitting to us: particularly because we train our robot on games played by humans whereas we have to play against robots in competitions.
+Incorporating $\PP(Op^{t-1})$ priors per match-up (from Table~\ref{tab:weberdatasetnumbers}) would lead to better results, but it would seem like overfitting to us: particularly because we train our robot on games played by humans whereas we have to play against robots in competitions.
 
 %We could also make use of more features as we currently only use at most 20 features (only buildings), and never all at once. 
 %TODO
@@ -1155,7 +1155,7 @@ Question \\
 We did not evaluate directly $\PP(U^{t+1}|eu^t,tt^t,\lambda=1)$ the efficiency of the army compositions which would be produced. Indeed, it is difficult to make it independent from (at least) the specific micro-management of different unit types composing the army. The quality of $\PP(ETT)$ also has to be taken into account. Instead, we evaluated the reduction of armies compositions ($EU$ and $U$ sets of variables) into clusters ($EC$ and $C$ variables) and the subsequent $\PP(C_c | EC)$ table. 
 
 We use the dataset presented in section~\ref{sec:dataset} in last chapter (tactics). It contains everything we need about the state and battles, units involved, units lost, winners. There are 7708 games. We only consider battles with about even force sizes, but that lets a sizable number on the more than 178,000 battles of the dataset. 
-%All the results presented in this section represent the nine match-ups (races combinations) in 1 versus 1 (duel) of StarCraft. We worked with a data-set of 7708 replays of highly skilled human players. 
+%All the results presented in this section represent the nine match-ups (races combinations) in 1 versus 1 (duel) of StarCraft. We worked with a dataset of 7708 replays of highly skilled human players. 
 For each match-up, we set aside 100 test matches, and use the remaining of the dataset for learning. 
 We preferred robustness to precision and thus we did not remove outliers: better scores can easily be achieved by considering only stereotypical armies/battles. %or more amateur players (which styles are less pronounced). 
 Performance wise, for the biggest dataset (PvT) the learning part takes around 100 second on a 2.8 Ghz Core 2 Duo CPU (and it is easily serializable) for 2408 games (57 seconds to fit and select the GMM, and 42 seconds to fill the probability tables / fit the Categorical distributions). The time to parse all the dataset is far larger (617 seconds with an SSD). %Each inference (question) step takes around $YYY$ second. 
@@ -1194,7 +1194,7 @@ We can see that predicting battle outcomes (even with a high disparity) with ``j
 \textit{Army efficiency}\\
 Secondly, and perhaps more importantly, we can view the difference between ``just prob.'' results and random guessing (50\%) as the military \textbf{efficiency improvement} that we can (at least) expect from having the right army composition. 
 Indeed, we see that for small forces disparities (up to 1.1 for instance), the prediction with army composition only (``just prob.'': 63.2\%) is better that the prediction with the baseline heuristic (61.7\%). It means that \textit{we can expect to win 63.2\% of the time (instead of 50\%) with an (almost) equal investment if we have the right composition}. %If we consider that half the time the player with the best composition also has the smallest army, it means that 29.25\% of the time, this player with down to only two third of the enemy's army force won against 
-Also, when we predict 58.5\% of the time the accurate result of a battle with disparity up to 1.5 from ``just prob.'', this success in prediction is independent of the sizes of the armies. What we predicted is that the player with the better army composition won (not necessarily the one with more or more expensive units). 
+Also, we predict 58.5\% of the time the accurate result of a battle with disparity up to 1.5 from ``just prob.'': these predictions are independent of the sizes of the armies. What we predicted is that the player with the better army composition won (not necessarily the one with more or more expensive units). 
 
 
 \setlength{\tabcolsep}{6pt}
@@ -1282,6 +1282,7 @@ Figure~\ref{ecknowingecnext} showcases the dynamics of clusters components: $\PP
 %%% \end{figure}
 
 \subsubsection{Extensions}
+\label{sec:armycompoextensions}
 
 Here, we focused on asking $\PP(U^{t+1}|eu^t, tt^t, \lambda=1)$, and evaluated (in the absence of ground truth for full armies compositions) the two key components that are $\PP(U|C)$ (or $\PP(EU|EC)$) and $\PP(C_c|EC)$. Many other questions can be asked: $\PP(TT^t|eu^t)$ can help us adapt our tech tree development to the opponent's army. If we know the opponent's army composition only partially, we can benefit of knowledge about $ETT$ to know what is possible, but also probable, by asking $\PP(EC^t|Observations)$.
 % TODO
