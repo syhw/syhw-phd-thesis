@@ -9,7 +9,7 @@
 
 
 \lettrine{W}e present our solutions to some of the problems raised at the strategic level. The main idea is to reduce the complexity encoding all possible variations of strategies to a few strong indicators: the \glos{buildtree} (closely related to the \glos{techtree}) and canonical army compositions. 
-We start by explaining what we consider that belongs to strategic thinking and related work. We then describe the information that we will use and the decisions that can be taken. As we try and abstract early game strategies to ``openings'' (as in Chess), we will present how we labeled a dataset of games with openings. Then, we present the Bayesian model for build tree prediction (from partial observations), followed by its augmented version able to predict the opponent's opening. Both models were evaluated in prediction dataset of skilled players. Finally we explain our work on army composition adaptation (to the opponent's army).
+We start by explaining what we consider that belongs to strategic thinking, and related work. We then describe the information that we will use and the decisions that can be taken. As we try and abstract early game strategies to ``openings'' (as in Chess), we will present how we labeled a dataset of games with openings. Then, we present the Bayesian model for build tree prediction (from partial observations), followed by its augmented version able to predict the opponent's opening. Both models were evaluated in prediction dataset of skilled players. Finally we explain our work on army composition adaptation (to the opponent's army).
 
 Build trees estimation was published at the Annual Conference on Artificial Intelligence and Interactive Digital Entertainment (AAAI AIIDE) 2011 in Palo Alto \citep{SYNNAEVE:StratPred} and openings prediction was published at Computational Intelligence in Games (IEEE CIG) 2011 in Seoul \citep{SYNNAEVE:OpeningPred}.
 
@@ -32,10 +32,10 @@ Build trees estimation was published at the Annual Conference on Artificial Inte
 \end{figure}
 
 \begin{itemize}
-\item Problem: take the winning strategy in the absolute (knowing everything: complete observations, players intentions, effects of each possible actions).
-\item Problem that we solve: take the winning strategy (in average) knowing what we saw from the opponent and our model of the game. 
-\item Type: prediction is a problem of \textit{inference} or \textit{plan recognition} from \textit{incomplete informations}; adaptation given what we know is a problem of \textit{planning under constraints}.
-\item Complexity: simple StarCraft decision problems are \textsc{np}-hard \citep{GamingComplexity}. We would argue that basic StarCraft strategy with full information (remember that StarCraft is partially observable) is mappable to the Generalized Geography problem\footnote{As the \gloss{techtree} get opened, the choices in this dimension of strategy is being reduced as in Generalized Geography.} and thus is \textsc{pspace}-hard \citep{Lichtenstein78},
+\item \underline{Problem:} take the winning strategy in the absolute (knowing everything: complete observations, players intentions, effects of each possible actions).
+\item \underline{Problem that we solve:} take the winning strategy (in average) knowing what we saw from the opponent and our model of the game. 
+\item \underline{Type:} prediction is a problem of \textit{inference} or \textit{plan recognition} from \textit{incomplete informations}; adaptation given what we know is a problem of \textit{planning under constraints}.
+\item \underline{Complexity:} simple StarCraft decision problems are \textsc{np}-hard \citep{GamingComplexity}. We would argue that basic StarCraft strategy with full information (remember that StarCraft is partially observable) is mappable to the Generalized Geography problem\footnote{As the \gloss{techtree} get opened, the choices in this dimension of strategy is being reduced as in Generalized Geography.} and thus is \textsc{pspace}-hard \citep{Lichtenstein78},
 Chess \citep{Fraenkel81} and Go (with Japanese ko rules) are \textsc{exptime}-complete \citep{Robson83}. Our solutions are real-time on a laptop. %%% TODO XXX
 %\item Results: better resistance to noise, which is fundamental in real setup RTS gameplay (fog of war). Full Bayesian model down to adaptation actions some day?
 %\item Conclusion and perspectives: a way to encode and use gameplay/structural knowledge 
@@ -1255,7 +1255,7 @@ Figure~\ref{fig:parallelplot} shows a parallel plot of \textit{army compositions
 %Each vertical (and parallel) axis represents one dimension and is scaled between $value\_min$ and $value\_max$ for the associated feature. We removed the less frequent components to keep only the 8 most important unit types of the PvP match-up. The rightmost axis corresponds to the 8 mixtures of the GMM associated to PvP army types. We colored each army (each trajectory in this 8 dimensional space) by the dominant (most probable) mixture. Expert StarCraft player will directly recognize the clusters.
 
 \begin{figure}[h]
-\centerline{\includegraphics[width=1.16\columnwidth]{images/PvP_small.png}}
+\centerline{\includegraphics[width=1.12\columnwidth]{images/PvP_small.png}}
 %\centerline{\includegraphics[width=2.1\columnwidth]{PvZ2.png}}
 \caption{Parallel plot of a small dataset of Protoss (vs Protoss, i.e. in the PvP match-up) army clusters on most important unit types (for the match-up). Each normalized vertical axis represents the percentage of the units of the given unit type in the army composition (we didn't remove outliers, so most top (tip) vertices represent 100\%), except for the rightmost (framed) which links to the most probable GMM component. Note that several traces can (and do) go through the same edge.}
 \label{fig:parallelplot}

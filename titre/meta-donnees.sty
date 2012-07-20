@@ -116,7 +116,8 @@
 \newcommand{\@ThesisCoSupervisor}{{\@CoDirecteur}}
 \newcommand\ThesisCoSupervisor[1]{\renewcommand{\@ThesisCoSupervisor}{{#1}}}
 
-\newcommand{\@ThesisJuryTitle}{{devant le jury compos\'e de~:}}
+%%%%\newcommand{\@ThesisJuryTitle}{{devant le jury compos\'e de~:}}
+\newcommand{\@ThesisJuryTitle}{{Jury compos\'e de~:}}
 \newcommand\ThesisJuryTitle[1]{\renewcommand{\@ThesisJuryTitle}{{#1}}}
 
 \newcommand{\@ThesisJury}{\begin{tabular}{@{}p{12.5cm}@{}}\@Jury\end{tabular}}
@@ -191,7 +192,7 @@
        \vskip1mm plus1fil
              {\fontsize{18}{20}\selectfont\@ThesisSubTitle}
        \vskip10mm plus2fil
-             \@ThesisDefendedThe\ {\bfseries\@ThesisPresentedThe},\\
+             %%%%\@ThesisDefendedThe\ {\bfseries\@ThesisPresentedThe},\\
              \@ThesisJuryTitle
        \vskip5mm plus1fil
              {\fontsize{10}{12}\selectfont\@ThesisJury}

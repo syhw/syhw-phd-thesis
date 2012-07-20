@@ -12,7 +12,7 @@ AC said, ``THERE IS AS YET INSUFFICIENT DATA FOR A MEANINGFUL ANSWER.''
 
 %\section{Summary}
 \section{Contributions summary}
-We classified the problems raised by game AI, and in particular by RTS AI. We showed how the complexity of video games makes it so that game AI systems can only be incompletely specified. This leads to uncertainty about our model, but also about the model of the opponent. Additionally, video games are often partially observable, sometimes stochastic, and most of them require motor skills, which will introduce randomness in the outcomes of player's actions. We chose to deal with incompleteness by transforming it into uncertainty about our reasoning model. We bind all these sources of uncertainty in Bayesian models. 
+We classified the problems raised by game AI, and in particular by RTS AI. We showed how the complexity of video games makes it so that game AI systems can only be incompletely specified. This leads to uncertainty about our model, but also about the model of the opponent. Additionally, video games are often partially observable, sometimes stochastic, and most of them require motor skills (quick and precise hands control), which will introduce randomness in the outcomes of player's actions. We chose to deal with incompleteness by transforming it into uncertainty about our reasoning model. We bind all these sources of uncertainty in Bayesian models. 
 
 %Specifically, we attacked three problems at three abstraction levels:
 Our contributions about breaking the complexity of \textit{specifying} and \textit{controlling} game AI systems are resumed by:
@@ -48,7 +48,11 @@ Finally, we produced a StarCraft bot (chapter~\ref{chapter:bot}), which ranked 9
 
 \section{Perspectives}
 \label{chapter:perspectives}
-\subsection{Micro}
+
+%Interesting work can be conducted to improve the performance of an AI robotic player. This work can be conducted at the different hierarchical levels micro tatic strategy.
+We will now present interesting perspectives and future work by following our hierarchical decomposition of the domain. Note that there are bridges between the levels presented here. In particular, having multi-scale reasoning seems necessary to produce the best strategies. For instance, no current AI is able to work out a ``fast \glos{expand}'' (expand before any military production) strategy by itself, in which it protects against early rushes by a smart positioning of buildings, and it performs temporal reasoning about when the opponent is first a threat. This kind of reasoning encompasses micro-management level reasoning (about the opponent units), with tactical reasoning (of where and when), buildings positioning, and economical and production planning.
+
+\subsection{Micro-management}
 \subsubsection{Reactive behaviors}
 An improvement (explained in subsection~\ref{sec:microreducingcollisions}) over our existing model usage would consist in using the distributions on directions ($\PP(Dir)$) for each units to make a centralized decision about which units should go where. This would allow for coordinated movements while retaining the tractability of a decentralized model: the cost for units to compute their distributions on directions ($\PP(Dir)$) is the same as in the current model, and there are methods to select the movements for each unit which are linear in the number of units (for instance maximizing the probability for the group, i.e. for the sum of the movements).
 

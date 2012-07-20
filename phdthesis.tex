@@ -3,10 +3,11 @@
 %%% \myprintformat == true ==> PDF for printing + binding
 %%% \myebookformat == true ==> HTML for transformation into ePub
 
-%\documentclass[a4paper,11pt,twoside]{memoir}
-\documentclass[ebook,oneside,openany]{book}%article, report
+%\documentclass[a4paper,10.5pt,openright,twoside]{memoir} // for book/margins
+\documentclass[a4paper,11pt,twoside]{memoir}
+%\documentclass[ebook,oneside,openany]{book}%article, report
 \def \myprintformat {false} % true or false
-\def \myebookformat {true} % true or false
+\def \myebookformat {false} % true or false
 
 \setcounter{secnumdepth}{2}
 %%% PACKAGES:
@@ -86,7 +87,6 @@
 \include{titre/template}
 }{}
 
-\linespread{1.12}
 %\date{}
 
 %%% VARIABLE CONF:
@@ -98,10 +98,12 @@
 }{
 \input{pdfspecific.tex}    % hyperref, backrefs, pdfinfo 
 \ifthenelse{\equal{\myprintformat}{false}}{
+\linespread{1.12}
 \usepackage{fullpage}      % for electronic viewing (no headers) %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 }{
-%\setlrmargins{*}{*}{1}
-%\checkandfixthelayout
+\linespread{1.10}
+\setlrmargins{*}{*}{1.14}
+\checkandfixthelayout
 }
 }
 
