@@ -13,17 +13,17 @@ $\cup$ & union \\
 $\wedge$ & and \\
 $\vee$ & or \\
 $M^T$ & $M$ transposed \\
-$\llbracket \ \ \rrbracket$ & integers interval \\
+$\llbracket \ \ \rrbracket$ & integer interval \\
 \end{tabular}
 
 \subsection*{Variables}
 \begin{tabular}{ll}
 $X$ and $Variable$ & random variables (or logical propositions) \\
 $x$ and $value$ & values \\
-$\#s = \abs{s}$ & cardinal of the set $s$ \\
-$\#X = \abs{X}$ & shortcut for ``cardinal of the set of the values of $X$'' \\
+$\#s = \abs{s}$ & cardinality of the set $s$ \\
+$\#X = \abs{X}$ & shortcut for ``cardinality of the set of the values of $X$'' \\
 $X_{1:n}$ & the set of $n$ random variables $X_1 \dots X_n$ \\
-$\{x \in \Omega | Q(x)\}$ & the set of elements from $\Omega$ which verify $Q$ \\
+$\{x \in \Omega | Q(x)\}$ & the set of elements from $\Omega$ that satisfy $Q$ \\
 \end{tabular}
 
 \subsection*{Probabilities}
@@ -36,5 +36,5 @@ $\PP(X|Y)$ & Probability (distribution) of $X$ knowing $Y$ \\
 \end{tabular}
 
 \subsection*{Conventions}
-$$\PP \begin{pmatrix}X_1 \\ \vdots \\ X_k\end{pmatrix}=\PP(X) = \mathcal{N}(\mu, \sigma) \leftrightarrow \PP(X=x)= \frac{1}{(2\pi)^{k/2}\abs{\Sigma}^{1/2}}\exp(-\frac{1}{2}(x-\mu)^T\Sigma^{-1}(x-\mu))$$%,\ \mathrm{with}\ \abs{x}=k$$
+$$\PP \begin{pmatrix}X_1 \\ \vdots \\ X_k\end{pmatrix}=\PP(X) = \mathcal{N}(\mu, \Sigma) \leftrightarrow \PP(X=x)= \frac{1}{(2\pi)^{k/2}\abs{\Sigma}^{1/2}}\exp(-\frac{1}{2}(x-\mu)^T\Sigma^{-1}(x-\mu))$$%,\ \mathrm{with}\ \abs{x}=k$$
 $$\PP(X) = Categorical\footnote{also sometimes called Multinomial or Histogram}(K,p) \leftrightarrow \PP(X=i) = p_i,\ \mathrm{such\ that}\ \sum_{i=1}^K p_i = 1$$
