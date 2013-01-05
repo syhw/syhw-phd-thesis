@@ -46,10 +46,10 @@ If the AI has perfect information, behaving realistically is the problem. Cheati
 Some games have inherent stochasticity part of the gameplay, through random action effects of attacks/spells for instance. This has to be taken into account while designing the AI and dealt with either to maximize the expectation at a given time. In any case, in a multi-player setting, an AI cannot assume optimal play from the opponent due to the complexity of video games. In the context of state estimation and control, dealing with this randomness require ad-hoc methods for scripting of boolean logic, while it is dealt with natively through probabilistic modeling. Where a program would have to test for the value of an effect $E$ to be in a given interval to decide on a given course of action $A$, a probabilistic model just computes the distribution on $A$ given $E$: $\PP(A|E) = \frac{\PP(E|A).\PP(A)}{\PP(E)}$.
 
 \subsection{Vertical continuity}
-As explained in section~\ref{sec:verticalcontinuity}, there are different levels of abstraction use to reason about a game. Abstracting higher level cognitive functions (strategy and tactics for instance) is an efficient way to break the complexity barrier of writing game AI. Exploiting the vertical continuity, i.e. the conditioning of higher level thinking on actions, is totally possible in a hierarchical Bayesian model. With strategies as values of $S$ and tactics as values of $T$, $\PP(T|S)$ gives the conditioning of $T$ on $S$ and thus enables us to evaluate only those $T$ values that are possible with given $S$ values.
+As explained in section~\ref{sec:verticalcontinuity}, there are different levels of abstraction use to reason about a game. Abstracting higher level cognitive functions (strategy and tactics for instance) is an efficient way to break the complexity barrier of writing game AI. Exploiting the vertical continuity, i.e. the conditioning of higher level actions thinking, is totally possible in a hierarchical Bayesian model. With strategies as values of $S$ and tactics as values of $T$, $\PP(T|S)$ gives the conditioning of $T$ on $S$ and thus enables us to evaluate only those $T$ values that are possible with given $S$ values.
 
 \subsection{Horizontal continuity}
-Real-time games may use discrete time-steps (24Hz for instance for StarCraft), it does not prevent temporal continuity in strategies, tactics and, most strongly, actions. Once a decision has been made at a given level, it may conditions subsequent decisions at same level (see section~\ref{sec:horizontalcontinuity}). There are several Bayesian models able to deal with sequences, filter models, from which \newglossaryentry{HMM}{name=HMM,description={Hidden Markov Model, a dynamic Bayesian network estimating hidden states following a Markov process from observations}}Hidden Markov Models (\glos{HMM}) \citep{Rabiner}, Kalman filters \citep{Kalman1960} and particle filters \citep{particleFiltering} are specializations of. With states $S$ and observations $O$, filter models under the Markov assumption represent the joint $\PP(S^0).\PP(O^0|S^0).\prod_{t=1}^T[\PP(S^t | S^{t-1}).\PP(O^t|S^t)]$. Thus, from partial informations, one can use more than just the probability of observations knowing states to reconstruct the state, but also the probability of states transitions (the sequences).
+Real-time games may use discrete time-steps (24Hz for instance for StarCraft), it does not prevent temporal continuity in strategies, tactics and, most strongly, actions. Once a decision has been made at a given level, it may conditions subsequent decisions at same level (see section~\ref{sec:horizontalcontinuity}). There are several Bayesian models able to deal with sequences, filter models, from which \newglossaryentry{HMM}{name=HMM,description={Hidden Markov Model, a dynamic Bayesian network estimating hidden states following a Markov process from observations}}Hidden Markov Models (\glos{HMM}) \citep{Rabiner} and Kalman filters \citep{Kalman1960} are specializations. With states $S$ and observations $O$, filter models under the Markov assumption represent the joint $\PP(S^0).\PP(O^0|S^0).\prod_{t=1}^T[\PP(S^t | S^{t-1}).\PP(O^t|S^t)]$. Thus, from partial informations, one can use more than just the probability of observations knowing states to reconstruct the state, but also the probability of states transitions (the sequences). This way we can only consider transitions that are probable according to the current state.
 
 \subsection{Autonomy and robust programming}
 Autonomy is the ability to deal with new states: the challenge of autonomous characters arises from state spaces too big to be fully specified (in scripts / FSM). In the case of discrete, programmer-specified states, the (modes of) behaviors of the autonomous agent are limited to what has been authored. Again, probabilistic modeling enables one to recognize unspecified states as soft mixtures of known states. For instance, with $S$ the state, instead of having either $\PP(S=0)=1.0$ or $\PP(S=1)=1.0$, one can be in $\PP(S=0)=0.2$ and $\PP(S=1)=0.8$, which allows to have behaviors composed from different states. This form of continuum allows to deal with unknown state as an incomplete version of a known state which subsumes it. Autonomy can also be reached through learning, being it through online or offline learning. Offline learning is used to learn parameters that does not have to be specified by the programmers and/or game designers. One can use data or experiments with known/wanted situations (supervised learning, reinforcement learning), or explore data (unsupervised learning), or game states (evolutionary algorithms). Online learning can provide adaptability of the AI to the player and/or its own competency playing the game. %This gives some form of continuum, which makes the bot more robust to unknown situations.
@@ -66,7 +66,7 @@ Autonomy is the ability to deal with new states: the challenge of autonomous cha
 \end{figure}
 
 
-The reverend Thomas Bayes is the first credited to have worked on inversing probabilities: by knowing something about the probability of $A$ given $B$, how can one draw conclusions on the probability of $B$ given $A$? Bayes theorem states: $$\PP(A|B) = \frac{\PP(B|A)\PP(A)}{\PP(B)}$$
+The reverend Thomas Bayes is the first credited to have worked on inverting probabilities: by knowing something about the probability of $A$ given $B$, how can one draw conclusions on the probability of $B$ given $A$? Bayes theorem states: $$\PP(A|B) = \frac{\PP(B|A)\PP(A)}{\PP(B)}$$
 \cite{Laplace} independently rediscovered Bayes' theorem and published the work of inductive reasoning by using probabilities. He presented ``inverse probabilities'' (inferential statistics) allowing the study of causes by observing effects: the first use of learning the probabilities of observations knowing states to then infer states having only observations.
 
 Later, by extending logic to \textit{plausible reasoning}, \cite{Jaynes} arrived at the same properties than the theory of probability of \cite{Kolmogorov33}. Plausible reasoning originates from logic, whose statements have degrees of plausibility represented by real numbers. %We note ``the conditional plausibility that A is true, given that B is true'' $A|B$.
@@ -106,11 +106,11 @@ So, the degrees of belief, of any consistent induction mechanism, verify Kolmogo
 
 
 \subsection{A formalism for Bayesian models}
-Inspired by plausible reasoning, we present Bayesian programming, a formalism that can be used to describe entirely any kind of Bayesian model. It subsumes Bayesian networks and Bayesian maps, as it is equivalent to probabilistic factor graphs \cite{Diard03}. There are mainly two parts in a \newacronym{BP}{BP}{Bayesian program}\glos{BP}, the \textbf{description} of how to compute the joint distribution, and the \textbf{question(s)} that it will be asked. 
+Inspired by plausible reasoning, we present Bayesian programming, a formalism that can be used to describe entirely several kinds of Bayesian model. It subsumes Bayesian networks and Bayesian maps, as it is equivalent to probabilistic factor graphs \citep{Diard03}. There are mainly two parts in a \newacronym{BP}{BP}{Bayesian program}\glos{BP}, the \textbf{description} of how to compute the joint distribution, and the \textbf{question(s)} that it will be asked. 
 
 The description consists in exhibiting the relevant \textit{variables} $\{X^1,\dots,X^n\}$ and explain their dependencies by \textit{decomposing} the joint distribution $\PP(X^1\dots X^n | \delta, \pi)$ with existing preliminary (\textit{prior}) knowledge $\pi$ and data $\delta$. The \textit{forms} of each term of the product specify how to compute their distributions: either parametric forms (laws or probability tables, with free parameters that can be learned from data $\delta$) or recursive questions to other Bayesian programs.
 
-Answering a question is computing the distribution $\PP(Searched | Known)$, with $Searched$ and $Known$ two disjoint subsets of the variables. 
+The conditional independences are stated in the decomposition $\PP(Searched, Free, Known)$. Answering a question is computing the distribution $\PP(Searched | Known)$, with $Searched$ and $Known$ two disjoint subsets of the variables. 
 %%%$P(Searched | Known) = \begin{small} \frac{\sum_{Free}P(Searched\ Free\ Known)}{P(Known)} \end{small} = \frac{1}{Z}\times \sum_{Free} P(Searched\ Free\ Known)$. 
 \begin{eqnarray}
 & & \PP(Searched | Known) \\
@@ -156,7 +156,7 @@ to build Bayesian models gets clearer: there is a strong parallel between Bayesi
 \end{enumerate}
 In the following, we present how we applied this method to a simulated \glos{MMORPG} fight situation as an example.
 
-By following these steps, one may have to choose among several models. That is not a problem as there are rational ground to make this choices, ``all models are wrong; some are useful'' (George Box). %We express this choice of modeling in $\pi$. 
+By following these steps, one may have to choose among several models. That is not a problem as there are rational ground to make this choice, ``all models are wrong; some are useful'' (George Box). %We express this choice of modeling in $\pi$. 
 Actually, the full question that we ask is $\PP(Searched|Known, \pi, \delta)$, it depends on the modeling assumptions ($\pi$) as well as the data ($\delta$) that we used for training (if any). A simple way to view model selection is to pick the model which makes the fewest assumptions (Occam's razor). In fact, Bayesian inference carries Occam's razor with it: we shall ask what is the plausibility of our model prior knowledge in the light of the data $\PP(\pi|\delta)$. 
 
 Indeed, when evaluating two models $\pi_1$ and $\pi_2$, doing the ratio of evidences for the two modeling assumption helps us choose:
@@ -290,7 +290,7 @@ We want to compute the probability distribution on the variable target ($T$) and
 \begin{itemize}
     \item $\PP(T^{t-1})$ is unknown and unspecified (uniform). In the question, we always know what was the previous target, except when there was not one (at the beginning).
     \item $\PP(T|T^{t-1})$ is a probability corresponding to the propensity to switch targets. It can be learned, or uniform if there is no previous target (it the prior on the targets then).
-    \item $\PP(S)$ is unknown and so unspecified, it could be a prior on the preferred skills (for style of for efficiency).
+    \item $\PP(S)$ is unknown and so unspecified, it could be a prior on the preferred skills (for style or for efficiency).
     %\item $\PP(Left\_Value | Right\_Value)$ All others are \textit{learned tables}.
     \item $\PP(HP_i | A_i, C_i, S, T)$ is a $2\times4\times m \times 2$ probability table, indexed on if the $i$th character is an ally or not, on its class, on the skills ($\#S=m$) and on where it is the target or not. It can be learned (and/or parametrized), for instance $\PP(HP_i=x|a_i,c_i,s,t)=\frac{1+\mathrm{count}(x,a_i,c_i,s,t)}{10+\mathrm{count}(a_i,c_i,s,t)}$.
     \item $\PP(D_i | A_i, S, T)$ is a $4\times2 \times m \times 2$ (possibly learned) probability table.
@@ -315,7 +315,7 @@ In any case, we ask our (updated) model the distribution on $S$ and $T$ knowing 
 
 We then proceed to choose to do the highest scoring combination of $S \wedge T$ that is available (skills may have cooldowns or cost more mana/energy that we have available).
 
-As (Bayes rule) $\PP(S,T) = \PP(S|T).\PP(T)$, if we want to decompose this question, we can ask:
+As (product rule) $\PP(S,T) = \PP(S|T).\PP(T)$, if we want to decompose this question, we can ask:
 $$\PP(T | t^{t-1}, hp_{1:n},d_{1:n}, a_{1:n}, \Delta hp_{1:n}, id_{1:n}, c_{1:n})$$ 
 Which means that we want to know the distribution on $T$ knowing all the relevant state variables, followed by (with the newly computed distribution on $T$):
 $$\PP(S | T, hp_{1:n},d_{1:n}, a_{1:n}, \Delta hp_{1:n}, id_{1:n}, c_{1:n}, r_{1:n})$$ 
@@ -344,7 +344,7 @@ Desc.
         \PP(S)\PP(T|T^{t-1})\PP(T^{t-1})\prod_{i=1}^n \big[ \PP(HP_i | A_i, C_i, S, T)\PP(D_i | A_i, S, T) \\
                 \PP(A_i | S, T)\PP(\Delta HP_i | A_i, S, T) \PP(R_i | C_i, S, T) \PP(C_i | A_i, S, T) \PP(ID_i | T)\big]\\
         Forms\\
-        \mathrm{probability\ tables\ parametrized\ on\ wether\ }i\ \mathrm{is\ targeted}\\
+        \mathrm{probability\ tables\ parametrized\ on\ whether\ }i\ \mathrm{is\ targeted}\\
         \end{cases}\\
     Identification\ (using\ \delta)\\
     \mathrm{learning\ (e.g.\ Laplace\ succession\ law)\ or\ manually\ specified}\\
@@ -366,7 +366,7 @@ Skills \in \{ small\_heal, big\_heal, HOT, poison\_abol, malediction\_abol,\\
 \end{eqnarray*}
 
 %We did not do the ``Identification'' part, which consists in learning the probability tables from observations. 
-To keep things simple and because we wanted to analyze the answers of the model, we worked with manually defined probability tables.%, %. So we introduced ``soft evidences'', indeed parameters that will modify the conditional probability tables, 
+To keep things simple and because we wanted to analyze the answers of the model, we worked with manually defined probability tables. %, %. So we introduced ``soft evidences'', indeed parameters that will modify the conditional probability tables, 
 %%%which we will change to watch their effects on the full behavior of the model. 
 %For instance the
 %``soft evidence that a selected target is foe'' and the ``soft evidence that a selected target will soon die ($ID=true$)'' that will consequently modify the probability tables of $P(A_i)$ and $P(ID_i)$ respectively. 
@@ -376,7 +376,7 @@ $\PP(ID_i | T=i)$, and see how the behavior of the agent changes.
 
 We set the probability to target the same target as before ($\PP(T^t=i|T^{t-1}=i)$) to 0.4 and the previous target to ``Lich'' so that the prior probability for all other 6 targets is 0.1 (4 times more chances to target the Lich than any other character). 
 
-We set the probability to target an enemy (instead of an ally) $\PP(A_i=false|T=i)$ to 0.6. This means that our Druid is mainly a damage dealer and just a backup healer. 
+We set the probability that an enemy (instead of an ally) is our target $\PP(A_i=false|T=i)$ to 0.6. This means that our Druid is mainly a damage dealer and just a backup healer. 
 %For the ``target selection'' sub-model, we can see on Fig.~\ref{fig:wow_target} (left) that the evolution from selecting the main foe ``Lich'' to selecting the ally ``Tank'' is driven by the increase of 
 
 When we only ask what the target should be:
@@ -415,7 +415,7 @@ To conclude this example, we ask the full question, what is the distribution on 
 $$\PP(S,T|t^{t-1},hp_{1:n},d_{1:n}, a_{1:n}, \Delta hp_{1:n}, id_{1:n}, c_{1:n}, r_{1:n})$$
 Figure~\ref{fig:wow_target_skill} shows this distribution %$\PP(T,S|all\_status\_variables)$ 
 with setup A and the probability to target the previous target (set to ``Lich'' here) only $\approx 2$ times greater than any other character, %(so that we focus less on the same character), 
-$\PP(ID_i=true|T=i)=0.9$ and $\PP(A_i=false|T=i)=0.6$. To make decisions about our actions, a simple approach would be a greedy one: if the first couple $(T,S)$ is already done or not available, we perform the second, and so on. Another approach would be to sample in this distribution.
+$\PP(ID_i=true|T=i)=0.9$ and $\PP(A_i=false|T=i)=0.6$. To make decisions about our actions, a simple approach would be a greedy one: if the first couple $(T,S)$ is already done or not available, we perform the second, and so on. Another approach would be to sample in this distribution, both approaches will lead to very different results. 
 
 \begin{figure}[h!]
 \begin{center}
@@ -463,4 +463,4 @@ This limited model served the purpose of presenting Bayesian programming in prac
 \end{itemize}
 Moreover, using this model on another agent than the one controlled by the AI can give a prediction on what it will do, resulting in human-like, adaptive, playing style.
 
-We did not kept at the research track of Bayesian modeling MMORPG games due to the difficulty to work on these types of games: the studios have too much to lose to ``farmer'' bots to accept any automated access to the game. Also, there are no sharing format of data (like replays) and the invariants of the game situations are fewer than in RTS games. Finally, RTS games have international AI competitions which were a good motivation to compare our approach with other game AI researchers.
+We did not persist in the research track of Bayesian modeling MMORPG games due to the difficulty to work on these types of games: the studios have too much to lose to ``farmer'' bots to accept any automated access to the game. Also, there are no sharing format of data (like replays) and the invariants of the game situations are fewer than in RTS games. Finally, RTS games have international AI competitions which were a good motivation to compare our approach with other game AI researchers.
