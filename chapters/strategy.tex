@@ -32,11 +32,11 @@ Build trees estimation was published at the Annual Conference on Artificial Inte
 \end{figure}
 
 \begin{itemize}
-\item \underline{Problem:} take the winning strategy in the absolute (knowing everything: complete observations, players intentions, effects of each possible actions).
-\item \underline{Problem that we solve:} take the winning strategy (in average) knowing what we saw from the opponent and our model of the game. 
+\item \underline{Problem:} take the winning strategy knowing everything that we saw and considering everything that can happen.
+\item \underline{Problem that we solve:} take the winning abstracted strategy (in average) knowing everything at this abstracted level that derives from what we saw.
 \item \underline{Type:} prediction is a problem of \textit{inference} or \textit{plan recognition} from \textit{incomplete informations}; adaptation given what we know is a problem of \textit{planning under constraints}.
 \item \underline{Complexity:} simple StarCraft decision problems are \textsc{np}-hard \citep{GamingComplexity}. We would argue that basic StarCraft strategy with full information (remember that StarCraft is partially observable) is mappable to the Generalized Geography problem\footnote{As the \gloss{techtree} get opened, the choices in this dimension of strategy is being reduced as in Generalized Geography.} and thus is \textsc{pspace}-hard \citep{Lichtenstein78},
-Chess \citep{Fraenkel81} and Go (with Japanese ko rules) are \textsc{exptime}-complete \citep{Robson83}. Our solutions are real-time on a laptop. %%% TODO XXX
+Chess \citep{Fraenkel81} and Go (with Japanese ko rules) are \textsc{exptime}-complete \citep{Robson83}. Our solutions are abstracted approximations and so are real-time on a laptop. %%% TODO XXX
 %\item Results: better resistance to noise, which is fundamental in real setup RTS gameplay (fog of war). Full Bayesian model down to adaptation actions some day?
 %\item Conclusion and perspectives: a way to encode and use gameplay/structural knowledge 
 \end{itemize}
@@ -49,9 +49,9 @@ Chess \citep{Fraenkel81} and Go (with Japanese ko rules) are \textsc{exptime}-co
 
 As it is an abstract concept, what constitutes \textit{strategy} is hard to grasp. The definition that we use for strategy is a combination of aggressiveness and ``where do we put the cursor/pointer/slider between economy, technology and military production?''. It is very much related to where we put our resources:
 \begin{itemize}
-    \item If we prioritize economy, on a short term basis our army strength (numbers) may suffer, but on the longer term we will be able to produce more, or produce equally and still expand our economy or technology in parallel. Also, keep in mind that resources depletes mineral deposits/gas geysers can be exhausted/drained.
-    \item If we prioritize technology, on a short term basis our army strength may suffer, on the longer term it can strive with powerful units or units which are adapted to the enemy's.
-    \item If we prioritize military production, on a short term basis our army strength will strive, but we will not be able to adapt our army composition to new unit types nor increase our production throughput.
+    \item If we prioritize economy, on a short term basis our army strength (numbers) may suffer, but on the longer term we will be able to produce more, or produce equally and still expand our economy or technology in parallel. Also, keep in mind that mineral deposits/gas geysers can be exhausted/drained.
+    \item If we prioritize technology, on a short term basis our army strength may suffer, on the longer term it can thrive with powerful units or units which are adapted to the enemy's.
+    \item If we prioritize military production, on a short term basis our army strength will thrive, but we will not be able to adapt our army composition to new unit types nor increase our production throughput.
 \end{itemize}
 Strategy is a question of balance between these three axis, and of knowing when we can attack and when we should stay in defense. Being aggressive is best when we have a military advantage (in numbers or technology) over the opponent. Advantages are gained by investments in these axis, and capitalizing on them when we max out our returns (comparatively to the opponent's).
 
@@ -92,7 +92,7 @@ They improve the speed of CPB by using a decision tree to select relevant featur
 
 From last chapter (section~\ref{sec:techtree}), we recall that the \textit{\glos{techtree}} is a directed acyclic graph which contains the whole technological (buildings and upgrades) development of a player. Also, each unit and building has a \textit{sight range} that provides the player with a view of the map. Parts of the map not in the sight range of the player's units are under \textit{fog of war} and the player ignores what is and happens there. We also recall the notion of \glos{buildorder}: the timings at which the first buildings are constructed. 
 
-In this chapter, we will use \textit{\gloss{buildtree}} as a proxy for estimating some of the strategy. A build tree is a little different than the \glos{techtree}: it is the tech tree without upgrades and researches (only buildings) and augmented of some duplications of buildings. For instance, $\{Pylon\wedge Gateway\}$ and $\{Pylon\wedge Gateway, Gateway2\}$ gives the same tech tree but we consider that they are two different build trees. Indeed, the second Gateway gives some units producing power to the player (it allows for producing two Gateway units at ones). Very early in the game, it also shows investment in production and the strategy is less likely to be focused on quick opening of technology paths/upgrades. 
+In this chapter, we will use \textit{\gloss{buildtree}} as a proxy for estimating some of the strategy. A build tree is a little different than the \glos{techtree}: it is the tech tree without upgrades and researches (only buildings) and augmented of some duplications of buildings. For instance, $\{Pylon\wedge Gateway\}$ and $\{Pylon\wedge Gateway, Gateway2\}$ gives the same tech tree but we consider that they are two different build trees. Indeed, the second Gateway gives some units producing power to the player (it allows for producing two Gateway units at once). Very early in the game, it also shows investment in production and the strategy is less likely to be focused on quick opening of technology paths/upgrades. 
 We have chosen how many different versions of a given building type to put in the build trees (as shown in Table~\ref{tab:labels}), so it is a little more arbitrary than the tech trees. Note that when we know the build tree, we have a very strong conditioning on the tech tree.
 
 
@@ -152,7 +152,7 @@ total & 542 & 1139 & 1024 & total & 1139 & 628 & 1150 & total & 1024 & 1150 & 10
 Instead of labeling with rules, we used (positive labeling vs rest) clustering of the opening's main features to label the games of each player.
 
 \subsubsection{The pitfall of logical/rule-based labeling}
-Openings are closely related to \gloss{buildorder} (BO) but different BO can lead to the same opening and some BO are shared by different openings. Particularly, if we do not take into account the time at which the buildings are constructed, we may have a wrong opening label too often: if an opening consist in having building C as soon as possible, it does not matter if we built B-A-C instead of the standard A-B-C as long as we have built C quickly. That is the kind of case that will be overlooked by logical labeling. For that reason, we tried to label replays with the statistical appearance of key features with a semi-supervised method (see Figure~\ref{fig:replays_labeling}). Indeed, the purpose of our opening prediction model is to help our StarCraft playing bot to deal with rushes and special tactics. This was not the main focus of Weber and Mateas' labels, which follow exactly the build tree. So, we used the key components of openings that we want to be aware of as features for our labeling algorithm as shown in Table~\ref{tab:labels}.
+Openings are closely related to \gloss{buildorder} (BO) but different BO can lead to the same opening and some BO are shared by different openings. Particularly, if we do not take into account the time at which the buildings are constructed, we may have a wrong opening label too often: if an opening consist in having building C as soon as possible, it does not matter if we built B-A-C instead of the standard A-B-C as long as we have built C quickly. That is the kind of case that will be overlooked by logical labeling simply following the order of construction. For that reason, we tried to label replays with the statistical appearance of key features with a semi-supervised method (see Figure~\ref{fig:replays_labeling}). Indeed, the purpose of our opening prediction model is to help our StarCraft playing bot to deal with rushes and special tactics. This was not the main focus of Weber and Mateas' labels, which follow exactly the build tree. So, we used the key components of openings that we want to be aware of as features for our labeling algorithm as shown in Table~\ref{tab:labels}.
 
 \begin{figure}[h]
 \centerline{\includegraphics[width=0.80\columnwidth]{images/replays_labeling.pdf}}
@@ -248,7 +248,7 @@ The Gaussian mixture model (\glos{GMM}) is as follows:
     \item Variables:
     \begin{itemize}
         \item $X_{i \in \llbracket 1 \dots n\rrbracket}$ the features for the $i$th replay/game. For instance for the ``fast\_expand'' opening (Barracks and then direct expanding), we used the features ``time of the first expansion'' and ``time of the first Barracks'', as is shown in Figure~\ref{TvZraxFE}, and each data point is an $X_i$.
-        \item $Op_{i \in \llbracket1 \dots n\rrbracket}$ the opening of game $i$. Instead of doing one clustering with $k$ possible openings, we did $k$ clusterings of 1 opening vs the rest. So for us $Op_i \in \{opening, rest\}$.
+        \item $Op_{i \in \llbracket1 \dots n\rrbracket}$ the opening of game $i$. Instead of doing one clustering with $k$ possible openings, we did $k$ clusterings of 1 opening vs the rest\footnote{with different features for each clustering, so each of the binary clustering represent the labeling of one opening against all others.}. So for us $Op_i \in \{opening, rest\}$.
     \end{itemize}
     \item Decomposition ($n$ data points, i.e. $n$ games):
 $$\PP(X_{1:n}, Op_{1:n}) = \prod_{i=1}^n \PP(X_i|Op_i)\PP(Op_i)$$
@@ -497,7 +497,7 @@ Table~\ref{tab:buildtreeresults} shows the \textbf{full results}, the first line
             \item best $k=1.193$, it means that the average number of buildings ahead (of their construction) that the model predicts at a fixed maximum error of 1 ($d=1$) for the most probable build tree (``best'') is 1.193 buildings.
             \item ``mean'' $k=3.991$, it means that the average number of buildings ahead (of their construction) that the model predicts at a fixed maximum error 1 ($d=1$), summed for $bt$ in $BT$ value and weighted by $\PP(bt)$ is 3.991\footnote{This shows that when the most probable build tree is mistaken, there is 1) not much confidence in it (otherwise we would have $\PP(bt_{best}) \approx 1.0$ and the ``mean'' $k$ for fixed $d$ values would equal the ``best'' one). 2) much information in the distribution on $BT$, in the subsequent $\PP(bt_{\neg best})$ values.}
         \end{itemize}
-    \item idem that the bullet above but $k$ for $d=2$ and $d=3$.
+    \item as for the bullet above but $k$ for $d=2$ and $d=3$.
 \end{itemize}
 The second line (``min'') is the minimum across the different \gloss{matchup} (as they are detailed for $noise=10\%$), the third (``max'') is for the maximum across match-ups, both still at zero noise. Subsequent sets of lines are for increasing values of noise (i.e. missing observations).
 
@@ -622,7 +622,7 @@ This would allow for simple and dynamic build tree adaptation to the opponent st
 & & \times \PP(\lambda | BT_{op}, o_{op, 1:N}) \ \ \mathrm{(consistency)} \\
 & & \times \PP(t|BT_{op}) \ \ \mathrm{(learned)}
 \end{eqnarray*}
-That way, one can ask ``what build/tech tree should I go for against what I see from my opponent'', which tacitly seeks the distribution on $BT_{op}$ to break the complexity of the possible combinations of $O_{1:N}$. It is possible to \textit{not} marginalize over $BT_{op}$, but consider only the most probable(s) $BT_{op}$. In this usage, a filter on $BT_{bot}$ (as simple as $\PP(BT_{bot}^t | BT_{bot}^{t-1}$) can and should be added to prevent switching build orders or strategies too often.
+That way, one can ask ``what build/tech tree should I go for against what I see from my opponent'', which tacitly seeks the distribution on $BT_{op}$ to reduce the complexity of the possible combinations of $O_{1:N}$. It is possible to \textit{not} marginalize over $BT_{op}$, but consider only the most probable(s) $BT_{op}$. In this usage, a filter on $BT_{bot}$ (as simple as $\PP(BT_{bot}^t | BT_{bot}^{t-1}$) can and should be added to prevent switching build orders or strategies too often.
 
 %%% \subsubsection{Uses}
 %%% 
@@ -955,7 +955,7 @@ We recall that we used this model for opening prediction, as a proxy for timing 
 \subsubsection{Possible improvements}
 \label{sec:openingspossibleimprovements}
 
-First, our prediction model can be upgraded to explicitly store transitions between $t$ and $t+1$ (or $t-1$ and $t$) for openings ($Op$) and for \gloss{buildtree} ($BT$). The problem is that $\PP(BT^{t+1}|BT^t)$ will be very sparse, so to efficiently learn something (instead of a sparse probability table) we have to consider a smoothing over the values of $BT$, perhaps with the distances mentioned in section~\ref{sec:buildtreemetrics}. If we can learn $\PP(BT^{t+1}|BT^t)$, it would perhaps increase the results of $\PP(Opening|Observations)$, and it almost surely would increase $\PP(BuildTree^{t+1}|Observations)$, which is important for late game predictions. 
+First, our prediction model can be upgraded to explicitly store transitions between $t$ and $t+1$ (or $t-1$ and $t$) for openings ($Op$) and for \gloss{buildtree} ($BT$). The fact is that $\PP(BT^{t+1}|BT^t)$ will be very sparse, so to efficiently learn something (instead of a sparse probability table) we have to consider a smoothing over the values of $BT$, perhaps with the distances mentioned in section~\ref{sec:buildtreemetrics}. If we can learn $\PP(BT^{t+1}|BT^t)$, it would perhaps increase the results of $\PP(Opening|Observations)$, and it almost surely would increase $\PP(BuildTree^{t+1}|Observations)$, which is important for late game predictions. 
 
 Incorporating $\PP(Op^{t-1})$ priors per match-up (from Table~\ref{tab:weberdatasetnumbers}) would lead to better results, but it would seem like overfitting to us: particularly because we train our robot on games played by humans whereas we have to play against robots in competitions.
 
@@ -1068,7 +1068,7 @@ This was simply implemented as a function. This is not strictly necessary (as on
 
 \subsubsection{Identification (learning)}
 %The first approach to clustering units was a simple fusion $\PP(U_{1:N},C)\propto \prod_i \PP(U_i|C)$ with rectangular $\PP(U_i|C)$ distributions above thresholds for basic and special (casters) units, and their compositions. So we fixed $\approx 8+4+4*8 = 44$ clusters (for each race) and set their parameters. The problem with this approach is that it requires a high game strategy expertize and understanding of the multiple influences of parameters, while it cannot take into account singular combinations of 3 (or more) unit types. 
-We learned Gaussian mixture models (GMM) with the expectation-maximization (EM) algorithm on 5 to 15 mixtures with spherical, tied, diagonal and full co-variance matrices \cite{scikit-learn}. We kept the best scoring models according to the Bayesian information criterion (BIC) \cite{schwarz1978}. % $-2 \ln{\max{Likelihood}} + k \ln(n)$, with $k$ the number of parameters and $n$ the number of observations. %used the python library scikit-learn  to learn the Gaussian Mixture Models. 
+We learned Gaussian mixture models (GMM) with the expectation-maximization (EM) algorithm on 5 to 15 mixtures with spherical, tied, diagonal and full co-variance matrices \citep{scikit-learn}. We kept the best scoring models according to the Bayesian information criterion (BIC) \citep{schwarz1978}. % $-2 \ln{\max{Likelihood}} + k \ln(n)$, with $k$ the number of parameters and $n$ the number of observations. %used the python library scikit-learn  to learn the Gaussian Mixture Models. 
 
 \begin{itemize}
     \item $\PP(U^{t+1}|C_f^{t+1}=c)$ is the result of the clustering of the armies compositions ($U$) into $C$, and so depends from the clustering model. 
